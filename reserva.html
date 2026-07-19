@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Completa tu reservación de vehículo en AutoRentCar."
+    >
+
+    <title>Reservar vehículo | AutoRentCar</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+    <header class="encabezado">
+
+        <div class="barra-superior">
+            <div class="contenedor barra-superior-contenido">
+
+                <div class="informacion-contacto">
+                    <span>
+                        <i class="fa-solid fa-phone"></i>
+                        +1 849-276-6030
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-envelope"></i>
+                        contacto@autorentcar.com
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-location-dot"></i>
+                        Santiago, República Dominicana
+                    </span>
+                </div>
+
+                <div class="redes-sociales">
+                    <a href="#" aria-label="Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+
+                    <a href="#" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+
+                    <a href="#" aria-label="TikTok">
+                        <i class="fa-brands fa-tiktok"></i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <nav class="navegacion">
+
+            <div class="contenedor navegacion-contenido">
+
+                <a href="index.html" class="logo">
+
+                    <span class="logo-icono">
+                        <i class="fa-solid fa-car-side"></i>
+                    </span>
+
+                    <span class="logo-texto">
+                        Auto<span>RentCar</span>
+                    </span>
+
+                </a>
+
+                <button
+                    type="button"
+                    class="boton-menu"
+                    id="boton-menu"
+                    aria-label="Abrir menú"
+                >
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="menu-principal" id="menu-principal">
+
+                    <a href="index.html">Inicio</a>
+                    <a href="vehiculos.html">Vehículos</a>
+                    <a href="index.html#servicios">Servicios</a>
+                    <a href="nosotros.html">Nosotros</a>
+                    <a href="contacto.html">Contacto</a>
+
+                    <button
+                        type="button"
+                        class="boton-modo"
+                        id="boton-modo"
+                        aria-label="Cambiar modo de color"
+                    >
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+
+                    <a
+                        href="reserva.html"
+                        class="boton boton-menu-reserva"
+                    >
+                        Reservar ahora
+                    </a>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+    <main>
+
+        <section class="banner-interno banner-reserva">
+
+            <div class="contenedor banner-interno-contenido">
+
+                <span class="etiqueta">
+                    <i class="fa-solid fa-key"></i>
+                    Reservación
+                </span>
+
+                <h1>Completa los datos de tu alquiler</h1>
+
+                <p>
+                    Revisa el vehículo seleccionado, elige las fechas y
+                    confirma tus datos personales.
+                </p>
+
+                <div class="migas-pan">
+
+                    <a href="index.html">
+                        <i class="fa-solid fa-house"></i>
+                        Inicio
+                    </a>
+
+                    <i class="fa-solid fa-angle-right"></i>
+
+                    <a href="vehiculos.html">
+                        Vehículos
+                    </a>
+
+                    <i class="fa-solid fa-angle-right"></i>
+
+                    <span>Reservación</span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="seccion seccion-reservacion">
+
+            <div class="contenedor">
+
+                <div class="pasos-reservacion">
+
+                    <div class="paso-reserva activo">
+                        <span>1</span>
+                        <p>Vehículo</p>
+                    </div>
+
+                    <div class="linea-reserva"></div>
+
+                    <div class="paso-reserva activo">
+                        <span>2</span>
+                        <p>Datos</p>
+                    </div>
+
+                    <div class="linea-reserva"></div>
+
+                    <div class="paso-reserva">
+                        <span>3</span>
+                        <p>Confirmación</p>
+                    </div>
+
+                </div>
+
+                <div class="reservacion-contenido">
+
+                    <div class="formulario-reservacion-contenedor">
+
+                        <div class="encabezado-formulario-reserva">
+
+                            <span class="subtitulo">
+                                Información del alquiler
+                            </span>
+
+                            <h2>Datos de la reservación</h2>
+
+                            <p>
+                                Completa todos los campos para preparar la
+                                solicitud.
+                            </p>
+
+                        </div>
+
+                        <form
+                            id="formulario-reservacion"
+                            class="formulario-reservacion"
+                            novalidate
+                        >
+
+                            <div class="bloque-reserva">
+
+                                <h3>
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                    Fechas y ubicación
+                                </h3>
+
+                                <div class="rejilla-formulario-reserva">
+
+                                    <div class="campo-reserva">
+
+                                        <label for="reserva-ubicacion">
+                                            Lugar de recogida
+                                        </label>
+
+                                        <select
+                                            id="reserva-ubicacion"
+                                            required
+                                        >
+                                            <option value="">
+                                                Selecciona una ubicación
+                                            </option>
+
+                                            <option value="Santiago">
+                                                Santiago
+                                            </option>
+
+                                            <option value="Santo Domingo">
+                                                Santo Domingo
+                                            </option>
+
+                                            <option value="Puerto Plata">
+                                                Puerto Plata
+                                            </option>
+
+                                            <option value="Punta Cana">
+                                                Punta Cana
+                                            </option>
+                                        </select>
+
+                                        <small class="error-reserva"></small>
+
+                                    </div>
+
+                                    <div class="campo-reserva">
+
+                                        <label for="reserva-entrega-lugar">
+                                            Lugar de entrega
+                                        </label>
+
+                                        <select
+                                            id="reserva-entrega-lugar"
+                                            required
+                                        >
+                                            <option value="">
+                                                Selecciona una ubicación
+                                            </option>
+
+                                            <option value="Santiago">
+                                                Santiago
+                                            </option>
+
+                                            <option value="Santo Domingo">
+                                                Santo Domingo
+                                            </option>
+
+                                            <option value="Puerto Plata">
+                                                Puerto Plata
+                                            </option>
+
+                                            <option value="Punta Cana">
+                                                Punta Cana
+                                            </option>
+                                        </select>
+
+                                        <small class="error-reserva"></small>
+
+                                    </div>
+
+                                    <div class="campo-reserva">
+
+                                        <label for="reserva-fecha-recogida">
+                                            Fecha de recogida
+                                        </label>
+
+                                        <input
+                                            type="date"
+                                            id="reserva-fecha-recogida"
+                                            required
+                                        >
+
+                                        <small class="error-reserva"></small>
+
+                                    </div>
+
+                                    <div class="campo-reserva">
+
+                                        <label for="reserva-fecha-entrega">
+                                            Fecha de entrega
+                                        </label>
+
+                                        <input
+                                            type="date"
+                                            id="reserva-fecha-entrega"
+                                            required
+                                        >
+
+                                        <small class="error-reserva"></small>
+
+                                    </div>
+
+                                    <div class="campo-reserva">
+
+                                        <label for="reserva-hora-recogida">
+                                            Hora de recogida
+                                        </label>
+
+                                        <input
+                                            type="time"
+                                            id="reserva-hora-recogida"
+                                            value="09:00"
+                                            required
+                                        >
+
+                                        <small class="error-reserva"></small>
+
+                                    </div>
+
+                                    <div class="campo-reserva">
+
+                                        <label for="reserva-hora-entrega">
+                                            Hora de entrega
+                                        </label>
+
+                                        <input
+                                            type="time"
+                                            id="reserva-hora-entrega"
+                                            value="09:00"
+                                            required
+                                        >
+
+                                        <small class="error-reserva"></small>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="bloque-reserva">
+
+                                <h3>
+                                    <i class="fa-solid fa-user"></i>
+                                    Información del conductor
+                                </h3>
+
+                                <div class="rejilla-formulario-reserva">
+
+                                    <div class="campo-reserva">
+
+                                        <label for="reserva-nombre">
+                                            Nombre completo
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            id="reserva-nombre"
+                                            placeholder="Escribe tu nombre"
+                                            autocomplete="name"
+                                            required
+                                        >
+
+                                        <small class="error-reserva"></small>
+
+                                    </div>
+
+                                    <div class="campo-reserva">
+
+                                        <label for="reserva-documento">
+                                            Cédula o pasaporte
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            id="reserva-documento"
+                                            placeholder="Documento de identidad"
+                                            required
+                                        >
+
+                                        <small class="error-reserva"></small>
+
+                                    </div>
+
+                                    <div class="campo-reserva">
+
+                                        <label for="reserva-correo">
+                                            Correo electrónico
+                                        </label>
+
+                                        <input
+                                            type="email"
+                                            id="reserva-correo"
+                                            placeholder="correo@ejemplo.com"
+                                            autocomplete="email"
+                                            required
+                                        >
+
+                                        <small class="error-reserva"></small>
+
+                                    </div>
+
+                                    <div class="campo-reserva">
+
+                                        <label for="reserva-telefono">
+                                            Teléfono
+                                        </label>
+
+                                        <input
+                                            type="tel"
+                                            id="reserva-telefono"
+                                            placeholder="809-555-0000"
+                                            autocomplete="tel"
+                                            required
+                                        >
+
+                                        <small class="error-reserva"></small>
+
+                                    </div>
+
+                                    <div class="campo-reserva">
+
+                                        <label for="reserva-edad">
+                                            Edad del conductor
+                                        </label>
+
+                                        <input
+                                            type="number"
+                                            id="reserva-edad"
+                                            min="21"
+                                            max="85"
+                                            placeholder="Edad"
+                                            required
+                                        >
+
+                                        <small class="error-reserva"></small>
+
+                                    </div>
+
+                                    <div class="campo-reserva">
+
+                                        <label for="reserva-licencia">
+                                            Número de licencia
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            id="reserva-licencia"
+                                            placeholder="Número de licencia"
+                                            required
+                                        >
+
+                                        <small class="error-reserva"></small>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="bloque-reserva">
+
+                                <h3>
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                    Servicios adicionales
+                                </h3>
+
+                                <div class="opciones-adicionales">
+
+                                    <label class="opcion-adicional">
+
+                                        <input
+                                            type="checkbox"
+                                            id="seguro-ampliado"
+                                            data-precio="12"
+                                        >
+
+                                        <span class="opcion-adicional-icono">
+                                            <i class="fa-solid fa-shield"></i>
+                                        </span>
+
+                                        <span class="opcion-adicional-texto">
+                                            <strong>Seguro ampliado</strong>
+                                            <small>
+                                                Mayor protección durante el
+                                                alquiler.
+                                            </small>
+                                        </span>
+
+                                        <span class="opcion-adicional-precio">
+                                            US$12/día
+                                        </span>
+
+                                    </label>
+
+                                    <label class="opcion-adicional">
+
+                                        <input
+                                            type="checkbox"
+                                            id="gps-adicional"
+                                            data-precio="5"
+                                        >
+
+                                        <span class="opcion-adicional-icono">
+                                            <i class="fa-solid fa-map-location-dot"></i>
+                                        </span>
+
+                                        <span class="opcion-adicional-texto">
+                                            <strong>Sistema GPS</strong>
+                                            <small>
+                                                Navegación para tus recorridos.
+                                            </small>
+                                        </span>
+
+                                        <span class="opcion-adicional-precio">
+                                            US$5/día
+                                        </span>
+
+                                    </label>
+
+                                    <label class="opcion-adicional">
+
+                                        <input
+                                            type="checkbox"
+                                            id="asiento-infantil"
+                                            data-precio="4"
+                                        >
+
+                                        <span class="opcion-adicional-icono">
+                                            <i class="fa-solid fa-baby"></i>
+                                        </span>
+
+                                        <span class="opcion-adicional-texto">
+                                            <strong>Asiento infantil</strong>
+                                            <small>
+                                                Seguridad adicional para niños.
+                                            </small>
+                                        </span>
+
+                                        <span class="opcion-adicional-precio">
+                                            US$4/día
+                                        </span>
+
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                            <div class="bloque-reserva">
+
+                                <h3>
+                                    <i class="fa-solid fa-message"></i>
+                                    Comentarios
+                                </h3>
+
+                                <div class="campo-reserva campo-completo">
+
+                                    <label for="reserva-comentarios">
+                                        Solicitudes especiales
+                                    </label>
+
+                                    <textarea
+                                        id="reserva-comentarios"
+                                        rows="5"
+                                        maxlength="400"
+                                        placeholder="Escribe cualquier información adicional..."
+                                    ></textarea>
+
+                                </div>
+
+                            </div>
+
+                            <label class="aceptacion-reserva">
+
+                                <input
+                                    type="checkbox"
+                                    id="aceptar-reserva"
+                                >
+
+                                <span>
+                                    Acepto los términos, condiciones y
+                                    políticas de alquiler de AutoRentCar.
+                                </span>
+
+                            </label>
+
+                            <button
+                                type="submit"
+                                class="boton boton-principal boton-confirmar-reserva"
+                            >
+                                Confirmar reservación
+
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    <aside class="resumen-reservacion">
+
+                        <div
+                            class="vehiculo-reserva-seleccionado"
+                            id="vehiculo-reserva-seleccionado"
+                        >
+
+                            <div class="sin-vehiculo-reserva">
+
+                                <i class="fa-solid fa-car"></i>
+
+                                <h3>No hay un vehículo seleccionado</h3>
+
+                                <p>
+                                    Regresa al catálogo y selecciona un
+                                    vehículo para continuar.
+                                </p>
+
+                                <a
+                                    href="vehiculos.html"
+                                    class="boton boton-principal"
+                                >
+                                    Elegir vehículo
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                        <div class="desglose-reserva">
+
+                            <h3>Resumen del precio</h3>
+
+                            <div class="linea-precio-reserva">
+                                <span>Precio diario</span>
+                                <strong id="resumen-precio-diario">
+                                    US$0
+                                </strong>
+                            </div>
+
+                            <div class="linea-precio-reserva">
+                                <span>Días de alquiler</span>
+                                <strong id="resumen-cantidad-dias">
+                                    0
+                                </strong>
+                            </div>
+
+                            <div class="linea-precio-reserva">
+                                <span>Subtotal del vehículo</span>
+                                <strong id="resumen-subtotal">
+                                    US$0
+                                </strong>
+                            </div>
+
+                            <div class="linea-precio-reserva">
+                                <span>Servicios adicionales</span>
+                                <strong id="resumen-adicionales">
+                                    US$0
+                                </strong>
+                            </div>
+
+                            <div class="linea-precio-reserva descuento">
+                                <span>Descuento</span>
+                                <strong id="resumen-descuento">
+                                    -US$0
+                                </strong>
+                            </div>
+
+                            <div class="codigo-promocional-reserva">
+
+                                <label for="codigo-promocional">
+                                    Código promocional
+                                </label>
+
+                                <div>
+                                    <input
+                                        type="text"
+                                        id="codigo-promocional"
+                                        placeholder="Ejemplo: AUTO15"
+                                    >
+
+                                    <button
+                                        type="button"
+                                        id="aplicar-codigo"
+                                    >
+                                        Aplicar
+                                    </button>
+                                </div>
+
+                                <small id="mensaje-codigo"></small>
+
+                            </div>
+
+                            <div class="total-reservacion">
+                                <span>Total estimado</span>
+                                <strong id="resumen-total">
+                                    US$0
+                                </strong>
+                            </div>
+
+                            <p class="nota-reservacion">
+                                El pago final será confirmado por nuestro
+                                equipo antes de entregar el vehículo.
+                            </p>
+
+                        </div>
+
+                    </aside>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="pie-pagina">
+
+        <div class="contenedor pie-contenido">
+
+            <div class="pie-marca">
+
+                <a href="index.html" class="logo logo-pie">
+
+                    <span class="logo-icono">
+                        <i class="fa-solid fa-car-side"></i>
+                    </span>
+
+                    <span class="logo-texto">
+                        Auto<span>RentCar</span>
+                    </span>
+
+                </a>
+
+                <p>
+                    Tu agencia de confianza para alquilar vehículos modernos,
+                    seguros y adecuados para cada recorrido.
+                </p>
+
+            </div>
+
+            <div class="pie-columna">
+                <h3>Enlaces</h3>
+
+                <a href="index.html">Inicio</a>
+                <a href="vehiculos.html">Vehículos</a>
+                <a href="nosotros.html">Nosotros</a>
+                <a href="contacto.html">Contacto</a>
+            </div>
+
+            <div class="pie-columna">
+                <h3>Categorías</h3>
+
+                <a href="vehiculos.html?categoria=economico">
+                    Económicos
+                </a>
+
+                <a href="vehiculos.html?categoria=sedan">
+                    Sedanes
+                </a>
+
+                <a href="vehiculos.html?categoria=suv">
+                    SUV
+                </a>
+
+                <a href="vehiculos.html?categoria=lujo">
+                    De lujo
+                </a>
+            </div>
+
+            <div class="pie-columna">
+                <h3>Contacto</h3>
+
+                <p>
+                    <i class="fa-solid fa-location-dot"></i>
+                    Santiago, República Dominicana
+                </p>
+
+                <p>
+                    <i class="fa-solid fa-phone"></i>
+                    +1 849-276-6030
+                </p>
+
+                <p>
+                    <i class="fa-solid fa-envelope"></i>
+                    contacto@autorentcar.com
+                </p>
+            </div>
+
+        </div>
+
+        <div class="pie-inferior">
+
+            <div class="contenedor pie-inferior-contenido">
+
+                <p>
+                    &copy;
+                    <span id="anio-actual"></span>
+                    AutoRentCar. Todos los derechos reservados.
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <div class="notificacion" id="notificacion">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <div>
+            <strong id="notificacion-titulo">
+                Operación completada
+            </strong>
+
+            <p id="notificacion-mensaje">
+                La información fue procesada correctamente.
+            </p>
+        </div>
+
+    </div>
+
+    <script src="js/vehiculos.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/reserva.js"></script>
+
+</body>
+</html>

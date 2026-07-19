@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Comprobante de reservación de AutoRentCar."
+    >
+
+    <title>Confirmación de reservación | AutoRentCar</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <header class="encabezado encabezado-confirmacion">
+
+        <nav class="navegacion">
+
+            <div class="contenedor navegacion-contenido">
+
+                <a href="index.html" class="logo">
+
+                    <span class="logo-icono">
+                        <i class="fa-solid fa-car-side"></i>
+                    </span>
+
+                    <span class="logo-texto">
+                        Auto<span>RentCar</span>
+                    </span>
+
+                </a>
+
+                <button
+                    type="button"
+                    class="boton-menu"
+                    id="boton-menu"
+                    aria-label="Abrir menú"
+                >
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="menu-principal" id="menu-principal">
+
+                    <a href="index.html">
+                        Inicio
+                    </a>
+
+                    <a href="vehiculos.html">
+                        Vehículos
+                    </a>
+
+                    <a href="nosotros.html">
+                        Nosotros
+                    </a>
+
+                    <a href="contacto.html">
+                        Contacto
+                    </a>
+
+                    <button
+                        type="button"
+                        class="boton-modo"
+                        id="boton-modo"
+                        aria-label="Cambiar modo de color"
+                    >
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+
+                    <a
+                        href="vehiculos.html"
+                        class="boton boton-menu-reserva"
+                    >
+                        Nueva reservación
+                    </a>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+    <main>
+
+        <!-- =================================================
+             CONFIRMACIÓN PRINCIPAL
+        ================================================== -->
+
+        <section class="seccion confirmacion-reserva">
+
+            <div class="contenedor">
+
+                <div
+                    class="confirmacion-sin-datos"
+                    id="confirmacion-sin-datos"
+                >
+
+                    <div class="confirmacion-sin-datos-icono">
+
+                        <i class="fa-solid fa-file-circle-xmark"></i>
+
+                    </div>
+
+                    <h1>
+                        No encontramos una reservación
+                    </h1>
+
+                    <p>
+                        Primero debes seleccionar un vehículo y completar el
+                        formulario de reservación.
+                    </p>
+
+                    <a
+                        href="vehiculos.html"
+                        class="boton boton-principal"
+                    >
+                        Ver vehículos
+
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+                <div
+                    class="confirmacion-contenido"
+                    id="confirmacion-contenido"
+                >
+
+                    <!-- =====================================
+                         MENSAJE DE ÉXITO
+                    ====================================== -->
+
+                    <div class="confirmacion-exito">
+
+                        <div class="confirmacion-icono-exito">
+
+                            <i class="fa-solid fa-check"></i>
+
+                        </div>
+
+                        <span class="subtitulo">
+                            Solicitud registrada
+                        </span>
+
+                        <h1>
+                            ¡Tu reservación fue recibida!
+                        </h1>
+
+                        <p>
+                            Hemos registrado correctamente tu solicitud. Un
+                            representante de AutoRentCar se comunicará contigo
+                            para confirmar la disponibilidad y el método de
+                            pago.
+                        </p>
+
+                        <div class="codigo-confirmacion">
+
+                            <span>
+                                Código de reservación
+                            </span>
+
+                            <strong id="confirmacion-codigo">
+                                AR-00000000
+                            </strong>
+
+                            <button
+                                type="button"
+                                id="copiar-codigo-reserva"
+                                aria-label="Copiar código de reservación"
+                            >
+                                <i class="fa-regular fa-copy"></i>
+                                Copiar
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <!-- =====================================
+                         ACCIONES SUPERIORES
+                    ====================================== -->
+
+                    <div class="acciones-confirmacion">
+
+                        <button
+                            type="button"
+                            class="boton-accion-confirmacion"
+                            id="boton-imprimir-reserva"
+                        >
+                            <i class="fa-solid fa-print"></i>
+                            Imprimir comprobante
+                        </button>
+
+                        <button
+                            type="button"
+                            class="boton-accion-confirmacion"
+                            id="boton-descargar-reserva"
+                        >
+                            <i class="fa-solid fa-download"></i>
+                            Descargar resumen
+                        </button>
+
+                        <a
+                            href="vehiculos.html"
+                            class="boton-accion-confirmacion"
+                        >
+                            <i class="fa-solid fa-plus"></i>
+                            Nueva reservación
+                        </a>
+                        <a
+    href="mis-reservas.html"
+    class="boton-accion-confirmacion"
+>
+    <i class="fa-solid fa-calendar-check"></i>
+    Ver mis reservaciones
+</a>
+
+                    </div>
+
+                    <!-- =====================================
+                         COMPROBANTE
+                    ====================================== -->
+
+                    <div
+                        class="comprobante-reservacion"
+                        id="comprobante-reservacion"
+                    >
+
+                        <div class="comprobante-encabezado">
+
+                            <div class="comprobante-marca">
+
+                                <span class="logo-icono">
+                                    <i class="fa-solid fa-car-side"></i>
+                                </span>
+
+                                <div>
+
+                                    <strong>
+                                        Auto<span>RentCar</span>
+                                    </strong>
+
+                                    <small>
+                                        Comprobante de reservación
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                            <div class="comprobante-estado">
+
+                                <span>Estado</span>
+
+                                <strong id="confirmacion-estado">
+                                    Pendiente de confirmación
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Vehículo -->
+
+                        <section class="seccion-comprobante">
+
+                            <div class="titulo-seccion-comprobante">
+
+                                <div>
+
+                                    <i class="fa-solid fa-car"></i>
+
+                                </div>
+
+                                <section>
+
+                                    <span>
+                                        Vehículo seleccionado
+                                    </span>
+
+                                    <h2>
+                                        Información del vehículo
+                                    </h2>
+
+                                </section>
+
+                            </div>
+
+                            <div class="vehiculo-confirmacion">
+
+                                <img
+                                    id="confirmacion-vehiculo-imagen"
+                                    src=""
+                                    alt="Vehículo reservado"
+                                >
+
+                                <div class="vehiculo-confirmacion-datos">
+
+                                    <span
+                                        class="subtitulo"
+                                        id="confirmacion-vehiculo-categoria"
+                                    >
+                                        Categoría
+                                    </span>
+
+                                    <h3 id="confirmacion-vehiculo-nombre">
+                                        Vehículo
+                                    </h3>
+
+                                    <div class="caracteristicas-confirmacion">
+
+                                        <span>
+                                            <i class="fa-solid fa-gears"></i>
+
+                                            <strong
+                                                id="confirmacion-transmision"
+                                            >
+                                                Automática
+                                            </strong>
+                                        </span>
+
+                                        <span>
+                                            <i class="fa-solid fa-user-group"></i>
+
+                                            <strong
+                                                id="confirmacion-pasajeros"
+                                            >
+                                                5 pasajeros
+                                            </strong>
+                                        </span>
+
+                                        <span>
+                                            <i class="fa-solid fa-gas-pump"></i>
+
+                                            <strong
+                                                id="confirmacion-combustible"
+                                            >
+                                                Gasolina
+                                            </strong>
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="precio-vehiculo-confirmacion">
+
+                                    <span>
+                                        Precio diario
+                                    </span>
+
+                                    <strong
+                                        id="confirmacion-precio-diario"
+                                    >
+                                        US$0
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                        <!-- Información del alquiler -->
+
+                        <section class="seccion-comprobante">
+
+                            <div class="titulo-seccion-comprobante">
+
+                                <div>
+                                    <i class="fa-solid fa-route"></i>
+                                </div>
+
+                                <section>
+
+                                    <span>
+                                        Datos del recorrido
+                                    </span>
+
+                                    <h2>
+                                        Información del alquiler
+                                    </h2>
+
+                                </section>
+
+                            </div>
+
+                            <div class="rejilla-datos-confirmacion">
+
+                                <article class="dato-confirmacion">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                    <span>
+                                        Lugar de recogida
+                                    </span>
+
+                                    <strong
+                                        id="confirmacion-lugar-recogida"
+                                    >
+                                        Sin información
+                                    </strong>
+
+                                </article>
+
+                                <article class="dato-confirmacion">
+
+                                    <i class="fa-solid fa-location-arrow"></i>
+
+                                    <span>
+                                        Lugar de entrega
+                                    </span>
+
+                                    <strong
+                                        id="confirmacion-lugar-entrega"
+                                    >
+                                        Sin información
+                                    </strong>
+
+                                </article>
+
+                                <article class="dato-confirmacion">
+
+                                    <i class="fa-solid fa-calendar-day"></i>
+
+                                    <span>
+                                        Fecha de recogida
+                                    </span>
+
+                                    <strong
+                                        id="confirmacion-fecha-recogida"
+                                    >
+                                        Sin información
+                                    </strong>
+
+                                </article>
+
+                                <article class="dato-confirmacion">
+
+                                    <i class="fa-solid fa-calendar-check"></i>
+
+                                    <span>
+                                        Fecha de entrega
+                                    </span>
+
+                                    <strong
+                                        id="confirmacion-fecha-entrega"
+                                    >
+                                        Sin información
+                                    </strong>
+
+                                </article>
+
+                                <article class="dato-confirmacion">
+
+                                    <i class="fa-solid fa-clock"></i>
+
+                                    <span>
+                                        Hora de recogida
+                                    </span>
+
+                                    <strong
+                                        id="confirmacion-hora-recogida"
+                                    >
+                                        Sin información
+                                    </strong>
+
+                                </article>
+
+                                <article class="dato-confirmacion">
+
+                                    <i class="fa-solid fa-hourglass-half"></i>
+
+                                    <span>
+                                        Duración
+                                    </span>
+
+                                    <strong id="confirmacion-dias">
+                                        0 días
+                                    </strong>
+
+                                </article>
+
+                            </div>
+
+                        </section>
+
+                        <!-- Cliente -->
+
+                        <section class="seccion-comprobante">
+
+                            <div class="titulo-seccion-comprobante">
+
+                                <div>
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+
+                                <section>
+
+                                    <span>
+                                        Conductor principal
+                                    </span>
+
+                                    <h2>
+                                        Información del cliente
+                                    </h2>
+
+                                </section>
+
+                            </div>
+
+                            <div class="rejilla-datos-confirmacion">
+
+                                <article class="dato-confirmacion">
+
+                                    <i class="fa-solid fa-user"></i>
+
+                                    <span>
+                                        Nombre completo
+                                    </span>
+
+                                    <strong
+                                        id="confirmacion-cliente-nombre"
+                                    >
+                                        Sin información
+                                    </strong>
+
+                                </article>
+
+                                <article class="dato-confirmacion">
+
+                                    <i class="fa-solid fa-id-card"></i>
+
+                                    <span>
+                                        Documento
+                                    </span>
+
+                                    <strong
+                                        id="confirmacion-cliente-documento"
+                                    >
+                                        Sin información
+                                    </strong>
+
+                                </article>
+
+                                <article class="dato-confirmacion">
+
+                                    <i class="fa-solid fa-envelope"></i>
+
+                                    <span>
+                                        Correo electrónico
+                                    </span>
+
+                                    <strong
+                                        id="confirmacion-cliente-correo"
+                                    >
+                                        Sin información
+                                    </strong>
+
+                                </article>
+
+                                <article class="dato-confirmacion">
+
+                                    <i class="fa-solid fa-phone"></i>
+
+                                    <span>
+                                        Teléfono
+                                    </span>
+
+                                    <strong
+                                        id="confirmacion-cliente-telefono"
+                                    >
+                                        Sin información
+                                    </strong>
+
+                                </article>
+
+                                <article class="dato-confirmacion">
+
+                                    <i class="fa-solid fa-cake-candles"></i>
+
+                                    <span>
+                                        Edad
+                                    </span>
+
+                                    <strong
+                                        id="confirmacion-cliente-edad"
+                                    >
+                                        Sin información
+                                    </strong>
+
+                                </article>
+
+                                <article class="dato-confirmacion">
+
+                                    <i class="fa-solid fa-address-card"></i>
+
+                                    <span>
+                                        Licencia
+                                    </span>
+
+                                    <strong
+                                        id="confirmacion-cliente-licencia"
+                                    >
+                                        Sin información
+                                    </strong>
+
+                                </article>
+
+                            </div>
+
+                        </section>
+
+                        <!-- Servicios adicionales -->
+
+                        <section
+                            class="seccion-comprobante"
+                            id="seccion-adicionales-confirmacion"
+                        >
+
+                            <div class="titulo-seccion-comprobante">
+
+                                <div>
+                                    <i class="fa-solid fa-circle-plus"></i>
+                                </div>
+
+                                <section>
+
+                                    <span>
+                                        Complementos seleccionados
+                                    </span>
+
+                                    <h2>
+                                        Servicios adicionales
+                                    </h2>
+
+                                </section>
+
+                            </div>
+
+                            <div
+                                class="lista-adicionales-confirmacion"
+                                id="lista-adicionales-confirmacion"
+                            ></div>
+
+                        </section>
+
+                        <!-- Comentarios -->
+
+                        <section
+                            class="seccion-comprobante"
+                            id="seccion-comentarios-confirmacion"
+                        >
+
+                            <div class="titulo-seccion-comprobante">
+
+                                <div>
+                                    <i class="fa-solid fa-message"></i>
+                                </div>
+
+                                <section>
+
+                                    <span>
+                                        Solicitudes especiales
+                                    </span>
+
+                                    <h2>
+                                        Comentarios
+                                    </h2>
+
+                                </section>
+
+                            </div>
+
+                            <div class="comentario-confirmacion">
+
+                                <p id="confirmacion-comentarios">
+                                    Sin comentarios adicionales.
+                                </p>
+
+                            </div>
+
+                        </section>
+
+                        <!-- Precio -->
+
+                        <section class="seccion-comprobante precio-confirmacion">
+
+                            <div class="titulo-seccion-comprobante">
+
+                                <div>
+                                    <i class="fa-solid fa-receipt"></i>
+                                </div>
+
+                                <section>
+
+                                    <span>
+                                        Resumen económico
+                                    </span>
+
+                                    <h2>
+                                        Desglose del alquiler
+                                    </h2>
+
+                                </section>
+
+                            </div>
+
+                            <div class="desglose-confirmacion">
+
+                                <div>
+
+                                    <span>
+                                        Vehículo
+                                    </span>
+
+                                    <strong id="confirmacion-subtotal">
+                                        US$0.00
+                                    </strong>
+
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Servicios adicionales
+                                    </span>
+
+                                    <strong id="confirmacion-adicionales">
+                                        US$0.00
+                                    </strong>
+
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Descuento aplicado
+                                    </span>
+
+                                    <strong
+                                        id="confirmacion-descuento"
+                                        class="valor-descuento"
+                                    >
+                                        -US$0.00
+                                    </strong>
+
+                                </div>
+
+                                <div class="total-confirmacion">
+
+                                    <span>
+                                        Total estimado
+                                    </span>
+
+                                    <strong id="confirmacion-total">
+                                        US$0.00
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                        <!-- Pie del comprobante -->
+
+                        <div class="comprobante-pie">
+
+                            <div>
+
+                                <i class="fa-solid fa-circle-info"></i>
+
+                                <p>
+                                    Esta solicitud queda pendiente de
+                                    confirmación. La disponibilidad final del
+                                    vehículo será validada por nuestro equipo.
+                                </p>
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    AutoRentCar
+                                </strong>
+
+                                <span>
+                                    Santiago, República Dominicana
+                                </span>
+
+                                <span>
+                                    +1 849-276-6030
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- =====================================
+                         PRÓXIMOS PASOS
+                    ====================================== -->
+
+                    <section class="proximos-pasos-confirmacion">
+
+                        <div class="encabezado-seccion centrado">
+
+                            <span class="subtitulo">
+                                ¿Qué sigue ahora?
+                            </span>
+
+                            <h2>
+                                Pasos para completar tu alquiler
+                            </h2>
+
+                            <p>
+                                Nuestro equipo revisará tu solicitud y se
+                                comunicará contigo para finalizar el proceso.
+                            </p>
+
+                        </div>
+
+                        <div class="rejilla-proximos-pasos">
+
+                            <article>
+
+                                <span>01</span>
+
+                                <div>
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </div>
+
+                                <h3>
+                                    Revisamos la solicitud
+                                </h3>
+
+                                <p>
+                                    Verificamos los datos y la disponibilidad
+                                    del vehículo seleccionado.
+                                </p>
+
+                            </article>
+
+                            <article>
+
+                                <span>02</span>
+
+                                <div>
+                                    <i class="fa-solid fa-phone-volume"></i>
+                                </div>
+
+                                <h3>
+                                    Nos comunicamos contigo
+                                </h3>
+
+                                <p>
+                                    Recibirás una llamada o mensaje para
+                                    confirmar todos los detalles.
+                                </p>
+
+                            </article>
+
+                            <article>
+
+                                <span>03</span>
+
+                                <div>
+                                    <i class="fa-solid fa-key"></i>
+                                </div>
+
+                                <h3>
+                                    Recibes tu vehículo
+                                </h3>
+
+                                <p>
+                                    Presenta tus documentos, completa el pago y
+                                    recibe las llaves.
+                                </p>
+
+                            </article>
+
+                        </div>
+
+                    </section>
+
+                    <!-- Contacto rápido -->
+
+                    <div class="ayuda-confirmacion">
+
+                        <div>
+
+                            <span class="subtitulo claro">
+                                ¿Necesitas hacer un cambio?
+                            </span>
+
+                            <h2>
+                                Comunícate con nuestro equipo
+                            </h2>
+
+                            <p>
+                                Ten disponible tu código de reservación para
+                                recibir una atención más rápida.
+                            </p>
+
+                        </div>
+
+                        <a
+                            href="https://wa.me/18492766030"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="boton boton-claro"
+                        >
+                            <i class="fa-brands fa-whatsapp"></i>
+                            Escribir por WhatsApp
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- =====================================================
+         PIE DE PÁGINA
+    ====================================================== -->
+
+    <footer class="pie-pagina">
+
+        <div class="contenedor pie-contenido">
+
+            <div class="pie-marca">
+
+                <a href="index.html" class="logo logo-pie">
+
+                    <span class="logo-icono">
+                        <i class="fa-solid fa-car-side"></i>
+                    </span>
+
+                    <span class="logo-texto">
+                        Auto<span>RentCar</span>
+                    </span>
+
+                </a>
+
+                <p>
+                    Tu agencia de confianza para alquilar vehículos modernos,
+                    seguros y adecuados para cada recorrido.
+                </p>
+
+            </div>
+
+            <div class="pie-columna">
+
+                <h3>Enlaces</h3>
+
+                <a href="index.html">Inicio</a>
+                <a href="vehiculos.html">Vehículos</a>
+                <a href="nosotros.html">Nosotros</a>
+                <a href="contacto.html">Contacto</a>
+
+            </div>
+
+            <div class="pie-columna">
+
+                <h3>Contacto</h3>
+
+                <p>
+                    <i class="fa-solid fa-location-dot"></i>
+                    Santiago, República Dominicana
+                </p>
+
+                <p>
+                    <i class="fa-solid fa-phone"></i>
+                    +1 849-276-6030
+                </p>
+
+                <p>
+                    <i class="fa-solid fa-envelope"></i>
+                    contacto@autorentcar.com
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="pie-inferior">
+
+            <div class="contenedor pie-inferior-contenido">
+
+                <p>
+                    &copy;
+                    <span id="anio-actual"></span>
+                    AutoRentCar. Todos los derechos reservados.
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <!-- Notificación -->
+
+    <div class="notificacion" id="notificacion">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <div>
+
+            <strong id="notificacion-titulo">
+                Operación completada
+            </strong>
+
+            <p id="notificacion-mensaje">
+                La información fue procesada correctamente.
+            </p>
+
+        </div>
+
+    </div>
+
+    <script src="js/vehiculos.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/confirmacion.js"></script>
+
+</body>
+</html>

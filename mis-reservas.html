@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Consulta y administra tus reservaciones de AutoRentCar."
+    >
+
+    <title>Mis reservaciones | AutoRentCar</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+    <header class="encabezado">
+
+        <div class="barra-superior">
+            <div class="contenedor barra-superior-contenido">
+
+                <div class="informacion-contacto">
+                    <span>
+                        <i class="fa-solid fa-phone"></i>
+                        +1 849-276-6030
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-envelope"></i>
+                        contacto@autorentcar.com
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-location-dot"></i>
+                        Santiago, República Dominicana
+                    </span>
+                </div>
+
+                <div class="redes-sociales">
+                    <a href="#" aria-label="Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+
+                    <a href="#" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+
+                    <a href="#" aria-label="TikTok">
+                        <i class="fa-brands fa-tiktok"></i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <nav class="navegacion">
+
+            <div class="contenedor navegacion-contenido">
+
+                <a href="index.html" class="logo">
+
+                    <span class="logo-icono">
+                        <i class="fa-solid fa-car-side"></i>
+                    </span>
+
+                    <span class="logo-texto">
+                        Auto<span>RentCar</span>
+                    </span>
+
+                </a>
+
+                <button
+                    type="button"
+                    class="boton-menu"
+                    id="boton-menu"
+                    aria-label="Abrir menú"
+                >
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="menu-principal" id="menu-principal">
+
+                    <a href="index.html">Inicio</a>
+                    <a href="vehiculos.html">Vehículos</a>
+                    <a href="nosotros.html">Nosotros</a>
+                    <a href="contacto.html">Contacto</a>
+
+                    <a href="mis-reservas.html" class="activo">
+                        Mis reservaciones
+                    </a>
+
+                    <button
+                        type="button"
+                        class="boton-modo"
+                        id="boton-modo"
+                        aria-label="Cambiar modo de color"
+                    >
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+
+                    <a
+                        href="vehiculos.html"
+                        class="boton boton-menu-reserva"
+                    >
+                        Reservar ahora
+                    </a>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+    <main>
+
+        <section class="banner-interno banner-mis-reservas">
+
+            <div class="contenedor banner-interno-contenido">
+
+                <span class="etiqueta">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    Gestión de solicitudes
+                </span>
+
+                <h1>Consulta tus reservaciones</h1>
+
+                <p>
+                    Revisa los vehículos, fechas, precios y estados de las
+                    solicitudes que has registrado.
+                </p>
+
+                <div class="migas-pan">
+
+                    <a href="index.html">
+                        <i class="fa-solid fa-house"></i>
+                        Inicio
+                    </a>
+
+                    <i class="fa-solid fa-angle-right"></i>
+
+                    <span>Mis reservaciones</span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="seccion seccion-mis-reservas">
+
+            <div class="contenedor">
+
+                <!-- Resumen -->
+
+                <div class="estadisticas-reservaciones">
+
+                    <article>
+                        <div>
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+
+                        <section>
+                            <span>Total de solicitudes</span>
+                            <strong id="total-reservaciones">0</strong>
+                        </section>
+                    </article>
+
+                    <article>
+                        <div>
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+
+                        <section>
+                            <span>Pendientes</span>
+                            <strong id="total-pendientes">0</strong>
+                        </section>
+                    </article>
+
+                    <article>
+                        <div>
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+
+                        <section>
+                            <span>Confirmadas</span>
+                            <strong id="total-confirmadas">0</strong>
+                        </section>
+                    </article>
+
+                    <article>
+                        <div>
+                            <i class="fa-solid fa-ban"></i>
+                        </div>
+
+                        <section>
+                            <span>Canceladas</span>
+                            <strong id="total-canceladas">0</strong>
+                        </section>
+                    </article>
+
+                </div>
+
+                <!-- Barra de búsqueda -->
+
+                <div class="barra-reservaciones">
+
+                    <div class="busqueda-reservaciones">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        <input
+                            type="search"
+                            id="buscar-reservacion"
+                            placeholder="Buscar por código, cliente o vehículo"
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+                    <div class="filtro-estado-reserva">
+
+                        <label for="filtrar-estado-reserva">
+                            Estado:
+                        </label>
+
+                        <select id="filtrar-estado-reserva">
+
+                            <option value="todos">
+                                Todos
+                            </option>
+
+                            <option value="pendiente">
+                                Pendientes
+                            </option>
+
+                            <option value="confirmada">
+                                Confirmadas
+                            </option>
+
+                            <option value="cancelada">
+                                Canceladas
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <select id="ordenar-reservaciones">
+
+                        <option value="recientes">
+                            Más recientes
+                        </option>
+
+                        <option value="antiguas">
+                            Más antiguas
+                        </option>
+
+                        <option value="precio-mayor">
+                            Mayor precio
+                        </option>
+
+                        <option value="precio-menor">
+                            Menor precio
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <!-- Resultados -->
+
+                <div
+                    class="lista-reservaciones"
+                    id="lista-reservaciones"
+                ></div>
+
+                <!-- Sin resultados -->
+
+                <div
+                    class="sin-reservaciones"
+                    id="sin-reservaciones"
+                >
+
+                    <div>
+                        <i class="fa-solid fa-calendar-xmark"></i>
+                    </div>
+
+                    <h2>No encontramos reservaciones</h2>
+
+                    <p>
+                        Todavía no has registrado solicitudes o los filtros no
+                        coinciden con ninguna reservación.
+                    </p>
+
+                    <a
+                        href="vehiculos.html"
+                        class="boton boton-principal"
+                    >
+                        Explorar vehículos
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Modal de detalles -->
+
+    <div class="modal" id="modal-detalle-reserva">
+
+        <div class="modal-contenido modal-reservacion-detalle">
+
+            <button
+                type="button"
+                class="modal-cerrar"
+                id="cerrar-detalle-reserva"
+                aria-label="Cerrar detalles"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div id="contenido-detalle-reserva"></div>
+
+        </div>
+
+    </div>
+
+    <!-- Modal de cancelación -->
+
+    <div class="modal" id="modal-cancelar-reserva">
+
+        <div class="modal-contenido modal-confirmar-cancelacion">
+
+            <div class="cancelacion-icono">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <h2>¿Cancelar esta reservación?</h2>
+
+            <p>
+                La solicitud cambiará al estado cancelado. Esta acción se
+                guardará en el navegador.
+            </p>
+
+            <div class="acciones-cancelacion">
+
+                <button
+                    type="button"
+                    class="boton-cancelacion-secundario"
+                    id="no-cancelar-reserva"
+                >
+                    Volver
+                </button>
+
+                <button
+                    type="button"
+                    class="boton-confirmar-cancelacion"
+                    id="confirmar-cancelar-reserva"
+                >
+                    Sí, cancelar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer class="pie-pagina">
+
+        <div class="contenedor pie-contenido">
+
+            <div class="pie-marca">
+
+                <a href="index.html" class="logo logo-pie">
+
+                    <span class="logo-icono">
+                        <i class="fa-solid fa-car-side"></i>
+                    </span>
+
+                    <span class="logo-texto">
+                        Auto<span>RentCar</span>
+                    </span>
+
+                </a>
+
+                <p>
+                    Tu agencia de confianza para alquilar vehículos modernos,
+                    seguros y adecuados para cada recorrido.
+                </p>
+
+            </div>
+
+            <div class="pie-columna">
+
+                <h3>Enlaces</h3>
+
+                <a href="index.html">Inicio</a>
+                <a href="vehiculos.html">Vehículos</a>
+                <a href="mis-reservas.html">Mis reservaciones</a>
+                <a href="contacto.html">Contacto</a>
+
+            </div>
+
+            <div class="pie-columna">
+
+                <h3>Contacto</h3>
+
+                <p>
+                    <i class="fa-solid fa-phone"></i>
+                    +1 849-276-6030
+                </p>
+
+                <p>
+                    <i class="fa-solid fa-envelope"></i>
+                    contacto@autorentcar.com
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="pie-inferior">
+
+            <div class="contenedor pie-inferior-contenido">
+
+                <p>
+                    &copy;
+                    <span id="anio-actual"></span>
+                    AutoRentCar. Todos los derechos reservados.
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <div class="notificacion" id="notificacion">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <div>
+            <strong id="notificacion-titulo">
+                Operación completada
+            </strong>
+
+            <p id="notificacion-mensaje">
+                La información fue procesada correctamente.
+            </p>
+        </div>
+
+    </div>
+
+    <script src="js/vehiculos.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/mis-reservas.js"></script>
+
+</body>
+</html>
