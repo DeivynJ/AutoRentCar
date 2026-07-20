@@ -42,7 +42,7 @@ const vehiculos = [
         descripcion:
             "SUV moderna con excelente espacio interior, gran comodidad y buen rendimiento para viajes familiares o recorridos largos.",
         imagen:
-            "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80"
+            "img/autos/Tuscon.jpg"
     },
 
     {
