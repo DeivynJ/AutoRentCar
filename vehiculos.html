@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Explora el catálogo de vehículos disponibles para alquiler en AutoRentCar."
+    >
+
+    <title>Vehículos | AutoRentCar</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <!-- CSS principal -->
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <header class="encabezado">
+
+        <div class="barra-superior">
+            <div class="contenedor barra-superior-contenido">
+
+                <div class="informacion-contacto">
+
+                    <span>
+                        <i class="fa-solid fa-phone"></i>
+                        +1 849-276-6030
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-envelope"></i>
+                        contacto@autorentcar.com
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-location-dot"></i>
+                        Santiago, República Dominicana
+                    </span>
+
+                </div>
+
+                <div class="redes-sociales">
+
+                    <a href="#" aria-label="Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+
+                    <a href="#" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+
+                    <a href="#" aria-label="TikTok">
+                        <i class="fa-brands fa-tiktok"></i>
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+
+        <nav class="navegacion">
+
+            <div class="contenedor navegacion-contenido">
+
+                <a href="index.html" class="logo">
+
+                    <span class="logo-icono">
+                        <i class="fa-solid fa-car-side"></i>
+                    </span>
+
+                    <span class="logo-texto">
+                        Auto<span>RentCar</span>
+                    </span>
+
+                </a>
+
+                <button
+                    type="button"
+                    class="boton-menu"
+                    id="boton-menu"
+                    aria-label="Abrir menú"
+                >
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="menu-principal" id="menu-principal">
+
+                    <a href="index.html">Inicio</a>
+
+                    <a href="vehiculos.html" class="activo">
+                        Vehículos
+                    </a>
+
+                    <a href="index.html#servicios">
+                        Servicios
+                    </a>
+
+                    <a href="nosotros.html">
+                        Nosotros
+                    </a>
+
+                    <a href="contacto.html">
+                        Contacto
+                    </a>
+
+                    <button
+                        type="button"
+                        class="boton-modo"
+                        id="boton-modo"
+                        aria-label="Cambiar modo de color"
+                    >
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+
+                    <a
+    href="vehiculos.html"
+    class="boton boton-menu-reserva"
+>
+    Reservar ahora
+</a>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+    <main>
+
+        <!-- =================================================
+             BANNER INTERNO
+        ================================================== -->
+
+        <section class="banner-interno banner-vehiculos">
+
+            <div class="contenedor banner-interno-contenido">
+
+                <span class="etiqueta">
+                    <i class="fa-solid fa-car"></i>
+                    Nuestra flota
+                </span>
+
+                <h1>Encuentra el vehículo perfecto</h1>
+
+                <p>
+                    Explora nuestras opciones, compara características y
+                    selecciona el automóvil ideal para tu próximo viaje.
+                </p>
+
+                <div class="migas-pan">
+
+                    <a href="index.html">
+                        <i class="fa-solid fa-house"></i>
+                        Inicio
+                    </a>
+
+                    <i class="fa-solid fa-angle-right"></i>
+
+                    <span>Vehículos</span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =================================================
+             RESUMEN DE LA BÚSQUEDA
+        ================================================== -->
+
+        <section
+            class="resumen-busqueda-seccion"
+            id="resumen-busqueda-seccion"
+        >
+
+            <div class="contenedor">
+
+                <div
+                    class="resumen-busqueda"
+                    id="resumen-busqueda"
+                >
+
+                    <div class="resumen-busqueda-icono">
+                        <i class="fa-solid fa-route"></i>
+                    </div>
+
+                    <div class="resumen-busqueda-datos">
+
+                        <span class="subtitulo">
+                            Información del alquiler
+                        </span>
+
+                        <h2 id="resumen-ubicacion">
+                            Consulta todos nuestros vehículos
+                        </h2>
+
+                        <div class="resumen-detalles">
+
+                            <span>
+                                <i class="fa-solid fa-calendar-day"></i>
+                                Recogida:
+                                <strong id="resumen-recogida">
+                                    Sin seleccionar
+                                </strong>
+                            </span>
+
+                            <span>
+                                <i class="fa-solid fa-calendar-check"></i>
+                                Entrega:
+                                <strong id="resumen-entrega">
+                                    Sin seleccionar
+                                </strong>
+                            </span>
+
+                            <span>
+                                <i class="fa-solid fa-clock"></i>
+                                Duración:
+                                <strong id="resumen-dias">
+                                    Sin calcular
+                                </strong>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <a
+                        href="vehiculos.html"
+                        class="boton boton-principal"
+                    >
+                        <i class="fa-solid fa-pen"></i>
+                        Cambiar búsqueda
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =================================================
+             CATÁLOGO DE VEHÍCULOS
+        ================================================== -->
+
+        <section class="seccion catalogo-vehiculos">
+
+            <div class="contenedor">
+
+                <div class="encabezado-seccion">
+
+                    <div>
+                        <span class="subtitulo">
+                            Vehículos disponibles
+                        </span>
+
+                        <h2>Explora nuestro catálogo</h2>
+                    </div>
+
+                    <p>
+                        Utiliza los filtros para encontrar rápidamente un
+                        vehículo que se adapte a tu presupuesto y necesidades.
+                    </p>
+
+                </div>
+
+                <div class="catalogo-contenido">
+
+                    <!-- =====================================
+                         PANEL DE FILTROS
+                    ====================================== -->
+
+                    <aside
+                        class="panel-filtros"
+                        id="panel-filtros"
+                    >
+
+                        <div class="filtros-encabezado">
+
+                            <div>
+                                <span class="subtitulo">
+                                    Búsqueda avanzada
+                                </span>
+
+                                <h3>Filtrar vehículos</h3>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="boton-cerrar-filtros"
+                                id="boton-cerrar-filtros"
+                                aria-label="Cerrar filtros"
+                            >
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+
+                        </div>
+
+                        <!-- Buscar por nombre -->
+
+                        <div class="grupo-filtro">
+
+                            <label for="buscar-vehiculo">
+                                Buscar vehículo
+                            </label>
+
+                            <div class="campo-busqueda-vehiculo">
+
+                                <i class="fa-solid fa-magnifying-glass"></i>
+
+                                <input
+                                    type="search"
+                                    id="buscar-vehiculo"
+                                    placeholder="Toyota, Kia, BMW..."
+                                    autocomplete="off"
+                                >
+
+                            </div>
+
+                        </div>
+
+                        <!-- Categoría -->
+
+                        <div class="grupo-filtro">
+
+                            <label for="filtro-categoria">
+                                Categoría
+                            </label>
+
+                            <select id="filtro-categoria">
+
+                                <option value="todos">
+                                    Todas las categorías
+                                </option>
+
+                                <option value="economico">
+                                    Económico
+                                </option>
+
+                                <option value="sedan">
+                                    Sedán
+                                </option>
+
+                                <option value="suv">
+                                    SUV
+                                </option>
+
+                                <option value="lujo">
+                                    Lujo
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- Transmisión -->
+
+                        <div class="grupo-filtro">
+
+                            <label for="filtro-transmision">
+                                Transmisión
+                            </label>
+
+                            <select id="filtro-transmision">
+
+                                <option value="todas">
+                                    Todas
+                                </option>
+
+                                <option value="Automática">
+                                    Automática
+                                </option>
+
+                                <option value="Manual">
+                                    Manual
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- Pasajeros -->
+
+                        <div class="grupo-filtro">
+
+                            <label for="filtro-pasajeros">
+                                Cantidad de pasajeros
+                            </label>
+
+                            <select id="filtro-pasajeros">
+
+                                <option value="todos">
+                                    Cualquier cantidad
+                                </option>
+
+                                <option value="4">
+                                    4 o más pasajeros
+                                </option>
+
+                                <option value="5">
+                                    5 o más pasajeros
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- Precio máximo -->
+
+                        <div class="grupo-filtro">
+
+                            <div class="filtro-rango-encabezado">
+
+                                <label for="filtro-precio">
+                                    Precio máximo diario
+                                </label>
+
+                                <strong id="precio-seleccionado">
+                                    US$160
+                                </strong>
+
+                            </div>
+
+                            <input
+                                type="range"
+                                id="filtro-precio"
+                                min="30"
+                                max="160"
+                                value="160"
+                                step="5"
+                            >
+
+                            <div class="rango-valores">
+                                <span>US$30</span>
+                                <span>US$160</span>
+                            </div>
+
+                        </div>
+
+                        <!-- Opciones rápidas -->
+
+                        <div class="grupo-filtro">
+
+                            <span class="titulo-opciones-filtro">
+                                Opciones adicionales
+                            </span>
+
+                            <label class="opcion-checkbox">
+
+                                <input
+                                    type="checkbox"
+                                    id="solo-destacados"
+                                >
+
+                                <span class="checkbox-personalizado">
+                                    <i class="fa-solid fa-check"></i>
+                                </span>
+
+                                Mostrar solo destacados
+
+                            </label>
+
+                            <label class="opcion-checkbox">
+
+                                <input
+                                    type="checkbox"
+                                    id="solo-favoritos"
+                                >
+
+                                <span class="checkbox-personalizado">
+                                    <i class="fa-solid fa-check"></i>
+                                </span>
+
+                                Mostrar mis favoritos
+
+                            </label>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="boton-limpiar-filtros"
+                            id="boton-limpiar-filtros"
+                        >
+                            <i class="fa-solid fa-rotate-left"></i>
+                            Limpiar filtros
+                        </button>
+
+                    </aside>
+
+                    <!-- =====================================
+                         RESULTADOS
+                    ====================================== -->
+
+                    <div class="resultados-catalogo">
+
+                        <div class="barra-resultados">
+
+                            <div class="cantidad-resultados">
+
+                                <button
+                                    type="button"
+                                    class="boton-abrir-filtros"
+                                    id="boton-abrir-filtros"
+                                >
+                                    <i class="fa-solid fa-sliders"></i>
+                                    Filtros
+                                </button>
+
+                                <div>
+                                    <strong id="cantidad-vehiculos">
+                                        0 vehículos
+                                    </strong>
+
+                                    <span>
+                                        encontrados
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div class="ordenar-resultados">
+
+                                <label for="ordenar-vehiculos">
+                                    Ordenar por:
+                                </label>
+
+                                <select id="ordenar-vehiculos">
+
+                                    <option value="recomendados">
+                                        Recomendados
+                                    </option>
+
+                                    <option value="precio-menor">
+                                        Menor precio
+                                    </option>
+
+                                    <option value="precio-mayor">
+                                        Mayor precio
+                                    </option>
+
+                                    <option value="nombre-az">
+                                        Nombre A-Z
+                                    </option>
+
+                                    <option value="nombre-za">
+                                        Nombre Z-A
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                        <!-- JavaScript insertará los vehículos -->
+
+                        <div
+                            class="rejilla-vehiculos catalogo-rejilla"
+                            id="contenedor-todos-vehiculos"
+                        ></div>
+
+                        <!-- Mensaje cuando no hay resultados -->
+
+                        <div
+                            class="sin-resultados"
+                            id="sin-resultados"
+                        >
+
+                            <div class="sin-resultados-icono">
+                                <i class="fa-solid fa-car-burst"></i>
+                            </div>
+
+                            <h3>No encontramos vehículos</h3>
+
+                            <p>
+                                Modifica los filtros para encontrar otras
+                                opciones disponibles.
+                            </p>
+
+                            <button
+                                type="button"
+                                class="boton boton-principal"
+                                id="boton-restablecer-resultados"
+                            >
+                                Restablecer filtros
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =================================================
+             INFORMACIÓN ADICIONAL
+        ================================================== -->
+
+        <section class="seccion beneficios-catalogo">
+
+            <div class="contenedor">
+
+                <div class="rejilla-beneficios-catalogo">
+
+                    <article class="beneficio-catalogo">
+
+                        <div>
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+
+                        <section>
+                            <h3>Seguro incluido</h3>
+
+                            <p>
+                                Todos los vehículos cuentan con cobertura
+                                básica durante el periodo del alquiler.
+                            </p>
+                        </section>
+
+                    </article>
+
+                    <article class="beneficio-catalogo">
+
+                        <div>
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                        </div>
+
+                        <section>
+                            <h3>Mantenimiento garantizado</h3>
+
+                            <p>
+                                Cada vehículo es inspeccionado antes de ser
+                                entregado al cliente.
+                            </p>
+                        </section>
+
+                    </article>
+
+                    <article class="beneficio-catalogo">
+
+                        <div>
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+
+                        <section>
+                            <h3>Asistencia permanente</h3>
+
+                            <p>
+                                Nuestro equipo está disponible para ayudarte
+                                durante todo tu recorrido.
+                            </p>
+                        </section>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =================================================
+             LLAMADO A LA ACCIÓN
+        ================================================== -->
+
+        <section class="llamado-accion">
+
+            <div class="contenedor llamado-contenido">
+
+                <div>
+                    <span class="subtitulo claro">
+                        Estamos para ayudarte
+                    </span>
+
+                    <h2>¿No sabes cuál vehículo elegir?</h2>
+
+                    <p>
+                        Comunícate con nuestro equipo y recibe orientación
+                        personalizada.
+                    </p>
+                </div>
+
+                <a
+                    href="contacto.html"
+                    class="boton boton-claro"
+                >
+                    Hablar con un asesor
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- =====================================================
+         PIE DE PÁGINA
+    ====================================================== -->
+
+    <footer class="pie-pagina">
+
+        <div class="contenedor pie-contenido">
+
+            <div class="pie-marca">
+
+                <a href="index.html" class="logo logo-pie">
+
+                    <span class="logo-icono">
+                        <i class="fa-solid fa-car-side"></i>
+                    </span>
+
+                    <span class="logo-texto">
+                        Auto<span>RentCar</span>
+                    </span>
+
+                </a>
+
+                <p>
+                    Tu agencia de confianza para alquilar vehículos modernos,
+                    seguros y adecuados para cada recorrido.
+                </p>
+
+                <div class="redes-pie">
+
+                    <a href="#" aria-label="Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+
+                    <a href="#" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+
+                    <a href="#" aria-label="TikTok">
+                        <i class="fa-brands fa-tiktok"></i>
+                    </a>
+
+                    <a href="#" aria-label="WhatsApp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="pie-columna">
+
+                <h3>Enlaces</h3>
+
+                <a href="index.html">Inicio</a>
+                <a href="vehiculos.html">Vehículos</a>
+                <a href="nosotros.html">Nosotros</a>
+                <a href="contacto.html">Contacto</a>
+
+            </div>
+
+            <div class="pie-columna">
+
+                <h3>Categorías</h3>
+
+                <a href="vehiculos.html?categoria=economico">
+                    Económicos
+                </a>
+
+                <a href="vehiculos.html?categoria=sedan">
+                    Sedanes
+                </a>
+
+                <a href="vehiculos.html?categoria=suv">
+                    SUV
+                </a>
+
+                <a href="vehiculos.html?categoria=lujo">
+                    De lujo
+                </a>
+
+            </div>
+
+            <div class="pie-columna">
+
+                <h3>Contacto</h3>
+
+                <p>
+                    <i class="fa-solid fa-location-dot"></i>
+                    Santiago, República Dominicana
+                </p>
+
+                <p>
+                    <i class="fa-solid fa-phone"></i>
+                    +1 849-276-6030
+                </p>
+
+                <p>
+                    <i class="fa-solid fa-envelope"></i>
+                    contacto@autorentcar.com
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="pie-inferior">
+
+            <div class="contenedor pie-inferior-contenido">
+
+                <p>
+                    &copy;
+                    <span id="anio-actual"></span>
+                    AutoRentCar. Todos los derechos reservados.
+                </p>
+
+                <div>
+                    <a href="#">Política de privacidad</a>
+                    <a href="#">Términos y condiciones</a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <!-- =====================================================
+         WHATSAPP
+    ====================================================== -->
+
+    <a
+        href="https://wa.me/18492766030?text=Hola,%20deseo%20información%20sobre%20un%20vehículo."
+        class="boton-whatsapp"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Contactar por WhatsApp"
+    >
+        <i class="fa-brands fa-whatsapp"></i>
+        <span>¿Necesitas ayuda?</span>
+    </a>
+
+    <!-- =====================================================
+         MODAL DE VEHÍCULO
+    ====================================================== -->
+
+    <div class="modal" id="modal-vehiculo">
+
+        <div class="modal-contenido">
+
+            <button
+                type="button"
+                class="modal-cerrar"
+                id="cerrar-modal"
+                aria-label="Cerrar ventana"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div id="contenido-modal"></div>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         NOTIFICACIÓN
+    ====================================================== -->
+
+    <div class="notificacion" id="notificacion">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <div>
+            <strong id="notificacion-titulo">
+                Operación completada
+            </strong>
+
+            <p id="notificacion-mensaje">
+                La información fue procesada correctamente.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/vehiculos.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
