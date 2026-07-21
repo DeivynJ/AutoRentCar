@@ -696,12 +696,12 @@ body.modo-oscuro .boton-modo {
 ========================================================= */
 
 .categorias {
-    padding-top: 110px;
+    padding-top: 90px;
 }
 
 .rejilla-categorias {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 22px;
 }
 
@@ -2148,7 +2148,7 @@ body.modo-oscuro .numero-paso {
 }
 
 .catalogo-vehiculos {
-    padding-top: 90px;
+    padding-top: 75px;
 }
 
 .catalogo-contenido {

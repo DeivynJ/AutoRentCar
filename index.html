@@ -115,7 +115,7 @@
                         <i class="fa-solid fa-moon"></i>
                     </button>
 
-                    <a href="#reservar" class="boton boton-menu-reserva">
+                    <a href="vehiculos.html" class="boton boton-menu-reserva">
                         Reservar ahora
                     </a>
 
@@ -218,100 +218,12 @@
 
             </div>
         </section>
-
-        <!-- Buscador de vehículos -->
-        <section class="seccion-buscador" id="reservar">
-
-            <div class="contenedor">
-
-                <div class="buscador-reserva">
-
-                    <div class="buscador-encabezado">
-                        <div>
-                            <span class="subtitulo">Reserva sencilla</span>
-                            <h2>Busca tu vehículo</h2>
-                        </div>
-
-                        <div class="estado-disponible">
-                            <span></span>
-                            Vehículos disponibles
-                        </div>
-                    </div>
-
-                    <form class="formulario-busqueda" id="formulario-busqueda">
-
-                        <div class="campo-formulario">
-                            <label for="lugar-recogida">
-                                <i class="fa-solid fa-location-dot"></i>
-                                Lugar de recogida
-                            </label>
-
-                            <select id="lugar-recogida" required>
-                                <option value="">Selecciona una ubicación</option>
-                                <option value="Santiago">Santiago</option>
-                                <option value="Santo Domingo">Santo Domingo</option>
-                                <option value="Puerto Plata">Puerto Plata</option>
-                                <option value="Punta Cana">Punta Cana</option>
-                            </select>
-                        </div>
-
-                        <div class="campo-formulario">
-                            <label for="fecha-recogida">
-                                <i class="fa-solid fa-calendar-days"></i>
-                                Fecha de recogida
-                            </label>
-
-                            <input
-                                type="date"
-                                id="fecha-recogida"
-                                required
-                            >
-                        </div>
-
-                        <div class="campo-formulario">
-                            <label for="fecha-entrega">
-                                <i class="fa-solid fa-calendar-check"></i>
-                                Fecha de entrega
-                            </label>
-
-                            <input
-                                type="date"
-                                id="fecha-entrega"
-                                required
-                            >
-                        </div>
-
-                        <div class="campo-formulario">
-                            <label for="categoria-busqueda">
-                                <i class="fa-solid fa-car"></i>
-                                Categoría
-                            </label>
-
-                            <select id="categoria-busqueda">
-                                <option value="todos">Todos los vehículos</option>
-                                <option value="economico">Económico</option>
-                                <option value="sedan">Sedán</option>
-                                <option value="suv">SUV</option>
-                                <option value="lujo">Lujo</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="boton boton-buscar">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            Buscar vehículo
-                        </button>
-
-                    </form>
-
-                </div>
-
-            </div>
-        </section>
-
+        
         <!-- Categorías -->
         <section class="seccion categorias">
 
             <div class="contenedor">
+            
 
                 <div class="encabezado-seccion">
 
@@ -327,81 +239,63 @@
 
                 </div>
 
-                <div class="rejilla-categorias">
+              <div class="rejilla-categorias">
 
-                    <article class="tarjeta-categoria">
-                        <div class="categoria-icono">
-                            <i class="fa-solid fa-car-side"></i>
-                        </div>
+    <article class="tarjeta-categoria">
+        <div class="categoria-icono">
+            <i class="fa-solid fa-car-side"></i>
+        </div>
 
-                        <h3>Económicos</h3>
+        <h3>Económico</h3>
 
-                        <p>
-                            Vehículos prácticos, eficientes y perfectos para
-                            desplazamientos diarios.
-                        </p>
+        <p>
+            Vehículos prácticos, eficientes y perfectos para
+            desplazamientos diarios.
+        </p>
 
-                        <a href="vehiculos.html?categoria=economico">
-                            Explorar
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-                    </article>
+        <a href="vehiculos.html?categoria=Económico">
+            Explorar
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </article>
 
-                    <article class="tarjeta-categoria">
-                        <div class="categoria-icono">
-                            <i class="fa-solid fa-car"></i>
-                        </div>
+    <article class="tarjeta-categoria">
+        <div class="categoria-icono">
+            <i class="fa-solid fa-car"></i>
+        </div>
 
-                        <h3>Sedanes</h3>
+        <h3>Gama media</h3>
 
-                        <p>
-                            Comodidad, buen espacio interior y excelente
-                            rendimiento para cualquier recorrido.
-                        </p>
+        <p>
+            Vehículos cómodos, modernos y equilibrados para viajes
+            familiares, personales o de trabajo.
+        </p>
 
-                        <a href="vehiculos.html?categoria=sedan">
-                            Explorar
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-                    </article>
+        <a href="vehiculos.html?categoria=Gama media">
+            Explorar
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </article>
 
-                    <article class="tarjeta-categoria">
-                        <div class="categoria-icono">
-                            <i class="fa-solid fa-truck"></i>
-                        </div>
+    <article class="tarjeta-categoria">
+        <div class="categoria-icono">
+            <i class="fa-solid fa-gem"></i>
+        </div>
 
-                        <h3>SUV</h3>
+        <h3>Vehículos de lujo</h3>
 
-                        <p>
-                            Más espacio, potencia y seguridad para viajes
-                            familiares o recorridos largos.
-                        </p>
+        <p>
+            Modelos exclusivos, elegantes y con mayor nivel de
+            comodidad, tecnología y rendimiento.
+        </p>
 
-                        <a href="vehiculos.html?categoria=suv">
-                            Explorar
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-                    </article>
+        <a href="vehiculos.html?categoria=Vehículo de lujo">
+            Explorar
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </article>
 
-                    <article class="tarjeta-categoria">
-                        <div class="categoria-icono">
-                            <i class="fa-solid fa-gem"></i>
-                        </div>
-
-                        <h3>Vehículos de lujo</h3>
-
-                        <p>
-                            Modelos exclusivos para disfrutar una experiencia
-                            elegante y memorable.
-                        </p>
-
-                        <a href="vehiculos.html?categoria=lujo">
-                            Explorar
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-                    </article>
-
-                </div>
+</div>
 
             </div>
         </section>
@@ -851,7 +745,7 @@
                     </p>
                 </div>
 
-                <a href="#reservar" class="boton boton-claro">
+                <a href="vehiculos.html" class="boton boton-claro">
                     Reservar ahora
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
@@ -917,10 +811,9 @@
             <div class="pie-columna">
                 <h3>Categorías</h3>
 
-                <a href="vehiculos.html?categoria=economico">Económicos</a>
-                <a href="vehiculos.html?categoria=sedan">Sedanes</a>
-                <a href="vehiculos.html?categoria=suv">SUV</a>
-                <a href="vehiculos.html?categoria=lujo">De lujo</a>
+                <a href="vehiculos.html?categoria=Economico">Económicos</a>
+                <a href="vehiculos.html?categoria=Gama media">Gama media</a>
+                <a href="vehiculos.html?categoria=Vehículo de lujo">Vehículo de lujo</a>
             </div>
 
             <div class="pie-columna">
