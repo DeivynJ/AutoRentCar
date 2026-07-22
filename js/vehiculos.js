@@ -439,22 +439,6 @@ function seleccionarVehiculo(id) {
     }, 700);
 }
 
-
-/* =========================================================
-   CERRAR LA VENTANA MODAL
-========================================================= */
-
-function cerrarModalVehiculo() {
-    const modal = document.getElementById("modal-vehiculo");
-
-    if (!modal) {
-        return;
-    }
-
-    modal.classList.remove("activo");
-    document.body.style.overflow = "";
-}
-
 /* =========================================================
    AGREGAR O QUITAR FAVORITOS
 ========================================================= */
@@ -501,42 +485,6 @@ function alternarFavorito(id, boton) {
     );
     actualizarCatalogoSiExiste();
 }
-
-/* =========================================================
-   NOTIFICACIÓN VISUAL
-========================================================= */
-
-let temporizadorNotificacion;
-
-function mostrarNotificacion(titulo, mensaje) {
-    const notificacion = document.getElementById("notificacion");
-    const tituloElemento = document.getElementById(
-        "notificacion-titulo"
-    );
-    const mensajeElemento = document.getElementById(
-        "notificacion-mensaje"
-    );
-
-    if (
-        !notificacion ||
-        !tituloElemento ||
-        !mensajeElemento
-    ) {
-        return;
-    }
-
-    tituloElemento.textContent = titulo;
-    mensajeElemento.textContent = mensaje;
-
-    notificacion.classList.add("visible");
-
-    clearTimeout(temporizadorNotificacion);
-
-    temporizadorNotificacion = setTimeout(() => {
-        notificacion.classList.remove("visible");
-    }, 3500);
-}
-
 /* =========================================================
    EJECUTAR AL CARGAR LA PÁGINA
 ========================================================= */

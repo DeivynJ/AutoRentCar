@@ -33,12 +33,18 @@
 
 <body>
 
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
     <header class="encabezado">
 
         <div class="barra-superior">
+
             <div class="contenedor barra-superior-contenido">
 
                 <div class="informacion-contacto">
+
                     <span>
                         <i class="fa-solid fa-phone"></i>
                         +1 849-276-6030
@@ -53,9 +59,11 @@
                         <i class="fa-solid fa-location-dot"></i>
                         Santiago, República Dominicana
                     </span>
+
                 </div>
 
                 <div class="redes-sociales">
+
                     <a href="#" aria-label="Facebook">
                         <i class="fa-brands fa-facebook-f"></i>
                     </a>
@@ -67,9 +75,11 @@
                     <a href="#" aria-label="TikTok">
                         <i class="fa-brands fa-tiktok"></i>
                     </a>
+
                 </div>
 
             </div>
+
         </div>
 
         <nav class="navegacion">
@@ -115,7 +125,7 @@
                     </button>
 
                     <a
-                        href="reserva.html"
+                        href="vehiculos.html"
                         class="boton boton-menu-reserva"
                     >
                         Reservar ahora
@@ -130,6 +140,10 @@
     </header>
 
     <main>
+
+        <!-- =================================================
+             BANNER
+        ================================================== -->
 
         <section class="banner-interno banner-reserva">
 
@@ -169,6 +183,10 @@
             </div>
 
         </section>
+
+        <!-- =================================================
+             FORMULARIO DE RESERVACIÓN
+        ================================================== -->
 
         <section class="seccion seccion-reservacion">
 
@@ -222,6 +240,8 @@
                             novalidate
                         >
 
+                            <!-- Fechas y ubicaciones -->
+
                             <div class="bloque-reserva">
 
                                 <h3>
@@ -268,6 +288,7 @@
                                             <option value="Jarabacoa">
                                                 Jarabacoa
                                             </option>
+
                                         </select>
 
                                         <small class="error-reserva"></small>
@@ -303,7 +324,7 @@
                                             <option value="Punta Cana">
                                                 Punta Cana
                                             </option>
-                                            
+
                                             <option value="Barahona">
                                                 Barahona
                                             </option>
@@ -311,6 +332,7 @@
                                             <option value="Jarabacoa">
                                                 Jarabacoa
                                             </option>
+
                                         </select>
 
                                         <small class="error-reserva"></small>
@@ -387,6 +409,8 @@
 
                             </div>
 
+                            <!-- Información del conductor -->
+
                             <div class="bloque-reserva">
 
                                 <h3>
@@ -406,6 +430,8 @@
                                             type="text"
                                             id="reserva-nombre"
                                             placeholder="Escribe tu nombre"
+                                            minlength="3"
+                                            maxlength="100"
                                             autocomplete="name"
                                             required
                                         >
@@ -423,7 +449,10 @@
                                         <input
                                             type="text"
                                             id="reserva-documento"
-                                            placeholder="Documento de identidad"
+                                            placeholder="Cédula o pasaporte"
+                                            minlength="6"
+                                            maxlength="20"
+                                            autocomplete="off"
                                             required
                                         >
 
@@ -441,6 +470,7 @@
                                             type="email"
                                             id="reserva-correo"
                                             placeholder="correo@ejemplo.com"
+                                            maxlength="120"
                                             autocomplete="email"
                                             required
                                         >
@@ -459,6 +489,8 @@
                                             type="tel"
                                             id="reserva-telefono"
                                             placeholder="809-555-0000"
+                                            minlength="8"
+                                            maxlength="20"
                                             autocomplete="tel"
                                             required
                                         >
@@ -476,8 +508,9 @@
                                         <input
                                             type="number"
                                             id="reserva-edad"
-                                            min="21"
+                                            min="18"
                                             max="85"
+                                            step="1"
                                             placeholder="Edad"
                                             required
                                         >
@@ -496,6 +529,9 @@
                                             type="text"
                                             id="reserva-licencia"
                                             placeholder="Número de licencia"
+                                            minlength="5"
+                                            maxlength="20"
+                                            autocomplete="off"
                                             required
                                         >
 
@@ -506,6 +542,8 @@
                                 </div>
 
                             </div>
+
+                            <!-- Servicios adicionales -->
 
                             <div class="bloque-reserva">
 
@@ -529,11 +567,16 @@
                                         </span>
 
                                         <span class="opcion-adicional-texto">
-                                            <strong>Seguro ampliado</strong>
+
+                                            <strong>
+                                                Seguro ampliado
+                                            </strong>
+
                                             <small>
                                                 Mayor protección durante el
                                                 alquiler.
                                             </small>
+
                                         </span>
 
                                         <span class="opcion-adicional-precio">
@@ -555,10 +598,15 @@
                                         </span>
 
                                         <span class="opcion-adicional-texto">
-                                            <strong>Sistema GPS</strong>
+
+                                            <strong>
+                                                Sistema GPS
+                                            </strong>
+
                                             <small>
                                                 Navegación para tus recorridos.
                                             </small>
+
                                         </span>
 
                                         <span class="opcion-adicional-precio">
@@ -580,10 +628,15 @@
                                         </span>
 
                                         <span class="opcion-adicional-texto">
-                                            <strong>Asiento infantil</strong>
+
+                                            <strong>
+                                                Asiento infantil
+                                            </strong>
+
                                             <small>
                                                 Seguridad adicional para niños.
                                             </small>
+
                                         </span>
 
                                         <span class="opcion-adicional-precio">
@@ -595,6 +648,8 @@
                                 </div>
 
                             </div>
+
+                            <!-- Comentarios -->
 
                             <div class="bloque-reserva">
 
@@ -619,6 +674,8 @@
                                 </div>
 
                             </div>
+
+                            <!-- Aceptación -->
 
                             <label class="aceptacion-reserva">
 
@@ -647,6 +704,10 @@
 
                     </div>
 
+                    <!-- =====================================
+                         RESUMEN DE LA RESERVACIÓN
+                    ====================================== -->
+
                     <aside class="resumen-reservacion">
 
                         <div
@@ -658,7 +719,9 @@
 
                                 <i class="fa-solid fa-car"></i>
 
-                                <h3>No hay un vehículo seleccionado</h3>
+                                <h3>
+                                    No hay un vehículo seleccionado
+                                </h3>
 
                                 <p>
                                     Regresa al catálogo y selecciona un
@@ -681,39 +744,56 @@
                             <h3>Resumen del precio</h3>
 
                             <div class="linea-precio-reserva">
+
                                 <span>Precio diario</span>
+
                                 <strong id="resumen-precio-diario">
                                     US$0
                                 </strong>
+
                             </div>
 
                             <div class="linea-precio-reserva">
+
                                 <span>Días de alquiler</span>
+
                                 <strong id="resumen-cantidad-dias">
                                     0
                                 </strong>
+
                             </div>
 
                             <div class="linea-precio-reserva">
+
                                 <span>Subtotal del vehículo</span>
+
                                 <strong id="resumen-subtotal">
                                     US$0
                                 </strong>
+
                             </div>
 
                             <div class="linea-precio-reserva">
+
                                 <span>Servicios adicionales</span>
+
                                 <strong id="resumen-adicionales">
                                     US$0
                                 </strong>
+
                             </div>
 
                             <div class="linea-precio-reserva descuento">
+
                                 <span>Descuento</span>
+
                                 <strong id="resumen-descuento">
                                     -US$0
                                 </strong>
+
                             </div>
+
+                            <!-- Código promocional -->
 
                             <div class="codigo-promocional-reserva">
 
@@ -722,10 +802,13 @@
                                 </label>
 
                                 <div>
+
                                     <input
                                         type="text"
                                         id="codigo-promocional"
                                         placeholder="Ejemplo: AUTO15"
+                                        maxlength="20"
+                                        autocomplete="off"
                                     >
 
                                     <button
@@ -734,17 +817,27 @@
                                     >
                                         Aplicar
                                     </button>
+
                                 </div>
 
                                 <small id="mensaje-codigo"></small>
 
+                                <p class="nota-codigo-promocional">
+                                    El descuento se aplica únicamente al costo
+                                    del vehículo. No incluye los servicios
+                                    adicionales.
+                                </p>
+
                             </div>
 
                             <div class="total-reservacion">
+
                                 <span>Total estimado</span>
+
                                 <strong id="resumen-total">
                                     US$0
                                 </strong>
+
                             </div>
 
                             <p class="nota-reservacion">
@@ -763,6 +856,10 @@
         </section>
 
     </main>
+
+    <!-- =====================================================
+         PIE DE PÁGINA
+    ====================================================== -->
 
     <footer class="pie-pagina">
 
@@ -790,31 +887,36 @@
             </div>
 
             <div class="pie-columna">
+
                 <h3>Enlaces</h3>
 
                 <a href="index.html">Inicio</a>
                 <a href="vehiculos.html">Vehículos</a>
                 <a href="nosotros.html">Nosotros</a>
                 <a href="contacto.html">Contacto</a>
+
             </div>
 
             <div class="pie-columna">
+
                 <h3>Categorías</h3>
 
                 <a href="vehiculos.html?categoria=economico">
                     Económicos
                 </a>
 
-                <a href="vehiculos.html?categoria=Gama media">
+                <a href="vehiculos.html?categoria=Gama%20media">
                     Gama media
                 </a>
 
                 <a href="vehiculos.html?categoria=lujo">
                     De lujo
                 </a>
+
             </div>
 
             <div class="pie-columna">
+
                 <h3>Contacto</h3>
 
                 <p>
@@ -831,6 +933,7 @@
                     <i class="fa-solid fa-envelope"></i>
                     contacto@autorentcar.com
                 </p>
+
             </div>
 
         </div>
@@ -851,11 +954,16 @@
 
     </footer>
 
+    <!-- =====================================================
+         NOTIFICACIÓN
+    ====================================================== -->
+
     <div class="notificacion" id="notificacion">
 
         <i class="fa-solid fa-circle-check"></i>
 
         <div>
+
             <strong id="notificacion-titulo">
                 Operación completada
             </strong>
@@ -863,9 +971,12 @@
             <p id="notificacion-mensaje">
                 La información fue procesada correctamente.
             </p>
+
         </div>
 
     </div>
+
+    <!-- JavaScript -->
 
     <script src="js/vehiculos.js"></script>
     <script src="js/app.js"></script>

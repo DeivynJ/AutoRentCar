@@ -126,19 +126,36 @@ function actualizarIconoModo() {
     }
 
     const icono = botonModo.querySelector("i");
+
     const modoOscuroActivo =
         document.body.classList.contains("modo-oscuro");
 
     if (modoOscuroActivo) {
         icono.classList.remove("fa-moon");
         icono.classList.add("fa-sun");
-        botonModo.setAttribute("aria-label", "Activar modo claro");
-        botonModo.setAttribute("title", "Activar modo claro");
+
+        botonModo.setAttribute(
+            "aria-label",
+            "Activar modo claro"
+        );
+
+        botonModo.setAttribute(
+            "title",
+            "Activar modo claro"
+        );
     } else {
         icono.classList.remove("fa-sun");
         icono.classList.add("fa-moon");
-        botonModo.setAttribute("aria-label", "Activar modo oscuro");
-        botonModo.setAttribute("title", "Activar modo oscuro");
+
+        botonModo.setAttribute(
+            "aria-label",
+            "Activar modo oscuro"
+        );
+
+        botonModo.setAttribute(
+            "title",
+            "Activar modo oscuro"
+        );
     }
 }
 
@@ -154,14 +171,17 @@ function configurarPreguntasFrecuentes() {
     }
 
     preguntas.forEach((pregunta) => {
-        const boton = pregunta.querySelector(".pregunta-boton");
+        const boton = pregunta.querySelector(
+            ".pregunta-boton"
+        );
 
         if (!boton) {
             return;
         }
 
         boton.addEventListener("click", () => {
-            const estabaActiva = pregunta.classList.contains("activa");
+            const estabaActiva =
+                pregunta.classList.contains("activa");
 
             preguntas.forEach((otraPregunta) => {
                 otraPregunta.classList.remove("activa");
@@ -175,12 +195,15 @@ function configurarPreguntasFrecuentes() {
 }
 
 /* =========================================================
-   CONFIGURACIÓN DEL MODAL
+   CONFIGURACIÓN DEL MODAL DE VEHÍCULOS
 ========================================================= */
 
 function configurarModal() {
     const modal = document.getElementById("modal-vehiculo");
-    const botonCerrar = document.getElementById("cerrar-modal");
+
+    const botonCerrar = document.getElementById(
+        "cerrar-modal"
+    );
 
     if (!modal || !botonCerrar) {
         return;
@@ -205,6 +228,22 @@ function configurarModal() {
         }
     });
 }
+
+/* =========================================================
+   CERRAR MODAL DE VEHÍCULO
+========================================================= */
+
+function cerrarModalVehiculo() {
+    const modal = document.getElementById("modal-vehiculo");
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.remove("activo");
+    document.body.style.overflow = "";
+}
+
 /* =========================================================
    DESPLAZAMIENTO SUAVE
 ========================================================= */
@@ -223,7 +262,9 @@ function configurarEnlacesInternos() {
                 return;
             }
 
-            const destino = document.querySelector(destinoTexto);
+            const destino = document.querySelector(
+                destinoTexto
+            );
 
             if (!destino) {
                 return;
@@ -244,13 +285,55 @@ function configurarEnlacesInternos() {
 ========================================================= */
 
 function colocarAnioActual() {
-    const elementoAnio = document.getElementById("anio-actual");
+    const elementoAnio = document.getElementById(
+        "anio-actual"
+    );
 
     if (!elementoAnio) {
         return;
     }
 
-    elementoAnio.textContent = new Date().getFullYear();
+    elementoAnio.textContent =
+        new Date().getFullYear();
+}
+
+/* =========================================================
+   NOTIFICACIONES GENERALES
+========================================================= */
+
+let temporizadorNotificacion;
+
+function mostrarNotificacion(titulo, mensaje) {
+    const notificacion = document.getElementById(
+        "notificacion"
+    );
+
+    const tituloElemento = document.getElementById(
+        "notificacion-titulo"
+    );
+
+    const mensajeElemento = document.getElementById(
+        "notificacion-mensaje"
+    );
+
+    if (
+        !notificacion ||
+        !tituloElemento ||
+        !mensajeElemento
+    ) {
+        return;
+    }
+
+    tituloElemento.textContent = titulo;
+    mensajeElemento.textContent = mensaje;
+
+    notificacion.classList.add("visible");
+
+    clearTimeout(temporizadorNotificacion);
+
+    temporizadorNotificacion = setTimeout(() => {
+        notificacion.classList.remove("visible");
+    }, 3500);
 }
 
 /* =========================================================
@@ -258,18 +341,25 @@ function colocarAnioActual() {
 ========================================================= */
 
 window.addEventListener("scroll", () => {
-    const navegacion = document.querySelector(".navegacion");
+    const navegacion = document.querySelector(
+        ".navegacion"
+    );
 
     if (!navegacion) {
         return;
     }
 
     if (window.scrollY > 40) {
-        navegacion.classList.add("navegacion-desplazada");
+        navegacion.classList.add(
+            "navegacion-desplazada"
+        );
     } else {
-        navegacion.classList.remove("navegacion-desplazada");
+        navegacion.classList.remove(
+            "navegacion-desplazada"
+        );
     }
 });
+
 /* =========================================================
    FORMULARIO DE CONTACTO
 ========================================================= */
@@ -283,11 +373,26 @@ function configurarFormularioContacto() {
         return;
     }
 
-    const nombre = document.getElementById("nombre-contacto");
-    const telefono = document.getElementById("telefono-contacto");
-    const correo = document.getElementById("correo-contacto");
-    const asunto = document.getElementById("asunto-contacto");
-    const mensaje = document.getElementById("mensaje-contacto");
+    const nombre = document.getElementById(
+        "nombre-contacto"
+    );
+
+    const telefono = document.getElementById(
+        "telefono-contacto"
+    );
+
+    const correo = document.getElementById(
+        "correo-contacto"
+    );
+
+    const asunto = document.getElementById(
+        "asunto-contacto"
+    );
+
+    const mensaje = document.getElementById(
+        "mensaje-contacto"
+    );
+
     const aceptarTerminos = document.getElementById(
         "aceptar-terminos"
     );
@@ -323,7 +428,9 @@ function configurarFormularioContacto() {
         });
 
         campo.addEventListener("input", () => {
-            const contenedor = campo.closest(".campo-contacto");
+            const contenedor = campo.closest(
+                ".campo-contacto"
+            );
 
             if (
                 contenedor &&
@@ -368,9 +475,22 @@ function configurarFormularioContacto() {
             fecha: new Date().toISOString()
         };
 
-        const solicitudesGuardadas = JSON.parse(
-            localStorage.getItem("autorentcarContactos")
-        ) || [];
+        let solicitudesGuardadas = [];
+
+        try {
+            solicitudesGuardadas = JSON.parse(
+                localStorage.getItem(
+                    "autorentcarContactos"
+                )
+            ) || [];
+        } catch (error) {
+            solicitudesGuardadas = [];
+
+            console.error(
+                "No fue posible leer los mensajes guardados.",
+                error
+            );
+        }
 
         solicitudesGuardadas.push(solicitud);
 
@@ -387,7 +507,9 @@ function configurarFormularioContacto() {
         formulario.reset();
 
         campos.forEach((campo) => {
-            const contenedor = campo.closest(".campo-contacto");
+            const contenedor = campo.closest(
+                ".campo-contacto"
+            );
 
             if (contenedor) {
                 contenedor.classList.remove(
@@ -403,28 +525,36 @@ function configurarFormularioContacto() {
     });
 }
 
+/* =========================================================
+   VALIDAR CAMPOS DEL FORMULARIO DE CONTACTO
+========================================================= */
+
 function validarCampoContacto(campo) {
     const valor = campo.value.trim();
 
     let mensajeError = "";
 
     if (!valor) {
-        mensajeError = "Este campo es obligatorio.";
+        mensajeError =
+            "Este campo es obligatorio.";
     } else if (
         campo.id === "nombre-contacto" &&
         valor.length < 3
     ) {
-        mensajeError = "Escribe un nombre válido.";
+        mensajeError =
+            "Escribe un nombre válido.";
     } else if (
         campo.id === "telefono-contacto" &&
         !/^[0-9+\-()\s]{8,20}$/.test(valor)
     ) {
-        mensajeError = "Escribe un teléfono válido.";
+        mensajeError =
+            "Escribe un teléfono válido.";
     } else if (
         campo.id === "correo-contacto" &&
         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor)
     ) {
-        mensajeError = "Escribe un correo válido.";
+        mensajeError =
+            "Escribe un correo válido.";
     } else if (
         campo.id === "mensaje-contacto" &&
         valor.length < 10
@@ -433,8 +563,13 @@ function validarCampoContacto(campo) {
             "El mensaje debe tener al menos 10 caracteres.";
     }
 
-    const contenedor = campo.closest(".campo-contacto");
-    const error = contenedor?.querySelector(".mensaje-error");
+    const contenedor = campo.closest(
+        ".campo-contacto"
+    );
+
+    const error = contenedor?.querySelector(
+        ".mensaje-error"
+    );
 
     if (!contenedor) {
         return false;
