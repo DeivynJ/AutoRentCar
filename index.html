@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
 
@@ -10,14 +11,23 @@
 
     <meta
         name="description"
-        content="AutoRentCar, agencia de alquiler de vehículos modernos, seguros y económicos."
+        content="AutoRentCar, agencia de alquiler de vehículos modernos, seguros y económicos en Santiago, República Dominicana."
     >
 
     <title>AutoRentCar | Alquiler de vehículos</title>
 
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
@@ -25,25 +35,36 @@
     >
 
     <!-- Font Awesome -->
+
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
     <!-- Hoja de estilos -->
-    <link rel="stylesheet" href="css/estilos.css">
+
+    <link
+        rel="stylesheet"
+        href="css/estilos.css"
+    >
 </head>
 
 <body>
 
-    <!-- Encabezado -->
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
     <header class="encabezado">
 
         <!-- Barra superior -->
+
         <div class="barra-superior">
+
             <div class="contenedor barra-superior-contenido">
 
                 <div class="informacion-contacto">
+
                     <span>
                         <i class="fa-solid fa-phone"></i>
                         +1 849-276-6030
@@ -58,30 +79,50 @@
                         <i class="fa-solid fa-location-dot"></i>
                         Santiago, República Dominicana
                     </span>
+
                 </div>
 
                 <div class="redes-sociales">
-                    <a href="#" aria-label="Facebook">
+
+                    <a
+                        href="#"
+                        aria-label="Facebook"
+                    >
                         <i class="fa-brands fa-facebook-f"></i>
                     </a>
 
-                    <a href="#" aria-label="Instagram">
+                    <a
+                        href="#"
+                        aria-label="Instagram"
+                    >
                         <i class="fa-brands fa-instagram"></i>
                     </a>
 
-                    <a href="#" aria-label="TikTok">
+                    <a
+                        href="#"
+                        aria-label="TikTok"
+                    >
                         <i class="fa-brands fa-tiktok"></i>
                     </a>
+
                 </div>
 
             </div>
+
         </div>
 
         <!-- Menú de navegación -->
+
         <nav class="navegacion">
+
             <div class="contenedor navegacion-contenido">
 
-                <a href="index.html" class="logo">
+                <a
+                    href="index.html"
+                    class="logo"
+                    aria-label="Ir al inicio de AutoRentCar"
+                >
+
                     <span class="logo-icono">
                         <i class="fa-solid fa-car-side"></i>
                     </span>
@@ -89,9 +130,11 @@
                     <span class="logo-texto">
                         Auto<span>RentCar</span>
                     </span>
+
                 </a>
 
                 <button
+                    type="button"
                     class="boton-menu"
                     id="boton-menu"
                     aria-label="Abrir menú"
@@ -99,15 +142,41 @@
                     <i class="fa-solid fa-bars"></i>
                 </button>
 
-                <div class="menu-principal" id="menu-principal">
+                <div
+                    class="menu-principal"
+                    id="menu-principal"
+                >
 
-                    <a href="index.html" class="activo">Inicio</a>
-                    <a href="vehiculos.html">Vehículos</a>
-                    <a href="#servicios">Servicios</a>
-                    <a href="nosotros.html">Nosotros</a>
-                    <a href="contacto.html">Contacto</a>
+                    <a
+                        href="index.html"
+                        class="activo"
+                        aria-current="page"
+                    >
+                        Inicio
+                    </a>
+
+                    <a href="vehiculos.html">
+                        Vehículos
+                    </a>
+
+                    <a href="#servicios">
+                        Servicios
+                    </a>
+
+                    <a href="nosotros.html">
+                        Nosotros
+                    </a>
+
+                    <a href="contacto.html">
+                        Contacto
+                    </a>
+
+                    <a href="mis-reservas.html">
+                        Mis reservaciones
+                    </a>
 
                     <button
+                        type="button"
                         class="boton-modo"
                         id="boton-modo"
                         aria-label="Cambiar modo de color"
@@ -115,19 +184,27 @@
                         <i class="fa-solid fa-moon"></i>
                     </button>
 
-                    <a href="vehiculos.html" class="boton boton-menu-reserva">
+                    <a
+                        href="vehiculos.html"
+                        class="boton boton-menu-reserva"
+                    >
                         Reservar ahora
                     </a>
 
                 </div>
+
             </div>
+
         </nav>
 
     </header>
 
     <main>
 
-        <!-- Sección principal -->
+        <!-- =================================================
+             SECCIÓN PRINCIPAL
+        ================================================== -->
+
         <section class="hero">
 
             <div class="hero-fondo"></div>
@@ -137,13 +214,16 @@
                 <div class="hero-texto">
 
                     <span class="etiqueta">
+
                         <i class="fa-solid fa-key"></i>
+
                         Tu próximo viaje comienza aquí
+
                     </span>
 
                     <h1>
                         Encuentra el vehículo ideal para cada
-                        <span>Viaje</span>
+                        <span>viaje</span>
                     </h1>
 
                     <p>
@@ -154,13 +234,21 @@
 
                     <div class="hero-botones">
 
-                        <a href="#vehiculos-destacados" class="boton boton-principal">
+                        <a
+                            href="#vehiculos-destacados"
+                            class="boton boton-principal"
+                        >
                             Ver vehículos
+
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
 
-                        <a href="#como-funciona" class="boton boton-secundario">
+                        <a
+                            href="#como-funciona"
+                            class="boton boton-secundario"
+                        >
                             <i class="fa-solid fa-circle-play"></i>
+
                             Cómo funciona
                         </a>
 
@@ -169,18 +257,27 @@
                     <div class="hero-estadisticas">
 
                         <div class="estadistica">
+
                             <strong>50+</strong>
+
                             <span>Vehículos disponibles</span>
+
                         </div>
 
                         <div class="estadistica">
+
                             <strong>1,200+</strong>
+
                             <span>Clientes satisfechos</span>
+
                         </div>
 
                         <div class="estadistica">
+
                             <strong>24/7</strong>
+
                             <span>Asistencia al cliente</span>
+
                         </div>
 
                     </div>
@@ -198,38 +295,57 @@
                     >
 
                     <div class="tarjeta-flotante tarjeta-seguridad">
+
                         <div class="tarjeta-icono">
+
                             <i class="fa-solid fa-shield-halved"></i>
+
                         </div>
 
                         <div>
+
                             <strong>Viaje seguro</strong>
+
                             <span>Vehículos inspeccionados</span>
+
                         </div>
+
                     </div>
 
                     <div class="tarjeta-flotante tarjeta-precio">
+
                         <span>Desde</span>
+
                         <strong>US$35</strong>
+
                         <span>por día</span>
+
                     </div>
 
                 </div>
 
             </div>
+
         </section>
-        
-        <!-- Categorías -->
+
+        <!-- =================================================
+             CATEGORÍAS
+        ================================================== -->
+
         <section class="seccion categorias">
 
             <div class="contenedor">
-            
 
                 <div class="encabezado-seccion">
 
                     <div>
-                        <span class="subtitulo">Explora nuestras opciones</span>
+
+                        <span class="subtitulo">
+                            Explora nuestras opciones
+                        </span>
+
                         <h2>Elige por categoría</h2>
+
                     </div>
 
                     <p>
@@ -239,68 +355,101 @@
 
                 </div>
 
-              <div class="rejilla-categorias">
+                <div class="rejilla-categorias">
 
-    <article class="tarjeta-categoria">
-        <div class="categoria-icono">
-            <i class="fa-solid fa-car-side"></i>
-        </div>
+                    <!-- Económico -->
 
-        <h3>Económico</h3>
+                    <article class="tarjeta-categoria">
 
-        <p>
-            Vehículos prácticos, eficientes y perfectos para
-            desplazamientos diarios.
-        </p>
+                        <div class="categoria-icono">
 
-        <a href="vehiculos.html?categoria=Económico">
-            Explorar
-            <i class="fa-solid fa-arrow-right"></i>
-        </a>
-    </article>
+                            <i class="fa-solid fa-car-side"></i>
 
-    <article class="tarjeta-categoria">
-        <div class="categoria-icono">
-            <i class="fa-solid fa-car"></i>
-        </div>
+                        </div>
 
-        <h3>Gama media</h3>
+                        <h3>Económico</h3>
 
-        <p>
-            Vehículos cómodos, modernos y equilibrados para viajes
-            familiares, personales o de trabajo.
-        </p>
+                        <p>
+                            Vehículos prácticos, eficientes y perfectos para
+                            desplazamientos diarios.
+                        </p>
 
-        <a href="vehiculos.html?categoria=Gama media">
-            Explorar
-            <i class="fa-solid fa-arrow-right"></i>
-        </a>
-    </article>
+                        <a href="vehiculos.html?categoria=Económico">
 
-    <article class="tarjeta-categoria">
-        <div class="categoria-icono">
-            <i class="fa-solid fa-gem"></i>
-        </div>
+                            Explorar
 
-        <h3>Vehículos de lujo</h3>
+                            <i class="fa-solid fa-arrow-right"></i>
 
-        <p>
-            Modelos exclusivos, elegantes y con mayor nivel de
-            comodidad, tecnología y rendimiento.
-        </p>
+                        </a>
 
-        <a href="vehiculos.html?categoria=Vehículo de lujo">
-            Explorar
-            <i class="fa-solid fa-arrow-right"></i>
-        </a>
-    </article>
+                    </article>
 
-</div>
+                    <!-- Gama media -->
+
+                    <article class="tarjeta-categoria">
+
+                        <div class="categoria-icono">
+
+                            <i class="fa-solid fa-car"></i>
+
+                        </div>
+
+                        <h3>Gama media</h3>
+
+                        <p>
+                            Vehículos cómodos, modernos y equilibrados para
+                            viajes familiares, personales o de trabajo.
+                        </p>
+
+                        <a href="vehiculos.html?categoria=Gama media">
+
+                            Explorar
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+                    </article>
+
+                    <!-- Vehículo de lujo -->
+
+                    <article class="tarjeta-categoria">
+
+                        <div class="categoria-icono">
+
+                            <i class="fa-solid fa-gem"></i>
+
+                        </div>
+
+                        <h3>Vehículo de lujo</h3>
+
+                        <p>
+                            Modelos exclusivos, elegantes y con un mayor nivel
+                            de comodidad, tecnología y rendimiento.
+                        </p>
+
+                        <a
+                            href="vehiculos.html?categoria=Vehículo de lujo"
+                        >
+
+                            Explorar
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+                    </article>
+
+                </div>
 
             </div>
+
         </section>
 
-        <!-- Vehículos destacados -->
+        <!-- =================================================
+             VEHÍCULOS DESTACADOS
+        ================================================== -->
+
         <section
             class="seccion vehiculos-destacados"
             id="vehiculos-destacados"
@@ -311,46 +460,72 @@
                 <div class="encabezado-seccion">
 
                     <div>
-                        <span class="subtitulo">Nuestra flota</span>
+
+                        <span class="subtitulo">
+                            Nuestra flota
+                        </span>
+
                         <h2>Vehículos destacados</h2>
+
                     </div>
 
-                    <a href="vehiculos.html" class="enlace-ver-todos">
+                    <a
+                        href="vehiculos.html"
+                        class="enlace-ver-todos"
+                    >
+
                         Ver todos los vehículos
+
                         <i class="fa-solid fa-arrow-right"></i>
+
                     </a>
 
                 </div>
 
-                <!-- JavaScript insertará aquí los vehículos -->
                 <div
                     class="rejilla-vehiculos"
                     id="contenedor-vehiculos-destacados"
+                    aria-live="polite"
                 ></div>
 
             </div>
+
         </section>
 
-        <!-- Servicios -->
-        <section class="seccion servicios" id="servicios">
+        <!-- =================================================
+             SERVICIOS
+        ================================================== -->
+
+        <section
+            class="seccion servicios"
+            id="servicios"
+        >
 
             <div class="contenedor">
 
                 <div class="encabezado-seccion centrado">
-                    <span class="subtitulo">¿Por qué elegirnos?</span>
+
+                    <span class="subtitulo">
+                        ¿Por qué elegirnos?
+                    </span>
+
                     <h2>Una experiencia de alquiler diferente</h2>
 
                     <p>
                         Nos encargamos de que el proceso sea sencillo, seguro
                         y rápido desde la reservación hasta la entrega.
                     </p>
+
                 </div>
 
                 <div class="rejilla-servicios">
 
                     <article class="tarjeta-servicio">
+
                         <div class="servicio-icono">
+
                             <i class="fa-solid fa-tags"></i>
+
                         </div>
 
                         <h3>Precios transparentes</h3>
@@ -359,11 +534,15 @@
                             Conoce el costo de tu alquiler sin cargos ocultos
                             ni sorpresas al momento de pagar.
                         </p>
+
                     </article>
 
                     <article class="tarjeta-servicio">
+
                         <div class="servicio-icono">
+
                             <i class="fa-solid fa-headset"></i>
+
                         </div>
 
                         <h3>Asistencia 24/7</h3>
@@ -372,11 +551,15 @@
                             Nuestro equipo estará disponible para ayudarte
                             durante todo el periodo de alquiler.
                         </p>
+
                     </article>
 
                     <article class="tarjeta-servicio">
+
                         <div class="servicio-icono">
+
                             <i class="fa-solid fa-shield-halved"></i>
+
                         </div>
 
                         <h3>Vehículos asegurados</h3>
@@ -385,11 +568,15 @@
                             Nuestra flota cuenta con mantenimiento preventivo,
                             inspección y cobertura de seguridad.
                         </p>
+
                     </article>
 
                     <article class="tarjeta-servicio">
+
                         <div class="servicio-icono">
+
                             <i class="fa-solid fa-route"></i>
+
                         </div>
 
                         <h3>Entrega flexible</h3>
@@ -398,26 +585,39 @@
                             Recoge o recibe tu vehículo en diferentes puntos
                             según la disponibilidad del servicio.
                         </p>
+
                     </article>
 
                 </div>
 
             </div>
+
         </section>
 
-        <!-- Cómo funciona -->
-        <section class="seccion como-funciona" id="como-funciona">
+        <!-- =================================================
+             CÓMO FUNCIONA
+        ================================================== -->
+
+        <section
+            class="seccion como-funciona"
+            id="como-funciona"
+        >
 
             <div class="contenedor">
 
                 <div class="encabezado-seccion centrado">
-                    <span class="subtitulo">Proceso rápido</span>
+
+                    <span class="subtitulo">
+                        Proceso rápido
+                    </span>
+
                     <h2>Reserva en tres pasos</h2>
 
                     <p>
                         Selecciona tu vehículo y completa la reservación en
                         pocos minutos.
                     </p>
+
                 </div>
 
                 <div class="rejilla-pasos">
@@ -427,7 +627,9 @@
                         <span class="numero-paso">01</span>
 
                         <div class="paso-icono">
+
                             <i class="fa-solid fa-magnifying-glass"></i>
+
                         </div>
 
                         <h3>Busca</h3>
@@ -436,6 +638,7 @@
                             Selecciona la ubicación, las fechas y el tipo de
                             vehículo que necesitas.
                         </p>
+
                     </article>
 
                     <div class="linea-paso"></div>
@@ -445,7 +648,9 @@
                         <span class="numero-paso">02</span>
 
                         <div class="paso-icono">
+
                             <i class="fa-solid fa-car-side"></i>
+
                         </div>
 
                         <h3>Selecciona</h3>
@@ -454,6 +659,7 @@
                             Compara precios y características para escoger el
                             vehículo adecuado.
                         </p>
+
                     </article>
 
                     <div class="linea-paso"></div>
@@ -463,7 +669,9 @@
                         <span class="numero-paso">03</span>
 
                         <div class="paso-icono">
+
                             <i class="fa-solid fa-key"></i>
+
                         </div>
 
                         <h3>Disfruta</h3>
@@ -472,20 +680,28 @@
                             Confirma tu reservación, recibe las llaves y
                             comienza tu recorrido.
                         </p>
+
                     </article>
 
                 </div>
 
             </div>
+
         </section>
 
-        <!-- Sección promocional -->
+        <!-- =================================================
+             PROMOCIÓN
+        ================================================== -->
+
         <section class="seccion-promocional">
 
             <div class="contenedor promocional-contenido">
 
                 <div class="promocional-texto">
-                    <span class="subtitulo claro">Oferta especial</span>
+
+                    <span class="subtitulo claro">
+                        Oferta especial
+                    </span>
 
                     <h2>
                         Obtén un 15 % de descuento en tu primera reservación
@@ -496,34 +712,57 @@
                         una experiencia cómoda, segura y confiable.
                     </p>
 
-                    <a href="vehiculos.html" class="boton boton-claro">
-    Reservar con descuento
-    <i class="fa-solid fa-arrow-right"></i>
-</a>
+                    <a
+                        href="vehiculos.html"
+                        class="boton boton-claro"
+                    >
+
+                        Reservar con descuento
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
                 </div>
 
                 <div class="promocional-codigo">
+
                     <span>Utiliza el código</span>
+
                     <strong>AUTO15</strong>
-                    <small>Aplican términos y condiciones</small>
+
+                    <small>
+                        El descuento se aplica al costo del vehículo.
+                        No incluye servicios adicionales.
+                    </small>
+
                 </div>
 
             </div>
+
         </section>
 
-        <!-- Testimonios -->
+        <!-- =================================================
+             TESTIMONIOS
+        ================================================== -->
+
         <section class="seccion testimonios">
 
             <div class="contenedor">
 
                 <div class="encabezado-seccion centrado">
-                    <span class="subtitulo">Opiniones reales</span>
+
+                    <span class="subtitulo">
+                        Opiniones reales
+                    </span>
+
                     <h2>Lo que dicen nuestros clientes</h2>
 
                     <p>
                         La confianza de nuestros clientes es la mejor
                         representación de nuestro servicio.
                     </p>
+
                 </div>
 
                 <div class="rejilla-testimonios">
@@ -531,11 +770,13 @@
                     <article class="tarjeta-testimonio">
 
                         <div class="estrellas">
+
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
+
                         </div>
 
                         <p>
@@ -545,55 +786,73 @@
                         </p>
 
                         <div class="cliente">
+
                             <img
                                 src="https://randomuser.me/api/portraits/men/32.jpg"
                                 alt="Cliente Carlos Rodríguez"
+                                loading="lazy"
                             >
 
                             <div>
+
                                 <strong>Carlos Rodríguez</strong>
+
                                 <span>Cliente frecuente</span>
+
                             </div>
+
                         </div>
+
                     </article>
 
                     <article class="tarjeta-testimonio">
 
                         <div class="estrellas">
+
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
+
                         </div>
 
                         <p>
-                            “Alquilé una SUV para viajar con mi familia y todo
-                            salió perfecto. El precio fue claro y no aparecieron
-                            costos adicionales”.
+                            “Alquilé un vehículo para viajar con mi familia y
+                            todo salió perfecto. El precio fue claro y no
+                            aparecieron costos adicionales”.
                         </p>
 
                         <div class="cliente">
+
                             <img
                                 src="https://randomuser.me/api/portraits/women/44.jpg"
                                 alt="Cliente Laura Méndez"
+                                loading="lazy"
                             >
 
                             <div>
+
                                 <strong>Laura Méndez</strong>
+
                                 <span>Cliente familiar</span>
+
                             </div>
+
                         </div>
+
                     </article>
 
                     <article class="tarjeta-testimonio">
 
                         <div class="estrellas">
+
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
+
                         </div>
 
                         <p>
@@ -603,121 +862,174 @@
                         </p>
 
                         <div class="cliente">
+
                             <img
                                 src="https://randomuser.me/api/portraits/men/75.jpg"
                                 alt="Cliente Miguel Santos"
+                                loading="lazy"
                             >
 
                             <div>
+
                                 <strong>Miguel Santos</strong>
+
                                 <span>Cliente empresarial</span>
+
                             </div>
+
                         </div>
+
                     </article>
 
                 </div>
 
             </div>
+
         </section>
 
-        <!-- Preguntas frecuentes -->
+        <!-- =================================================
+             PREGUNTAS FRECUENTES
+        ================================================== -->
+
         <section class="seccion preguntas-frecuentes">
 
             <div class="contenedor preguntas-contenido">
 
                 <div class="preguntas-introduccion">
 
-                    <span class="subtitulo">Necesitas ayuda</span>
+                    <span class="subtitulo">
+                        ¿Necesitas ayuda?
+                    </span>
 
                     <h2>Preguntas frecuentes</h2>
 
                     <p>
                         Aquí encontrarás respuestas a las principales dudas
-                        sobre la reservación y el alquiler de nuestros vehículos.
+                        sobre la reservación y el alquiler de nuestros
+                        vehículos.
                     </p>
 
-                    <a href="contacto.html" class="boton boton-principal">
+                    <a
+                        href="contacto.html"
+                        class="boton boton-principal"
+                    >
                         Contactar soporte
                     </a>
 
                 </div>
 
-                <div class="acordeon" id="acordeon">
+                <div
+                    class="acordeon"
+                    id="acordeon"
+                >
 
                     <article class="pregunta activa">
 
-                        <button class="pregunta-boton">
+                        <button
+                            type="button"
+                            class="pregunta-boton"
+                            aria-expanded="true"
+                        >
+
                             <span>
                                 ¿Qué documentos necesito para alquilar?
                             </span>
 
                             <i class="fa-solid fa-plus"></i>
+
                         </button>
 
                         <div class="pregunta-respuesta">
+
                             <p>
                                 Debes presentar una licencia de conducir
-                                vigente, documento de identidad y una tarjeta
-                                válida para completar la garantía.
+                                vigente, un documento de identidad y un método
+                                de pago válido para completar la garantía.
                             </p>
+
                         </div>
 
                     </article>
 
                     <article class="pregunta">
 
-                        <button class="pregunta-boton">
+                        <button
+                            type="button"
+                            class="pregunta-boton"
+                            aria-expanded="false"
+                        >
+
                             <span>
                                 ¿Cuál es la edad mínima para reservar?
                             </span>
 
                             <i class="fa-solid fa-plus"></i>
+
                         </button>
 
                         <div class="pregunta-respuesta">
+
                             <p>
-                                La edad mínima general es de 21 años. Algunos
-                                vehículos pueden requerir una edad mínima mayor.
+                                La edad mínima general para alquilar un
+                                vehículo es de 18 años. Algunos vehículos
+                                pueden requerir condiciones adicionales.
                             </p>
+
                         </div>
 
                     </article>
 
                     <article class="pregunta">
 
-                        <button class="pregunta-boton">
+                        <button
+                            type="button"
+                            class="pregunta-boton"
+                            aria-expanded="false"
+                        >
+
                             <span>
                                 ¿Puedo modificar las fechas de mi reservación?
                             </span>
 
                             <i class="fa-solid fa-plus"></i>
+
                         </button>
 
                         <div class="pregunta-respuesta">
+
                             <p>
                                 Sí, las fechas pueden modificarse según la
                                 disponibilidad del vehículo seleccionado.
                             </p>
+
                         </div>
 
                     </article>
 
                     <article class="pregunta">
 
-                        <button class="pregunta-boton">
+                        <button
+                            type="button"
+                            class="pregunta-boton"
+                            aria-expanded="false"
+                        >
+
                             <span>
                                 ¿Los vehículos tienen seguro?
                             </span>
 
                             <i class="fa-solid fa-plus"></i>
+
                         </button>
 
                         <div class="pregunta-respuesta">
+
                             <p>
-                                Todos nuestros vehículos incluyen una cobertura
-                                básica. También podrás seleccionar coberturas
-                                adicionales.
+                                Todos nuestros vehículos incluyen una
+                                cobertura básica. También podrás seleccionar
+                                coberturas adicionales.
                             </p>
+
                         </div>
 
                     </article>
@@ -725,14 +1037,19 @@
                 </div>
 
             </div>
+
         </section>
 
-        <!-- Llamado a la acción -->
+        <!-- =================================================
+             LLAMADO A LA ACCIÓN
+        ================================================== -->
+
         <section class="llamado-accion">
 
             <div class="contenedor llamado-contenido">
 
                 <div>
+
                     <span class="subtitulo claro">
                         Comienza tu próximo viaje
                     </span>
@@ -743,33 +1060,54 @@
                         Encuentra el vehículo perfecto y reserva en pocos
                         minutos.
                     </p>
+
                 </div>
 
-                <a href="vehiculos.html" class="boton boton-claro">
+                <a
+                    href="vehiculos.html"
+                    class="boton boton-claro"
+                >
+
                     Reservar ahora
+
                     <i class="fa-solid fa-arrow-right"></i>
+
                 </a>
 
             </div>
+
         </section>
 
     </main>
 
-    <!-- Pie de página -->
+    <!-- =====================================================
+         PIE DE PÁGINA
+    ====================================================== -->
+
     <footer class="pie-pagina">
 
         <div class="contenedor pie-contenido">
 
             <div class="pie-marca">
 
-                <a href="index.html" class="logo logo-pie">
+                <a
+                    href="index.html"
+                    class="logo logo-pie"
+                    aria-label="Ir al inicio de AutoRentCar"
+                >
+
                     <span class="logo-icono">
+
                         <i class="fa-solid fa-car-side"></i>
+
                     </span>
 
                     <span class="logo-texto">
+
                         Auto<span>RentCar</span>
+
                     </span>
+
                 </a>
 
                 <p>
@@ -779,19 +1117,31 @@
 
                 <div class="redes-pie">
 
-                    <a href="#" aria-label="Facebook">
+                    <a
+                        href="#"
+                        aria-label="Facebook"
+                    >
                         <i class="fa-brands fa-facebook-f"></i>
                     </a>
 
-                    <a href="#" aria-label="Instagram">
+                    <a
+                        href="#"
+                        aria-label="Instagram"
+                    >
                         <i class="fa-brands fa-instagram"></i>
                     </a>
 
-                    <a href="#" aria-label="TikTok">
+                    <a
+                        href="#"
+                        aria-label="TikTok"
+                    >
                         <i class="fa-brands fa-tiktok"></i>
                     </a>
 
-                    <a href="#" aria-label="WhatsApp">
+                    <a
+                        href="#"
+                        aria-label="WhatsApp"
+                    >
                         <i class="fa-brands fa-whatsapp"></i>
                     </a>
 
@@ -800,62 +1150,101 @@
             </div>
 
             <div class="pie-columna">
+
                 <h3>Enlaces</h3>
 
                 <a href="index.html">Inicio</a>
+
                 <a href="vehiculos.html">Vehículos</a>
+
                 <a href="nosotros.html">Nosotros</a>
+
                 <a href="contacto.html">Contacto</a>
+
+                <a href="mis-reservas.html">
+                    Mis reservaciones
+                </a>
+
             </div>
 
             <div class="pie-columna">
+
                 <h3>Categorías</h3>
 
-                <a href="vehiculos.html?categoria=Economico">Económicos</a>
-                <a href="vehiculos.html?categoria=Gama media">Gama media</a>
-                <a href="vehiculos.html?categoria=Vehículo de lujo">Vehículo de lujo</a>
+                <a href="vehiculos.html?categoria=Económico">
+                    Económico
+                </a>
+
+                <a href="vehiculos.html?categoria=Gama media">
+                    Gama media
+                </a>
+
+                <a
+                    href="vehiculos.html?categoria=Vehículo de lujo"
+                >
+                    Vehículo de lujo
+                </a>
+
             </div>
 
             <div class="pie-columna">
+
                 <h3>Contacto</h3>
 
                 <p>
                     <i class="fa-solid fa-location-dot"></i>
+
                     Santiago, República Dominicana
                 </p>
 
                 <p>
                     <i class="fa-solid fa-phone"></i>
+
                     +1 849-276-6030
                 </p>
 
                 <p>
                     <i class="fa-solid fa-envelope"></i>
+
                     contacto@autorentcar.com
                 </p>
+
             </div>
 
         </div>
 
         <div class="pie-inferior">
+
             <div class="contenedor pie-inferior-contenido">
 
                 <p>
-                    &copy; <span id="anio-actual"></span> AutoRentCar.
-                    Todos los derechos reservados.
+                    &copy;
+                    <span id="anio-actual"></span>
+                    AutoRentCar. Todos los derechos reservados.
                 </p>
 
                 <div>
-                    <a href="#">Política de privacidad</a>
-                    <a href="#">Términos y condiciones</a>
+
+                    <a href="#">
+                        Política de privacidad
+                    </a>
+
+                    <a href="#">
+                        Términos y condiciones
+                    </a>
+
                 </div>
 
             </div>
+
         </div>
 
     </footer>
 
-    <!-- Botón de WhatsApp -->
+    <!-- =====================================================
+         WHATSAPP
+    ====================================================== -->
+
     <a
         href="https://wa.me/18492766030?text=Hola,%20deseo%20información%20sobre%20el%20alquiler%20de%20un%20vehículo."
         class="boton-whatsapp"
@@ -863,17 +1252,29 @@
         rel="noopener noreferrer"
         aria-label="Contactar por WhatsApp"
     >
+
         <i class="fa-brands fa-whatsapp"></i>
 
         <span>¿Necesitas ayuda?</span>
+
     </a>
 
-    <!-- Ventana modal para vehículos -->
-    <div class="modal" id="modal-vehiculo">
+    <!-- =====================================================
+         MODAL DE VEHÍCULOS
+    ====================================================== -->
+
+    <div
+        class="modal"
+        id="modal-vehiculo"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Detalles del vehículo"
+    >
 
         <div class="modal-contenido">
 
             <button
+                type="button"
                 class="modal-cerrar"
                 id="cerrar-modal"
                 aria-label="Cerrar ventana"
@@ -887,21 +1288,41 @@
 
     </div>
 
-    <!-- Notificación -->
-    <div class="notificacion" id="notificacion">
+    <!-- =====================================================
+         NOTIFICACIÓN
+    ====================================================== -->
+
+    <div
+        class="notificacion"
+        id="notificacion"
+        role="status"
+        aria-live="polite"
+    >
+
         <i class="fa-solid fa-circle-check"></i>
 
         <div>
-            <strong id="notificacion-titulo">Operación completada</strong>
+
+            <strong id="notificacion-titulo">
+                Operación completada
+            </strong>
+
             <p id="notificacion-mensaje">
                 La información fue procesada correctamente.
             </p>
+
         </div>
+
     </div>
 
-    <!-- JavaScript -->
-    <script src="js/vehiculos.js"></script>
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
     <script src="js/app.js"></script>
+<script src="js/vehiculos.js"></script>
+<script src="js/reserva.js"></script>
 
 </body>
+
 </html>

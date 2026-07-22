@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
 
@@ -15,23 +16,31 @@
 
     <title>Vehículos | AutoRentCar</title>
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
         rel="stylesheet"
     >
 
-    <!-- Font Awesome -->
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
-    <!-- CSS principal -->
-    <link rel="stylesheet" href="css/estilos.css">
+    <link
+        rel="stylesheet"
+        href="css/estilos.css"
+    >
 </head>
 
 <body>
@@ -43,6 +52,7 @@
     <header class="encabezado">
 
         <div class="barra-superior">
+
             <div class="contenedor barra-superior-contenido">
 
                 <div class="informacion-contacto">
@@ -66,28 +76,42 @@
 
                 <div class="redes-sociales">
 
-                    <a href="#" aria-label="Facebook">
+                    <a
+                        href="#"
+                        aria-label="Facebook"
+                    >
                         <i class="fa-brands fa-facebook-f"></i>
                     </a>
 
-                    <a href="#" aria-label="Instagram">
+                    <a
+                        href="#"
+                        aria-label="Instagram"
+                    >
                         <i class="fa-brands fa-instagram"></i>
                     </a>
 
-                    <a href="#" aria-label="TikTok">
+                    <a
+                        href="#"
+                        aria-label="TikTok"
+                    >
                         <i class="fa-brands fa-tiktok"></i>
                     </a>
 
                 </div>
 
             </div>
+
         </div>
 
         <nav class="navegacion">
 
             <div class="contenedor navegacion-contenido">
 
-                <a href="index.html" class="logo">
+                <a
+                    href="index.html"
+                    class="logo"
+                    aria-label="Ir al inicio de AutoRentCar"
+                >
 
                     <span class="logo-icono">
                         <i class="fa-solid fa-car-side"></i>
@@ -108,11 +132,20 @@
                     <i class="fa-solid fa-bars"></i>
                 </button>
 
-                <div class="menu-principal" id="menu-principal">
+                <div
+                    class="menu-principal"
+                    id="menu-principal"
+                >
 
-                    <a href="index.html">Inicio</a>
+                    <a href="index.html">
+                        Inicio
+                    </a>
 
-                    <a href="vehiculos.html" class="activo">
+                    <a
+                        href="vehiculos.html"
+                        class="activo"
+                        aria-current="page"
+                    >
                         Vehículos
                     </a>
 
@@ -128,6 +161,10 @@
                         Contacto
                     </a>
 
+                    <a href="mis-reservas.html">
+                        Mis reservaciones
+                    </a>
+
                     <button
                         type="button"
                         class="boton-modo"
@@ -138,11 +175,11 @@
                     </button>
 
                     <a
-    href="vehiculos.html"
-    class="boton boton-menu-reserva"
->
-    Reservar ahora
-</a>
+                        href="vehiculos.html"
+                        class="boton boton-menu-reserva"
+                    >
+                        Reservar ahora
+                    </a>
 
                 </div>
 
@@ -202,11 +239,13 @@
                 <div class="encabezado-seccion">
 
                     <div>
+
                         <span class="subtitulo">
                             Vehículos disponibles
                         </span>
 
                         <h2>Explora nuestro catálogo</h2>
+
                     </div>
 
                     <p>
@@ -218,23 +257,24 @@
 
                 <div class="catalogo-contenido">
 
-                    <!-- =====================================
-                         PANEL DE FILTROS
-                    ====================================== -->
+                    <!-- Panel de filtros -->
 
                     <aside
                         class="panel-filtros"
                         id="panel-filtros"
+                        aria-label="Filtros del catálogo"
                     >
 
                         <div class="filtros-encabezado">
 
                             <div>
+
                                 <span class="subtitulo">
                                     Búsqueda avanzada
                                 </span>
 
                                 <h3>Filtrar vehículos</h3>
+
                             </div>
 
                             <button
@@ -248,7 +288,7 @@
 
                         </div>
 
-                        <!-- Buscar por nombre -->
+                        <!-- Buscar -->
 
                         <div class="grupo-filtro">
 
@@ -279,25 +319,25 @@
                                 Categoría
                             </label>
 
-                           <select id="filtro-categoria">
+                            <select id="filtro-categoria">
 
-    <option value="todos">
-        Todas las categorías
-    </option>
+                                <option value="todos">
+                                    Todas las categorías
+                                </option>
 
-    <option value="Económico">
-        Económico
-    </option>
+                                <option value="Económico">
+                                    Económico
+                                </option>
 
-    <option value="Gama media">
-        Gama media
-    </option>
+                                <option value="Gama media">
+                                    Gama media
+                                </option>
 
-    <option value="Vehículo de lujo">
-        Vehículos de lujo
-    </option>
+                                <option value="Vehículo de lujo">
+                                    Vehículo de lujo
+                                </option>
 
-</select>
+                            </select>
 
                         </div>
 
@@ -436,9 +476,7 @@
 
                     </aside>
 
-                    <!-- =====================================
-                         RESULTADOS
-                    ====================================== -->
+                    <!-- Resultados -->
 
                     <div class="resultados-catalogo">
 
@@ -450,12 +488,14 @@
                                     type="button"
                                     class="boton-abrir-filtros"
                                     id="boton-abrir-filtros"
+                                    aria-label="Abrir filtros del catálogo"
                                 >
                                     <i class="fa-solid fa-sliders"></i>
                                     Filtros
                                 </button>
 
                                 <div>
+
                                     <strong id="cantidad-vehiculos">
                                         0 vehículos
                                     </strong>
@@ -463,6 +503,7 @@
                                     <span>
                                         encontrados
                                     </span>
+
                                 </div>
 
                             </div>
@@ -501,14 +542,11 @@
 
                         </div>
 
-                        <!-- JavaScript insertará los vehículos -->
-
                         <div
                             class="rejilla-vehiculos catalogo-rejilla"
                             id="contenedor-todos-vehiculos"
+                            aria-live="polite"
                         ></div>
-
-                        <!-- Mensaje cuando no hay resultados -->
 
                         <div
                             class="sin-resultados"
@@ -561,12 +599,14 @@
                         </div>
 
                         <section>
+
                             <h3>Seguro incluido</h3>
 
                             <p>
                                 Todos los vehículos cuentan con cobertura
                                 básica durante el periodo del alquiler.
                             </p>
+
                         </section>
 
                     </article>
@@ -578,12 +618,14 @@
                         </div>
 
                         <section>
+
                             <h3>Mantenimiento garantizado</h3>
 
                             <p>
                                 Cada vehículo es inspeccionado antes de ser
                                 entregado al cliente.
                             </p>
+
                         </section>
 
                     </article>
@@ -595,12 +637,14 @@
                         </div>
 
                         <section>
+
                             <h3>Asistencia permanente</h3>
 
                             <p>
                                 Nuestro equipo está disponible para ayudarte
                                 durante todo tu recorrido.
                             </p>
+
                         </section>
 
                     </article>
@@ -620,6 +664,7 @@
             <div class="contenedor llamado-contenido">
 
                 <div>
+
                     <span class="subtitulo claro">
                         Estamos para ayudarte
                     </span>
@@ -630,6 +675,7 @@
                         Comunícate con nuestro equipo y recibe orientación
                         personalizada.
                     </p>
+
                 </div>
 
                 <a
@@ -656,7 +702,10 @@
 
             <div class="pie-marca">
 
-                <a href="index.html" class="logo logo-pie">
+                <a
+                    href="index.html"
+                    class="logo logo-pie"
+                >
 
                     <span class="logo-icono">
                         <i class="fa-solid fa-car-side"></i>
@@ -675,19 +724,31 @@
 
                 <div class="redes-pie">
 
-                    <a href="#" aria-label="Facebook">
+                    <a
+                        href="#"
+                        aria-label="Facebook"
+                    >
                         <i class="fa-brands fa-facebook-f"></i>
                     </a>
 
-                    <a href="#" aria-label="Instagram">
+                    <a
+                        href="#"
+                        aria-label="Instagram"
+                    >
                         <i class="fa-brands fa-instagram"></i>
                     </a>
 
-                    <a href="#" aria-label="TikTok">
+                    <a
+                        href="#"
+                        aria-label="TikTok"
+                    >
                         <i class="fa-brands fa-tiktok"></i>
                     </a>
 
-                    <a href="#" aria-label="WhatsApp">
+                    <a
+                        href="#"
+                        aria-label="WhatsApp"
+                    >
                         <i class="fa-brands fa-whatsapp"></i>
                     </a>
 
@@ -703,6 +764,7 @@
                 <a href="vehiculos.html">Vehículos</a>
                 <a href="nosotros.html">Nosotros</a>
                 <a href="contacto.html">Contacto</a>
+                <a href="mis-reservas.html">Mis reservaciones</a>
 
             </div>
 
@@ -711,7 +773,7 @@
                 <h3>Categorías</h3>
 
                 <a href="vehiculos.html?categoria=Económico">
-                    Económicos
+                    Económico
                 </a>
 
                 <a href="vehiculos.html?categoria=Gama media">
@@ -719,7 +781,7 @@
                 </a>
 
                 <a href="vehiculos.html?categoria=Vehículo de lujo">
-                    Vehiculo de lujo
+                    Vehículo de lujo
                 </a>
 
             </div>
@@ -787,7 +849,13 @@
          MODAL DE VEHÍCULO
     ====================================================== -->
 
-    <div class="modal" id="modal-vehiculo">
+    <div
+        class="modal"
+        id="modal-vehiculo"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Detalles del vehículo"
+    >
 
         <div class="modal-contenido">
 
@@ -810,11 +878,17 @@
          NOTIFICACIÓN
     ====================================================== -->
 
-    <div class="notificacion" id="notificacion">
+    <div
+        class="notificacion"
+        id="notificacion"
+        role="status"
+        aria-live="polite"
+    >
 
         <i class="fa-solid fa-circle-check"></i>
 
         <div>
+
             <strong id="notificacion-titulo">
                 Operación completada
             </strong>
@@ -822,13 +896,16 @@
             <p id="notificacion-mensaje">
                 La información fue procesada correctamente.
             </p>
+
         </div>
 
     </div>
 
     <!-- JavaScript -->
-    <script src="js/vehiculos.js"></script>
+
     <script src="js/app.js"></script>
+    <script src="js/vehiculos.js"></script>
 
 </body>
+
 </html>
