@@ -5534,13 +5534,15 @@ body.modo-oscuro .rejilla-proximos-pasos article > span {
     .acciones-cancelacion {
         grid-template-columns: 1fr;
     }
-    /* =========================================================
+}
+
+/* =========================================================
    NOTA DEL CÓDIGO PROMOCIONAL
 ========================================================= */
+
 .nota-codigo-promocional {
     margin-top: 7px;
     color: var(--color-texto-suave);
     font-size: 0.67rem;
     line-height: 1.5;
-}
 }

@@ -1,6 +1,12 @@
 /* =========================================================
-   LISTA DE VEHÍCULOS DE AUTORENTCAR
+   AUTORENTCAR - VEHÍCULOS
 ========================================================= */
+
+const CATEGORIAS_VEHICULOS = [
+    "Económico",
+    "Gama media",
+    "Vehículo de lujo"
+];
 
 const vehiculos = [
     {
@@ -92,7 +98,7 @@ const vehiculos = [
         nombre: "Mercedes-Benz",
         marca: "Mercedes-Benz",
         categoria: "Vehículo de lujo",
-        categoriaTexto: "Lujo",
+        categoriaTexto: "Vehículo de lujo",
         precio: 125,
         transmision: "Automática",
         combustible: "Gasolina",
@@ -110,8 +116,8 @@ const vehiculos = [
 
     {
         id: 6,
-        nombre: "Hyudai Sonata",
-        marca: "Hyudai",
+        nombre: "Hyundai Sonata",
+        marca: "Hyundai",
         categoria: "Económico",
         categoriaTexto: "Económico",
         precio: 42,
@@ -131,10 +137,10 @@ const vehiculos = [
 
     {
         id: 7,
-        nombre: "Mercedes Benz",
-        marca: "AMG",
+        nombre: "Mercedes-Benz AMG",
+        marca: "Mercedes-Benz",
         categoria: "Vehículo de lujo",
-        categoriaTexto: "Lujo",
+        categoriaTexto: "Vehículo de lujo",
         precio: 32,
         transmision: "Automática",
         combustible: "Gasolina",
@@ -155,7 +161,7 @@ const vehiculos = [
         nombre: "BMW X5",
         marca: "BMW",
         categoria: "Vehículo de lujo",
-        categoriaTexto: "Lujo",
+        categoriaTexto: "Vehículo de lujo",
         precio: 155,
         transmision: "Automática",
         combustible: "Gasolina",
@@ -194,19 +200,117 @@ const vehiculos = [
 ];
 
 /* =========================================================
-   FAVORITOS GUARDADOS EN EL NAVEGADOR
+   FAVORITOS
 ========================================================= */
 
-let favoritos = JSON.parse(
-    localStorage.getItem("autorentcarFavoritos")
-) || [];
+let favoritos = obtenerFavoritosGuardados();
+
+function obtenerFavoritosGuardados() {
+    const contenido = localStorage.getItem(
+        "autorentcarFavoritos"
+    );
+
+    if (!contenido) {
+        return [];
+    }
+
+    try {
+        const datos = JSON.parse(contenido);
+
+        if (!Array.isArray(datos)) {
+            return [];
+        }
+
+        return [
+            ...new Set(
+                datos
+                    .map(Number)
+                    .filter((id) =>
+                        vehiculos.some(
+                            (vehiculo) =>
+                                vehiculo.id === id
+                        )
+                    )
+            )
+        ];
+    } catch (error) {
+        console.error(
+            "No fue posible cargar los favoritos.",
+            error
+        );
+
+        localStorage.removeItem(
+            "autorentcarFavoritos"
+        );
+
+        return [];
+    }
+}
+
+function guardarFavoritos() {
+    try {
+        localStorage.setItem(
+            "autorentcarFavoritos",
+            JSON.stringify(favoritos)
+        );
+    } catch (error) {
+        console.error(
+            "No fue posible guardar los favoritos.",
+            error
+        );
+
+        mostrarNotificacion(
+            "No se pudo guardar",
+            "Ocurrió un problema al guardar tus favoritos."
+        );
+    }
+}
 
 /* =========================================================
-   CREAR UNA TARJETA DE VEHÍCULO
+   INICIAR
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+    mostrarVehiculosDestacados();
+    configurarCatalogoVehiculos();
+});
+
+/* =========================================================
+   CREAR TARJETA
 ========================================================= */
 
 function crearTarjetaVehiculo(vehiculo) {
-    const esFavorito = favoritos.includes(vehiculo.id);
+    const esFavorito = favoritos.includes(
+        vehiculo.id
+    );
+
+    const nombre = escaparVehiculoHTML(
+        vehiculo.nombre || "Vehículo"
+    );
+
+    const imagen = escaparVehiculoHTML(
+        vehiculo.imagen || ""
+    );
+
+    const etiqueta = escaparVehiculoHTML(
+        vehiculo.etiqueta || ""
+    );
+
+    const categoria = escaparVehiculoHTML(
+        vehiculo.categoriaTexto ||
+        vehiculo.categoria ||
+        "Sin categoría"
+    );
+
+    const transmision = escaparVehiculoHTML(
+        vehiculo.transmision ||
+        "Sin información"
+    );
+
+    const combustible = escaparVehiculoHTML(
+        vehiculo.combustible ||
+        "Sin información"
+    );
 
     return `
         <article class="tarjeta-vehiculo">
@@ -214,21 +318,43 @@ function crearTarjetaVehiculo(vehiculo) {
             <div class="vehiculo-imagen-contenedor">
 
                 <img
-                    src="${vehiculo.imagen}"
-                    alt="${vehiculo.nombre}"
+                    src="${imagen}"
+                    alt="${nombre}"
                     class="vehiculo-imagen"
                     loading="lazy"
                 >
 
-                <span class="vehiculo-etiqueta">
-                    ${vehiculo.etiqueta}
-                </span>
+                ${
+                    etiqueta
+                        ? `
+                            <span class="vehiculo-etiqueta">
+                                ${etiqueta}
+                            </span>
+                        `
+                        : ""
+                }
 
                 <button
-                    class="vehiculo-favorito ${esFavorito ? "activo" : ""}"
+                    class="vehiculo-favorito ${
+                        esFavorito
+                            ? "activo"
+                            : ""
+                    }"
                     type="button"
-                    onclick="alternarFavorito(${vehiculo.id}, this)"
-                    aria-label="Agregar ${vehiculo.nombre} a favoritos"
+                    onclick="alternarFavorito(
+                        ${Number(vehiculo.id)},
+                        this
+                    )"
+                    aria-label="${
+                        esFavorito
+                            ? "Eliminar"
+                            : "Agregar"
+                    } ${nombre} ${
+                        esFavorito
+                            ? "de"
+                            : "a"
+                    } favoritos"
+                    aria-pressed="${esFavorito}"
                 >
                     <i class="${
                         esFavorito
@@ -244,13 +370,20 @@ function crearTarjetaVehiculo(vehiculo) {
                 <div class="vehiculo-superior">
 
                     <div>
-                        <h3>${vehiculo.nombre}</h3>
-                        <span>${vehiculo.categoriaTexto}</span>
+                        <h3>${nombre}</h3>
+                        <span>${categoria}</span>
                     </div>
 
                     <div class="vehiculo-precio">
-                        <strong>US$${vehiculo.precio}</strong>
+
+                        <strong>
+                            ${formatearPrecioVehiculo(
+                                vehiculo.precio
+                            )}
+                        </strong>
+
                         <span>por día</span>
+
                     </div>
 
                 </div>
@@ -259,17 +392,22 @@ function crearTarjetaVehiculo(vehiculo) {
 
                     <span>
                         <i class="fa-solid fa-user-group"></i>
-                        ${vehiculo.pasajeros} pasajeros
+
+                        ${Number(
+                            vehiculo.pasajeros || 0
+                        )} pasajeros
                     </span>
 
                     <span>
                         <i class="fa-solid fa-gears"></i>
-                        ${vehiculo.transmision}
+
+                        ${transmision}
                     </span>
 
                     <span>
                         <i class="fa-solid fa-gas-pump"></i>
-                        ${vehiculo.combustible}
+
+                        ${combustible}
                     </span>
 
                 </div>
@@ -279,7 +417,9 @@ function crearTarjetaVehiculo(vehiculo) {
                     <button
                         class="boton-detalles"
                         type="button"
-                        onclick="mostrarDetallesVehiculo(${vehiculo.id})"
+                        onclick="mostrarDetallesVehiculo(
+                            ${Number(vehiculo.id)}
+                        )"
                     >
                         Ver detalles
                     </button>
@@ -287,7 +427,9 @@ function crearTarjetaVehiculo(vehiculo) {
                     <button
                         class="boton-reservar-vehiculo"
                         type="button"
-                        onclick="seleccionarVehiculo(${vehiculo.id})"
+                        onclick="seleccionarVehiculo(
+                            ${Number(vehiculo.id)}
+                        )"
                     >
                         Reservar
                     </button>
@@ -301,7 +443,7 @@ function crearTarjetaVehiculo(vehiculo) {
 }
 
 /* =========================================================
-   MOSTRAR VEHÍCULOS DESTACADOS
+   VEHÍCULOS DESTACADOS
 ========================================================= */
 
 function mostrarVehiculosDestacados() {
@@ -314,7 +456,8 @@ function mostrarVehiculosDestacados() {
     }
 
     const destacados = vehiculos.filter(
-        (vehiculo) => vehiculo.destacado
+        (vehiculo) =>
+            Boolean(vehiculo.destacado)
     );
 
     contenedor.innerHTML = destacados
@@ -323,64 +466,129 @@ function mostrarVehiculosDestacados() {
 }
 
 /* =========================================================
-   MOSTRAR DETALLES EN LA VENTANA MODAL
+   MODAL DE DETALLES
 ========================================================= */
 
 function mostrarDetallesVehiculo(id) {
     const vehiculo = vehiculos.find(
-        (elemento) => elemento.id === id
+        (elemento) =>
+            elemento.id === Number(id)
     );
 
-    const modal = document.getElementById("modal-vehiculo");
+    const modal = document.getElementById(
+        "modal-vehiculo"
+    );
+
     const contenidoModal = document.getElementById(
         "contenido-modal"
     );
 
-    if (!vehiculo || !modal || !contenidoModal) {
+    if (!vehiculo) {
+        mostrarNotificacion(
+            "Vehículo no encontrado",
+            "No fue posible encontrar la información del vehículo."
+        );
+
+        return;
+    }
+
+    if (!modal || !contenidoModal) {
         return;
     }
 
     contenidoModal.innerHTML = `
         <img
-            src="${vehiculo.imagen}"
-            alt="${vehiculo.nombre}"
+            src="${escaparVehiculoHTML(
+                vehiculo.imagen || ""
+            )}"
+            alt="${escaparVehiculoHTML(
+                vehiculo.nombre ||
+                "Vehículo"
+            )}"
             class="modal-vehiculo-imagen"
         >
 
         <div class="modal-vehiculo-informacion">
 
             <span class="subtitulo">
-                ${vehiculo.categoriaTexto}
+                ${escaparVehiculoHTML(
+                    vehiculo.categoriaTexto ||
+                    vehiculo.categoria ||
+                    "Sin categoría"
+                )}
             </span>
 
-            <h2>${vehiculo.nombre}</h2>
+            <h2>
+                ${escaparVehiculoHTML(
+                    vehiculo.nombre ||
+                    "Vehículo"
+                )}
+            </h2>
 
-            <p>${vehiculo.descripcion}</p>
+            <p>
+                ${escaparVehiculoHTML(
+                    vehiculo.descripcion ||
+                    "Sin descripción disponible."
+                )}
+            </p>
 
             <div class="modal-detalles">
 
                 <div class="modal-detalle">
+
                     <i class="fa-solid fa-user-group"></i>
-                    <strong>${vehiculo.pasajeros}</strong>
+
+                    <strong>
+                        ${Number(
+                            vehiculo.pasajeros || 0
+                        )}
+                    </strong>
+
                     <span>Pasajeros</span>
+
                 </div>
 
                 <div class="modal-detalle">
+
                     <i class="fa-solid fa-door-open"></i>
-                    <strong>${vehiculo.puertas}</strong>
+
+                    <strong>
+                        ${Number(
+                            vehiculo.puertas || 0
+                        )}
+                    </strong>
+
                     <span>Puertas</span>
+
                 </div>
 
                 <div class="modal-detalle">
+
                     <i class="fa-solid fa-suitcase-rolling"></i>
-                    <strong>${vehiculo.equipaje}</strong>
+
+                    <strong>
+                        ${Number(
+                            vehiculo.equipaje || 0
+                        )}
+                    </strong>
+
                     <span>Equipajes</span>
+
                 </div>
 
                 <div class="modal-detalle">
+
                     <i class="fa-solid fa-gears"></i>
-                    <strong>${vehiculo.transmision}</strong>
+
+                    <strong>
+                        ${escaparVehiculoHTML(
+                            vehiculo.transmision ||
+                            "Sin información"
+                        )}
+                    </strong>
+
                     <span>Transmisión</span>
+
                 </div>
 
             </div>
@@ -388,14 +596,24 @@ function mostrarDetallesVehiculo(id) {
             <div class="modal-precio">
 
                 <div>
+
                     <span>Precio del alquiler</span>
-                    <strong>US$${vehiculo.precio} por día</strong>
+
+                    <strong>
+                        ${formatearPrecioVehiculo(
+                            vehiculo.precio
+                        )}
+                        por día
+                    </strong>
+
                 </div>
 
                 <button
                     type="button"
                     class="boton boton-principal"
-                    onclick="seleccionarVehiculo(${vehiculo.id})"
+                    onclick="seleccionarVehiculo(
+                        ${Number(vehiculo.id)}
+                    )"
                 >
                     Reservar este vehículo
                 </button>
@@ -406,28 +624,53 @@ function mostrarDetallesVehiculo(id) {
     `;
 
     modal.classList.add("activo");
-    document.body.style.overflow = "hidden";
+    actualizarBloqueoVehiculos();
 }
 
 /* =========================================================
-   SELECCIONAR VEHÍCULO PARA RESERVAR
+   SELECCIONAR VEHÍCULO
 ========================================================= */
 
 function seleccionarVehiculo(id) {
     const vehiculo = vehiculos.find(
-        (elemento) => elemento.id === id
+        (elemento) =>
+            elemento.id === Number(id)
     );
 
     if (!vehiculo) {
+        mostrarNotificacion(
+            "Vehículo no encontrado",
+            "No fue posible seleccionar el vehículo."
+        );
+
         return;
     }
 
-    localStorage.setItem(
-        "autorentcarVehiculoSeleccionado",
-        JSON.stringify(vehiculo)
-    );
+    try {
+        localStorage.setItem(
+            "autorentcarVehiculoSeleccionado",
+            JSON.stringify(vehiculo)
+        );
+    } catch (error) {
+        console.error(
+            "No fue posible guardar el vehículo seleccionado.",
+            error
+        );
 
-    cerrarModalVehiculo();
+        mostrarNotificacion(
+            "No se pudo seleccionar",
+            "Ocurrió un problema al preparar la reservación."
+        );
+
+        return;
+    }
+
+    if (
+        typeof cerrarModalVehiculo ===
+        "function"
+    ) {
+        cerrarModalVehiculo();
+    }
 
     mostrarNotificacion(
         "Vehículo seleccionado",
@@ -435,43 +678,85 @@ function seleccionarVehiculo(id) {
     );
 
     setTimeout(() => {
-        window.location.href = "reserva.html";
+        window.location.href =
+            "reserva.html";
     }, 700);
 }
 
 /* =========================================================
-   AGREGAR O QUITAR FAVORITOS
+   FAVORITOS
 ========================================================= */
 
 function alternarFavorito(id, boton) {
-    const icono = boton.querySelector("i");
+    const identificador = Number(id);
+
     const vehiculo = vehiculos.find(
-        (elemento) => elemento.id === id
+        (elemento) =>
+            elemento.id === identificador
     );
 
-    if (!vehiculo) {
+    if (!vehiculo || !boton) {
         return;
     }
 
-    if (favoritos.includes(id)) {
+    const icono = boton.querySelector("i");
+
+    if (favoritos.includes(identificador)) {
         favoritos = favoritos.filter(
-            (favoritoId) => favoritoId !== id
+            (favoritoId) =>
+                favoritoId !== identificador
         );
 
         boton.classList.remove("activo");
-        icono.classList.remove("fa-solid");
-        icono.classList.add("fa-regular");
+
+        boton.setAttribute(
+            "aria-pressed",
+            "false"
+        );
+
+        boton.setAttribute(
+            "aria-label",
+            `Agregar ${vehiculo.nombre} a favoritos`
+        );
+
+        icono?.classList.remove(
+            "fa-solid"
+        );
+
+        icono?.classList.add(
+            "fa-regular"
+        );
 
         mostrarNotificacion(
             "Eliminado de favoritos",
             `${vehiculo.nombre} fue eliminado de tus favoritos.`
         );
     } else {
-        favoritos.push(id);
+        favoritos.push(identificador);
+
+        favoritos = [
+            ...new Set(favoritos)
+        ];
 
         boton.classList.add("activo");
-        icono.classList.remove("fa-regular");
-        icono.classList.add("fa-solid");
+
+        boton.setAttribute(
+            "aria-pressed",
+            "true"
+        );
+
+        boton.setAttribute(
+            "aria-label",
+            `Eliminar ${vehiculo.nombre} de favoritos`
+        );
+
+        icono?.classList.remove(
+            "fa-regular"
+        );
+
+        icono?.classList.add(
+            "fa-solid"
+        );
 
         mostrarNotificacion(
             "Agregado a favoritos",
@@ -479,21 +764,23 @@ function alternarFavorito(id, boton) {
         );
     }
 
-    localStorage.setItem(
-        "autorentcarFavoritos",
-        JSON.stringify(favoritos)
-    );
+    guardarFavoritos();
     actualizarCatalogoSiExiste();
+    actualizarDestacadosSiExisten();
 }
-/* =========================================================
-   EJECUTAR AL CARGAR LA PÁGINA
-========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
-    mostrarVehiculosDestacados();
-});
+function actualizarDestacadosSiExisten() {
+    const contenedor = document.getElementById(
+        "contenedor-vehiculos-destacados"
+    );
+
+    if (contenedor) {
+        mostrarVehiculosDestacados();
+    }
+}
+
 /* =========================================================
-   CATÁLOGO COMPLETO DE VEHÍCULOS
+   CATÁLOGO
 ========================================================= */
 
 function configurarCatalogoVehiculos() {
@@ -545,9 +832,10 @@ function configurarCatalogoVehiculos() {
         "boton-limpiar-filtros"
     );
 
-    const botonRestablecerResultados = document.getElementById(
-        "boton-restablecer-resultados"
-    );
+    const botonRestablecerResultados =
+        document.getElementById(
+            "boton-restablecer-resultados"
+        );
 
     const botonAbrirFiltros = document.getElementById(
         "boton-abrir-filtros"
@@ -577,64 +865,140 @@ function configurarCatalogoVehiculos() {
             return;
         }
 
-        elemento.addEventListener("input", aplicarFiltrosCatalogo);
-        elemento.addEventListener("change", aplicarFiltrosCatalogo);
-    });
-
-    if (filtroPrecio && precioSeleccionado) {
-        filtroPrecio.addEventListener("input", () => {
-            precioSeleccionado.textContent =
-                `US$${filtroPrecio.value}`;
-        });
-    }
-
-    if (botonLimpiarFiltros) {
-        botonLimpiarFiltros.addEventListener(
-            "click",
-            limpiarFiltrosCatalogo
-        );
-    }
-
-    if (botonRestablecerResultados) {
-        botonRestablecerResultados.addEventListener(
-            "click",
-            limpiarFiltrosCatalogo
-        );
-    }
-
-    if (botonAbrirFiltros && panelFiltros) {
-        botonAbrirFiltros.addEventListener("click", () => {
-            panelFiltros.classList.add("activo");
-            document.body.style.overflow = "hidden";
-        });
-    }
-
-    if (botonCerrarFiltros && panelFiltros) {
-        botonCerrarFiltros.addEventListener("click", () => {
-            panelFiltros.classList.remove("activo");
-            document.body.style.overflow = "";
-        });
-    }
-
-    document.addEventListener("click", (evento) => {
         if (
-            window.innerWidth <= 1000 &&
-            panelFiltros &&
-            panelFiltros.classList.contains("activo")
+            elemento.type === "search" ||
+            elemento.type === "text" ||
+            elemento.type === "range"
         ) {
-            const clicDentroPanel =
-                panelFiltros.contains(evento.target);
-
-            const clicBotonAbrir =
-                botonAbrirFiltros &&
-                botonAbrirFiltros.contains(evento.target);
-
-            if (!clicDentroPanel && !clicBotonAbrir) {
-                panelFiltros.classList.remove("activo");
-                document.body.style.overflow = "";
-            }
+            elemento.addEventListener(
+                "input",
+                aplicarFiltrosCatalogo
+            );
+        } else {
+            elemento.addEventListener(
+                "change",
+                aplicarFiltrosCatalogo
+            );
         }
     });
+
+    filtroPrecio?.addEventListener(
+        "input",
+        () => {
+            if (precioSeleccionado) {
+                precioSeleccionado.textContent =
+                    formatearPrecioVehiculo(
+                        filtroPrecio.value
+                    );
+            }
+        }
+    );
+
+    botonLimpiarFiltros?.addEventListener(
+        "click",
+        limpiarFiltrosCatalogo
+    );
+
+    botonRestablecerResultados?.addEventListener(
+        "click",
+        limpiarFiltrosCatalogo
+    );
+
+    botonAbrirFiltros?.addEventListener(
+        "click",
+        () => {
+            panelFiltros?.classList.add(
+                "activo"
+            );
+
+            actualizarBloqueoVehiculos();
+        }
+    );
+
+    botonCerrarFiltros?.addEventListener(
+        "click",
+        () => {
+            panelFiltros?.classList.remove(
+                "activo"
+            );
+
+            actualizarBloqueoVehiculos();
+        }
+    );
+
+    document.addEventListener(
+        "click",
+        (evento) => {
+            if (
+                window.innerWidth > 1000 ||
+                !panelFiltros?.classList.contains(
+                    "activo"
+                )
+            ) {
+                return;
+            }
+
+            const clicDentroPanel =
+                panelFiltros.contains(
+                    evento.target
+                );
+
+            const clicBotonAbrir =
+                botonAbrirFiltros?.contains(
+                    evento.target
+                );
+
+            if (
+                !clicDentroPanel &&
+                !clicBotonAbrir
+            ) {
+                panelFiltros.classList.remove(
+                    "activo"
+                );
+
+                actualizarBloqueoVehiculos();
+            }
+        }
+    );
+
+    document.addEventListener(
+        "keydown",
+        (evento) => {
+            if (evento.key !== "Escape") {
+                return;
+            }
+
+            if (
+                panelFiltros?.classList.contains(
+                    "activo"
+                )
+            ) {
+                panelFiltros.classList.remove(
+                    "activo"
+                );
+
+                actualizarBloqueoVehiculos();
+            }
+        }
+    );
+
+    window.addEventListener(
+        "resize",
+        () => {
+            if (
+                window.innerWidth > 1000 &&
+                panelFiltros?.classList.contains(
+                    "activo"
+                )
+            ) {
+                panelFiltros.classList.remove(
+                    "activo"
+                );
+
+                actualizarBloqueoVehiculos();
+            }
+        }
+    );
 
     cargarParametrosCatalogo();
     cargarResumenBusqueda();
@@ -642,7 +1006,7 @@ function configurarCatalogoVehiculos() {
 }
 
 /* =========================================================
-   APLICAR FILTROS DEL CATÁLOGO
+   APLICAR FILTROS
 ========================================================= */
 
 function aplicarFiltrosCatalogo() {
@@ -650,212 +1014,338 @@ function aplicarFiltrosCatalogo() {
         "contenedor-todos-vehiculos"
     );
 
-    const buscarVehiculo = document.getElementById(
-        "buscar-vehiculo"
-    );
-
-    const filtroCategoria = document.getElementById(
-        "filtro-categoria"
-    );
-
-    const filtroTransmision = document.getElementById(
-        "filtro-transmision"
-    );
-
-    const filtroPasajeros = document.getElementById(
-        "filtro-pasajeros"
-    );
-
-    const filtroPrecio = document.getElementById(
-        "filtro-precio"
-    );
-
-    const soloDestacados = document.getElementById(
-        "solo-destacados"
-    );
-
-    const soloFavoritos = document.getElementById(
-        "solo-favoritos"
-    );
-
-    const ordenarVehiculos = document.getElementById(
-        "ordenar-vehiculos"
-    );
-
     if (!contenedor) {
         return;
     }
 
-    const textoBusqueda = normalizarTexto(
-        buscarVehiculo?.value || ""
+    const textoBusqueda = normalizarTextoVehiculo(
+        document.getElementById(
+            "buscar-vehiculo"
+        )?.value || ""
     );
 
     const categoriaSeleccionada =
-        filtroCategoria?.value || "todos";
+        document.getElementById(
+            "filtro-categoria"
+        )?.value || "todos";
 
     const transmisionSeleccionada =
-        filtroTransmision?.value || "todas";
+        document.getElementById(
+            "filtro-transmision"
+        )?.value || "todas";
 
     const pasajerosSeleccionados =
-        filtroPasajeros?.value || "todos";
+        document.getElementById(
+            "filtro-pasajeros"
+        )?.value || "todos";
+
+    const filtroPrecio =
+        document.getElementById(
+            "filtro-precio"
+        );
 
     const precioMaximo = Number(
-        filtroPrecio?.value || 160
+        filtroPrecio?.value ||
+        obtenerPrecioMaximoVehiculos()
     );
 
-    const filtrarDestacados =
-        soloDestacados?.checked || false;
+    const filtrarDestacados = Boolean(
+        document.getElementById(
+            "solo-destacados"
+        )?.checked
+    );
 
-    const filtrarFavoritos =
-        soloFavoritos?.checked || false;
+    const filtrarFavoritos = Boolean(
+        document.getElementById(
+            "solo-favoritos"
+        )?.checked
+    );
 
-    let resultados = vehiculos.filter((vehiculo) => {
-        const coincideTexto =
-            normalizarTexto(vehiculo.nombre).includes(
-                textoBusqueda
-            ) ||
-            normalizarTexto(vehiculo.marca).includes(
-                textoBusqueda
-            ) ||
-            normalizarTexto(vehiculo.categoriaTexto).includes(
-                textoBusqueda
+    const ordenarVehiculos =
+        document.getElementById(
+            "ordenar-vehiculos"
+        )?.value || "recomendados";
+
+    let resultados = vehiculos.filter(
+        (vehiculo) => {
+            const contenidoBusqueda =
+                normalizarTextoVehiculo(
+                    [
+                        vehiculo.nombre,
+                        vehiculo.marca,
+                        vehiculo.categoria,
+                        vehiculo.categoriaTexto,
+                        vehiculo.transmision,
+                        vehiculo.combustible,
+                        vehiculo.descripcion,
+                        vehiculo.etiqueta
+                    ].join(" ")
+                );
+
+            const coincideTexto =
+                contenidoBusqueda.includes(
+                    textoBusqueda
+                );
+
+            const coincideCategoria =
+                coincideCategoriaVehiculo(
+                    vehiculo,
+                    categoriaSeleccionada
+                );
+
+            const coincideTransmision =
+                transmisionSeleccionada ===
+                    "todas" ||
+                normalizarTextoVehiculo(
+                    vehiculo.transmision
+                ) ===
+                    normalizarTextoVehiculo(
+                        transmisionSeleccionada
+                    );
+
+            const coincidePasajeros =
+                pasajerosSeleccionados ===
+                    "todos" ||
+                Number(vehiculo.pasajeros) >=
+                    Number(
+                        pasajerosSeleccionados
+                    );
+
+            const coincidePrecio =
+                Number(vehiculo.precio) <=
+                precioMaximo;
+
+            const coincideDestacado =
+                !filtrarDestacados ||
+                Boolean(vehiculo.destacado);
+
+            const coincideFavorito =
+                !filtrarFavoritos ||
+                favoritos.includes(
+                    vehiculo.id
+                );
+
+            return (
+                coincideTexto &&
+                coincideCategoria &&
+                coincideTransmision &&
+                coincidePasajeros &&
+                coincidePrecio &&
+                coincideDestacado &&
+                coincideFavorito
             );
-
-        const coincideCategoria =
-            categoriaSeleccionada === "todos" ||
-            vehiculo.categoria === categoriaSeleccionada;
-
-        const coincideTransmision =
-            transmisionSeleccionada === "todas" ||
-            vehiculo.transmision === transmisionSeleccionada;
-
-        const coincidePasajeros =
-            pasajerosSeleccionados === "todos" ||
-            vehiculo.pasajeros >= Number(pasajerosSeleccionados);
-
-        const coincidePrecio =
-            vehiculo.precio <= precioMaximo;
-
-        const coincideDestacado =
-            !filtrarDestacados || vehiculo.destacado;
-
-        const coincideFavorito =
-            !filtrarFavoritos ||
-            favoritos.includes(vehiculo.id);
-
-        return (
-            coincideTexto &&
-            coincideCategoria &&
-            coincideTransmision &&
-            coincidePasajeros &&
-            coincidePrecio &&
-            coincideDestacado &&
-            coincideFavorito
-        );
-    });
+        }
+    );
 
     resultados = ordenarListaVehiculos(
         resultados,
-        ordenarVehiculos?.value || "recomendados"
+        ordenarVehiculos
     );
 
     mostrarResultadosCatalogo(resultados);
 }
 
 /* =========================================================
+   COMPROBAR CATEGORÍA
+========================================================= */
+
+function coincideCategoriaVehiculo(
+    vehiculo,
+    categoriaSeleccionada
+) {
+    if (
+        !categoriaSeleccionada ||
+        normalizarTextoVehiculo(
+            categoriaSeleccionada
+        ) === "todos"
+    ) {
+        return true;
+    }
+
+    const categoriaFiltro =
+        normalizarTextoVehiculo(
+            categoriaSeleccionada
+        );
+
+    const categoriaVehiculo =
+        normalizarTextoVehiculo(
+            vehiculo.categoria || ""
+        );
+
+    const categoriasNormalizadas =
+        CATEGORIAS_VEHICULOS.map(
+            normalizarTextoVehiculo
+        );
+
+    if (
+        !categoriasNormalizadas.includes(
+            categoriaFiltro
+        )
+    ) {
+        return false;
+    }
+
+    return (
+        categoriaVehiculo ===
+        categoriaFiltro
+    );
+}
+
+/* =========================================================
    MOSTRAR RESULTADOS
 ========================================================= */
 
-function mostrarResultadosCatalogo(resultados) {
+function mostrarResultadosCatalogo(
+    resultados
+) {
     const contenedor = document.getElementById(
         "contenedor-todos-vehiculos"
     );
 
-    const cantidadVehiculos = document.getElementById(
-        "cantidad-vehiculos"
-    );
+    const cantidadVehiculos =
+        document.getElementById(
+            "cantidad-vehiculos"
+        );
 
-    const sinResultados = document.getElementById(
-        "sin-resultados"
-    );
+    const sinResultados =
+        document.getElementById(
+            "sin-resultados"
+        );
 
     if (!contenedor) {
         return;
     }
 
-    if (cantidadVehiculos) {
-        cantidadVehiculos.textContent =
-            resultados.length === 1
-                ? "1 vehículo"
-                : `${resultados.length} vehículos`;
-    }
+    colocarCantidadVehiculos(
+        cantidadVehiculos,
+        resultados.length
+    );
 
-    if (resultados.length === 0) {
+    if (!resultados.length) {
         contenedor.innerHTML = "";
 
-        if (sinResultados) {
-            sinResultados.classList.add("visible");
-        }
+        sinResultados?.classList.add(
+            "visible"
+        );
 
         return;
     }
 
-    if (sinResultados) {
-        sinResultados.classList.remove("visible");
-    }
+    sinResultados?.classList.remove(
+        "visible"
+    );
 
     contenedor.innerHTML = resultados
         .map(crearTarjetaVehiculo)
         .join("");
 }
 
+function colocarCantidadVehiculos(
+    elemento,
+    cantidad
+) {
+    if (!elemento) {
+        return;
+    }
+
+    elemento.textContent =
+        cantidad === 1
+            ? "1 vehículo"
+            : `${cantidad} vehículos`;
+}
+
 /* =========================================================
    ORDENAR VEHÍCULOS
 ========================================================= */
 
-function ordenarListaVehiculos(lista, tipoOrden) {
+function ordenarListaVehiculos(
+    lista,
+    tipoOrden
+) {
     const copia = [...lista];
 
     switch (tipoOrden) {
         case "precio-menor":
             return copia.sort(
                 (vehiculoA, vehiculoB) =>
-                    vehiculoA.precio - vehiculoB.precio
+                    Number(
+                        vehiculoA.precio || 0
+                    ) -
+                    Number(
+                        vehiculoB.precio || 0
+                    )
             );
 
         case "precio-mayor":
             return copia.sort(
                 (vehiculoA, vehiculoB) =>
-                    vehiculoB.precio - vehiculoA.precio
+                    Number(
+                        vehiculoB.precio || 0
+                    ) -
+                    Number(
+                        vehiculoA.precio || 0
+                    )
             );
 
         case "nombre-az":
-            return copia.sort((vehiculoA, vehiculoB) =>
-                vehiculoA.nombre.localeCompare(
-                    vehiculoB.nombre,
-                    "es"
-                )
+            return copia.sort(
+                (vehiculoA, vehiculoB) =>
+                    String(
+                        vehiculoA.nombre || ""
+                    ).localeCompare(
+                        String(
+                            vehiculoB.nombre || ""
+                        ),
+                        "es",
+                        {
+                            sensitivity: "base"
+                        }
+                    )
             );
 
         case "nombre-za":
-            return copia.sort((vehiculoA, vehiculoB) =>
-                vehiculoB.nombre.localeCompare(
-                    vehiculoA.nombre,
-                    "es"
-                )
+            return copia.sort(
+                (vehiculoA, vehiculoB) =>
+                    String(
+                        vehiculoB.nombre || ""
+                    ).localeCompare(
+                        String(
+                            vehiculoA.nombre || ""
+                        ),
+                        "es",
+                        {
+                            sensitivity: "base"
+                        }
+                    )
             );
 
         case "recomendados":
         default:
-            return copia.sort((vehiculoA, vehiculoB) => {
-                if (
-                    vehiculoA.destacado === vehiculoB.destacado
-                ) {
-                    return vehiculoA.precio - vehiculoB.precio;
-                }
+            return copia.sort(
+                (vehiculoA, vehiculoB) => {
+                    if (
+                        Boolean(
+                            vehiculoA.destacado
+                        ) ===
+                        Boolean(
+                            vehiculoB.destacado
+                        )
+                    ) {
+                        return (
+                            Number(
+                                vehiculoA.precio || 0
+                            ) -
+                            Number(
+                                vehiculoB.precio || 0
+                            )
+                        );
+                    }
 
-                return vehiculoA.destacado ? -1 : 1;
-            });
+                    return vehiculoA.destacado
+                        ? -1
+                        : 1;
+                }
+            );
     }
 }
 
@@ -864,65 +1354,55 @@ function ordenarListaVehiculos(lista, tipoOrden) {
 ========================================================= */
 
 function limpiarFiltrosCatalogo() {
-    const buscarVehiculo = document.getElementById(
-        "buscar-vehiculo"
+    asignarValorFiltro(
+        "buscar-vehiculo",
+        ""
     );
 
-    const filtroCategoria = document.getElementById(
-        "filtro-categoria"
+    asignarValorFiltro(
+        "filtro-categoria",
+        "todos"
     );
 
-    const filtroTransmision = document.getElementById(
-        "filtro-transmision"
+    asignarValorFiltro(
+        "filtro-transmision",
+        "todas"
     );
 
-    const filtroPasajeros = document.getElementById(
-        "filtro-pasajeros"
+    asignarValorFiltro(
+        "filtro-pasajeros",
+        "todos"
     );
 
-    const filtroPrecio = document.getElementById(
-        "filtro-precio"
+    const precioMaximo =
+        obtenerPrecioMaximoVehiculos();
+
+    asignarValorFiltro(
+        "filtro-precio",
+        String(precioMaximo)
     );
 
-    const precioSeleccionado = document.getElementById(
-        "precio-seleccionado"
-    );
-
-    const soloDestacados = document.getElementById(
-        "solo-destacados"
-    );
-
-    const soloFavoritos = document.getElementById(
-        "solo-favoritos"
-    );
-
-    const ordenarVehiculos = document.getElementById(
-        "ordenar-vehiculos"
-    );
-
-    if (buscarVehiculo) {
-        buscarVehiculo.value = "";
-    }
-
-    if (filtroCategoria) {
-        filtroCategoria.value = "todos";
-    }
-
-    if (filtroTransmision) {
-        filtroTransmision.value = "todas";
-    }
-
-    if (filtroPasajeros) {
-        filtroPasajeros.value = "todos";
-    }
-
-    if (filtroPrecio) {
-        filtroPrecio.value = "160";
-    }
+    const precioSeleccionado =
+        document.getElementById(
+            "precio-seleccionado"
+        );
 
     if (precioSeleccionado) {
-        precioSeleccionado.textContent = "US$160";
+        precioSeleccionado.textContent =
+            formatearPrecioVehiculo(
+                precioMaximo
+            );
     }
+
+    const soloDestacados =
+        document.getElementById(
+            "solo-destacados"
+        );
+
+    const soloFavoritos =
+        document.getElementById(
+            "solo-favoritos"
+        );
 
     if (soloDestacados) {
         soloDestacados.checked = false;
@@ -932,9 +1412,10 @@ function limpiarFiltrosCatalogo() {
         soloFavoritos.checked = false;
     }
 
-    if (ordenarVehiculos) {
-        ordenarVehiculos.value = "recomendados";
-    }
+    asignarValorFiltro(
+        "ordenar-vehiculos",
+        "recomendados"
+    );
 
     aplicarFiltrosCatalogo();
 
@@ -944,8 +1425,29 @@ function limpiarFiltrosCatalogo() {
     );
 }
 
+function asignarValorFiltro(id, valor) {
+    const elemento =
+        document.getElementById(id);
+
+    if (elemento) {
+        elemento.value = valor;
+    }
+}
+
+function obtenerPrecioMaximoVehiculos() {
+    const precios = vehiculos
+        .map((vehiculo) =>
+            Number(vehiculo.precio)
+        )
+        .filter(Number.isFinite);
+
+    return precios.length
+        ? Math.max(...precios)
+        : 160;
+}
+
 /* =========================================================
-   CARGAR CATEGORÍA DESDE LA DIRECCIÓN WEB
+   PARÁMETROS DE LA URL
 ========================================================= */
 
 function cargarParametrosCatalogo() {
@@ -953,36 +1455,62 @@ function cargarParametrosCatalogo() {
         window.location.search
     );
 
-    const categoria = parametros.get("categoria");
-    const filtroCategoria = document.getElementById(
-        "filtro-categoria"
-    );
+    const categoriaParametro =
+        normalizarTextoVehiculo(
+            parametros.get("categoria") || ""
+        );
 
-    const categoriasValidas = [
-        "todos",
-        "economico",
-        "sedan",
-        "suv",
-        "lujo"
-    ];
+    const filtroCategoria =
+        document.getElementById(
+            "filtro-categoria"
+        );
 
     if (
-        categoria &&
-        filtroCategoria &&
-        categoriasValidas.includes(categoria)
+        !categoriaParametro ||
+        !filtroCategoria
     ) {
-        filtroCategoria.value = categoria;
+        return;
+    }
+
+    const opciones = Array.from(
+        filtroCategoria.options
+    );
+
+    const opcionCoincidente =
+        opciones.find((opcion) => {
+            const valorOpcion =
+                normalizarTextoVehiculo(
+                    opcion.value
+                );
+
+            const textoOpcion =
+                normalizarTextoVehiculo(
+                    opcion.textContent
+                );
+
+            return (
+                valorOpcion ===
+                    categoriaParametro ||
+                textoOpcion ===
+                    categoriaParametro
+            );
+        });
+
+    if (opcionCoincidente) {
+        filtroCategoria.value =
+            opcionCoincidente.value;
     }
 }
 
 /* =========================================================
-   CARGAR RESUMEN DE LA BÚSQUEDA
+   RESUMEN DE BÚSQUEDA
 ========================================================= */
 
 function cargarResumenBusqueda() {
-    const busquedaGuardada = localStorage.getItem(
-        "autorentcarBusqueda"
-    );
+    const busquedaGuardada =
+        localStorage.getItem(
+            "autorentcarBusqueda"
+        );
 
     const parametros = new URLSearchParams(
         window.location.search
@@ -992,8 +1520,21 @@ function cargarResumenBusqueda() {
 
     if (busquedaGuardada) {
         try {
-            busqueda = JSON.parse(busquedaGuardada);
+            const datos = JSON.parse(
+                busquedaGuardada
+            );
+
+            if (
+                datos &&
+                typeof datos === "object"
+            ) {
+                busqueda = datos;
+            }
         } catch (error) {
+            localStorage.removeItem(
+                "autorentcarBusqueda"
+            );
+
             console.error(
                 "No fue posible leer la búsqueda guardada.",
                 error
@@ -1016,51 +1557,51 @@ function cargarResumenBusqueda() {
         busqueda?.fechaEntrega ||
         "";
 
-    const resumenUbicacion = document.getElementById(
-        "resumen-ubicacion"
+    colocarResumenBusqueda(
+        "resumen-ubicacion",
+        lugar
+            ? `Vehículos disponibles en ${lugar}`
+            : "Vehículos disponibles"
     );
 
-    const resumenRecogida = document.getElementById(
-        "resumen-recogida"
+    colocarResumenBusqueda(
+        "resumen-recogida",
+        formatearFechaVehiculo(
+            fechaRecogida
+        )
     );
 
-    const resumenEntrega = document.getElementById(
-        "resumen-entrega"
-    );
-
-    const resumenDias = document.getElementById(
-        "resumen-dias"
-    );
-
-    if (resumenUbicacion && lugar) {
-        resumenUbicacion.textContent =
-            `Vehículos disponibles en ${lugar}`;
-    }
-
-    if (resumenRecogida && fechaRecogida) {
-        resumenRecogida.textContent =
-            formatearFechaEspañol(fechaRecogida);
-    }
-
-    if (resumenEntrega && fechaEntrega) {
-        resumenEntrega.textContent =
-            formatearFechaEspañol(fechaEntrega);
-    }
-
-    if (
-        resumenDias &&
-        fechaRecogida &&
-        fechaEntrega
-    ) {
-        const dias = calcularDiasEntreFechas(
-            fechaRecogida,
+    colocarResumenBusqueda(
+        "resumen-entrega",
+        formatearFechaVehiculo(
             fechaEntrega
-        );
+        )
+    );
 
-        resumenDias.textContent =
-            dias === 1
+    const dias = calcularDiasEntreFechas(
+        fechaRecogida,
+        fechaEntrega
+    );
+
+    colocarResumenBusqueda(
+        "resumen-dias",
+        dias > 0
+            ? dias === 1
                 ? "1 día"
-                : `${dias} días`;
+                : `${dias} días`
+            : "Fechas no seleccionadas"
+    );
+}
+
+function colocarResumenBusqueda(
+    id,
+    valor
+) {
+    const elemento =
+        document.getElementById(id);
+
+    if (elemento) {
+        elemento.textContent = valor;
     }
 }
 
@@ -1068,41 +1609,110 @@ function cargarResumenBusqueda() {
    FUNCIONES AUXILIARES
 ========================================================= */
 
-function normalizarTexto(texto) {
-    return texto
+function normalizarTextoVehiculo(texto) {
+    return String(texto ?? "")
         .toLowerCase()
         .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
         .trim();
 }
 
-function calcularDiasEntreFechas(fechaInicial, fechaFinal) {
-    const inicio = new Date(`${fechaInicial}T00:00:00`);
-    const final = new Date(`${fechaFinal}T00:00:00`);
+function calcularDiasEntreFechas(
+    fechaInicial,
+    fechaFinal
+) {
+    const inicio =
+        convertirFechaVehiculo(
+            fechaInicial
+        );
 
-    const diferencia = final - inicio;
+    const final =
+        convertirFechaVehiculo(
+            fechaFinal
+        );
 
-    return Math.max(
-        1,
-        Math.ceil(
-            diferencia / (1000 * 60 * 60 * 24)
-        )
+    if (
+        !inicio ||
+        !final ||
+        final <= inicio
+    ) {
+        return 0;
+    }
+
+    return Math.ceil(
+        (final - inicio) /
+        (1000 * 60 * 60 * 24)
     );
 }
 
-function formatearFechaEspañol(fechaTexto) {
-    const fecha = new Date(`${fechaTexto}T00:00:00`);
+function convertirFechaVehiculo(
+    fechaTexto
+) {
+    if (!fechaTexto) {
+        return null;
+    }
 
-    return fecha.toLocaleDateString("es-DO", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric"
-    });
+    const fecha = new Date(
+        `${fechaTexto}T00:00:00`
+    );
+
+    if (Number.isNaN(fecha.getTime())) {
+        return null;
+    }
+
+    return fecha;
 }
 
-/* =========================================================
-   ACTUALIZAR CATÁLOGO DESPUÉS DE CAMBIAR FAVORITOS
-========================================================= */
+function formatearFechaVehiculo(
+    fechaTexto
+) {
+    const fecha = convertirFechaVehiculo(
+        fechaTexto
+    );
+
+    if (!fecha) {
+        return "Sin fecha";
+    }
+
+    return fecha.toLocaleDateString(
+        "es-DO",
+        {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        }
+    );
+}
+
+function formatearPrecioVehiculo(valor) {
+    const numero = Number(valor);
+
+    const precio =
+        Number.isFinite(numero)
+            ? numero
+            : 0;
+
+    return new Intl.NumberFormat(
+        "en-US",
+        {
+            style: "currency",
+            currency: "USD"
+        }
+    ).format(precio);
+}
+
+function escaparVehiculoHTML(texto) {
+    const elemento =
+        document.createElement("div");
+
+    elemento.textContent =
+        String(texto ?? "");
+
+    return elemento.innerHTML;
+}
 
 function actualizarCatalogoSiExiste() {
     const contenedor = document.getElementById(
@@ -1114,10 +1724,19 @@ function actualizarCatalogoSiExiste() {
     }
 }
 
-/* =========================================================
-   INICIAR CATÁLOGO
-========================================================= */
+function actualizarBloqueoVehiculos() {
+    const modalActivo =
+        document.querySelector(
+            ".modal.activo"
+        );
 
-document.addEventListener("DOMContentLoaded", () => {
-    configurarCatalogoVehiculos();
-});
+    const filtrosActivos =
+        document.getElementById(
+            "panel-filtros"
+        )?.classList.contains("activo");
+
+    document.body.style.overflow =
+        modalActivo || filtrosActivos
+            ? "hidden"
+            : "";
+}
