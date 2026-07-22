@@ -3859,11 +3859,30 @@ body.modo-oscuro .valor-item > span {
 .campo-reserva select,
 .campo-reserva textarea {
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display: block;
     border: 1px solid var(--color-borde);
     border-radius: 10px;
     outline: none;
     color: var(--color-texto);
     background-color: var(--color-fondo);
+    box-sizing: border-box;
+}
+
+.campo-reserva input,
+.campo-reserva select,
+.campo-reserva textarea {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display: block;
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+    outline: none;
+    color: var(--color-texto);
+    background-color: var(--color-fondo);
+    box-sizing: border-box;
 }
 
 .campo-reserva input,
@@ -4148,6 +4167,14 @@ body.modo-oscuro .valor-item > span {
 
     .linea-reserva {
         width: 50px;
+    }
+
+    .campo-reserva input[type="date"],
+    .campo-reserva input[type="time"] {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        font-size: 16px;
     }
 }
 
