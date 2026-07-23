@@ -85,41 +85,145 @@ function configurarMenuMovil() {
 ========================================================= */
 
 function configurarModoOscuro() {
-    const botonModo = document.getElementById("boton-modo");
+    const botonModo = document.getElementById(
+        "boton-modo"
+    );
 
     if (!botonModo) {
         return;
     }
 
     botonModo.addEventListener("click", () => {
-        document.body.classList.toggle("modo-oscuro");
-
         const modoOscuroActivo =
-            document.body.classList.contains("modo-oscuro");
+            document.body.classList.toggle(
+                "modo-oscuro"
+            );
 
-        localStorage.setItem(
-            "autorentcarModoOscuro",
-            modoOscuroActivo
-        );
+        /*
+         * Se guarda solamente cuando el usuario
+         * cambia el modo manualmente.
+         */
+        try {
+            localStorage.setItem(
+                "autorentcarPreferenciaTema",
+                modoOscuroActivo
+                    ? "oscuro"
+                    : "claro"
+            );
+        } catch (error) {
+            console.error(
+                "No fue posible guardar la preferencia visual.",
+                error
+            );
+        }
 
         actualizarIconoModo();
     });
 }
 
 function cargarPreferenciaVisual() {
-    const preferenciaGuardada = localStorage.getItem(
-        "autorentcarModoOscuro"
+    let preferenciaGuardada = null;
+
+    try {
+        preferenciaGuardada =
+            localStorage.getItem(
+                "autorentcarPreferenciaTema"
+            );
+    } catch (error) {
+        console.error(
+            "No fue posible leer la preferencia visual.",
+            error
+        );
+    }
+
+    if (preferenciaGuardada === "oscuro") {
+        aplicarTemaVisual(true);
+        return;
+    }
+
+    if (preferenciaGuardada === "claro") {
+        aplicarTemaVisual(false);
+        return;
+    }
+
+    /*
+     * Si el cliente nunca ha seleccionado un tema,
+     * se utiliza la configuración del dispositivo.
+     */
+    const dispositivoUsaModoOscuro =
+        window.matchMedia &&
+        window.matchMedia(
+            "(prefers-color-scheme: dark)"
+        ).matches;
+
+    aplicarTemaVisual(
+        dispositivoUsaModoOscuro
     );
 
-    if (preferenciaGuardada === "true") {
-        document.body.classList.add("modo-oscuro");
-    }
+    configurarCambioTemaDelDispositivo();
+}
+
+function aplicarTemaVisual(usarModoOscuro) {
+    document.body.classList.toggle(
+        "modo-oscuro",
+        Boolean(usarModoOscuro)
+    );
 
     actualizarIconoModo();
 }
 
+function configurarCambioTemaDelDispositivo() {
+    if (!window.matchMedia) {
+        return;
+    }
+
+    const consultaTema = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+    );
+
+    const actualizarTemaAutomatico = (
+        evento
+    ) => {
+        const preferenciaManual =
+            localStorage.getItem(
+                "autorentcarPreferenciaTema"
+            );
+
+        /*
+         * Solo sigue al dispositivo mientras
+         * el cliente no haya elegido un modo.
+         */
+        if (preferenciaManual) {
+            return;
+        }
+
+        aplicarTemaVisual(
+            evento.matches
+        );
+    };
+
+    if (
+        typeof consultaTema.addEventListener ===
+        "function"
+    ) {
+        consultaTema.addEventListener(
+            "change",
+            actualizarTemaAutomatico
+        );
+    } else if (
+        typeof consultaTema.addListener ===
+        "function"
+    ) {
+        consultaTema.addListener(
+            actualizarTemaAutomatico
+        );
+    }
+}
+
 function actualizarIconoModo() {
-    const botonModo = document.getElementById("boton-modo");
+    const botonModo = document.getElementById(
+        "boton-modo"
+    );
 
     if (!botonModo) {
         return;
@@ -128,11 +232,18 @@ function actualizarIconoModo() {
     const icono = botonModo.querySelector("i");
 
     const modoOscuroActivo =
-        document.body.classList.contains("modo-oscuro");
+        document.body.classList.contains(
+            "modo-oscuro"
+        );
 
     if (modoOscuroActivo) {
-        icono.classList.remove("fa-moon");
-        icono.classList.add("fa-sun");
+        icono?.classList.remove(
+            "fa-moon"
+        );
+
+        icono?.classList.add(
+            "fa-sun"
+        );
 
         botonModo.setAttribute(
             "aria-label",
@@ -142,10 +253,20 @@ function actualizarIconoModo() {
         botonModo.setAttribute(
             "title",
             "Activar modo claro"
+        );
+
+        botonModo.setAttribute(
+            "aria-pressed",
+            "true"
         );
     } else {
-        icono.classList.remove("fa-sun");
-        icono.classList.add("fa-moon");
+        icono?.classList.remove(
+            "fa-sun"
+        );
+
+        icono?.classList.add(
+            "fa-moon"
+        );
 
         botonModo.setAttribute(
             "aria-label",
@@ -155,6 +276,11 @@ function actualizarIconoModo() {
         botonModo.setAttribute(
             "title",
             "Activar modo oscuro"
+        );
+
+        botonModo.setAttribute(
+            "aria-pressed",
+            "false"
         );
     }
 }

@@ -114,6 +114,8 @@
                     <a href="index.html#servicios">Servicios</a>
                     <a href="nosotros.html">Nosotros</a>
                     <a href="contacto.html">Contacto</a>
+                    <a href="mis-reservas.html"> Mis reservaciones</a>
+
 
                     <button
                         type="button"
@@ -409,6 +411,77 @@
 
                             </div>
 
+                            <div class="campo-reserva campo-cantidad-vehiculos">
+
+    <label for="reserva-cantidad-vehiculos">
+        Cantidad de vehículos
+    </label>
+
+    <div class="selector-cantidad-vehiculos">
+
+        <button
+            type="button"
+            id="disminuir-cantidad-vehiculos"
+            aria-label="Disminuir cantidad de vehículos"
+        >
+            <i class="fa-solid fa-minus"></i>
+        </button>
+
+        <input
+            type="number"
+            id="reserva-cantidad-vehiculos"
+            value="1"
+            min="1"
+            max="1"
+            step="1"
+            inputmode="numeric"
+            required
+        >
+
+        <button
+            type="button"
+            id="aumentar-cantidad-vehiculos"
+            aria-label="Aumentar cantidad de vehículos"
+        >
+            <i class="fa-solid fa-plus"></i>
+        </button>
+
+    </div>
+
+    <small class="error-reserva"></small>
+
+</div>
+
+<div class="campo-reserva campo-disponibilidad-unidades">
+
+    <span class="titulo-disponibilidad-reserva">
+        Disponibilidad para las fechas
+    </span>
+
+    <div
+        class="estado-disponibilidad-reserva"
+        id="estado-disponibilidad-reserva"
+        aria-live="polite"
+    >
+
+        <i class="fa-solid fa-circle-info"></i>
+
+        <div>
+
+            <strong id="disponibilidad-unidades-reserva">
+                Selecciona las fechas para comprobar la disponibilidad.
+            </strong>
+
+            <span id="mensaje-disponibilidad-reserva">
+                La cantidad disponible se actualizará automáticamente.
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+                            
                             <!-- Información del conductor -->
 
                             <div class="bloque-reserva">
@@ -765,6 +838,16 @@
 
                             <div class="linea-precio-reserva">
 
+    <span>Cantidad de vehículos</span>
+
+    <strong id="resumen-cantidad-vehiculos">
+        1
+    </strong>
+
+</div>
+
+                            <div class="linea-precio-reserva">
+
                                 <span>Subtotal del vehículo</span>
 
                                 <strong id="resumen-subtotal">
@@ -894,6 +977,7 @@
                 <a href="vehiculos.html">Vehículos</a>
                 <a href="nosotros.html">Nosotros</a>
                 <a href="contacto.html">Contacto</a>
+                <a href="mis-reservas.html">Mis reservaciones</a>
 
             </div>
 
@@ -901,19 +985,22 @@
 
                 <h3>Categorías</h3>
 
-                <a href="vehiculos.html?categoria=economico">
-                    Económicos
-                </a>
-
-                <a href="vehiculos.html?categoria=Gama%20media">
-                    Gama media
-                </a>
-
-                <a href="vehiculos.html?categoria=lujo">
-                    De lujo
-                </a>
-
-            </div>
+                <a href="vehiculos.html?categoria=Económico">
+                     
+                    Económico
+                    
+                    </a>
+                    
+                    <a href="vehiculos.html?categoria=Gama%20media">
+                    
+                        Gama media
+                    </a>
+                    
+                    <a href="vehiculos.html?categoria=Vehículo%20de%20lujo">
+                        
+                        Vehículo de lujo
+                    
+                    </div>
 
             <div class="pie-columna">
 

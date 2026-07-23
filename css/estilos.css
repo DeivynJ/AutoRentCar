@@ -126,6 +126,22 @@ ul {
     backdrop-filter: blur(10px);
 }
 
+/* =========================================================
+   BOTÓN SECUNDARIO DEL HERO EN MODO OSCURO
+========================================================= */
+
+body.modo-oscuro .hero .boton-secundario {
+    color: #dce7f5;
+    background-color: rgba(24, 40, 66, 0.82);
+    border-color: #385170;
+}
+
+body.modo-oscuro .hero .boton-secundario:hover {
+    color: var(--color-secundario);
+    background-color: #203653;
+    border-color: var(--color-secundario);
+}
+
 .boton-secundario:hover {
     background-color: rgba(255, 255, 255, 0.18);
     transform: translateY(-3px);
@@ -134,6 +150,23 @@ ul {
 .boton-claro {
     background-color: var(--color-blanco);
     color: var(--color-principal);
+}
+
+/* =========================================================
+   BOTÓN CLARO EN MODO OSCURO
+========================================================= */
+
+body.modo-oscuro .boton-claro {
+    color: #dce7f5;
+    background-color: #182842;
+    border: 1px solid #2d4261;
+}
+
+body.modo-oscuro .boton-claro:hover {
+    color: #ffffff;
+    background-color: #203653;
+    border-color: var(--color-secundario);
+    box-shadow: 0 12px 28px rgba(7, 20, 38, 0.35);
 }
 
 .boton-claro:hover {
@@ -310,6 +343,25 @@ body.modo-oscuro .logo-texto {
     font-size: 1.25rem;
 }
 
+/* =========================================================
+   BOTÓN DEL MENÚ EN MODO OSCURO
+========================================================= */
+
+body.modo-oscuro .boton-menu {
+    color: #dce7f5;
+    background-color: #182842;
+    border: 1px solid #2d4261;
+}
+
+body.modo-oscuro .boton-menu:hover {
+    color: var(--color-secundario);
+    background-color: #203653;
+    border-color: var(--color-secundario);
+}
+
+.boton-menu i {
+    color: currentColor;
+}
 .boton-modo {
     width: 42px;
     height: 42px;
@@ -1555,6 +1607,48 @@ body.modo-oscuro .numero-paso {
     color: var(--color-secundario);
     font-size: 1.6rem;
 }
+/* =========================================================
+   DISPONIBILIDAD DE UNIDADES DEL MODELO
+========================================================= */
+
+.disponibilidad-modelo {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin: 0 0 24px;
+    padding: 16px;
+    border: 1px solid rgba(22, 163, 106, 0.25);
+    border-radius: 13px;
+    background-color: rgba(22, 163, 106, 0.08);
+}
+
+.disponibilidad-modelo > i {
+    flex-shrink: 0;
+    margin-top: 3px;
+    color: var(--color-exito);
+    font-size: 1.2rem;
+}
+
+.disponibilidad-modelo > div {
+    min-width: 0;
+}
+
+.disponibilidad-modelo strong,
+.disponibilidad-modelo span {
+    display: block;
+}
+
+.disponibilidad-modelo strong {
+    margin-bottom: 3px;
+    color: var(--color-texto);
+    font-size: 0.85rem;
+}
+
+.disponibilidad-modelo span {
+    color: var(--color-texto-suave);
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
 
 /* =========================================================
    NOTIFICACIÓN
@@ -1911,6 +2005,17 @@ body.modo-oscuro .numero-paso {
 @media (max-width: 480px) {
     .logo-texto {
         font-size: 1.1rem;
+        .disponibilidad-modelo {
+    padding: 14px;
+}
+
+.disponibilidad-modelo strong {
+    font-size: 0.8rem;
+}
+
+.disponibilidad-modelo span {
+    font-size: 0.7rem;
+}
     }
 
     .logo-icono {
@@ -3871,21 +3976,6 @@ body.modo-oscuro .valor-item > span {
 }
 
 .campo-reserva input,
-.campo-reserva select,
-.campo-reserva textarea {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    display: block;
-    border: 1px solid var(--color-borde);
-    border-radius: 10px;
-    outline: none;
-    color: var(--color-texto);
-    background-color: var(--color-fondo);
-    box-sizing: border-box;
-}
-
-.campo-reserva input,
 .campo-reserva select {
     height: 49px;
     padding: 0 13px;
@@ -3906,6 +3996,131 @@ body.modo-oscuro .valor-item > span {
 .campo-reserva.error input,
 .campo-reserva.error select {
     border-color: #ef4444;
+}
+
+/* =========================================================
+   CANTIDAD Y DISPONIBILIDAD DE VEHÍCULOS
+========================================================= */
+
+.selector-cantidad-vehiculos {
+    display: grid;
+    grid-template-columns: 48px 1fr 48px;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+    background-color: var(--color-fondo);
+    transition: var(--transicion);
+}
+
+.selector-cantidad-vehiculos:focus-within {
+    border-color: var(--color-secundario);
+    box-shadow: 0 0 0 4px rgba(255, 138, 0, 0.1);
+}
+
+.selector-cantidad-vehiculos button {
+    width: 48px;
+    height: 49px;
+    display: grid;
+    place-items: center;
+    color: var(--color-texto);
+    background-color: transparent;
+    transition: var(--transicion);
+}
+
+.selector-cantidad-vehiculos button:hover:not(:disabled) {
+    color: #ffffff;
+    background-color: var(--color-secundario);
+}
+
+.selector-cantidad-vehiculos button:disabled {
+    cursor: not-allowed;
+    color: var(--color-texto-suave);
+    opacity: 0.45;
+}
+
+.selector-cantidad-vehiculos input {
+    height: 49px;
+    padding: 0 8px;
+    border: none;
+    border-right: 1px solid var(--color-borde);
+    border-left: 1px solid var(--color-borde);
+    border-radius: 0;
+    text-align: center;
+    font-weight: 800;
+    background-color: var(--color-blanco);
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.selector-cantidad-vehiculos input:focus {
+    border-color: var(--color-borde);
+    box-shadow: none;
+}
+
+.selector-cantidad-vehiculos input::-webkit-outer-spin-button,
+.selector-cantidad-vehiculos input::-webkit-inner-spin-button {
+    margin: 0;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.titulo-disponibilidad-reserva {
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.estado-disponibilidad-reserva {
+    min-height: 76px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    border-radius: 11px;
+    background-color: rgba(37, 99, 235, 0.07);
+}
+
+.estado-disponibilidad-reserva > i {
+    flex-shrink: 0;
+    margin-top: 3px;
+    color: #2563eb;
+    font-size: 1.05rem;
+}
+
+.estado-disponibilidad-reserva strong,
+.estado-disponibilidad-reserva span {
+    display: block;
+}
+
+.estado-disponibilidad-reserva strong {
+    margin-bottom: 3px;
+    color: var(--color-texto);
+    font-size: 0.76rem;
+}
+
+.estado-disponibilidad-reserva span {
+    color: var(--color-texto-suave);
+    font-size: 0.67rem;
+    line-height: 1.5;
+}
+
+.estado-disponibilidad-reserva.disponible {
+    border-color: rgba(22, 163, 106, 0.25);
+    background-color: rgba(22, 163, 106, 0.08);
+}
+
+.estado-disponibilidad-reserva.disponible > i {
+    color: var(--color-exito);
+}
+
+.estado-disponibilidad-reserva.agotado {
+    border-color: rgba(239, 68, 68, 0.25);
+    background-color: rgba(239, 68, 68, 0.08);
+}
+
+.estado-disponibilidad-reserva.agotado > i {
+    color: #ef4444;
 }
 
 .error-reserva {
@@ -4183,6 +4398,17 @@ body.modo-oscuro .valor-item > span {
         justify-content: space-between;
     }
 
+    .selector-cantidad-vehiculos {
+    grid-template-columns: 44px 1fr 44px;
+}
+
+.selector-cantidad-vehiculos button {
+    width: 44px;
+}
+
+.estado-disponibilidad-reserva {
+    min-height: auto;
+}
     .linea-reserva {
         width: 25px;
         margin-left: 5px;

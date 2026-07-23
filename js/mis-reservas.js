@@ -24,13 +24,14 @@ function cargarReservacionesUsuario() {
         reservacionesUsuario = [];
     } else {
         try {
-            const reservaciones = JSON.parse(contenido);
+            const reservaciones = JSON.parse(
+                contenido
+            );
 
-            reservacionesUsuario = Array.isArray(
-                reservaciones
-            )
-                ? reservaciones
-                : [];
+            reservacionesUsuario =
+                Array.isArray(reservaciones)
+                    ? reservaciones
+                    : [];
         } catch (error) {
             reservacionesUsuario = [];
 
@@ -85,48 +86,55 @@ function aplicarFiltrosReservaciones() {
         )?.value || ""
     );
 
-    const estado = document.getElementById(
-        "filtrar-estado-reserva"
-    )?.value || "todos";
+    const estado =
+        document.getElementById(
+            "filtrar-estado-reserva"
+        )?.value || "todos";
 
-    const orden = document.getElementById(
-        "ordenar-reservaciones"
-    )?.value || "recientes";
+    const orden =
+        document.getElementById(
+            "ordenar-reservaciones"
+        )?.value || "recientes";
 
-    let resultados = reservacionesUsuario.filter(
-        (reserva) => {
-            const contenido = normalizarReservaTexto(
-                [
-                    reserva.codigo,
-                    reserva.cliente?.nombre,
-                    reserva.cliente?.documento,
-                    reserva.cliente?.correo,
-                    reserva.cliente?.telefono,
-                    reserva.vehiculo?.nombre,
-                    reserva.lugarRecogida,
-                    reserva.lugarEntrega,
-                    reserva.estado
-                ].join(" ")
-            );
+    let resultados =
+        reservacionesUsuario.filter(
+            (reserva) => {
+                const contenido =
+                    normalizarReservaTexto(
+                        [
+                            reserva.codigo,
+                            reserva.cliente?.nombre,
+                            reserva.cliente?.documento,
+                            reserva.cliente?.correo,
+                            reserva.cliente?.telefono,
+                            reserva.vehiculo?.nombre,
+                            reserva.lugarRecogida,
+                            reserva.lugarEntrega,
+                            reserva.estado,
+                            obtenerCantidadReservada(
+                                reserva
+                            )
+                        ].join(" ")
+                    );
 
-            const coincideTexto =
-                contenido.includes(texto);
+                const coincideTexto =
+                    contenido.includes(texto);
 
-            const estadoNormalizado =
-                obtenerEstadoNormalizado(
-                    reserva.estado
+                const estadoNormalizado =
+                    obtenerEstadoNormalizado(
+                        reserva.estado
+                    );
+
+                const coincideEstado =
+                    estado === "todos" ||
+                    estadoNormalizado === estado;
+
+                return (
+                    coincideTexto &&
+                    coincideEstado
                 );
-
-            const coincideEstado =
-                estado === "todos" ||
-                estadoNormalizado === estado;
-
-            return (
-                coincideTexto &&
-                coincideEstado
-            );
-        }
-    );
+            }
+        );
 
     resultados = ordenarReservaciones(
         resultados,
@@ -180,7 +188,9 @@ function ordenarReservaciones(lista, tipo) {
 }
 
 function obtenerTiempoFecha(fechaTexto) {
-    const fecha = new Date(fechaTexto || "");
+    const fecha = new Date(
+        fechaTexto || ""
+    );
 
     if (Number.isNaN(fecha.getTime())) {
         return 0;
@@ -237,12 +247,21 @@ function crearTarjetaReservacion(reserva) {
     const puedeCancelarse =
         ![
             "cancelada",
-            "finalizada"
+            "finalizada",
+            "rechazada"
         ].includes(estado);
 
     const codigoSeguro = escaparReservaHTML(
         reserva.codigo || ""
     );
+
+    const cantidadVehiculos =
+        obtenerCantidadReservada(reserva);
+
+    const textoCantidad =
+        formatearCantidadVehiculos(
+            cantidadVehiculos
+        );
 
     return `
         <article class="tarjeta-reservacion">
@@ -323,9 +342,15 @@ function crearTarjetaReservacion(reserva) {
                     <span>
                         <i class="fa-solid fa-clock"></i>
 
-                        ${Number(
-                            reserva.dias || 0
-                        )} día(s)
+                        ${formatearDiasReserva(
+                            reserva.dias
+                        )}
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-car-side"></i>
+
+                        ${textoCantidad}
                     </span>
 
                 </div>
@@ -445,10 +470,11 @@ function actualizarEstadisticasReservaciones() {
 ========================================================= */
 
 function verDetalleReservacion(codigo) {
-    const reserva = reservacionesUsuario.find(
-        (elemento) =>
-            elemento.codigo === codigo
-    );
+    const reserva =
+        reservacionesUsuario.find(
+            (elemento) =>
+                elemento.codigo === codigo
+        );
 
     const modal = document.getElementById(
         "modal-detalle-reserva"
@@ -466,6 +492,38 @@ function verDetalleReservacion(codigo) {
 
         return;
     }
+
+    const cantidadVehiculos =
+        obtenerCantidadReservada(reserva);
+
+    const textoCantidad =
+        formatearCantidadVehiculos(
+            cantidadVehiculos
+        );
+
+    const precioDiario =
+        obtenerNumeroReserva(
+            reserva.precioDiario ??
+            reserva.vehiculo?.precio
+        );
+
+    const dias =
+        obtenerNumeroEnteroReserva(
+            reserva.dias,
+            0
+        );
+
+    const subtotalCalculado =
+        precioDiario *
+        dias *
+        cantidadVehiculos;
+
+    const subtotal =
+        Number.isFinite(
+            Number(reserva.subtotal)
+        )
+            ? Number(reserva.subtotal)
+            : subtotalCalculado;
 
     contenido.innerHTML = `
         <div class="detalle-reserva-encabezado">
@@ -497,7 +555,8 @@ function verDetalleReservacion(codigo) {
 
                 <img
                     src="${escaparReservaHTML(
-                        reserva.vehiculo?.imagen || ""
+                        reserva.vehiculo?.imagen ||
+                        ""
                     )}"
                     alt="${escaparReservaHTML(
                         reserva.vehiculo?.nombre ||
@@ -510,7 +569,10 @@ function verDetalleReservacion(codigo) {
                     <span class="subtitulo">
                         ${escaparReservaHTML(
                             reserva.vehiculo
-                                ?.categoriaTexto || ""
+                                ?.categoriaTexto ||
+                            reserva.vehiculo
+                                ?.categoria ||
+                            "Sin categoría"
                         )}
                     </span>
 
@@ -524,7 +586,8 @@ function verDetalleReservacion(codigo) {
                     <p>
                         ${escaparReservaHTML(
                             reserva.vehiculo
-                                ?.transmision || ""
+                                ?.transmision ||
+                            "Sin información"
                         )}
 
                         ·
@@ -533,6 +596,14 @@ function verDetalleReservacion(codigo) {
                             reserva.vehiculo
                                 ?.pasajeros || 0
                         )} pasajeros
+                    </p>
+
+                    <p>
+                        <strong>
+                            ${textoCantidad}
+                        </strong>
+
+                        reservados
                     </p>
 
                 </div>
@@ -592,7 +663,9 @@ function verDetalleReservacion(codigo) {
 
                 ${crearDatoDetalle(
                     "Hora de recogida",
-                    reserva.horaRecogida
+                    formatearHoraReserva(
+                        reserva.horaRecogida
+                    )
                 )}
 
                 ${crearDatoDetalle(
@@ -604,14 +677,35 @@ function verDetalleReservacion(codigo) {
 
                 ${crearDatoDetalle(
                     "Hora de entrega",
-                    reserva.horaEntrega
+                    formatearHoraReserva(
+                        reserva.horaEntrega
+                    )
                 )}
 
                 ${crearDatoDetalle(
                     "Duración",
-                    `${Number(
-                        reserva.dias || 0
-                    )} día(s)`
+                    formatearDiasReserva(
+                        dias
+                    )
+                )}
+
+                ${crearDatoDetalle(
+                    "Cantidad reservada",
+                    textoCantidad
+                )}
+
+                ${crearDatoDetalle(
+                    "Precio por vehículo/día",
+                    formatearMonedaReserva(
+                        precioDiario
+                    )
+                )}
+
+                ${crearDatoDetalle(
+                    "Subtotal de vehículos",
+                    formatearMonedaReserva(
+                        subtotal
+                    )
                 )}
 
                 ${crearDatoDetalle(
@@ -622,9 +716,23 @@ function verDetalleReservacion(codigo) {
                 )}
 
                 ${crearDatoDetalle(
+                    "Costo de adicionales",
+                    formatearMonedaReserva(
+                        reserva.costoAdicionales
+                    )
+                )}
+
+                ${crearDatoDetalle(
                     "Código promocional",
                     reserva.codigoPromocional ||
                     "No aplicado"
+                )}
+
+                ${crearDatoDetalle(
+                    "Descuento",
+                    `-${formatearMonedaReserva(
+                        reserva.descuento
+                    )}`
                 )}
 
                 ${crearDatoDetalle(
@@ -696,10 +804,12 @@ function crearDatoDetalle(titulo, valor) {
     const contenido =
         valor === 0
             ? "0"
-            : valor || "Sin información";
+            : valor ||
+            "Sin información";
 
     return `
         <article>
+
             <span>
                 ${escaparReservaHTML(titulo)}
             </span>
@@ -707,6 +817,7 @@ function crearDatoDetalle(titulo, valor) {
             <strong>
                 ${escaparReservaHTML(contenido)}
             </strong>
+
         </article>
     `;
 }
@@ -716,10 +827,11 @@ function crearDatoDetalle(titulo, valor) {
 ========================================================= */
 
 function solicitarCancelarReservacion(codigo) {
-    const reserva = reservacionesUsuario.find(
-        (elemento) =>
-            elemento.codigo === codigo
-    );
+    const reserva =
+        reservacionesUsuario.find(
+            (elemento) =>
+                elemento.codigo === codigo
+        );
 
     if (!reserva) {
         mostrarNotificacion(
@@ -743,10 +855,13 @@ function solicitarCancelarReservacion(codigo) {
         return;
     }
 
-    if (estado === "finalizada") {
+    if (
+        estado === "finalizada" ||
+        estado === "rechazada"
+    ) {
         mostrarNotificacion(
             "Acción no permitida",
-            "Una reservación finalizada no puede cancelarse."
+            "Esta reservación no puede cancelarse."
         );
 
         return;
@@ -786,14 +901,18 @@ function confirmarCancelacionReservacion() {
         return;
     }
 
+    const reserva =
+        reservacionesUsuario[indice];
+
     const codigoCancelado =
-        reservacionesUsuario[indice].codigo;
+        reserva.codigo;
 
-    reservacionesUsuario[indice].estado =
-        "Cancelada";
+    const cantidadLiberada =
+        obtenerCantidadReservada(reserva);
 
-    reservacionesUsuario[indice]
-        .fechaCancelacion =
+    reserva.estado = "Cancelada";
+
+    reserva.fechaCancelacion =
         new Date().toISOString();
 
     guardarReservacionesActualizadas();
@@ -802,7 +921,9 @@ function confirmarCancelacionReservacion() {
 
     mostrarNotificacion(
         "Reservación cancelada",
-        `La solicitud ${codigoCancelado} fue cancelada. El vehículo quedó disponible para esas fechas.`
+        `La solicitud ${codigoCancelado} fue cancelada. ${formatearCantidadVehiculos(
+            cantidadLiberada
+        )} quedaron disponibles para esas fechas.`
     );
 
     codigoReservaCancelar = null;
@@ -844,17 +965,40 @@ function restaurarReservacion(codigo) {
         return;
     }
 
-    const conflicto =
-        buscarConflictoAlRestaurar(reserva);
+    const disponibilidad =
+        obtenerDisponibilidadAlRestaurar(
+            reserva
+        );
 
-    if (conflicto) {
+    const cantidadSolicitada =
+        obtenerCantidadReservada(reserva);
+
+    if (
+        disponibilidad.cantidadDisponible < 1
+    ) {
         mostrarNotificacion(
             "No se puede restaurar",
-            `El vehículo ya tiene otra reservación activa del ${formatearFechaCompletaReserva(
-                conflicto.fechaRecogida
+            `No quedan unidades disponibles de ${reserva.vehiculo?.nombre || "este vehículo"} para el periodo del ${formatearFechaCompletaReserva(
+                reserva.fechaRecogida
             )} al ${formatearFechaCompletaReserva(
-                conflicto.fechaEntrega
+                reserva.fechaEntrega
             )}.`
+        );
+
+        return;
+    }
+
+    if (
+        cantidadSolicitada >
+        disponibilidad.cantidadDisponible
+    ) {
+        mostrarNotificacion(
+            "Cantidad insuficiente",
+            `La solicitud necesita ${formatearCantidadVehiculos(
+                cantidadSolicitada
+            )}, pero solo quedan ${formatearCantidadVehiculos(
+                disponibilidad.cantidadDisponible
+            )} disponibles para esas fechas.`
         );
 
         return;
@@ -867,19 +1011,51 @@ function restaurarReservacion(codigo) {
         new Date().toISOString();
 
     /*
-     * Se conserva la fecha de cancelación
-     * como parte del historial.
+     * Se conserva la fecha de cancelación como
+     * parte del historial de la solicitud.
      */
 
     guardarReservacionesActualizadas();
 
     mostrarNotificacion(
         "Reservación restaurada",
-        `La solicitud ${codigo} volvió al estado pendiente.`
+        `La solicitud ${codigo} volvió al estado pendiente con ${formatearCantidadVehiculos(
+            cantidadSolicitada
+        )}.`
     );
 }
 
-function buscarConflictoAlRestaurar(
+/* =========================================================
+   DISPONIBILIDAD AL RESTAURAR
+========================================================= */
+
+function obtenerDisponibilidadAlRestaurar(
+    reservaRestaurada
+) {
+    const cantidadTotal =
+        obtenerCantidadTotalModelo(
+            reservaRestaurada
+        );
+
+    const cantidadOcupada =
+        calcularCantidadOcupadaAlRestaurar(
+            reservaRestaurada
+        );
+
+    return {
+        cantidadTotal,
+        cantidadOcupada,
+
+        cantidadDisponible:
+            Math.max(
+                0,
+                cantidadTotal -
+                cantidadOcupada
+            )
+    };
+}
+
+function calcularCantidadOcupadaAlRestaurar(
     reservaRestaurada
 ) {
     const identificador =
@@ -887,28 +1063,24 @@ function buscarConflictoAlRestaurar(
             reservaRestaurada.vehiculo
         );
 
-    return reservacionesUsuario.find(
-        (reservaExistente) => {
+    return reservacionesUsuario.reduce(
+        (
+            cantidadOcupada,
+            reservaExistente
+        ) => {
             if (
                 reservaExistente.codigo ===
                 reservaRestaurada.codigo
             ) {
-                return false;
+                return cantidadOcupada;
             }
 
-            const estado =
-                obtenerEstadoNormalizado(
-                    reservaExistente.estado
-                );
-
-            const estaActiva =
-                ![
-                    "cancelada",
-                    "finalizada"
-                ].includes(estado);
-
-            if (!estaActiva) {
-                return false;
+            if (
+                !esReservacionActivaParaInventario(
+                    reservaExistente
+                )
+            ) {
+                return cantidadOcupada;
             }
 
             const mismoVehiculo =
@@ -917,17 +1089,66 @@ function buscarConflictoAlRestaurar(
                 ) === identificador;
 
             if (!mismoVehiculo) {
-                return false;
+                return cantidadOcupada;
             }
 
-            return fechasReservasSeCruzan(
-                reservaRestaurada.fechaRecogida,
-                reservaRestaurada.fechaEntrega,
-                reservaExistente.fechaRecogida,
-                reservaExistente.fechaEntrega
+            const fechasCruzadas =
+                fechasReservasSeCruzan(
+                    reservaRestaurada.fechaRecogida,
+                    reservaRestaurada.fechaEntrega,
+                    reservaExistente.fechaRecogida,
+                    reservaExistente.fechaEntrega
+                );
+
+            if (!fechasCruzadas) {
+                return cantidadOcupada;
+            }
+
+            return (
+                cantidadOcupada +
+                obtenerCantidadReservada(
+                    reservaExistente
+                )
             );
-        }
+        },
+        0
     );
+}
+
+function obtenerCantidadTotalModelo(
+    reserva
+) {
+    const cantidadTotal = Number(
+        reserva?.vehiculo?.cantidadTotal
+    );
+
+    /*
+     * Compatibilidad con vehículos y reservaciones
+     * creados antes de incorporar cantidadTotal.
+     */
+    if (
+        !Number.isInteger(cantidadTotal) ||
+        cantidadTotal < 1
+    ) {
+        return 1;
+    }
+
+    return cantidadTotal;
+}
+
+function esReservacionActivaParaInventario(
+    reserva
+) {
+    const estado =
+        obtenerEstadoNormalizado(
+            reserva?.estado
+        );
+
+    return ![
+        "cancelada",
+        "finalizada",
+        "rechazada"
+    ].includes(estado);
 }
 
 function obtenerIdentificadorVehiculoReserva(
@@ -956,16 +1177,24 @@ function fechasReservasSeCruzan(
     finExistente
 ) {
     const nuevaFechaInicio =
-        convertirFechaSimple(inicioNuevo);
+        convertirFechaSimple(
+            inicioNuevo
+        );
 
     const nuevaFechaFin =
-        convertirFechaSimple(finNuevo);
+        convertirFechaSimple(
+            finNuevo
+        );
 
     const fechaExistenteInicio =
-        convertirFechaSimple(inicioExistente);
+        convertirFechaSimple(
+            inicioExistente
+        );
 
     const fechaExistenteFin =
-        convertirFechaSimple(finExistente);
+        convertirFechaSimple(
+            finExistente
+        );
 
     if (
         !nuevaFechaInicio ||
@@ -976,6 +1205,10 @@ function fechasReservasSeCruzan(
         return false;
     }
 
+    /*
+     * Una reservación nueva puede comenzar el
+     * mismo día en que termina la anterior.
+     */
     return (
         nuevaFechaInicio <
             fechaExistenteFin &&
@@ -1042,8 +1275,9 @@ function actualizarUltimaReservacionGuardada() {
     let ultimaReservacion = null;
 
     try {
-        ultimaReservacion =
-            JSON.parse(contenido);
+        ultimaReservacion = JSON.parse(
+            contenido
+        );
     } catch (error) {
         localStorage.removeItem(
             "autorentcarUltimaReservacion"
@@ -1202,30 +1436,30 @@ function actualizarBloqueoPagina() {
 ========================================================= */
 
 function obtenerEstadoNormalizado(estado) {
-    const valor = normalizarReservaTexto(
-        estado || ""
-    );
+    const valor =
+        normalizarReservaTexto(
+            estado || ""
+        );
 
-    if (
-        valor.includes("cancel")
-    ) {
+    if (valor.includes("cancel")) {
         return "cancelada";
     }
 
-    if (
-        valor.includes("confirm")
-    ) {
+    if (valor.includes("rechaz")) {
+        return "rechazada";
+    }
+
+    if (valor.includes("confirm")) {
         return "confirmada";
     }
 
-    if (
-        valor.includes("curso")
-    ) {
+    if (valor.includes("curso")) {
         return "en-curso";
     }
 
     if (
-        valor.includes("entregado")
+        valor.includes("entregado") ||
+        valor.includes("entregada")
     ) {
         return "entregado";
     }
@@ -1238,6 +1472,55 @@ function obtenerEstadoNormalizado(estado) {
     }
 
     return "pendiente";
+}
+
+/* =========================================================
+   CANTIDAD DE VEHÍCULOS
+========================================================= */
+
+function obtenerCantidadReservada(reserva) {
+    const cantidad = Number(
+        reserva?.cantidadVehiculos
+    );
+
+    /*
+     * Las reservaciones anteriores a esta mejora
+     * se consideran reservaciones de una unidad.
+     */
+    if (
+        !Number.isInteger(cantidad) ||
+        cantidad < 1
+    ) {
+        return 1;
+    }
+
+    return cantidad;
+}
+
+function formatearCantidadVehiculos(
+    cantidad
+) {
+    const total = Number(cantidad) || 0;
+
+    if (total === 1) {
+        return "1 vehículo";
+    }
+
+    return `${total} vehículos`;
+}
+
+function formatearDiasReserva(cantidad) {
+    const dias =
+        obtenerNumeroEnteroReserva(
+            cantidad,
+            0
+        );
+
+    if (dias === 1) {
+        return "1 día";
+    }
+
+    return `${dias} días`;
 }
 
 /* =========================================================
@@ -1255,6 +1538,25 @@ function normalizarReservaTexto(texto) {
         .trim();
 }
 
+function obtenerNumeroReserva(valor) {
+    const numero = Number(valor);
+
+    return Number.isFinite(numero)
+        ? numero
+        : 0;
+}
+
+function obtenerNumeroEnteroReserva(
+    valor,
+    alternativa = 0
+) {
+    const numero = Number(valor);
+
+    return Number.isInteger(numero)
+        ? numero
+        : alternativa;
+}
+
 function formatearMonedaReserva(valor) {
     return new Intl.NumberFormat(
         "en-US",
@@ -1262,7 +1564,9 @@ function formatearMonedaReserva(valor) {
             style: "currency",
             currency: "USD"
         }
-    ).format(Number(valor) || 0);
+    ).format(
+        obtenerNumeroReserva(valor)
+    );
 }
 
 function formatearFechaReservaListado(
@@ -1334,6 +1638,49 @@ function formatearFechaCompletaReserva(
             day: "2-digit",
             month: "long",
             year: "numeric"
+        }
+    );
+}
+
+function formatearHoraReserva(
+    horaTexto
+) {
+    if (!horaTexto) {
+        return "Sin información";
+    }
+
+    const partes = String(
+        horaTexto
+    ).split(":");
+
+    if (partes.length < 2) {
+        return horaTexto;
+    }
+
+    const hora = Number(partes[0]);
+    const minutos = Number(partes[1]);
+
+    if (
+        !Number.isInteger(hora) ||
+        !Number.isInteger(minutos)
+    ) {
+        return horaTexto;
+    }
+
+    const fecha = new Date();
+
+    fecha.setHours(
+        hora,
+        minutos,
+        0,
+        0
+    );
+
+    return fecha.toLocaleTimeString(
+        "es-DO",
+        {
+            hour: "numeric",
+            minute: "2-digit"
         }
     );
 }

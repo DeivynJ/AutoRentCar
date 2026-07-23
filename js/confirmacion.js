@@ -33,7 +33,9 @@ function cargarConfirmacionReserva() {
     }
 
     try {
-        ultimaReservacion = JSON.parse(reservacionGuardada);
+        ultimaReservacion = JSON.parse(
+            reservacionGuardada
+        );
     } catch (error) {
         console.error(
             "No fue posible cargar la reservación.",
@@ -42,6 +44,7 @@ function cargarConfirmacionReserva() {
 
         sinDatos?.classList.add("visible");
         contenido?.classList.remove("visible");
+
         return;
     }
 
@@ -52,8 +55,11 @@ function cargarConfirmacionReserva() {
     ) {
         sinDatos?.classList.add("visible");
         contenido?.classList.remove("visible");
+
         return;
     }
+
+    normalizarReservacionConfirmacion();
 
     sinDatos?.classList.remove("visible");
     contenido?.classList.add("visible");
@@ -62,22 +68,122 @@ function cargarConfirmacionReserva() {
 }
 
 /* =========================================================
+   NORMALIZAR RESERVACIÓN
+========================================================= */
+
+function normalizarReservacionConfirmacion() {
+    if (!ultimaReservacion) {
+        return;
+    }
+
+    const cantidadVehiculos =
+        obtenerCantidadReservada();
+
+    const dias = obtenerDiasReservados();
+
+    const precioDiario = obtenerNumeroSeguro(
+        ultimaReservacion.precioDiario ??
+        ultimaReservacion.vehiculo?.precio
+    );
+
+    ultimaReservacion.cantidadVehiculos =
+        cantidadVehiculos;
+
+    ultimaReservacion.dias = dias;
+    ultimaReservacion.precioDiario =
+        precioDiario;
+
+    if (
+        !Number.isFinite(
+            Number(ultimaReservacion.subtotal)
+        )
+    ) {
+        ultimaReservacion.subtotal =
+            precioDiario *
+            dias *
+            cantidadVehiculos;
+    }
+
+    if (
+        !Array.isArray(
+            ultimaReservacion.adicionales
+        )
+    ) {
+        ultimaReservacion.adicionales = [];
+    }
+
+    const costoAdicionalesCalculado =
+        calcularCostoAdicionalesConfirmacion();
+
+    if (
+        !Number.isFinite(
+            Number(
+                ultimaReservacion
+                    .costoAdicionales
+            )
+        )
+    ) {
+        ultimaReservacion.costoAdicionales =
+            costoAdicionalesCalculado;
+    }
+
+    if (
+        !Number.isFinite(
+            Number(ultimaReservacion.descuento)
+        )
+    ) {
+        ultimaReservacion.descuento = 0;
+    }
+
+    if (
+        !Number.isFinite(
+            Number(ultimaReservacion.total)
+        )
+    ) {
+        ultimaReservacion.total =
+            obtenerNumeroSeguro(
+                ultimaReservacion.subtotal
+            ) +
+            obtenerNumeroSeguro(
+                ultimaReservacion
+                    .costoAdicionales
+            ) -
+            obtenerNumeroSeguro(
+                ultimaReservacion.descuento
+            );
+    }
+}
+
+/* =========================================================
    MOSTRAR LOS DATOS
 ========================================================= */
 
 function mostrarDatosConfirmacion() {
     const reservacion = ultimaReservacion;
-    const vehiculo = reservacion.vehiculo;
-    const cliente = reservacion.cliente;
+    const vehiculo = reservacion.vehiculo || {};
+    const cliente = reservacion.cliente || {};
+
+    const cantidadVehiculos =
+        obtenerCantidadReservada();
+
+    const dias =
+        obtenerDiasReservados();
+
+    const textoCantidad =
+        formatearCantidadReservada(
+            cantidadVehiculos
+        );
 
     colocarConfirmacion(
         "confirmacion-codigo",
-        reservacion.codigo
+        reservacion.codigo ||
+        "Sin código"
     );
 
     colocarConfirmacion(
         "confirmacion-estado",
-        reservacion.estado
+        reservacion.estado ||
+        "Pendiente de confirmación"
     );
 
     const imagenVehiculo = document.getElementById(
@@ -85,120 +191,180 @@ function mostrarDatosConfirmacion() {
     );
 
     if (imagenVehiculo) {
-        imagenVehiculo.src = vehiculo.imagen;
-        imagenVehiculo.alt = vehiculo.nombre;
+        imagenVehiculo.src =
+            vehiculo.imagen || "";
+
+        imagenVehiculo.alt =
+            vehiculo.nombre ||
+            "Vehículo reservado";
     }
 
     colocarConfirmacion(
         "confirmacion-vehiculo-categoria",
-        vehiculo.categoriaTexto
+        vehiculo.categoriaTexto ||
+        vehiculo.categoria ||
+        "Sin categoría"
     );
 
     colocarConfirmacion(
         "confirmacion-vehiculo-nombre",
-        vehiculo.nombre
+        vehiculo.nombre ||
+        "Vehículo"
     );
 
     colocarConfirmacion(
         "confirmacion-transmision",
-        vehiculo.transmision
+        vehiculo.transmision ||
+        "Sin información"
     );
 
     colocarConfirmacion(
         "confirmacion-pasajeros",
-        `${vehiculo.pasajeros} pasajeros`
+        `${Number(
+            vehiculo.pasajeros || 0
+        )} pasajeros`
     );
 
     colocarConfirmacion(
         "confirmacion-combustible",
-        vehiculo.combustible
+        vehiculo.combustible ||
+        "Sin información"
     );
 
     colocarConfirmacion(
         "confirmacion-precio-diario",
-        formatearMoneda(reservacion.precioDiario)
+        formatearMoneda(
+            reservacion.precioDiario
+        )
+    );
+
+    colocarConfirmacion(
+        "confirmacion-cantidad-vehiculos",
+        textoCantidad
+    );
+
+    colocarConfirmacion(
+        "confirmacion-cantidad",
+        textoCantidad
+    );
+
+    colocarConfirmacion(
+        "confirmacion-precio-unitario",
+        formatearMoneda(
+            reservacion.precioDiario
+        )
+    );
+
+    colocarConfirmacion(
+        "confirmacion-desglose-vehiculo",
+        `${textoCantidad} × ${formatearDiasConfirmacion(
+            dias
+        )}`
     );
 
     colocarConfirmacion(
         "confirmacion-lugar-recogida",
-        reservacion.lugarRecogida
+        reservacion.lugarRecogida ||
+        "Sin información"
     );
 
     colocarConfirmacion(
         "confirmacion-lugar-entrega",
-        reservacion.lugarEntrega
+        reservacion.lugarEntrega ||
+        "Sin información"
     );
 
     colocarConfirmacion(
         "confirmacion-fecha-recogida",
-        formatearFechaConfirmacion(reservacion.fechaRecogida)
+        formatearFechaConfirmacion(
+            reservacion.fechaRecogida
+        )
     );
 
     colocarConfirmacion(
         "confirmacion-fecha-entrega",
-        formatearFechaConfirmacion(reservacion.fechaEntrega)
+        formatearFechaConfirmacion(
+            reservacion.fechaEntrega
+        )
     );
 
     colocarConfirmacion(
         "confirmacion-hora-recogida",
-        formatearHoraConfirmacion(reservacion.horaRecogida)
+        formatearHoraConfirmacion(
+            reservacion.horaRecogida
+        )
     );
 
     colocarConfirmacion(
         "confirmacion-dias",
-        reservacion.dias === 1
-            ? "1 día"
-            : `${reservacion.dias} días`
+        formatearDiasConfirmacion(
+            dias
+        )
     );
 
     colocarConfirmacion(
         "confirmacion-cliente-nombre",
-        cliente.nombre
+        cliente.nombre ||
+        "Sin información"
     );
 
     colocarConfirmacion(
         "confirmacion-cliente-documento",
-        cliente.documento
+        cliente.documento ||
+        "Sin información"
     );
 
     colocarConfirmacion(
         "confirmacion-cliente-correo",
-        cliente.correo
+        cliente.correo ||
+        "Sin información"
     );
 
     colocarConfirmacion(
         "confirmacion-cliente-telefono",
-        cliente.telefono
+        cliente.telefono ||
+        "Sin información"
     );
 
     colocarConfirmacion(
         "confirmacion-cliente-edad",
-        `${cliente.edad} años`
+        cliente.edad
+            ? `${cliente.edad} años`
+            : "Sin información"
     );
 
     colocarConfirmacion(
         "confirmacion-cliente-licencia",
-        cliente.licencia
+        cliente.licencia ||
+        "Sin información"
     );
 
     colocarConfirmacion(
         "confirmacion-subtotal",
-        formatearMoneda(reservacion.subtotal)
+        formatearMoneda(
+            reservacion.subtotal
+        )
     );
 
     colocarConfirmacion(
         "confirmacion-adicionales",
-        formatearMoneda(reservacion.costoAdicionales)
+        formatearMoneda(
+            reservacion.costoAdicionales
+        )
     );
 
     colocarConfirmacion(
         "confirmacion-descuento",
-        `-${formatearMoneda(reservacion.descuento)}`
+        `-${formatearMoneda(
+            reservacion.descuento
+        )}`
     );
 
     colocarConfirmacion(
         "confirmacion-total",
-        formatearMoneda(reservacion.total)
+        formatearMoneda(
+            reservacion.total
+        )
     );
 
     mostrarServiciosAdicionales();
@@ -218,7 +384,11 @@ function mostrarServiciosAdicionales() {
         return;
     }
 
-    const adicionales = ultimaReservacion.adicionales || [];
+    const adicionales = Array.isArray(
+        ultimaReservacion?.adicionales
+    )
+        ? ultimaReservacion.adicionales
+        : [];
 
     if (!adicionales.length) {
         contenedor.innerHTML = `
@@ -230,26 +400,60 @@ function mostrarServiciosAdicionales() {
         return;
     }
 
+    const cantidadVehiculos =
+        obtenerCantidadReservada();
+
+    const dias =
+        obtenerDiasReservados();
+
     contenedor.innerHTML = adicionales
         .map((adicional) => {
             const costoTotal =
-                adicional.precioDiario *
-                ultimaReservacion.dias;
+                obtenerCostoTotalAdicional(
+                    adicional
+                );
+
+            const detalleCosto =
+                adicional?.aplicaPorVehiculo ===
+                    false
+                    ? `${formatearMoneda(
+                        adicional.precioDiario
+                    )} por día`
+                    : `${formatearMoneda(
+                        adicional.precioDiario
+                    )} × ${dias} día(s) × ${cantidadVehiculos} vehículo(s)`;
 
             return `
                 <article class="adicional-confirmacion">
 
                     <div>
+
                         <i class="fa-solid fa-circle-check"></i>
 
                         <span>
-                            ${escaparHTML(adicional.nombre)}
+                            ${escaparHTML(
+                                adicional?.nombre ||
+                                "Servicio adicional"
+                            )}
                         </span>
+
                     </div>
 
-                    <strong>
-                        ${formatearMoneda(costoTotal)}
-                    </strong>
+                    <div>
+
+                        <small>
+                            ${escaparHTML(
+                                detalleCosto
+                            )}
+                        </small>
+
+                        <strong>
+                            ${formatearMoneda(
+                                costoTotal
+                            )}
+                        </strong>
+
+                    </div>
 
                 </article>
             `;
@@ -257,16 +461,70 @@ function mostrarServiciosAdicionales() {
         .join("");
 }
 
+function obtenerCostoTotalAdicional(
+    adicional
+) {
+    const costoGuardado = Number(
+        adicional?.costoTotal
+    );
+
+    if (
+        Number.isFinite(costoGuardado) &&
+        costoGuardado >= 0
+    ) {
+        return costoGuardado;
+    }
+
+    const precioDiario = obtenerNumeroSeguro(
+        adicional?.precioDiario
+    );
+
+    const dias =
+        obtenerDiasReservados();
+
+    const cantidadVehiculos =
+        adicional?.aplicaPorVehiculo ===
+            false
+            ? 1
+            : obtenerCantidadReservada();
+
+    return (
+        precioDiario *
+        dias *
+        cantidadVehiculos
+    );
+}
+
+function calcularCostoAdicionalesConfirmacion() {
+    const adicionales = Array.isArray(
+        ultimaReservacion?.adicionales
+    )
+        ? ultimaReservacion.adicionales
+        : [];
+
+    return adicionales.reduce(
+        (total, adicional) =>
+            total +
+            obtenerCostoTotalAdicional(
+                adicional
+            ),
+        0
+    );
+}
+
 /* =========================================================
    COMENTARIOS
 ========================================================= */
 
 function mostrarComentariosConfirmacion() {
-    const comentario = ultimaReservacion.comentarios?.trim();
+    const comentario =
+        ultimaReservacion?.comentarios
+            ?.trim();
 
     colocarConfirmacion(
         "confirmacion-comentarios",
-        comentario || "Sin comentarios adicionales."
+        comentario ||
+        "Sin comentarios adicionales."
     );
 }
 
@@ -292,13 +550,16 @@ function configurarAccionesConfirmacion() {
         copiarCodigoReservacion
     );
 
-    botonImprimir?.addEventListener("click", () => {
-        if (!ultimaReservacion) {
-            return;
-        }
+    botonImprimir?.addEventListener(
+        "click",
+        () => {
+            if (!ultimaReservacion) {
+                return;
+            }
 
-        window.print();
-    });
+            window.print();
+        }
+    );
 
     botonDescargar?.addEventListener(
         "click",
@@ -325,20 +586,26 @@ async function copiarCodigoReservacion() {
             "El código de la reservación fue copiado."
         );
     } catch (error) {
-        copiarTextoAlternativo(ultimaReservacion.codigo);
+        copiarTextoAlternativo(
+            ultimaReservacion.codigo
+        );
     }
 }
 
 function copiarTextoAlternativo(texto) {
-    const campoTemporal = document.createElement("textarea");
+    const campoTemporal =
+        document.createElement("textarea");
 
     campoTemporal.value = texto;
     campoTemporal.style.position = "fixed";
     campoTemporal.style.opacity = "0";
 
-    document.body.appendChild(campoTemporal);
+    document.body.appendChild(
+        campoTemporal
+    );
 
     campoTemporal.select();
+
     document.execCommand("copy");
 
     campoTemporal.remove();
@@ -388,56 +655,122 @@ function descargarResumenReservacion() {
             format: "a4"
         });
 
-        const reservacion = ultimaReservacion;
+        const reservacion =
+            ultimaReservacion;
+
         const vehiculo =
             reservacion.vehiculo || {};
 
         const cliente =
             reservacion.cliente || {};
 
-        const margenIzquierdo = 18;
-        const margenDerecho = 192;
-        const anchoContenido = 174;
+        const adicionales = Array.isArray(
+            reservacion.adicionales
+        )
+            ? reservacion.adicionales
+            : [];
 
-        let posicionY = 20;
+        const cantidadVehiculos =
+            obtenerCantidadReservada();
 
-        function comprobarNuevaPagina(
-            espacioNecesario = 15
+        const dias =
+            obtenerDiasReservados();
+
+        const textoCantidad =
+            formatearCantidadReservada(
+                cantidadVehiculos
+            );
+
+        const colores = {
+            azul: [11, 31, 58],
+            azulMedio: [24, 68, 115],
+            naranja: [255, 138, 0],
+            fondo: [246, 248, 252],
+            borde: [226, 232, 240],
+            texto: [23, 32, 51],
+            suave: [100, 116, 139],
+            blanco: [255, 255, 255],
+            verde: [22, 163, 106]
+        };
+
+        const paginaAncho = 210;
+        const margen = 12;
+
+        const anchoContenido =
+            paginaAncho -
+            margen * 2;
+
+        const espacioColumnas = 4;
+
+        const anchoColumna =
+            (
+                anchoContenido -
+                espacioColumnas
+            ) / 2;
+
+        function textoSeguro(
+            valor,
+            alternativa = "Sin información"
         ) {
             if (
-                posicionY + espacioNecesario >
-                278
+                valor === undefined ||
+                valor === null ||
+                valor === ""
             ) {
-                documento.addPage();
-                posicionY = 20;
+                return alternativa;
             }
+
+            return String(valor);
         }
 
-        function agregarTituloSeccion(
-            titulo
+        function recortarTexto(
+            texto,
+            maximo = 115
         ) {
-            comprobarNuevaPagina(18);
+            const limpio = textoSeguro(
+                texto,
+                "Sin comentarios adicionales."
+            )
+                .replace(/\s+/g, " ")
+                .trim();
 
+            if (limpio.length <= maximo) {
+                return limpio;
+            }
+
+            return (
+                limpio
+                    .slice(
+                        0,
+                        maximo - 3
+                    )
+                    .trim() +
+                "..."
+            );
+        }
+
+        function dibujarTituloSeccion(
+            x,
+            y,
+            titulo,
+            ancho
+        ) {
             documento.setFillColor(
-                11,
-                31,
-                58
+                ...colores.azul
             );
 
             documento.roundedRect(
-                margenIzquierdo,
-                posicionY,
-                anchoContenido,
-                9,
+                x,
+                y,
+                ancho,
+                8,
                 2,
                 2,
                 "F"
             );
 
             documento.setTextColor(
-                255,
-                255,
-                255
+                ...colores.blanco
             );
 
             documento.setFont(
@@ -445,489 +778,124 @@ function descargarResumenReservacion() {
                 "bold"
             );
 
-            documento.setFontSize(10);
+            documento.setFontSize(8.5);
 
             documento.text(
                 titulo,
-                margenIzquierdo + 4,
-                posicionY + 6
-            );
-
-            posicionY += 14;
-
-            documento.setTextColor(
-                30,
-                41,
-                59
+                x + 4,
+                y + 5.5
             );
         }
 
-        function agregarDato(
+        function dibujarEtiquetaValor(
+            x,
+            y,
             etiqueta,
-            valor
+            valor,
+            ancho,
+            opciones = {}
         ) {
-            comprobarNuevaPagina(12);
+            const {
+                alto = 13,
+                fondo = colores.fondo,
+                valorTamano = 8.2,
+                valorNegrita = true
+            } = opciones;
 
-            const texto =
-                valor === undefined ||
-                valor === null ||
-                valor === ""
-                    ? "Sin información"
-                    : String(valor);
+            documento.setFillColor(
+                ...fondo
+            );
+
+            documento.setDrawColor(
+                ...colores.borde
+            );
+
+            documento.roundedRect(
+                x,
+                y,
+                ancho,
+                alto,
+                2,
+                2,
+                "FD"
+            );
+
+            documento.setTextColor(
+                ...colores.suave
+            );
 
             documento.setFont(
                 "helvetica",
                 "bold"
             );
 
-            documento.setFontSize(9);
-
-            documento.setTextColor(
-                71,
-                85,
-                105
-            );
+            documento.setFontSize(6.5);
 
             documento.text(
-                `${etiqueta}:`,
-                margenIzquierdo,
-                posicionY
+                etiqueta.toUpperCase(),
+                x + 3,
+                y + 4.2
+            );
+
+            documento.setTextColor(
+                ...colores.texto
             );
 
             documento.setFont(
                 "helvetica",
-                "normal"
+                valorNegrita
+                    ? "bold"
+                    : "normal"
             );
 
-            documento.setTextColor(
-                15,
-                23,
-                42
+            documento.setFontSize(
+                valorTamano
             );
 
             const lineas =
-                documento.splitTextToSize(
-                    texto,
-                    112
-                );
+                documento
+                    .splitTextToSize(
+                        textoSeguro(valor),
+                        ancho - 6
+                    )
+                    .slice(0, 2);
 
             documento.text(
                 lineas,
-                margenIzquierdo + 54,
-                posicionY
-            );
-
-            posicionY += Math.max(
-                7,
-                lineas.length * 5
+                x + 3,
+                y + 9.3
             );
         }
 
-        /* =========================
-           ENCABEZADO
-        ========================= */
+        /* =====================================================
+           ENCABEZADO PRINCIPAL
+        ===================================================== */
 
         documento.setFillColor(
-            11,
-            31,
-            58
+            ...colores.azul
         );
 
         documento.rect(
             0,
             0,
-            210,
-            42,
+            paginaAncho,
+            37,
             "F"
-        );
-
-        documento.setTextColor(
-            255,
-            255,
-            255
-        );
-
-        documento.setFont(
-            "helvetica",
-            "bold"
-        );
-
-        documento.setFontSize(22);
-
-        documento.text(
-            "AutoRentCar",
-            margenIzquierdo,
-            18
-        );
-
-        documento.setFont(
-            "helvetica",
-            "normal"
-        );
-
-        documento.setFontSize(11);
-
-        documento.text(
-            "Comprobante de reservación",
-            margenIzquierdo,
-            27
-        );
-
-        documento.setFontSize(9);
-
-        documento.text(
-            "Santiago, República Dominicana",
-            margenIzquierdo,
-            34
         );
 
         documento.setFillColor(
-            245,
-            158,
-            11
+            ...colores.naranja
         );
 
-        documento.roundedRect(
-            136,
-            13,
-            56,
-            17,
-            2,
-            2,
-            "F"
-        );
-
-        documento.setTextColor(
-            255,
-            255,
-            255
-        );
-
-        documento.setFont(
-            "helvetica",
-            "bold"
-        );
-
-        documento.setFontSize(8);
-
-        documento.text(
-            "CÓDIGO DE RESERVACIÓN",
-            140,
-            19
-        );
-
-        documento.setFontSize(10);
-
-        documento.text(
-            String(
-                reservacion.codigo ||
-                "Sin código"
-            ),
-            140,
-            26
-        );
-
-        posicionY = 52;
-
-        documento.setTextColor(
-            15,
-            23,
-            42
-        );
-
-        documento.setFont(
-            "helvetica",
-            "bold"
-        );
-
-        documento.setFontSize(11);
-
-        documento.text(
-            "Estado:",
-            margenIzquierdo,
-            posicionY
-        );
-
-        documento.setTextColor(
+        documento.circle(
             22,
-            163,
-            106
-        );
-
-        documento.text(
-            String(
-                reservacion.estado ||
-                "Pendiente de confirmación"
-            ),
-            38,
-            posicionY
-        );
-
-        posicionY += 12;
-
-        /* =========================
-           VEHÍCULO
-        ========================= */
-
-        agregarTituloSeccion(
-            "INFORMACIÓN DEL VEHÍCULO"
-        );
-
-        agregarDato(
-            "Vehículo",
-            vehiculo.nombre
-        );
-
-        agregarDato(
-            "Categoría",
-            vehiculo.categoriaTexto
-        );
-
-        agregarDato(
-            "Transmisión",
-            vehiculo.transmision
-        );
-
-        agregarDato(
-            "Combustible",
-            vehiculo.combustible
-        );
-
-        agregarDato(
-            "Pasajeros",
-            vehiculo.pasajeros
-                ? `${vehiculo.pasajeros} pasajeros`
-                : "Sin información"
-        );
-
-        agregarDato(
-            "Precio diario",
-            formatearMoneda(
-                reservacion.precioDiario
-            )
-        );
-
-        posicionY += 3;
-
-        /* =========================
-           ALQUILER
-        ========================= */
-
-        agregarTituloSeccion(
-            "INFORMACIÓN DEL ALQUILER"
-        );
-
-        agregarDato(
-            "Lugar de recogida",
-            reservacion.lugarRecogida
-        );
-
-        agregarDato(
-            "Lugar de entrega",
-            reservacion.lugarEntrega
-        );
-
-        agregarDato(
-            "Fecha de recogida",
-            formatearFechaConfirmacion(
-                reservacion.fechaRecogida
-            )
-        );
-
-        agregarDato(
-            "Hora de recogida",
-            formatearHoraConfirmacion(
-                reservacion.horaRecogida
-            )
-        );
-
-        agregarDato(
-            "Fecha de entrega",
-            formatearFechaConfirmacion(
-                reservacion.fechaEntrega
-            )
-        );
-
-        agregarDato(
-            "Hora de entrega",
-            formatearHoraConfirmacion(
-                reservacion.horaEntrega
-            )
-        );
-
-        agregarDato(
-            "Duración",
-            `${Number(
-                reservacion.dias || 0
-            )} día(s)`
-        );
-
-        posicionY += 3;
-
-        /* =========================
-           CLIENTE
-        ========================= */
-
-        agregarTituloSeccion(
-            "INFORMACIÓN DEL CLIENTE"
-        );
-
-        agregarDato(
-            "Nombre",
-            cliente.nombre
-        );
-
-        agregarDato(
-            "Documento",
-            cliente.documento
-        );
-
-        agregarDato(
-            "Correo",
-            cliente.correo
-        );
-
-        agregarDato(
-            "Teléfono",
-            cliente.telefono
-        );
-
-        agregarDato(
-            "Edad",
-            cliente.edad
-                ? `${cliente.edad} años`
-                : "Sin información"
-        );
-
-        agregarDato(
-            "Licencia",
-            cliente.licencia
-        );
-
-        posicionY += 3;
-
-        /* =========================
-           SERVICIOS ADICIONALES
-        ========================= */
-
-        agregarTituloSeccion(
-            "SERVICIOS ADICIONALES"
-        );
-
-        const adicionales =
-            Array.isArray(
-                reservacion.adicionales
-            )
-                ? reservacion.adicionales
-                : [];
-
-        if (!adicionales.length) {
-            agregarDato(
-                "Servicios",
-                "No se seleccionaron servicios adicionales."
-            );
-        } else {
-            adicionales.forEach(
-                (adicional) => {
-                    const precioDiario =
-                        Number(
-                            adicional
-                                ?.precioDiario ||
-                            0
-                        );
-
-                    const dias = Number(
-                        reservacion.dias || 0
-                    );
-
-                    agregarDato(
-                        adicional?.nombre ||
-                        "Servicio adicional",
-                        formatearMoneda(
-                            precioDiario *
-                            dias
-                        )
-                    );
-                }
-            );
-        }
-
-        agregarDato(
-            "Código promocional",
-            reservacion.codigoPromocional ||
-            "No aplicado"
-        );
-
-        posicionY += 3;
-
-        /* =========================
-           COMENTARIOS
-        ========================= */
-
-        agregarTituloSeccion(
-            "COMENTARIOS"
-        );
-
-        agregarDato(
-            "Observaciones",
-            reservacion.comentarios ||
-            "Sin comentarios adicionales."
-        );
-
-        posicionY += 3;
-
-        /* =========================
-           PRECIO
-        ========================= */
-
-        agregarTituloSeccion(
-            "RESUMEN DEL PRECIO"
-        );
-
-        agregarDato(
-            "Subtotal del vehículo",
-            formatearMoneda(
-                reservacion.subtotal
-            )
-        );
-
-        agregarDato(
-            "Servicios adicionales",
-            formatearMoneda(
-                reservacion
-                    .costoAdicionales
-            )
-        );
-
-        agregarDato(
-            "Descuento",
-            `-${formatearMoneda(
-                reservacion.descuento
-            )}`
-        );
-
-        comprobarNuevaPagina(25);
-
-        documento.setFillColor(
-            241,
-            245,
-            249
-        );
-
-        documento.roundedRect(
-            margenIzquierdo,
-            posicionY,
-            anchoContenido,
-            18,
-            3,
-            3,
+            18.5,
+            9,
             "F"
         );
 
         documento.setTextColor(
-            15,
-            23,
-            42
+            ...colores.blanco
         );
 
         documento.setFont(
@@ -938,57 +906,20 @@ function descargarResumenReservacion() {
         documento.setFontSize(12);
 
         documento.text(
-            "TOTAL ESTIMADO",
-            margenIzquierdo + 5,
-            posicionY + 11
-        );
-
-        documento.setTextColor(
-            245,
-            158,
-            11
-        );
-
-        documento.setFontSize(16);
-
-        documento.text(
-            formatearMoneda(
-                reservacion.total
-            ),
-            margenDerecho - 5,
-            posicionY + 12,
+            "AR",
+            22,
+            21,
             {
-                align: "right"
+                align: "center"
             }
         );
 
-        posicionY += 27;
+        documento.setFontSize(18);
 
-        /* =========================
-           PIE DE PÁGINA
-        ========================= */
-
-        comprobarNuevaPagina(25);
-
-        documento.setDrawColor(
-            226,
-            232,
-            240
-        );
-
-        documento.line(
-            margenIzquierdo,
-            posicionY,
-            margenDerecho,
-            posicionY
-        );
-
-        posicionY += 8;
-
-        documento.setTextColor(
-            100,
-            116,
-            139
+        documento.text(
+            "AutoRentCar",
+            35,
+            16
         );
 
         documento.setFont(
@@ -996,65 +927,1001 @@ function descargarResumenReservacion() {
             "normal"
         );
 
+        documento.setFontSize(8.5);
+
+        documento.setTextColor(
+            203,
+            213,
+            225
+        );
+
+        documento.text(
+            "Comprobante profesional de reservación",
+            35,
+            22
+        );
+
+        documento.setFillColor(
+            ...colores.blanco
+        );
+
+        documento.roundedRect(
+            139,
+            8,
+            59,
+            21,
+            3,
+            3,
+            "F"
+        );
+
+        documento.setTextColor(
+            ...colores.suave
+        );
+
+        documento.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        documento.setFontSize(6.5);
+
+        documento.text(
+            "CÓDIGO DE RESERVACIÓN",
+            143,
+            13
+        );
+
+        documento.setTextColor(
+            ...colores.naranja
+        );
+
+        documento.setFontSize(12);
+
+        documento.text(
+            textoSeguro(
+                reservacion.codigo,
+                "SIN-CÓDIGO"
+            ),
+            143,
+            19
+        );
+
+        documento.setTextColor(
+            ...colores.azul
+        );
+
+        documento.setFontSize(7);
+
+        documento.text(
+            textoSeguro(
+                reservacion.estado,
+                "Pendiente de confirmación"
+            ),
+            143,
+            25
+        );
+
+        documento.setFillColor(
+            ...colores.naranja
+        );
+
+        documento.rect(
+            0,
+            37,
+            paginaAncho,
+            5,
+            "F"
+        );
+
+        documento.setTextColor(
+            ...colores.suave
+        );
+
+        documento.setFont(
+            "helvetica",
+            "normal"
+        );
+
+        documento.setFontSize(7);
+
+        documento.text(
+            `Emitido: ${formatearFechaHoraRegistro(
+                reservacion.fechaRegistro
+            )}`,
+            margen,
+            47
+        );
+
+        documento.text(
+            "Santiago, República Dominicana",
+            paginaAncho - margen,
+            47,
+            {
+                align: "right"
+            }
+        );
+
+        /* =====================================================
+           VEHÍCULO
+        ===================================================== */
+
+        let y = 52;
+
+        dibujarTituloSeccion(
+            margen,
+            y,
+            "VEHÍCULO RESERVADO",
+            anchoContenido
+        );
+
+        y += 10;
+
+        documento.setFillColor(
+            ...colores.fondo
+        );
+
+        documento.setDrawColor(
+            ...colores.borde
+        );
+
+        documento.roundedRect(
+            margen,
+            y,
+            anchoContenido,
+            34,
+            3,
+            3,
+            "FD"
+        );
+
+        documento.setFillColor(
+            ...colores.azulMedio
+        );
+
+        documento.roundedRect(
+            margen + 4,
+            y + 5,
+            34,
+            24,
+            3,
+            3,
+            "F"
+        );
+
+        documento.setTextColor(
+            ...colores.blanco
+        );
+
+        documento.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        documento.setFontSize(10);
+
+        documento.text(
+            "VEHÍCULO",
+            margen + 21,
+            y + 18,
+            {
+                align: "center"
+            }
+        );
+
+        documento.setTextColor(
+            ...colores.texto
+        );
+
+        documento.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        documento.setFontSize(13);
+
+        documento.text(
+            textoSeguro(
+                vehiculo.nombre,
+                "Vehículo"
+            ),
+            margen + 43,
+            y + 9
+        );
+
+        documento.setTextColor(
+            ...colores.naranja
+        );
+
         documento.setFontSize(8);
 
-        const nota =
-            documento.splitTextToSize(
-                "Este documento confirma el registro de la solicitud. La reservación permanece sujeta a validación y confirmación por parte de AutoRentCar.",
-                anchoContenido
-            );
-
         documento.text(
-            nota,
-            margenIzquierdo,
-            posicionY
+            textoSeguro(
+                vehiculo.categoriaTexto ||
+                vehiculo.categoria,
+                "Sin categoría"
+            ),
+            margen + 43,
+            y + 15
         );
 
-        posicionY +=
-            nota.length * 4 + 5;
-
-        documento.text(
-            "AutoRentCar | +1 849-276-6030 | contacto@autorentcar.com",
-            margenIzquierdo,
-            posicionY
+        documento.setTextColor(
+            ...colores.suave
         );
 
-        /* =========================
-           NUMERACIÓN
-        ========================= */
+        documento.setFont(
+            "helvetica",
+            "normal"
+        );
 
-        const totalPaginas =
-            documento.getNumberOfPages();
+        documento.setFontSize(7.5);
 
-        for (
-            let pagina = 1;
-            pagina <= totalPaginas;
-            pagina += 1
-        ) {
-            documento.setPage(pagina);
+        documento.text(
+            `${textoSeguro(
+                vehiculo.transmision
+            )} | ${textoSeguro(
+                vehiculo.combustible
+            )} | ${textoSeguro(
+                vehiculo.pasajeros,
+                "0"
+            )} pasajeros`,
+            margen + 43,
+            y + 21
+        );
 
-            documento.setFont(
-                "helvetica",
-                "normal"
-            );
+        documento.setFont(
+            "helvetica",
+            "bold"
+        );
 
-            documento.setFontSize(8);
+        documento.setTextColor(
+            ...colores.azulMedio
+        );
 
+        documento.text(
+            `Cantidad reservada: ${textoCantidad}`,
+            margen + 43,
+            y + 27
+        );
+
+        documento.setTextColor(
+            ...colores.texto
+        );
+
+        documento.setFontSize(7);
+
+        documento.text(
+            "PRECIO POR VEHÍCULO/DÍA",
+            190,
+            y + 8,
+            {
+                align: "right"
+            }
+        );
+
+        documento.setTextColor(
+            ...colores.naranja
+        );
+
+        documento.setFontSize(14);
+
+        documento.text(
+            formatearMoneda(
+                reservacion.precioDiario
+            ),
+            190,
+            y + 16,
+            {
+                align: "right"
+            }
+        );
+
+        documento.setTextColor(
+            ...colores.suave
+        );
+
+        documento.setFont(
+            "helvetica",
+            "normal"
+        );
+
+        documento.setFontSize(6.5);
+
+        documento.text(
+            `${cantidadVehiculos} vehículo(s) × ${dias} día(s)`,
+            190,
+            y + 22,
+            {
+                align: "right"
+            }
+        );
+
+        documento.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        documento.setTextColor(
+            ...colores.texto
+        );
+
+        documento.setFontSize(7);
+
+        documento.text(
+            `Subtotal: ${formatearMoneda(
+                reservacion.subtotal
+            )}`,
+            190,
+            y + 28,
+            {
+                align: "right"
+            }
+        );
+
+        /* =====================================================
+           DATOS DEL ALQUILER Y CLIENTE
+        ===================================================== */
+
+        y += 39;
+
+        dibujarTituloSeccion(
+            margen,
+            y,
+            "INFORMACIÓN DEL ALQUILER",
+            anchoColumna
+        );
+
+        dibujarTituloSeccion(
+            margen +
+                anchoColumna +
+                espacioColumnas,
+            y,
+            "DATOS DEL CLIENTE",
+            anchoColumna
+        );
+
+        y += 10;
+
+        const xIzquierda = margen;
+
+        const xDerecha =
+            margen +
+            anchoColumna +
+            espacioColumnas;
+
+        const medioAncho =
+            (
+                anchoColumna -
+                3
+            ) / 2;
+
+        dibujarEtiquetaValor(
+            xIzquierda,
+            y,
+            "Recogida",
+            reservacion.lugarRecogida,
+            anchoColumna
+        );
+
+        dibujarEtiquetaValor(
+            xDerecha,
+            y,
+            "Cliente",
+            cliente.nombre,
+            anchoColumna
+        );
+
+        y += 15;
+
+        dibujarEtiquetaValor(
+            xIzquierda,
+            y,
+            "Fecha y hora de recogida",
+            `${formatearFechaConfirmacion(
+                reservacion.fechaRecogida
+            )} - ${formatearHoraConfirmacion(
+                reservacion.horaRecogida
+            )}`,
+            anchoColumna
+        );
+
+        dibujarEtiquetaValor(
+            xDerecha,
+            y,
+            "Documento",
+            cliente.documento,
+            medioAncho
+        );
+
+        dibujarEtiquetaValor(
+            xDerecha +
+                medioAncho +
+                3,
+            y,
+            "Edad",
+            cliente.edad
+                ? `${cliente.edad} años`
+                : "Sin información",
+            medioAncho
+        );
+
+        y += 15;
+
+        dibujarEtiquetaValor(
+            xIzquierda,
+            y,
+            "Entrega",
+            reservacion.lugarEntrega,
+            anchoColumna
+        );
+
+        dibujarEtiquetaValor(
+            xDerecha,
+            y,
+            "Teléfono",
+            cliente.telefono,
+            medioAncho
+        );
+
+        dibujarEtiquetaValor(
+            xDerecha +
+                medioAncho +
+                3,
+            y,
+            "Licencia",
+            cliente.licencia,
+            medioAncho
+        );
+
+        y += 15;
+
+        dibujarEtiquetaValor(
+            xIzquierda,
+            y,
+            "Fecha y hora de entrega",
+            `${formatearFechaConfirmacion(
+                reservacion.fechaEntrega
+            )} - ${formatearHoraConfirmacion(
+                reservacion.horaEntrega
+            )}`,
+            anchoColumna
+        );
+
+        dibujarEtiquetaValor(
+            xDerecha,
+            y,
+            "Correo",
+            cliente.correo,
+            anchoColumna,
+            {
+                valorTamano: 7.2
+            }
+        );
+
+        y += 15;
+
+        dibujarEtiquetaValor(
+            xIzquierda,
+            y,
+            "Duración",
+            formatearDiasConfirmacion(
+                dias
+            ),
+            medioAncho
+        );
+
+        dibujarEtiquetaValor(
+            xIzquierda +
+                medioAncho +
+                3,
+            y,
+            "Cantidad",
+            textoCantidad,
+            medioAncho
+        );
+
+        dibujarEtiquetaValor(
+            xDerecha,
+            y,
+            "Comentarios",
+            recortarTexto(
+                reservacion.comentarios
+            ),
+            anchoColumna,
+            {
+                valorTamano: 6.8,
+                valorNegrita: false
+            }
+        );
+
+        y += 15;
+
+        dibujarEtiquetaValor(
+            xIzquierda,
+            y,
+            "Promoción",
+            reservacion.codigoPromocional ||
+            "No aplicada",
+            medioAncho
+        );
+
+        dibujarEtiquetaValor(
+            xIzquierda +
+                medioAncho +
+                3,
+            y,
+            "Precio unitario",
+            formatearMoneda(
+                reservacion.precioDiario
+            ),
+            medioAncho
+        );
+
+        dibujarEtiquetaValor(
+            xDerecha,
+            y,
+            "Estado",
+            reservacion.estado ||
+            "Pendiente",
+            anchoColumna
+        );
+
+        /* =====================================================
+           SERVICIOS Y RESUMEN ECONÓMICO
+        ===================================================== */
+
+        y += 18;
+
+        dibujarTituloSeccion(
+            margen,
+            y,
+            "SERVICIOS ADICIONALES",
+            anchoColumna
+        );
+
+        dibujarTituloSeccion(
+            xDerecha,
+            y,
+            "RESUMEN ECONÓMICO",
+            anchoColumna
+        );
+
+        y += 10;
+
+        documento.setFillColor(
+            ...colores.fondo
+        );
+
+        documento.setDrawColor(
+            ...colores.borde
+        );
+
+        documento.roundedRect(
+            margen,
+            y,
+            anchoColumna,
+            43,
+            3,
+            3,
+            "FD"
+        );
+
+        documento.setFont(
+            "helvetica",
+            "normal"
+        );
+
+        documento.setFontSize(7.5);
+
+        if (!adicionales.length) {
             documento.setTextColor(
-                148,
-                163,
-                184
+                ...colores.suave
             );
 
             documento.text(
-                `Página ${pagina} de ${totalPaginas}`,
-                192,
-                291,
-                {
-                    align: "right"
-                }
+                "No se seleccionaron servicios adicionales.",
+                margen + 4,
+                y + 9
             );
+        } else {
+            adicionales
+                .slice(0, 4)
+                .forEach(
+                    (
+                        adicional,
+                        indice
+                    ) => {
+                        const totalAdicional =
+                            obtenerCostoTotalAdicional(
+                                adicional
+                            );
+
+                        const posicionLinea =
+                            y +
+                            8 +
+                            indice * 8;
+
+                        documento.setFillColor(
+                            ...colores.verde
+                        );
+
+                        documento.circle(
+                            margen + 5,
+                            posicionLinea - 1,
+                            1.2,
+                            "F"
+                        );
+
+                        documento.setTextColor(
+                            ...colores.texto
+                        );
+
+                        documento.setFont(
+                            "helvetica",
+                            "normal"
+                        );
+
+                        documento.text(
+                            recortarTexto(
+                                adicional?.nombre ||
+                                "Servicio adicional",
+                                34
+                            ),
+                            margen + 9,
+                            posicionLinea
+                        );
+
+                        documento.setFont(
+                            "helvetica",
+                            "bold"
+                        );
+
+                        documento.text(
+                            formatearMoneda(
+                                totalAdicional
+                            ),
+                            margen +
+                                anchoColumna -
+                                4,
+                            posicionLinea,
+                            {
+                                align: "right"
+                            }
+                        );
+                    }
+                );
+
+            if (
+                adicionales.length > 4
+            ) {
+                documento.setTextColor(
+                    ...colores.suave
+                );
+
+                documento.setFont(
+                    "helvetica",
+                    "italic"
+                );
+
+                documento.setFontSize(6.5);
+
+                documento.text(
+                    `+ ${
+                        adicionales.length -
+                        4
+                    } servicio(s) adicional(es)`,
+                    margen + 4,
+                    y + 39
+                );
+            }
         }
+
+        documento.setFillColor(
+            ...colores.fondo
+        );
+
+        documento.setDrawColor(
+            ...colores.borde
+        );
+
+        documento.roundedRect(
+            xDerecha,
+            y,
+            anchoColumna,
+            43,
+            3,
+            3,
+            "FD"
+        );
+
+        const filasPrecio = [
+            [
+                `${cantidadVehiculos} vehículo(s) × ${dias} día(s)`,
+                formatearMoneda(
+                    reservacion.subtotal
+                )
+            ],
+            [
+                "Servicios adicionales",
+                formatearMoneda(
+                    reservacion
+                        .costoAdicionales
+                )
+            ],
+            [
+                "Descuento",
+                `-${formatearMoneda(
+                    reservacion.descuento
+                )}`
+            ]
+        ];
+
+        filasPrecio.forEach(
+            (
+                [etiqueta, valor],
+                indice
+            ) => {
+                const posicion =
+                    y +
+                    7 +
+                    indice * 8;
+
+                documento.setTextColor(
+                    ...colores.suave
+                );
+
+                documento.setFont(
+                    "helvetica",
+                    "normal"
+                );
+
+                documento.setFontSize(7.3);
+
+                documento.text(
+                    etiqueta,
+                    xDerecha + 4,
+                    posicion
+                );
+
+                documento.setTextColor(
+                    ...colores.texto
+                );
+
+                documento.setFont(
+                    "helvetica",
+                    "bold"
+                );
+
+                documento.text(
+                    valor,
+                    xDerecha +
+                        anchoColumna -
+                        4,
+                    posicion,
+                    {
+                        align: "right"
+                    }
+                );
+            }
+        );
+
+        documento.setDrawColor(
+            ...colores.borde
+        );
+
+        documento.line(
+            xDerecha + 4,
+            y + 31,
+            xDerecha +
+                anchoColumna -
+                4,
+            y + 31
+        );
+
+        documento.setTextColor(
+            ...colores.texto
+        );
+
+        documento.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        documento.setFontSize(8.5);
+
+        documento.text(
+            "TOTAL ESTIMADO",
+            xDerecha + 4,
+            y + 39
+        );
+
+        documento.setTextColor(
+            ...colores.naranja
+        );
+
+        documento.setFontSize(14);
+
+        documento.text(
+            formatearMoneda(
+                reservacion.total
+            ),
+            xDerecha +
+                anchoColumna -
+                4,
+            y + 39,
+            {
+                align: "right"
+            }
+        );
+
+        /* =====================================================
+           AVISO IMPORTANTE
+        ===================================================== */
+
+        y += 48;
+
+        documento.setFillColor(
+            255,
+            247,
+            237
+        );
+
+        documento.setDrawColor(
+            253,
+            186,
+            116
+        );
+
+        documento.roundedRect(
+            margen,
+            y,
+            anchoContenido,
+            19,
+            3,
+            3,
+            "FD"
+        );
+
+        documento.setFillColor(
+            ...colores.naranja
+        );
+
+        documento.circle(
+            margen + 7,
+            y + 9.5,
+            3,
+            "F"
+        );
+
+        documento.setTextColor(
+            ...colores.blanco
+        );
+
+        documento.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        documento.setFontSize(7);
+
+        documento.text(
+            "i",
+            margen + 7,
+            y + 11,
+            {
+                align: "center"
+            }
+        );
+
+        documento.setTextColor(
+            ...colores.texto
+        );
+
+        documento.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        documento.setFontSize(7.5);
+
+        documento.text(
+            "Importante",
+            margen + 13,
+            y + 7
+        );
+
+        documento.setTextColor(
+            ...colores.suave
+        );
+
+        documento.setFont(
+            "helvetica",
+            "normal"
+        );
+
+        documento.setFontSize(6.8);
+
+        const textoAviso =
+            documento.splitTextToSize(
+                "Este comprobante confirma el registro de la solicitud. La reservación queda sujeta a validación y confirmación por parte de la agencia.",
+                anchoContenido - 18
+            );
+
+        documento.text(
+            textoAviso,
+            margen + 13,
+            y + 11
+        );
+
+        /* =====================================================
+           PIE DEL DOCUMENTO
+        ===================================================== */
+
+        documento.setFillColor(
+            ...colores.azul
+        );
+
+        documento.rect(
+            0,
+            278,
+            paginaAncho,
+            19,
+            "F"
+        );
+
+        documento.setTextColor(
+            ...colores.blanco
+        );
+
+        documento.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        documento.setFontSize(7.2);
+
+        documento.text(
+            "AutoRentCar",
+            margen,
+            286
+        );
+
+        documento.setFont(
+            "helvetica",
+            "normal"
+        );
+
+        documento.setTextColor(
+            203,
+            213,
+            225
+        );
+
+        documento.setFontSize(6.7);
+
+        documento.text(
+            "+1 849-276-6030 | contacto@autorentcar.com",
+            margen,
+            291
+        );
+
+        documento.text(
+            "Documento generado electrónicamente",
+            paginaAncho - margen,
+            286,
+            {
+                align: "right"
+            }
+        );
+
+        documento.text(
+            "Página 1 de 1",
+            paginaAncho - margen,
+            291,
+            {
+                align: "right"
+            }
+        );
 
         const codigoArchivo = String(
             reservacion.codigo ||
@@ -1065,7 +1932,10 @@ function descargarResumenReservacion() {
                 /[^a-zA-Z0-9-_]/g,
                 "-"
             )
-            .replace(/-+/g, "-");
+            .replace(
+                /-+/g,
+                "-"
+            );
 
         documento.save(
             `reservacion-${codigoArchivo}.pdf`
@@ -1073,7 +1943,7 @@ function descargarResumenReservacion() {
 
         mostrarNotificacion(
             "PDF descargado",
-            "El comprobante fue descargado en formato PDF."
+            "El comprobante fue descargado con la cantidad de vehículos reservados."
         );
     } catch (error) {
         console.error(
@@ -1089,6 +1959,68 @@ function descargarResumenReservacion() {
 }
 
 /* =========================================================
+   CANTIDAD Y DÍAS
+========================================================= */
+
+function obtenerCantidadReservada() {
+    const cantidad = Number(
+        ultimaReservacion?.cantidadVehiculos
+    );
+
+    /*
+     * Las reservaciones anteriores a la
+     * actualización cuentan como una unidad.
+     */
+    if (
+        !Number.isInteger(cantidad) ||
+        cantidad < 1
+    ) {
+        return 1;
+    }
+
+    return cantidad;
+}
+
+function obtenerDiasReservados() {
+    const dias = Number(
+        ultimaReservacion?.dias
+    );
+
+    if (
+        !Number.isInteger(dias) ||
+        dias < 0
+    ) {
+        return 0;
+    }
+
+    return dias;
+}
+
+function formatearCantidadReservada(
+    cantidad
+) {
+    const total = Number(cantidad) || 0;
+
+    if (total === 1) {
+        return "1 vehículo";
+    }
+
+    return `${total} vehículos`;
+}
+
+function formatearDiasConfirmacion(
+    cantidad
+) {
+    const dias = Number(cantidad) || 0;
+
+    if (dias === 1) {
+        return "1 día";
+    }
+
+    return `${dias} días`;
+}
+
+/* =========================================================
    FUNCIONES AUXILIARES
 ========================================================= */
 
@@ -1096,73 +2028,137 @@ function colocarConfirmacion(id, valor) {
     const elemento = document.getElementById(id);
 
     if (elemento) {
-        elemento.textContent = valor ?? "Sin información";
+        elemento.textContent =
+            valor ??
+            "Sin información";
     }
 }
 
-function formatearMoneda(valor) {
-    const numero = Number(valor) || 0;
+function obtenerNumeroSeguro(valor) {
+    const numero = Number(valor);
 
-    return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD"
-    }).format(numero);
+    return Number.isFinite(numero)
+        ? numero
+        : 0;
 }
 
-function formatearFechaConfirmacion(fechaTexto) {
+function formatearMoneda(valor) {
+    const numero =
+        obtenerNumeroSeguro(valor);
+
+    return new Intl.NumberFormat(
+        "en-US",
+        {
+            style: "currency",
+            currency: "USD"
+        }
+    ).format(numero);
+}
+
+function formatearFechaConfirmacion(
+    fechaTexto
+) {
     if (!fechaTexto) {
         return "Sin información";
     }
 
-    const fecha = new Date(`${fechaTexto}T00:00:00`);
+    const fecha = new Date(
+        `${fechaTexto}T00:00:00`
+    );
 
-    return fecha.toLocaleDateString("es-DO", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric"
-    });
+    if (
+        Number.isNaN(fecha.getTime())
+    ) {
+        return fechaTexto;
+    }
+
+    return fecha.toLocaleDateString(
+        "es-DO",
+        {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        }
+    );
 }
 
-function formatearHoraConfirmacion(horaTexto) {
+function formatearHoraConfirmacion(
+    horaTexto
+) {
     if (!horaTexto) {
         return "Sin información";
     }
 
-    const partes = horaTexto.split(":");
+    const partes =
+        horaTexto.split(":");
+
+    if (partes.length < 2) {
+        return horaTexto;
+    }
+
+    const hora = Number(partes[0]);
+    const minutos = Number(partes[1]);
+
+    if (
+        !Number.isInteger(hora) ||
+        !Number.isInteger(minutos)
+    ) {
+        return horaTexto;
+    }
 
     const fecha = new Date();
 
     fecha.setHours(
-        Number(partes[0]),
-        Number(partes[1]),
+        hora,
+        minutos,
         0,
         0
     );
 
-    return fecha.toLocaleTimeString("es-DO", {
-        hour: "numeric",
-        minute: "2-digit"
-    });
+    return fecha.toLocaleTimeString(
+        "es-DO",
+        {
+            hour: "numeric",
+            minute: "2-digit"
+        }
+    );
 }
 
-function formatearFechaHoraRegistro(fechaTexto) {
+function formatearFechaHoraRegistro(
+    fechaTexto
+) {
     if (!fechaTexto) {
         return "Sin información";
     }
 
-    return new Date(fechaTexto).toLocaleString("es-DO", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit"
-    });
+    const fecha = new Date(
+        fechaTexto
+    );
+
+    if (
+        Number.isNaN(fecha.getTime())
+    ) {
+        return fechaTexto;
+    }
+
+    return fecha.toLocaleString(
+        "es-DO",
+        {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
+        }
+    );
 }
 
 function escaparHTML(texto) {
-    const elemento = document.createElement("div");
+    const elemento =
+        document.createElement("div");
 
-    elemento.textContent = texto ?? "";
+    elemento.textContent =
+        String(texto ?? "");
 
     return elemento.innerHTML;
 }

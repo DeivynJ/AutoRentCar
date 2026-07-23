@@ -6,13 +6,20 @@ let vehiculoReserva = null;
 let descuentoReserva = 0;
 let reservacionEnProceso = false;
 
+let cantidadVehiculosReserva = 1;
+let cantidadDisponibleReserva = 0;
+
 document.addEventListener("DOMContentLoaded", () => {
     cargarVehiculoReserva();
     cargarBusquedaReserva();
     configurarFechasReserva();
+    configurarCantidadVehiculos();
     configurarCalculoReserva();
     configurarCodigoPromocional();
     configurarEnvioReservacion();
+
+    actualizarDisponibilidadReserva();
+    actualizarResumenReserva();
 });
 
 /* =========================================================
@@ -25,7 +32,12 @@ function cargarVehiculoReserva() {
     );
 
     if (!guardado) {
+        vehiculoReserva = null;
+        cantidadDisponibleReserva = 0;
+
+        actualizarDisponibilidadReserva();
         actualizarResumenReserva();
+
         return;
     }
 
@@ -49,44 +61,84 @@ function cargarVehiculoReserva() {
     );
 
     if (!contenedor || !vehiculoReserva) {
+        actualizarDisponibilidadReserva();
         actualizarResumenReserva();
+
         return;
     }
 
+    const cantidadTotal =
+        obtenerCantidadTotalVehiculoReserva();
+
     contenedor.innerHTML = `
         <img
-            src="${vehiculoReserva.imagen}"
-            alt="${vehiculoReserva.nombre}"
+            src="${escaparReservaHTML(
+                vehiculoReserva.imagen || ""
+            )}"
+            alt="${escaparReservaHTML(
+                vehiculoReserva.nombre ||
+                "Vehículo seleccionado"
+            )}"
             class="vehiculo-reserva-imagen"
         >
 
         <div class="vehiculo-reserva-datos">
 
             <span class="subtitulo">
-                ${vehiculoReserva.categoriaTexto}
+                ${escaparReservaHTML(
+                    vehiculoReserva.categoriaTexto ||
+                    vehiculoReserva.categoria ||
+                    "Sin categoría"
+                )}
             </span>
 
-            <h3>${vehiculoReserva.nombre}</h3>
+            <h3>
+                ${escaparReservaHTML(
+                    vehiculoReserva.nombre ||
+                    "Vehículo"
+                )}
+            </h3>
 
             <p>
-                ${vehiculoReserva.transmision} ·
-                ${vehiculoReserva.pasajeros} pasajeros ·
-                ${vehiculoReserva.combustible}
+                ${escaparReservaHTML(
+                    vehiculoReserva.transmision ||
+                    "Sin información"
+                )}
+                ·
+                ${Number(
+                    vehiculoReserva.pasajeros || 0
+                )} pasajeros
+                ·
+                ${escaparReservaHTML(
+                    vehiculoReserva.combustible ||
+                    "Sin información"
+                )}
+            </p>
+
+            <p class="unidades-flota-reserva">
+                <i class="fa-solid fa-car-side"></i>
+
+                ${formatearCantidadVehiculos(
+                    cantidadTotal
+                )} en la flota
             </p>
 
             <div class="vehiculo-precio">
+
                 <strong>
-                    US$${Number(
+                    ${formatearMonedaReserva(
                         vehiculoReserva.precio
-                    ).toFixed(2)}
+                    )}
                 </strong>
 
-                <span>por día</span>
+                <span>por vehículo y día</span>
+
             </div>
 
         </div>
     `;
 
+    actualizarDisponibilidadReserva();
     actualizarResumenReserva();
 }
 
@@ -108,22 +160,22 @@ function cargarBusquedaReserva() {
 
         asignarValor(
             "reserva-ubicacion",
-            busqueda.lugar
+            busqueda?.lugar
         );
 
         asignarValor(
             "reserva-entrega-lugar",
-            busqueda.lugar
+            busqueda?.lugar
         );
 
         asignarValor(
             "reserva-fecha-recogida",
-            busqueda.fechaRecogida
+            busqueda?.fechaRecogida
         );
 
         asignarValor(
             "reserva-fecha-entrega",
-            busqueda.fechaEntrega
+            busqueda?.fechaEntrega
         );
     } catch (error) {
         localStorage.removeItem(
@@ -188,7 +240,9 @@ function configurarFechasReserva() {
 
     recogida.addEventListener("change", () => {
         if (!recogida.value) {
+            actualizarDisponibilidadReserva();
             actualizarResumenReserva();
+
             return;
         }
 
@@ -206,14 +260,16 @@ function configurarFechasReserva() {
             entrega.value = siguiente;
         }
 
+        actualizarDisponibilidadReserva();
         actualizarResumenReserva();
     });
 
-    entrega.addEventListener(
-        "change",
-        actualizarResumenReserva
-    );
+    entrega.addEventListener("change", () => {
+        actualizarDisponibilidadReserva();
+        actualizarResumenReserva();
+    });
 
+    actualizarDisponibilidadReserva();
     actualizarResumenReserva();
 }
 
@@ -259,6 +315,495 @@ function sumarDiasReserva(fechaTexto, dias) {
             "0"
         )
     ].join("-");
+}
+
+/* =========================================================
+   CANTIDAD DE VEHÍCULOS
+========================================================= */
+
+function configurarCantidadVehiculos() {
+    const campoCantidad = document.getElementById(
+        "reserva-cantidad-vehiculos"
+    );
+
+    const botonDisminuir = document.getElementById(
+        "disminuir-cantidad-vehiculos"
+    );
+
+    const botonAumentar = document.getElementById(
+        "aumentar-cantidad-vehiculos"
+    );
+
+    if (!campoCantidad) {
+        return;
+    }
+
+    cantidadVehiculosReserva = 1;
+    campoCantidad.value = "1";
+
+    botonDisminuir?.addEventListener("click", () => {
+        establecerCantidadVehiculos(
+            cantidadVehiculosReserva - 1
+        );
+    });
+
+    botonAumentar?.addEventListener("click", () => {
+        establecerCantidadVehiculos(
+            cantidadVehiculosReserva + 1
+        );
+    });
+
+    campoCantidad.addEventListener("input", () => {
+        const cantidadIntroducida = Number(
+            campoCantidad.value
+        );
+
+        if (!Number.isInteger(cantidadIntroducida)) {
+            return;
+        }
+
+        cantidadVehiculosReserva =
+            cantidadIntroducida;
+
+        actualizarControlesCantidad();
+        actualizarResumenReserva();
+    });
+
+    campoCantidad.addEventListener("change", () => {
+        establecerCantidadVehiculos(
+            Number(campoCantidad.value)
+        );
+
+        validarCampoReserva(campoCantidad);
+    });
+
+    actualizarControlesCantidad();
+}
+
+function establecerCantidadVehiculos(cantidad) {
+    const campoCantidad = document.getElementById(
+        "reserva-cantidad-vehiculos"
+    );
+
+    if (!campoCantidad) {
+        return;
+    }
+
+    const limiteSuperior = Math.max(
+        1,
+        cantidadDisponibleReserva
+    );
+
+    let cantidadCorregida = Number(cantidad);
+
+    if (!Number.isInteger(cantidadCorregida)) {
+        cantidadCorregida = 1;
+    }
+
+    cantidadCorregida = Math.max(
+        1,
+        Math.min(
+            cantidadCorregida,
+            limiteSuperior
+        )
+    );
+
+    cantidadVehiculosReserva =
+        cantidadCorregida;
+
+    campoCantidad.value = String(
+        cantidadVehiculosReserva
+    );
+
+    actualizarControlesCantidad();
+    actualizarResumenReserva();
+    validarCampoReserva(campoCantidad);
+}
+
+function obtenerCantidadVehiculosSeleccionada() {
+    const campoCantidad = document.getElementById(
+        "reserva-cantidad-vehiculos"
+    );
+
+    const cantidad = Number(
+        campoCantidad?.value ||
+        cantidadVehiculosReserva ||
+        1
+    );
+
+    if (
+        !Number.isInteger(cantidad) ||
+        cantidad < 1
+    ) {
+        return 1;
+    }
+
+    return cantidad;
+}
+
+function actualizarControlesCantidad() {
+    const campoCantidad = document.getElementById(
+        "reserva-cantidad-vehiculos"
+    );
+
+    const botonDisminuir = document.getElementById(
+        "disminuir-cantidad-vehiculos"
+    );
+
+    const botonAumentar = document.getElementById(
+        "aumentar-cantidad-vehiculos"
+    );
+
+    if (!campoCantidad) {
+        return;
+    }
+
+    const limiteMaximo = Math.max(
+        1,
+        cantidadDisponibleReserva
+    );
+
+    campoCantidad.min = "1";
+    campoCantidad.max = String(limiteMaximo);
+
+    botonDisminuir?.toggleAttribute(
+        "disabled",
+        cantidadVehiculosReserva <= 1
+    );
+
+    botonAumentar?.toggleAttribute(
+        "disabled",
+        cantidadDisponibleReserva < 1 ||
+        cantidadVehiculosReserva >=
+            cantidadDisponibleReserva
+    );
+
+    campoCantidad.disabled =
+        !vehiculoReserva ||
+        cantidadDisponibleReserva < 1;
+}
+
+/* =========================================================
+   DISPONIBILIDAD POR CANTIDAD
+========================================================= */
+
+function actualizarDisponibilidadReserva() {
+    cantidadDisponibleReserva =
+        calcularCantidadDisponibleReserva();
+
+    const cantidadSeleccionada =
+        obtenerCantidadVehiculosSeleccionada();
+
+    if (
+        cantidadDisponibleReserva > 0 &&
+        cantidadSeleccionada >
+            cantidadDisponibleReserva
+    ) {
+        cantidadVehiculosReserva =
+            cantidadDisponibleReserva;
+
+        const campoCantidad =
+            document.getElementById(
+                "reserva-cantidad-vehiculos"
+            );
+
+        if (campoCantidad) {
+            campoCantidad.value = String(
+                cantidadVehiculosReserva
+            );
+        }
+    }
+
+    if (cantidadDisponibleReserva < 1) {
+        cantidadVehiculosReserva = 1;
+
+        const campoCantidad =
+            document.getElementById(
+                "reserva-cantidad-vehiculos"
+            );
+
+        if (campoCantidad) {
+            campoCantidad.value = "1";
+        }
+    }
+
+    mostrarEstadoDisponibilidadReserva();
+    actualizarControlesCantidad();
+    actualizarResumenReserva();
+}
+
+function calcularCantidadDisponibleReserva() {
+    if (!vehiculoReserva) {
+        return 0;
+    }
+
+    const cantidadTotal =
+        obtenerCantidadTotalVehiculoReserva();
+
+    const fechaRecogida = obtenerValorCampo(
+        "reserva-fecha-recogida"
+    );
+
+    const fechaEntrega = obtenerValorCampo(
+        "reserva-fecha-entrega"
+    );
+
+    if (
+        !fechaRecogida ||
+        !fechaEntrega ||
+        fechaEntrega <= fechaRecogida
+    ) {
+        return cantidadTotal;
+    }
+
+    const cantidadOcupada =
+        calcularCantidadOcupadaReserva(
+            fechaRecogida,
+            fechaEntrega
+        );
+
+    return Math.max(
+        0,
+        cantidadTotal - cantidadOcupada
+    );
+}
+
+function calcularCantidadOcupadaReserva(
+    fechaRecogida,
+    fechaEntrega
+) {
+    const reservaciones =
+        obtenerReservacionesGuardadas();
+
+    return reservaciones.reduce(
+        (totalOcupado, reservacion) => {
+            if (
+                !esReservacionActiva(
+                    reservacion
+                )
+            ) {
+                return totalOcupado;
+            }
+
+            const mismoVehiculo =
+                obtenerIdentificadorVehiculo(
+                    reservacion.vehiculo
+                ) ===
+                obtenerIdentificadorVehiculo(
+                    vehiculoReserva
+                );
+
+            if (!mismoVehiculo) {
+                return totalOcupado;
+            }
+
+            const seCruzan =
+                fechasReservacionSeCruzan(
+                    fechaRecogida,
+                    fechaEntrega,
+                    reservacion.fechaRecogida,
+                    reservacion.fechaEntrega
+                );
+
+            if (!seCruzan) {
+                return totalOcupado;
+            }
+
+            const cantidadReservada =
+                obtenerCantidadReservadaExistente(
+                    reservacion
+                );
+
+            return (
+                totalOcupado +
+                cantidadReservada
+            );
+        },
+        0
+    );
+}
+
+function obtenerCantidadReservadaExistente(
+    reservacion
+) {
+    const cantidad = Number(
+        reservacion?.cantidadVehiculos
+    );
+
+    /*
+     * Las reservaciones creadas antes de esta
+     * actualización cuentan como una unidad.
+     */
+    if (
+        !Number.isInteger(cantidad) ||
+        cantidad < 1
+    ) {
+        return 1;
+    }
+
+    return cantidad;
+}
+
+function esReservacionActiva(reservacion) {
+    const estado = normalizarEstadoReserva(
+        reservacion?.estado
+    );
+
+    const estadosInactivos = [
+        "cancelada",
+        "cancelado",
+        "finalizada",
+        "finalizado",
+        "completada",
+        "completado",
+        "rechazada",
+        "rechazado"
+    ];
+
+    return !estadosInactivos.includes(
+        estado
+    );
+}
+
+function mostrarEstadoDisponibilidadReserva() {
+    const contenedor = document.getElementById(
+        "estado-disponibilidad-reserva"
+    );
+
+    const titulo = document.getElementById(
+        "disponibilidad-unidades-reserva"
+    );
+
+    const mensaje = document.getElementById(
+        "mensaje-disponibilidad-reserva"
+    );
+
+    if (!contenedor || !titulo || !mensaje) {
+        return;
+    }
+
+    contenedor.classList.remove(
+        "disponible",
+        "agotado"
+    );
+
+    const icono = contenedor.querySelector("i");
+
+    if (!vehiculoReserva) {
+        titulo.textContent =
+            "Selecciona un vehículo para continuar.";
+
+        mensaje.textContent =
+            "Regresa al catálogo y elige el modelo de tu preferencia.";
+
+        cambiarIconoDisponibilidad(
+            icono,
+            "fa-circle-info"
+        );
+
+        return;
+    }
+
+    const fechaRecogida = obtenerValorCampo(
+        "reserva-fecha-recogida"
+    );
+
+    const fechaEntrega = obtenerValorCampo(
+        "reserva-fecha-entrega"
+    );
+
+    if (
+        !fechaRecogida ||
+        !fechaEntrega ||
+        fechaEntrega <= fechaRecogida
+    ) {
+        const cantidadTotal =
+            obtenerCantidadTotalVehiculoReserva();
+
+        titulo.textContent =
+            `${formatearCantidadVehiculos(
+                cantidadTotal
+            )} en la flota`;
+
+        mensaje.textContent =
+            "Selecciona fechas válidas para comprobar la disponibilidad exacta.";
+
+        cambiarIconoDisponibilidad(
+            icono,
+            "fa-circle-info"
+        );
+
+        return;
+    }
+
+    if (cantidadDisponibleReserva < 1) {
+        contenedor.classList.add(
+            "agotado"
+        );
+
+        titulo.textContent =
+            "No hay unidades disponibles para estas fechas.";
+
+        mensaje.textContent =
+            "Selecciona otro periodo o elige otro modelo del catálogo.";
+
+        cambiarIconoDisponibilidad(
+            icono,
+            "fa-circle-xmark"
+        );
+
+        return;
+    }
+
+    contenedor.classList.add(
+        "disponible"
+    );
+
+    titulo.textContent =
+        `${formatearCantidadVehiculos(
+            cantidadDisponibleReserva
+        )} disponibles`;
+
+    mensaje.textContent =
+        cantidadDisponibleReserva === 1
+            ? "Puedes solicitar la única unidad disponible para este periodo."
+            : `Puedes solicitar entre 1 y ${cantidadDisponibleReserva} vehículos para este periodo.`;
+
+    cambiarIconoDisponibilidad(
+        icono,
+        "fa-circle-check"
+    );
+}
+
+function cambiarIconoDisponibilidad(
+    icono,
+    claseNueva
+) {
+    if (!icono) {
+        return;
+    }
+
+    icono.className =
+        `fa-solid ${claseNueva}`;
+}
+
+function obtenerCantidadTotalVehiculoReserva() {
+    const cantidad = Number(
+        vehiculoReserva?.cantidadTotal
+    );
+
+    /*
+     * Compatibilidad con vehículos guardados
+     * antes de incorporar cantidadTotal.
+     */
+    if (
+        !Number.isInteger(cantidad) ||
+        cantidad < 1
+    ) {
+        return 1;
+    }
+
+    return cantidad;
 }
 
 /* =========================================================
@@ -319,11 +864,17 @@ function calcularDiasReserva() {
 function actualizarResumenReserva() {
     const dias = calcularDiasReserva();
 
+    const cantidadVehiculos =
+        obtenerCantidadVehiculosSeleccionada();
+
     const precioDiario = Number(
         vehiculoReserva?.precio || 0
     );
 
-    const subtotal = precioDiario * dias;
+    const subtotal =
+        precioDiario *
+        dias *
+        cantidadVehiculos;
 
     let adicionales = 0;
 
@@ -336,13 +887,20 @@ function actualizarResumenReserva() {
                 opcion.dataset.precio || 0
             );
 
+            /*
+             * En esta versión los servicios
+             * adicionales se cobran por vehículo
+             * y por día.
+             */
             adicionales +=
-                precioAdicional * dias;
+                precioAdicional *
+                dias *
+                cantidadVehiculos;
         });
 
     /*
-     * El descuento AUTO15 se aplica únicamente
-     * al costo del vehículo.
+     * AUTO15 se aplica únicamente sobre
+     * el costo de los vehículos.
      */
     const descuento =
         subtotal * descuentoReserva;
@@ -354,7 +912,9 @@ function actualizarResumenReserva() {
 
     colocarTexto(
         "resumen-precio-diario",
-        `US$${precioDiario.toFixed(2)}`
+        formatearMonedaReserva(
+            precioDiario
+        )
     );
 
     colocarTexto(
@@ -363,26 +923,36 @@ function actualizarResumenReserva() {
     );
 
     colocarTexto(
+        "resumen-cantidad-vehiculos",
+        cantidadVehiculos
+    );
+
+    colocarTexto(
         "resumen-subtotal",
-        `US$${subtotal.toFixed(2)}`
+        formatearMonedaReserva(
+            subtotal
+        )
     );
 
     colocarTexto(
         "resumen-adicionales",
-        `US$${adicionales.toFixed(2)}`
+        formatearMonedaReserva(
+            adicionales
+        )
     );
 
     colocarTexto(
         "resumen-descuento",
-        `-US$${descuento.toFixed(2)}`
+        `-${formatearMonedaReserva(
+            descuento
+        )}`
     );
 
     colocarTexto(
         "resumen-total",
-        `US$${Math.max(
-            0,
-            total
-        ).toFixed(2)}`
+        formatearMonedaReserva(
+            Math.max(0, total)
+        )
     );
 }
 
@@ -429,6 +999,7 @@ function configurarCodigoPromocional() {
             mensaje.style.color = "#ef4444";
 
             actualizarResumenReserva();
+
             return;
         }
 
@@ -437,13 +1008,13 @@ function configurarCodigoPromocional() {
             campo.value = "AUTO15";
 
             mensaje.textContent =
-                "Código aplicado: 15 % de descuento sobre el costo del vehículo. No aplica a los servicios adicionales.";
+                "Código aplicado: 15 % de descuento sobre el costo de los vehículos. No aplica a los servicios adicionales.";
 
             mensaje.style.color = "#16a36a";
 
             mostrarNotificacion(
                 "Descuento aplicado",
-                "Se aplicó un 15 % sobre el costo del vehículo. Los servicios adicionales no están incluidos."
+                "Se aplicó un 15 % sobre el costo de los vehículos. Los servicios adicionales no están incluidos."
             );
         } else {
             descuentoReserva = 0;
@@ -546,6 +1117,8 @@ function configurarEnvioReservacion() {
                 return;
             }
 
+            actualizarDisponibilidadReserva();
+
             let formularioValido = true;
 
             campos.forEach((campo) => {
@@ -580,6 +1153,36 @@ function configurarEnvioReservacion() {
                 return;
             }
 
+            const cantidadSolicitada =
+                obtenerCantidadVehiculosSeleccionada();
+
+            if (
+                cantidadDisponibleReserva < 1
+            ) {
+                mostrarNotificacion(
+                    "Sin disponibilidad",
+                    "No quedan unidades disponibles para las fechas seleccionadas."
+                );
+
+                return;
+            }
+
+            if (
+                cantidadSolicitada >
+                cantidadDisponibleReserva
+            ) {
+                mostrarNotificacion(
+                    "Cantidad no disponible",
+                    `Solo quedan ${formatearCantidadVehiculos(
+                        cantidadDisponibleReserva
+                    )} disponibles para esas fechas.`
+                );
+
+                actualizarControlesCantidad();
+
+                return;
+            }
+
             const aceptar =
                 document.getElementById(
                     "aceptar-reserva"
@@ -606,20 +1209,25 @@ function configurarEnvioReservacion() {
                 return;
             }
 
-            const conflicto =
-                verificarConflictoReservacion(
-                    reservacion
-                );
+            /*
+             * Se comprueba nuevamente justo antes
+             * de guardar para evitar inconsistencias.
+             */
+            const disponibilidadFinal =
+                calcularCantidadDisponibleReserva();
 
-            if (conflicto) {
+            if (
+                reservacion.cantidadVehiculos >
+                disponibilidadFinal
+            ) {
                 mostrarNotificacion(
-                    "Vehículo no disponible",
-                    `Este vehículo ya tiene una reservación activa del ${formatearFechaConflicto(
-                        conflicto.fechaRecogida
-                    )} al ${formatearFechaConflicto(
-                        conflicto.fechaEntrega
+                    "Disponibilidad actualizada",
+                    `La disponibilidad cambió. Ahora solo quedan ${formatearCantidadVehiculos(
+                        disponibilidadFinal
                     )}.`
                 );
+
+                actualizarDisponibilidadReserva();
 
                 return;
             }
@@ -656,17 +1264,15 @@ function configurarEnvioReservacion() {
                     JSON.stringify(reservacion)
                 );
 
-                /*
-                 * Se elimina el vehículo temporal
-                 * después de guardar correctamente.
-                 */
                 localStorage.removeItem(
                     "autorentcarVehiculoSeleccionado"
                 );
 
                 mostrarNotificacion(
                     "Reservación registrada",
-                    `Tu solicitud ${reservacion.codigo} fue registrada correctamente.`
+                    `Tu solicitud ${reservacion.codigo} para ${formatearCantidadVehiculos(
+                        reservacion.cantidadVehiculos
+                    )} fue registrada correctamente.`
                 );
 
                 setTimeout(() => {
@@ -714,8 +1320,9 @@ function obtenerReservacionesGuardadas() {
     }
 
     try {
-        const reservaciones =
-            JSON.parse(contenido);
+        const reservaciones = JSON.parse(
+            contenido
+        );
 
         return Array.isArray(reservaciones)
             ? reservaciones
@@ -865,6 +1472,35 @@ function validarCampoReserva(campo) {
         }
     }
 
+    if (
+        campo.id ===
+            "reserva-cantidad-vehiculos" &&
+        valor
+    ) {
+        const cantidad = Number(valor);
+
+        if (
+            !Number.isInteger(cantidad) ||
+            cantidad < 1
+        ) {
+            mensaje =
+                "Selecciona al menos un vehículo.";
+        } else if (
+            cantidadDisponibleReserva < 1
+        ) {
+            mensaje =
+                "No hay unidades disponibles para estas fechas.";
+        } else if (
+            cantidad >
+            cantidadDisponibleReserva
+        ) {
+            mensaje =
+                `Solo hay ${formatearCantidadVehiculos(
+                    cantidadDisponibleReserva
+                )} disponibles.`;
+        }
+    }
+
     if (mensaje) {
         contenedor?.classList.add("error");
 
@@ -893,11 +1529,6 @@ function validarDocumentoReserva(valor) {
         .trim()
         .replace(/\s+/g, "");
 
-    /*
-     * Acepta:
-     * - Cédula dominicana con o sin guiones.
-     * - Pasaporte alfanumérico de 6 a 20 caracteres.
-     */
     const cedulaDominicana =
         /^\d{3}-?\d{7}-?\d{1}$/.test(
             documento
@@ -952,12 +1583,17 @@ function construirReservacion() {
 
     const dias = calcularDiasReserva();
 
+    const cantidadVehiculos =
+        obtenerCantidadVehiculosSeleccionada();
+
     const precioDiario = Number(
         vehiculoReserva.precio || 0
     );
 
     const subtotal =
-        precioDiario * dias;
+        precioDiario *
+        dias *
+        cantidadVehiculos;
 
     const adicionalesSeleccionados = [];
 
@@ -984,13 +1620,21 @@ function construirReservacion() {
                 opcion.dataset.precio || 0
             );
 
+            const costoTotal =
+                precio *
+                dias *
+                cantidadVehiculos;
+
             adicionalesSeleccionados.push({
                 nombre,
-                precioDiario: precio
+                precioDiario: precio,
+                aplicaPorVehiculo: true,
+                cantidadVehiculos,
+                costoTotal
             });
 
             costoAdicionales +=
-                precio * dias;
+                costoTotal;
         });
 
     const descuento =
@@ -1006,6 +1650,7 @@ function construirReservacion() {
 
     return {
         codigo,
+
         fechaRegistro:
             new Date().toISOString(),
 
@@ -1015,6 +1660,11 @@ function construirReservacion() {
         vehiculo: {
             ...vehiculoReserva
         },
+
+        cantidadVehiculos,
+
+        cantidadDisponibleAlReservar:
+            cantidadDisponibleReserva,
 
         lugarRecogida:
             obtenerValorCampo(
@@ -1125,55 +1775,8 @@ function crearCodigoReservacion() {
 }
 
 /* =========================================================
-   DISPONIBILIDAD DEL VEHÍCULO
+   IDENTIFICACIÓN Y CRUCE DE FECHAS
 ========================================================= */
-
-function verificarConflictoReservacion(
-    nuevaReservacion
-) {
-    const reservacionesGuardadas =
-        obtenerReservacionesGuardadas();
-
-    return reservacionesGuardadas.find(
-        (reservacionExistente) => {
-            const mismoVehiculo =
-                obtenerIdentificadorVehiculo(
-                    reservacionExistente.vehiculo
-                ) ===
-                obtenerIdentificadorVehiculo(
-                    nuevaReservacion.vehiculo
-                );
-
-            if (!mismoVehiculo) {
-                return false;
-            }
-
-            const estado =
-                normalizarEstadoReserva(
-                    reservacionExistente.estado
-                );
-
-            const reservacionActiva =
-                estado !== "cancelada" &&
-                estado !== "cancelado" &&
-                estado !== "finalizada" &&
-                estado !== "finalizado" &&
-                estado !== "completada" &&
-                estado !== "completado";
-
-            if (!reservacionActiva) {
-                return false;
-            }
-
-            return fechasReservacionSeCruzan(
-                nuevaReservacion.fechaRecogida,
-                nuevaReservacion.fechaEntrega,
-                reservacionExistente.fechaRecogida,
-                reservacionExistente.fechaEntrega
-            );
-        }
-    );
-}
 
 function obtenerIdentificadorVehiculo(
     vehiculo
@@ -1236,8 +1839,8 @@ function fechasReservacionSeCruzan(
     }
 
     /*
-     * Permite que una nueva reservación comience
-     * el mismo día en que termina la reservación anterior.
+     * Se permite iniciar una reservación el mismo
+     * día en que termina la reservación anterior.
      */
     return (
         nuevaFechaInicio <
@@ -1258,29 +1861,45 @@ function normalizarEstadoReserva(estado) {
         .trim();
 }
 
-function formatearFechaConflicto(
-    fechaTexto
+/* =========================================================
+   FUNCIONES DE FORMATO Y SEGURIDAD
+========================================================= */
+
+function formatearCantidadVehiculos(
+    cantidad
 ) {
-    if (!fechaTexto) {
-        return "una fecha no disponible";
+    const total = Number(cantidad) || 0;
+
+    if (total === 1) {
+        return "1 unidad";
     }
 
-    const fecha = new Date(
-        `${fechaTexto}T00:00:00`
-    );
+    return `${total} unidades`;
+}
 
-    if (
-        Number.isNaN(fecha.getTime())
-    ) {
-        return fechaTexto;
-    }
+function formatearMonedaReserva(valor) {
+    const numero = Number(valor);
 
-    return fecha.toLocaleDateString(
-        "es-DO",
+    const cantidad =
+        Number.isFinite(numero)
+            ? numero
+            : 0;
+
+    return new Intl.NumberFormat(
+        "en-US",
         {
-            day: "2-digit",
-            month: "long",
-            year: "numeric"
+            style: "currency",
+            currency: "USD"
         }
-    );
+    ).format(cantidad);
+}
+
+function escaparReservaHTML(texto) {
+    const elemento =
+        document.createElement("div");
+
+    elemento.textContent =
+        String(texto ?? "");
+
+    return elemento.innerHTML;
 }

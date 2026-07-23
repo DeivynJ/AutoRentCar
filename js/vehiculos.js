@@ -16,6 +16,7 @@ const vehiculos = [
         categoria: "Económico",
         categoriaTexto: "Económico",
         precio: 45,
+        cantidadTotal: 5,
         transmision: "Automática",
         combustible: "Gasolina",
         pasajeros: 5,
@@ -37,6 +38,7 @@ const vehiculos = [
         categoria: "Gama media",
         categoriaTexto: "Gama media",
         precio: 68,
+        cantidadTotal: 3,
         transmision: "Automática",
         combustible: "Gasolina",
         pasajeros: 5,
@@ -58,6 +60,7 @@ const vehiculos = [
         categoria: "Económico",
         categoriaTexto: "Económico",
         precio: 35,
+        cantidadTotal: 4,
         transmision: "Automática",
         combustible: "Gasolina",
         pasajeros: 4,
@@ -79,6 +82,7 @@ const vehiculos = [
         categoria: "Gama media",
         categoriaTexto: "Gama media",
         precio: 75,
+        cantidadTotal: 2,
         transmision: "Automática",
         combustible: "Gasolina",
         pasajeros: 5,
@@ -100,6 +104,7 @@ const vehiculos = [
         categoria: "Vehículo de lujo",
         categoriaTexto: "Vehículo de lujo",
         precio: 125,
+        cantidadTotal: 2,
         transmision: "Automática",
         combustible: "Gasolina",
         pasajeros: 5,
@@ -121,6 +126,7 @@ const vehiculos = [
         categoria: "Económico",
         categoriaTexto: "Económico",
         precio: 42,
+        cantidadTotal: 3,
         transmision: "Automática",
         combustible: "Gasolina",
         pasajeros: 5,
@@ -142,6 +148,7 @@ const vehiculos = [
         categoria: "Vehículo de lujo",
         categoriaTexto: "Vehículo de lujo",
         precio: 32,
+        cantidadTotal: 1,
         transmision: "Automática",
         combustible: "Gasolina",
         pasajeros: 4,
@@ -163,6 +170,7 @@ const vehiculos = [
         categoria: "Vehículo de lujo",
         categoriaTexto: "Vehículo de lujo",
         precio: 155,
+        cantidadTotal: 2,
         transmision: "Automática",
         combustible: "Gasolina",
         pasajeros: 5,
@@ -184,6 +192,7 @@ const vehiculos = [
         categoria: "Gama media",
         categoriaTexto: "Gama media",
         precio: 110,
+        cantidadTotal: 3,
         transmision: "Automática",
         combustible: "Gasolina",
         pasajeros: 5,
@@ -307,10 +316,15 @@ function crearTarjetaVehiculo(vehiculo) {
         "Sin información"
     );
 
-    const combustible = escaparVehiculoHTML(
-        vehiculo.combustible ||
-        "Sin información"
-    );
+    const cantidadTotal =
+        obtenerCantidadTotalVehiculo(
+            vehiculo
+        );
+
+    const textoUnidades =
+        formatearUnidadesVehiculo(
+            cantidadTotal
+        );
 
     return `
         <article class="tarjeta-vehiculo">
@@ -405,9 +419,9 @@ function crearTarjetaVehiculo(vehiculo) {
                     </span>
 
                     <span>
-                        <i class="fa-solid fa-gas-pump"></i>
+                        <i class="fa-solid fa-car-side"></i>
 
-                        ${combustible}
+                        ${textoUnidades}
                     </span>
 
                 </div>
@@ -496,6 +510,16 @@ function mostrarDetallesVehiculo(id) {
         return;
     }
 
+    const cantidadTotal =
+        obtenerCantidadTotalVehiculo(
+            vehiculo
+        );
+
+    const textoUnidades =
+        formatearUnidadesVehiculo(
+            cantidadTotal
+        );
+
     contenidoModal.innerHTML = `
         <img
             src="${escaparVehiculoHTML(
@@ -578,16 +602,37 @@ function mostrarDetallesVehiculo(id) {
 
                 <div class="modal-detalle">
 
-                    <i class="fa-solid fa-gears"></i>
+                    <i class="fa-solid fa-car-side"></i>
 
                     <strong>
-                        ${escaparVehiculoHTML(
-                            vehiculo.transmision ||
-                            "Sin información"
-                        )}
+                        ${cantidadTotal}
                     </strong>
 
-                    <span>Transmisión</span>
+                    <span>
+                        ${
+                            cantidadTotal === 1
+                                ? "Unidad en flota"
+                                : "Unidades en flota"
+                        }
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="disponibilidad-modelo">
+
+                <i class="fa-solid fa-circle-check"></i>
+
+                <div>
+
+                    <strong>
+                        ${textoUnidades} en la flota
+                    </strong>
+
+                    <span>
+                        La disponibilidad exacta se comprobará según las fechas seleccionadas.
+                    </span>
 
                 </div>
 
@@ -1603,6 +1648,39 @@ function colocarResumenBusqueda(
     if (elemento) {
         elemento.textContent = valor;
     }
+}
+
+/* =========================================================
+   CANTIDAD DE UNIDADES POR MODELO
+========================================================= */
+
+function obtenerCantidadTotalVehiculo(
+    vehiculo
+) {
+    const cantidad = Number(
+        vehiculo?.cantidadTotal
+    );
+
+    if (
+        !Number.isInteger(cantidad) ||
+        cantidad < 0
+    ) {
+        return 0;
+    }
+
+    return cantidad;
+}
+
+function formatearUnidadesVehiculo(
+    cantidad
+) {
+    const total = Number(cantidad) || 0;
+
+    if (total === 1) {
+        return "1 unidad";
+    }
+
+    return `${total} unidades`;
 }
 
 /* =========================================================
