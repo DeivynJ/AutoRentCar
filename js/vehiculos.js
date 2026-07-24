@@ -26,7 +26,7 @@ const vehiculos = [
         destacado: true,
         etiqueta: "Más reservado",
         descripcion:
-            "Un sedán cómodo, seguro y económico, ideal para recorridos urbanos, viajes de trabajo y desplazamientos familiares.",
+            "Cómodo, seguro y económico, ideal para recorridos urbanos, viajes de trabajo y desplazamientos familiares.",
         imagen:
             "img/autos/Toyota-Corolla.jpg"
     },
@@ -37,7 +37,7 @@ const vehiculos = [
         marca: "Hyundai",
         categoria: "Gama media",
         categoriaTexto: "Gama media",
-        precio: 68,
+        precio: 70,
         cantidadTotal: 3,
         transmision: "Automática",
         combustible: "Gasolina",
@@ -48,7 +48,7 @@ const vehiculos = [
         destacado: true,
         etiqueta: "Recomendado",
         descripcion:
-            "SUV moderna con excelente espacio interior, gran comodidad y buen rendimiento para viajes familiares o recorridos largos.",
+            "Moderna con excelente espacio interior, gran comodidad y buen rendimiento para viajes familiares o recorridos largos.",
         imagen:
             "img/autos/Tuscon.jpg"
     },
@@ -59,7 +59,7 @@ const vehiculos = [
         marca: "Kia",
         categoria: "Económico",
         categoriaTexto: "Económico",
-        precio: 35,
+        precio: 40,
         cantidadTotal: 4,
         transmision: "Automática",
         combustible: "Gasolina",
@@ -81,7 +81,7 @@ const vehiculos = [
         marca: "Honda",
         categoria: "Gama media",
         categoriaTexto: "Gama media",
-        precio: 75,
+        precio: 55,
         cantidadTotal: 2,
         transmision: "Automática",
         combustible: "Gasolina",
@@ -92,7 +92,7 @@ const vehiculos = [
         destacado: false,
         etiqueta: "Familiar",
         descripcion:
-            "SUV espaciosa y confiable, diseñada para brindar comodidad, estabilidad y seguridad durante recorridos largos.",
+            "Espaciosa y confiable, diseñada para brindar comodidad, estabilidad y seguridad durante recorridos largos.",
         imagen:
             "img/autos/Honda-CRV.jpg"
     },
@@ -103,7 +103,7 @@ const vehiculos = [
         marca: "Mercedes-Benz",
         categoria: "Vehículo de lujo",
         categoriaTexto: "Vehículo de lujo",
-        precio: 125,
+        precio: 250,
         cantidadTotal: 2,
         transmision: "Automática",
         combustible: "Gasolina",
@@ -114,7 +114,7 @@ const vehiculos = [
         destacado: false,
         etiqueta: "Premium",
         descripcion:
-            "Vehículo elegante y sofisticado con interior de alta calidad, tecnología moderna y una experiencia de conducción superior.",
+            "Vehículo de lujo y sofisticado con interior de alta calidad, tecnología moderna y una experiencia de conducción superior.",
         imagen:
             "img/autos/Mercedes-Benz.jpg"
     },
@@ -125,7 +125,7 @@ const vehiculos = [
         marca: "Hyundai",
         categoria: "Económico",
         categoriaTexto: "Económico",
-        precio: 42,
+        precio: 60,
         cantidadTotal: 3,
         transmision: "Automática",
         combustible: "Gasolina",
@@ -136,7 +136,7 @@ const vehiculos = [
         destacado: false,
         etiqueta: "Eficiente",
         descripcion:
-            "Sedán práctico con excelente rendimiento de combustible, amplio espacio interior y conducción cómoda.",
+            "Práctico con excelente rendimiento de combustible, amplio espacio interior y conducción cómoda.",
         imagen:
             "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=1200&q=80"
     },
@@ -147,7 +147,7 @@ const vehiculos = [
         marca: "Mercedes-Benz",
         categoria: "Vehículo de lujo",
         categoriaTexto: "Vehículo de lujo",
-        precio: 32,
+        precio: 245,
         cantidadTotal: 1,
         transmision: "Automática",
         combustible: "Gasolina",
@@ -169,7 +169,7 @@ const vehiculos = [
         marca: "BMW",
         categoria: "Vehículo de lujo",
         categoriaTexto: "Vehículo de lujo",
-        precio: 155,
+        precio: 185,
         cantidadTotal: 2,
         transmision: "Automática",
         combustible: "Gasolina",
@@ -180,7 +180,7 @@ const vehiculos = [
         destacado: false,
         etiqueta: "Exclusivo",
         descripcion:
-            "SUV premium con diseño deportivo, gran potencia, tecnología avanzada y un interior espacioso y elegante.",
+            "Premium con diseño deportivo, gran potencia, tecnología avanzada y un interior espacioso y elegante.",
         imagen:
             "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80"
     },
@@ -611,8 +611,8 @@ function mostrarDetallesVehiculo(id) {
                     <span>
                         ${
                             cantidadTotal === 1
-                                ? "Unidad en flota"
-                                : "Unidades en flota"
+                                ? "Unidad disponible"
+                                : "Unidades disponible"
                         }
                     </span>
 
@@ -627,7 +627,7 @@ function mostrarDetallesVehiculo(id) {
                 <div>
 
                     <strong>
-                        ${textoUnidades} en la flota
+                        ${textoUnidades} Disponible
                     </strong>
 
                     <span>
