@@ -103,7 +103,7 @@ const vehiculos = [
         marca: "Mercedes-Benz",
         categoria: "Vehículo de lujo",
         categoriaTexto: "Vehículo de lujo",
-        precio: 250,
+        precio: 550,
         cantidadTotal: 2,
         transmision: "Automática",
         combustible: "Gasolina",
@@ -147,7 +147,7 @@ const vehiculos = [
         marca: "Mercedes-Benz",
         categoria: "Vehículo de lujo",
         categoriaTexto: "Vehículo de lujo",
-        precio: 245,
+        precio: 160,
         cantidadTotal: 1,
         transmision: "Automática",
         combustible: "Gasolina",
@@ -169,7 +169,7 @@ const vehiculos = [
         marca: "BMW",
         categoria: "Vehículo de lujo",
         categoriaTexto: "Vehículo de lujo",
-        precio: 185,
+        precio: 350,
         cantidadTotal: 2,
         transmision: "Automática",
         combustible: "Gasolina",
@@ -861,6 +861,11 @@ function configurarCatalogoVehiculos() {
         "precio-seleccionado"
     );
 
+    configurarPrecioMaximoCatalogo(
+    filtroPrecio,
+    precioSeleccionado
+);
+
     const soloDestacados = document.getElementById(
         "solo-destacados"
     );
@@ -1484,11 +1489,60 @@ function obtenerPrecioMaximoVehiculos() {
         .map((vehiculo) =>
             Number(vehiculo.precio)
         )
-        .filter(Number.isFinite);
+        .filter(
+            (precio) =>
+                Number.isFinite(precio) &&
+                precio >= 0
+        );
 
-    return precios.length
-        ? Math.max(...precios)
-        : 160;
+    if (!precios.length) {
+        return 200;
+    }
+
+    const precioMayor = Math.max(
+        ...precios
+    );
+
+    /*
+     * Redondea el precio máximo hacia arriba
+     * en bloques de US$50.
+     *
+     * Ejemplos:
+     * US$160 → US$200
+     * US$500 → US$500
+     * US$525 → US$550
+     */
+    return Math.ceil(
+        precioMayor / 50
+    ) * 50;
+}
+
+function configurarPrecioMaximoCatalogo(
+    filtroPrecio,
+    precioSeleccionado
+) {
+    if (!filtroPrecio) {
+        return;
+    }
+
+    const precioMaximo =
+        obtenerPrecioMaximoVehiculos();
+
+    filtroPrecio.min = "0";
+    filtroPrecio.max = String(
+        precioMaximo
+    );
+
+    filtroPrecio.value = String(
+        precioMaximo
+    );
+
+    if (precioSeleccionado) {
+        precioSeleccionado.textContent =
+            formatearPrecioVehiculo(
+                precioMaximo
+            );
+    }
 }
 
 /* =========================================================
