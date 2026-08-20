@@ -1,0 +1,278 @@
+<aside
+    class="admin-sidebar"
+    id="admin-sidebar"
+>
+
+    <!-- =============================================
+         ENCABEZADO DEL SIDEBAR
+    ============================================== -->
+
+    <div class="sidebar-header">
+
+        <a
+            href="/admin"
+            class="sidebar-brand"
+        >
+
+            <span class="sidebar-brand-icon">
+                <i class="fa-solid fa-car-side"></i>
+            </span>
+
+            <span class="sidebar-brand-text">
+
+                <strong>
+                    AutoRentCar
+                </strong>
+
+                <small>
+                    Plataforma
+                </small>
+
+            </span>
+
+        </a>
+
+        <button
+            type="button"
+            class="sidebar-collapse-btn"
+            id="sidebar-collapse-btn"
+            aria-label="Contraer menú"
+            title="Contraer menú"
+        >
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+    </div>
+
+
+    <!-- =============================================
+         PERFIL RESUMIDO
+    ============================================== -->
+
+    <div class="sidebar-profile">
+
+        <div class="sidebar-profile-avatar">
+
+            <%= usuario.nombre
+                .charAt(0)
+                .toUpperCase() %>
+
+        </div>
+
+        <div class="sidebar-profile-info">
+
+            <strong>
+                <%= usuario.nombre %>
+                <%= usuario.apellido || "" %>
+            </strong>
+
+            <span>
+                <%= usuario.rolNombre %>
+            </span>
+
+        </div>
+
+        <span
+            class="sidebar-profile-status"
+            title="Sesión activa"
+        ></span>
+
+    </div>
+
+
+    <!-- =============================================
+         NAVEGACIÓN
+    ============================================== -->
+
+    <nav class="sidebar-navigation">
+
+        <div class="sidebar-section">
+
+            <span class="sidebar-section-title">
+                Principal
+            </span>
+
+            <a
+                href="/admin"
+                class="sidebar-link <%= paginaActual === 'dashboard' ? 'activo' : '' %>"
+                data-tooltip="Dashboard"
+            >
+
+                <span class="sidebar-link-icon">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </span>
+
+                <span class="sidebar-link-text">
+                    Dashboard
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="sidebar-section">
+
+            <span class="sidebar-section-title">
+                Gestión
+            </span>
+
+            <a
+                href="/admin/agencias"
+                class="sidebar-link <%= paginaActual === 'agencias' ? 'activo' : '' %>"
+                data-tooltip="Agencias"
+            >
+
+                <span class="sidebar-link-icon">
+                    <i class="fa-solid fa-building"></i>
+                </span>
+
+                <span class="sidebar-link-text">
+                    Agencias
+                </span>
+
+                <span class="sidebar-link-badge">
+                    <%= typeof totalAgencias !== "undefined" ? totalAgencias : "" %>
+                </span>
+
+            </a>
+
+            <a
+                href="/admin/planes"
+                class="sidebar-link <%= paginaActual === 'planes' ? 'activo' : '' %>"
+                data-tooltip="Planes"
+            >
+
+                <span class="sidebar-link-icon">
+                    <i class="fa-solid fa-layer-group"></i>
+                </span>
+
+                <span class="sidebar-link-text">
+                    Planes
+                </span>
+
+            </a>
+
+            <a
+                href="/admin/suscripciones"
+                class="sidebar-link <%= paginaActual === 'suscripciones' ? 'activo' : '' %>"
+                data-tooltip="Suscripciones"
+            >
+
+                <span class="sidebar-link-icon">
+                    <i class="fa-solid fa-file-signature"></i>
+                </span>
+
+                <span class="sidebar-link-text">
+                    Suscripciones
+                </span>
+
+            </a>
+
+            <a
+                href="/admin/usuarios"
+                class="sidebar-link <%= paginaActual === 'usuarios' ? 'activo' : '' %>"
+                data-tooltip="Usuarios"
+            >
+
+                <span class="sidebar-link-icon">
+                    <i class="fa-solid fa-users"></i>
+                </span>
+
+                <span class="sidebar-link-text">
+                    Usuarios
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="sidebar-section">
+
+            <span class="sidebar-section-title">
+                Sistema
+            </span>
+
+            <a
+                href="/admin/configuracion"
+                class="sidebar-link <%= paginaActual === 'configuracion' ? 'activo' : '' %>"
+                data-tooltip="Configuración"
+            >
+
+                <span class="sidebar-link-icon">
+                    <i class="fa-solid fa-gear"></i>
+                </span>
+
+                <span class="sidebar-link-text">
+                    Configuración
+                </span>
+
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =============================================
+         PIE DEL SIDEBAR
+    ============================================== -->
+
+    <div class="sidebar-footer">
+
+        <div class="sidebar-system-status">
+
+            <span class="system-status-indicator"></span>
+
+            <div class="system-status-text">
+
+                <strong>
+                    Sistema operativo
+                </strong>
+
+                <span>
+                    Servicios funcionando
+                </span>
+
+            </div>
+
+        </div>
+
+        <form
+            action="/logout"
+            method="POST"
+            class="sidebar-logout-form"
+        >
+
+            <button
+                type="submit"
+                class="sidebar-logout"
+                data-tooltip="Cerrar sesión"
+            >
+
+                <span class="sidebar-link-icon">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </span>
+
+                <span class="sidebar-link-text">
+                    Cerrar sesión
+                </span>
+
+            </button>
+
+        </form>
+
+    </div>
+
+</aside>
+
+
+<!-- =============================================
+     OVERLAY MÓVIL
+============================================== -->
+
+<div
+    class="sidebar-overlay"
+    id="sidebar-overlay"
+></div>

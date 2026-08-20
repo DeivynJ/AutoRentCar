@@ -1,0 +1,184 @@
+<header class="admin-topbar">
+
+    <!-- =============================================
+         ZONA IZQUIERDA
+    ============================================== -->
+
+    <div class="topbar-left">
+
+        <button
+            type="button"
+            class="topbar-menu-mobile"
+            id="topbar-menu-mobile"
+            aria-label="Abrir menú"
+        >
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div class="topbar-title">
+
+            <span class="topbar-eyebrow">
+                <%= subtituloPagina || "Panel administrativo" %>
+            </span>
+
+            <h1>
+                <%= titulo %>
+            </h1>
+
+        </div>
+
+    </div>
+
+
+    <!-- =============================================
+         ZONA DERECHA
+    ============================================== -->
+
+    <div class="topbar-right">
+
+        <!-- BOTÓN ACCIÓN RÁPIDA -->
+
+        <button
+            type="button"
+            class="topbar-action-button"
+            title="Acciones rápidas"
+        >
+
+            <i class="fa-solid fa-plus"></i>
+
+            <span>
+                Acción rápida
+            </span>
+
+        </button>
+
+
+        <!-- NOTIFICACIONES -->
+
+        <button
+            type="button"
+            class="topbar-icon-button"
+            aria-label="Notificaciones"
+            title="Notificaciones"
+        >
+
+            <i class="fa-regular fa-bell"></i>
+
+            <span class="topbar-notification-dot"></span>
+
+        </button>
+
+
+        <!-- USUARIO -->
+
+        <div class="topbar-user">
+
+            <button
+                type="button"
+                class="topbar-user-button"
+                id="topbar-user-button"
+                aria-expanded="false"
+            >
+
+                <span class="topbar-user-avatar">
+
+                    <%= usuario.nombre
+                        .charAt(0)
+                        .toUpperCase() %>
+
+                </span>
+
+                <span class="topbar-user-info">
+
+                    <strong>
+                        <%= usuario.nombre %>
+                        <%= usuario.apellido || "" %>
+                    </strong>
+
+                    <small>
+                        <%= usuario.rolNombre %>
+                    </small>
+
+                </span>
+
+                <i class="fa-solid fa-chevron-down topbar-user-arrow"></i>
+
+            </button>
+
+
+            <!-- MENÚ DESPLEGABLE -->
+
+            <div
+                class="topbar-user-menu"
+                id="topbar-user-menu"
+            >
+
+                <div class="topbar-user-menu-header">
+
+                    <span class="topbar-user-avatar grande">
+
+                        <%= usuario.nombre
+                            .charAt(0)
+                            .toUpperCase() %>
+
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            <%= usuario.nombre %>
+                            <%= usuario.apellido || "" %>
+                        </strong>
+
+                        <span>
+                            <%= usuario.correo %>
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="topbar-user-menu-divider"></div>
+
+                <a
+                    href="/admin/configuracion"
+                    class="topbar-user-menu-link"
+                >
+
+                    <i class="fa-solid fa-gear"></i>
+
+                    <span>
+                        Configuración
+                    </span>
+
+                </a>
+
+                <div class="topbar-user-menu-divider"></div>
+
+                <form
+                    action="/logout"
+                    method="POST"
+                >
+
+                    <button
+                        type="submit"
+                        class="topbar-user-menu-link danger"
+                    >
+
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+
+                        <span>
+                            Cerrar sesión
+                        </span>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>

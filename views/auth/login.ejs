@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Acceso administrativo a la plataforma AutoRentCar."
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/auth.css"
+    >
+</head>
+
+<body>
+
+    <main class="auth-pagina">
+
+        <div class="auth-decoracion auth-decoracion-1"></div>
+        <div class="auth-decoracion auth-decoracion-2"></div>
+
+        <section class="auth-contenedor">
+
+            <!-- =============================================
+                 PANEL VISUAL
+            ============================================== -->
+
+            <div class="auth-panel-marca">
+
+                <div class="auth-marca-superior">
+
+                    <a
+                        href="/"
+                        class="auth-logo"
+                    >
+                        <span class="auth-logo-icono">
+                            <i class="fa-solid fa-car-side"></i>
+                        </span>
+
+                        <span class="auth-logo-texto">
+                            Auto<span>RentCar</span>
+                        </span>
+                    </a>
+
+                    <span class="auth-etiqueta">
+                        Plataforma de gestión
+                    </span>
+
+                </div>
+
+                <div class="auth-marca-contenido">
+
+                    <span class="auth-subtitulo">
+                        Gestión inteligente para agencias
+                    </span>
+
+                    <h1>
+                        Administra tu plataforma desde un solo lugar
+                    </h1>
+
+                    <p>
+                        Controla agencias, usuarios, suscripciones,
+                        vehículos y operaciones desde una interfaz
+                        moderna, segura y preparada para crecer.
+                    </p>
+
+                    <div class="auth-beneficios">
+
+                        <article>
+                            <div>
+                                <i class="fa-solid fa-building"></i>
+                            </div>
+
+                            <section>
+                                <strong>
+                                    Multiagencia
+                                </strong>
+
+                                <span>
+                                    Gestiona diferentes agencias
+                                    desde una sola plataforma.
+                                </span>
+                            </section>
+                        </article>
+
+                        <article>
+                            <div>
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+
+                            <section>
+                                <strong>
+                                    Acceso seguro
+                                </strong>
+
+                                <span>
+                                    Autenticación protegida y
+                                    controlada por roles.
+                                </span>
+                            </section>
+                        </article>
+
+                        <article>
+                            <div>
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+
+                            <section>
+                                <strong>
+                                    Crecimiento
+                                </strong>
+
+                                <span>
+                                    Arquitectura preparada para
+                                    escalar con nuevas agencias.
+                                </span>
+                            </section>
+                        </article>
+
+                    </div>
+
+                </div>
+
+                <div class="auth-marca-pie">
+
+                    <span>
+                        <i class="fa-solid fa-lock"></i>
+                        Conexión protegida
+                    </span>
+
+                    <span>
+                        AutoRentCar Platform
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- =============================================
+                 FORMULARIO
+            ============================================== -->
+
+            <div class="auth-panel-formulario">
+
+                <div class="auth-formulario-contenido">
+
+                    <div class="auth-formulario-encabezado">
+
+                        <div class="auth-icono-acceso">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+
+                        <span>
+                            Acceso administrativo
+                        </span>
+
+                        <h2>
+                            Bienvenido nuevamente
+                        </h2>
+
+                        <p>
+                            Ingresa tus credenciales para acceder
+                            al panel de administración.
+                        </p>
+
+                    </div>
+
+                    <% if (error) { %>
+
+                        <div class="auth-error">
+
+                            <i class="fa-solid fa-circle-exclamation"></i>
+
+                            <div>
+                                <strong>
+                                    No pudimos iniciar sesión
+                                </strong>
+
+                                <span>
+                                    <%= error %>
+                                </span>
+                            </div>
+
+                        </div>
+
+                    <% } %>
+
+                    <form
+                        action="/login"
+                        method="POST"
+                        class="auth-formulario"
+                        autocomplete="on"
+                    >
+
+                        <!-- CORREO -->
+
+                        <div class="auth-campo">
+
+                            <label for="correo">
+                                Correo electrónico
+                            </label>
+
+                            <div class="auth-input-contenedor">
+
+                                <i class="fa-solid fa-envelope"></i>
+
+                                <input
+                                    type="email"
+                                    name="correo"
+                                    id="correo"
+                                    placeholder="nombre@correo.com"
+                                    autocomplete="email"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+                        <!-- CONTRASEÑA -->
+
+                        <div class="auth-campo">
+
+                            <div class="auth-label-fila">
+
+                                <label for="password">
+                                    Contraseña
+                                </label>
+
+                                <span>
+                                    Acceso protegido
+                                </span>
+
+                            </div>
+
+                            <div class="auth-input-contenedor">
+
+                                <i class="fa-solid fa-lock"></i>
+
+                                <input
+                                    type="password"
+                                    name="password"
+                                    id="password"
+                                    placeholder="Introduce tu contraseña"
+                                    autocomplete="current-password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="auth-ver-password"
+                                    id="auth-ver-password"
+                                    aria-label="Mostrar contraseña"
+                                >
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <!-- BOTÓN -->
+
+                        <button
+                            type="submit"
+                            class="auth-boton"
+                        >
+
+                            <span>
+                                Iniciar sesión
+                            </span>
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </button>
+
+                    </form>
+
+                    <div class="auth-seguridad">
+
+                        <i class="fa-solid fa-shield"></i>
+
+                        <p>
+                            Tu sesión está protegida y las credenciales
+                            se verifican de forma segura.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="auth-formulario-pie">
+
+                    <span>
+                        © <%= new Date().getFullYear() %> AutoRentCar
+                    </span>
+
+                    <span>
+                        Plataforma administrativa
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        const botonPassword =
+            document.getElementById(
+                "auth-ver-password"
+            );
+
+        const campoPassword =
+            document.getElementById(
+                "password"
+            );
+
+        botonPassword?.addEventListener(
+            "click",
+            () => {
+
+                const mostrar =
+                    campoPassword.type ===
+                    "password";
+
+                campoPassword.type =
+                    mostrar
+                        ? "text"
+                        : "password";
+
+                const icono =
+                    botonPassword.querySelector(
+                        "i"
+                    );
+
+                if (!icono) {
+                    return;
+                }
+
+                icono.className =
+                    mostrar
+                        ? "fa-regular fa-eye-slash"
+                        : "fa-regular fa-eye";
+
+                botonPassword.setAttribute(
+                    "aria-label",
+                    mostrar
+                        ? "Ocultar contraseña"
+                        : "Mostrar contraseña"
+                );
+            }
+        );
+    </script>
+
+</body>
+
+</html>

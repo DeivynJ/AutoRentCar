@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Panel administrativo de AutoRentCar."
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+</head>
+
+<body>
+
+    <div class="admin-shell">
+
+        <!-- ============================================
+             SIDEBAR
+        ============================================= -->
+
+        <%- include("partials/sidebar") %>
+
+
+        <!-- ============================================
+             ÁREA PRINCIPAL
+        ============================================= -->
+
+        <div class="admin-content-wrapper">
+
+            <!-- HEADER -->
+
+            <%- include("partials/header") %>
+
+
+            <!-- ========================================
+                 CONTENIDO
+            ========================================= -->
+
+            <main class="admin-main-content">
+
+                <!-- ====================================
+                     HERO / BIENVENIDA
+                ===================================== -->
+
+                <section class="dashboard-hero">
+
+                    <div class="dashboard-hero-content">
+
+                        <div class="dashboard-hero-badge">
+
+                            <i class="fa-solid fa-chart-line"></i>
+
+                            <span>
+                                Resumen de la plataforma
+                            </span>
+
+                        </div>
+
+                        <h2>
+                            Bienvenido,
+                            <span>
+                                <%= usuario.nombre %>
+                            </span>
+                        </h2>
+
+                        <p>
+                            Consulta el estado general de la plataforma,
+                            las agencias registradas y la actividad de
+                            las suscripciones desde un solo lugar.
+                        </p>
+
+                        <div class="dashboard-hero-actions">
+
+                            <a
+                                href="/admin/agencias"
+                                class="btn btn-primary"
+                            >
+
+                                <i class="fa-solid fa-building"></i>
+
+                                <span>
+                                    Gestionar agencias
+                                </span>
+
+                            </a>
+
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                disabled
+                            >
+
+                                <i class="fa-solid fa-file-arrow-down"></i>
+
+                                <span>
+                                    Exportar resumen
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DECORACIÓN -->
+
+                    <div class="dashboard-hero-visual">
+
+                        <div class="hero-orbit hero-orbit-1"></div>
+                        <div class="hero-orbit hero-orbit-2"></div>
+
+                        <div class="hero-main-icon">
+
+                            <i class="fa-solid fa-car-side"></i>
+
+                        </div>
+
+                        <div class="hero-floating-card hero-floating-card-1">
+
+                            <i class="fa-solid fa-building-circle-check"></i>
+
+                            <div>
+                                <strong>
+                                    <%= estadisticas.agenciasActivas %>
+                                </strong>
+
+                                <span>
+                                    Agencias activas
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <div class="hero-floating-card hero-floating-card-2">
+
+                            <i class="fa-solid fa-file-circle-check"></i>
+
+                            <div>
+                                <strong>
+                                    <%= estadisticas.suscripciones %>
+                                </strong>
+
+                                <span>
+                                    Suscripciones
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ====================================
+                     ESTADÍSTICAS
+                ===================================== -->
+
+                <section class="dashboard-stats">
+
+                    <!-- AGENCIAS -->
+
+                    <article
+                        class="stat-card"
+                        data-animate="fade-up"
+                    >
+
+                        <div class="stat-card-top">
+
+                            <div class="stat-icon stat-icon-blue">
+
+                                <i class="fa-solid fa-building"></i>
+
+                            </div>
+
+                            <span class="stat-label">
+                                Total registrado
+                            </span>
+
+                        </div>
+
+                        <div class="stat-card-body">
+
+                            <span class="stat-title">
+                                Agencias
+                            </span>
+
+                            <strong
+                                class="stat-value"
+                                data-counter="<%= estadisticas.agencias %>"
+                            >
+                                <%= estadisticas.agencias %>
+                            </strong>
+
+                        </div>
+
+                        <div class="stat-footer">
+
+                            <span class="stat-status positive">
+
+                                <i class="fa-solid fa-database"></i>
+
+                                Datos en tiempo real
+
+                            </span>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- ACTIVAS -->
+
+                    <article
+                        class="stat-card"
+                        data-animate="fade-up"
+                    >
+
+                        <div class="stat-card-top">
+
+                            <div class="stat-icon stat-icon-green">
+
+                                <i class="fa-solid fa-circle-check"></i>
+
+                            </div>
+
+                            <span class="stat-label">
+                                Estado operativo
+                            </span>
+
+                        </div>
+
+                        <div class="stat-card-body">
+
+                            <span class="stat-title">
+                                Agencias activas
+                            </span>
+
+                            <strong
+                                class="stat-value"
+                                data-counter="<%= estadisticas.agenciasActivas %>"
+                            >
+                                <%= estadisticas.agenciasActivas %>
+                            </strong>
+
+                        </div>
+
+                        <div class="stat-footer">
+
+                            <span class="stat-status positive">
+
+                                <i class="fa-solid fa-arrow-trend-up"></i>
+
+                                Operativas
+
+                            </span>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- SUSCRIPCIONES -->
+
+                    <article
+                        class="stat-card"
+                        data-animate="fade-up"
+                    >
+
+                        <div class="stat-card-top">
+
+                            <div class="stat-icon stat-icon-orange">
+
+                                <i class="fa-solid fa-file-signature"></i>
+
+                            </div>
+
+                            <span class="stat-label">
+                                Servicio activo
+                            </span>
+
+                        </div>
+
+                        <div class="stat-card-body">
+
+                            <span class="stat-title">
+                                Suscripciones
+                            </span>
+
+                            <strong
+                                class="stat-value"
+                                data-counter="<%= estadisticas.suscripciones %>"
+                            >
+                                <%= estadisticas.suscripciones %>
+                            </strong>
+
+                        </div>
+
+                        <div class="stat-footer">
+
+                            <span class="stat-status positive">
+
+                                <i class="fa-solid fa-bolt"></i>
+
+                                En servicio
+
+                            </span>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- USUARIOS -->
+
+                    <article
+                        class="stat-card"
+                        data-animate="fade-up"
+                    >
+
+                        <div class="stat-card-top">
+
+                            <div class="stat-icon stat-icon-purple">
+
+                                <i class="fa-solid fa-users"></i>
+
+                            </div>
+
+                            <span class="stat-label">
+                                Acceso autorizado
+                            </span>
+
+                        </div>
+
+                        <div class="stat-card-body">
+
+                            <span class="stat-title">
+                                Usuarios activos
+                            </span>
+
+                            <strong
+                                class="stat-value"
+                                data-counter="<%= estadisticas.usuarios %>"
+                            >
+                                <%= estadisticas.usuarios %>
+                            </strong>
+
+                        </div>
+
+                        <div class="stat-footer">
+
+                            <span class="stat-status neutral">
+
+                                <i class="fa-solid fa-user-shield"></i>
+
+                                Acceso controlado
+
+                            </span>
+
+                        </div>
+
+                    </article>
+
+                </section>
+
+
+                <!-- ====================================
+                     CONTENIDO SECUNDARIO
+                ===================================== -->
+
+                <section class="dashboard-grid">
+
+                    <!-- =================================
+                         AGENCIAS RECIENTES
+                    ================================== -->
+
+                    <article
+                        class="dashboard-panel dashboard-panel-large"
+                        data-animate="fade-up"
+                    >
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <span class="panel-eyebrow">
+                                    Actividad reciente
+                                </span>
+
+                                <h3>
+                                    Agencias registradas
+                                </h3>
+
+                                <p>
+                                    Últimas agencias incorporadas
+                                    a la plataforma.
+                                </p>
+
+                            </div>
+
+                            <a
+                                href="/admin/agencias"
+                                class="panel-link"
+                            >
+
+                                Ver todas
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </a>
+
+                        </div>
+
+
+                        <div class="admin-table-wrapper">
+
+                            <table class="admin-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Agencia
+                                        </th>
+
+                                        <th>
+                                            Ubicación
+                                        </th>
+
+                                        <th>
+                                            Estado
+                                        </th>
+
+                                        <th>
+                                            Registro
+                                        </th>
+
+                                        <th>
+                                            Acción
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    <% if (agenciasRecientes.length) { %>
+
+                                        <% agenciasRecientes.forEach((agencia) => { %>
+
+                                            <tr>
+
+                                                <!-- AGENCIA -->
+
+                                                <td>
+
+                                                    <div class="table-agency">
+
+                                                        <div class="table-agency-avatar">
+
+                                                            <%= agencia.nombre
+                                                                .charAt(0)
+                                                                .toUpperCase() %>
+
+                                                        </div>
+
+                                                        <div>
+
+                                                            <strong>
+                                                                <%= agencia.nombre %>
+                                                            </strong>
+
+                                                            <span>
+                                                                ID #<%= agencia.id %>
+                                                            </span>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </td>
+
+
+                                                <!-- UBICACIÓN -->
+
+                                                <td>
+
+                                                    <div class="table-location">
+
+                                                        <i class="fa-solid fa-location-dot"></i>
+
+                                                        <span>
+
+                                                            <% if (agencia.ciudad || agencia.provincia) { %>
+
+                                                                <%= agencia.ciudad || "" %>
+
+                                                                <% if (agencia.ciudad && agencia.provincia) { %>
+                                                                    ,
+                                                                <% } %>
+
+                                                                <%= agencia.provincia || "" %>
+
+                                                            <% } else { %>
+
+                                                                No especificada
+
+                                                            <% } %>
+
+                                                        </span>
+
+                                                    </div>
+
+                                                </td>
+
+
+                                                <!-- ESTADO -->
+
+                                                <td>
+
+                                                    <span
+                                                        class="status-badge status-<%= agencia.estado %>"
+                                                    >
+
+                                                        <span class="status-dot"></span>
+
+                                                        <%= agencia.estado %>
+
+                                                    </span>
+
+                                                </td>
+
+
+                                                <!-- FECHA -->
+
+                                                <td>
+
+                                                    <span class="table-date">
+
+                                                        <%= new Date(
+                                                            agencia.fecha_creacion
+                                                        ).toLocaleDateString(
+                                                            "es-DO",
+                                                            {
+                                                                day: "2-digit",
+                                                                month: "short",
+                                                                year: "numeric"
+                                                            }
+                                                        ) %>
+
+                                                    </span>
+
+                                                </td>
+
+
+                                                <!-- ACCIÓN -->
+
+                                                <td>
+
+                                                    <button
+                                                        type="button"
+                                                        class="table-action"
+                                                        title="Opciones"
+                                                        disabled
+                                                    >
+
+                                                        <i class="fa-solid fa-ellipsis"></i>
+
+                                                    </button>
+
+                                                </td>
+
+                                            </tr>
+
+                                        <% }); %>
+
+                                    <% } else { %>
+
+                                        <tr>
+
+                                            <td
+                                                colspan="5"
+                                                class="table-empty"
+                                            >
+
+                                                <div>
+
+                                                    <i class="fa-regular fa-folder-open"></i>
+
+                                                    <strong>
+                                                        No hay agencias registradas
+                                                    </strong>
+
+                                                    <span>
+                                                        Cuando agregues una agencia,
+                                                        aparecerá en este listado.
+                                                    </span>
+
+                                                </div>
+
+                                            </td>
+
+                                        </tr>
+
+                                    <% } %>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- =================================
+                         RESUMEN DEL SISTEMA
+                    ================================== -->
+
+                    <aside
+                        class="dashboard-panel dashboard-panel-small"
+                        data-animate="fade-up"
+                    >
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <span class="panel-eyebrow">
+                                    Estado
+                                </span>
+
+                                <h3>
+                                    Plataforma
+                                </h3>
+
+                                <p>
+                                    Resumen del entorno actual.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="system-summary">
+
+                            <div class="system-summary-item">
+
+                                <div class="system-summary-icon green">
+
+                                    <i class="fa-solid fa-server"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Backend
+                                    </strong>
+
+                                    <span>
+                                        Operativo
+                                    </span>
+
+                                </div>
+
+                                <i class="fa-solid fa-circle-check system-check"></i>
+
+                            </div>
+
+
+                            <div class="system-summary-item">
+
+                                <div class="system-summary-icon blue">
+
+                                    <i class="fa-solid fa-database"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        MariaDB
+                                    </strong>
+
+                                    <span>
+                                        Conectada
+                                    </span>
+
+                                </div>
+
+                                <i class="fa-solid fa-circle-check system-check"></i>
+
+                            </div>
+
+
+                            <div class="system-summary-item">
+
+                                <div class="system-summary-icon orange">
+
+                                    <i class="fa-solid fa-shield-halved"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Autenticación
+                                    </strong>
+
+                                    <span>
+                                        Protegida
+                                    </span>
+
+                                </div>
+
+                                <i class="fa-solid fa-circle-check system-check"></i>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="system-summary-footer">
+
+                            <div>
+
+                                <span class="system-live-dot"></span>
+
+                                <strong>
+                                    Sistema disponible
+                                </strong>
+
+                            </div>
+
+                            <small>
+                                Estado actual
+                            </small>
+
+                        </div>
+
+                    </aside>
+
+                </section>
+
+
+                <!-- ====================================
+                     PIE
+                ===================================== -->
+
+                <footer class="admin-footer">
+
+                    <span>
+                        AutoRentCar Platform
+                    </span>
+
+                    <span>
+                        © <%= new Date().getFullYear() %>
+                    </span>
+
+                </footer>
+
+            </main>
+
+        </div>
+
+    </div>
+
+
+    <script src="/js/admin.js"></script>
+
+</body>
+
+</html>
