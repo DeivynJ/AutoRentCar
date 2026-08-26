@@ -1,2 +1,18 @@
-node_modules/
+# Variables de entorno
 .env
+.env.*
+
+# Dependencias
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos temporales
+*.tmp
+*.temp

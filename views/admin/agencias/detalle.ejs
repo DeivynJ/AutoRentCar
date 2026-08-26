@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="admin-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+
+    <div class="admin-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+
+        <main class="admin-main-content">
+
+
+
+            <div class="form-page-top">
+
+                <a
+                    href="/admin/agencias"
+                    class="back-link"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    <span>
+                        Volver a agencias
+                    </span>
+
+                </a>
+
+            </div>
+
+
+
+
+
+            <!-- =====================================
+                 CABECERA AGENCIA
+            ====================================== -->
+
+
+            <section
+                class="agency-profile-hero"
+                data-animate="fade-up"
+            >
+
+
+                <div class="agency-profile-main">
+
+
+                    <div class="agency-profile-logo">
+
+
+                        <% if (agencia.logo) { %>
+
+
+                            <img
+                                src="<%= agencia.logo %>"
+                                alt="Logo <%= agencia.nombre %>"
+                            >
+
+
+                        <% } else { %>
+
+
+                            <span>
+
+                                <%= agencia.nombre
+                                    .charAt(0)
+                                    .toUpperCase()
+                                %>
+
+                            </span>
+
+
+                        <% } %>
+
+
+                    </div>
+
+
+
+
+                    <div class="agency-profile-info">
+
+
+                        <span class="profile-label">
+
+                            Agencia registrada
+
+                        </span>
+
+
+
+                        <h1>
+
+                            <%= agencia.nombre %>
+
+                        </h1>
+
+
+
+                        <p>
+
+                            ID #<%= agencia.id %>
+
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+
+
+                <div class="agency-profile-actions">
+
+
+                    <a
+    href="/admin/agencias/<%= agencia.id %>/editar"
+    class="quick-action-btn"
+>
+
+    <i class="fa-solid fa-pen"></i>
+
+    Editar agencia
+
+</a>
+
+
+
+                   <a
+    href="/admin/agencias/<%= agencia.id %>/usuarios"
+    class="btn btn-light"
+>
+
+    <i class="fa-solid fa-users"></i>
+
+    Usuarios
+
+</a>
+
+
+
+                    <a
+                        href="#"
+                        class="btn btn-light"
+                    >
+
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+
+                        Suscripción
+
+                    </a>
+
+
+                </div>
+
+
+
+
+
+                <div class="agency-profile-status">
+
+
+                    <span
+                        class="status-badge status-<%= agencia.estado %>"
+                    >
+
+                        <span class="status-dot"></span>
+
+                        <%= agencia.estado %>
+
+                    </span>
+
+
+
+                    <span class="plan-badge">
+
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+
+                        <%= agencia.plan_nombre || "Sin plan" %>
+
+
+                    </span>
+
+
+                </div>
+
+
+
+            </section>
+
+
+
+
+
+
+
+            <!-- =====================================
+                 RESUMEN
+            ====================================== -->
+
+
+            <section
+                class="dashboard-stats agency-detail-stats"
+            >
+
+
+                <article class="stat-card">
+
+                    <div class="stat-icon stat-icon-blue">
+
+                        <i class="fa-solid fa-users"></i>
+
+                    </div>
+
+
+                    <span class="stat-title">
+                        Usuarios
+                    </span>
+
+
+                    <strong class="stat-value">
+                        <%= resumen.usuarios %>
+                    </strong>
+
+
+                </article>
+
+
+
+
+
+                <article class="stat-card">
+
+                    <div class="stat-icon stat-icon-green">
+
+                        <i class="fa-solid fa-car"></i>
+
+                    </div>
+
+
+                    <span class="stat-title">
+                        Vehículos
+                    </span>
+
+
+                    <strong class="stat-value">
+                        <%= resumen.vehiculos %>
+                    </strong>
+
+
+                </article>
+
+
+
+
+
+                <article class="stat-card">
+
+                    <div class="stat-icon stat-icon-orange">
+
+                        <i class="fa-solid fa-calendar-check"></i>
+
+                    </div>
+
+
+                    <span class="stat-title">
+                        Reservas
+                    </span>
+
+
+                    <strong class="stat-value">
+                        <%= resumen.reservas %>
+                    </strong>
+
+
+                </article>
+
+
+
+
+
+                <article class="stat-card">
+
+                    <div class="stat-icon stat-icon-purple">
+
+                        <i class="fa-solid fa-user-group"></i>
+
+                    </div>
+
+
+                    <span class="stat-title">
+                        Clientes
+                    </span>
+
+
+                    <strong class="stat-value">
+                        <%= resumen.clientes %>
+                    </strong>
+
+
+                </article>
+
+
+            </section>
+
+
+
+
+
+
+
+            <div class="agency-detail-grid">
+
+
+
+
+
+                <!-- INFORMACIÓN GENERAL -->
+
+
+                <section class="dashboard-panel">
+
+
+                    <div class="panel-header">
+
+                        <h3>
+                            Datos generales
+                        </h3>
+
+                    </div>
+
+
+
+                    <div class="detail-list">
+
+
+    <div>
+
+        <span>
+            Nombre legal
+        </span>
+
+        <strong>
+            <%= agencia.nombre_legal || "No registrado" %>
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span>
+            Identificación fiscal
+        </span>
+
+        <strong>
+            <%= agencia.identificacion_fiscal || "No registrada" %>
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span>
+            Correo
+        </span>
+
+        <strong>
+            <%= agencia.correo || "No registrado" %>
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span>
+            Teléfono
+        </span>
+
+        <strong>
+            <%= agencia.telefono || "No registrado" %>
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span>
+            WhatsApp
+        </span>
+
+        <strong>
+            <%= agencia.whatsapp || "No registrado" %>
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span>
+            Dirección
+        </span>
+
+        <strong>
+            <%= agencia.direccion || "No registrada" %>
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span>
+            Ciudad
+        </span>
+
+        <strong>
+            <%= agencia.ciudad || "No registrada" %>
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span>
+            Provincia
+        </span>
+
+        <strong>
+            <%= agencia.provincia || "No registrada" %>
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span>
+            País
+        </span>
+
+        <strong>
+            <%= agencia.pais || "No registrado" %>
+        </strong>
+
+    </div>
+
+
+</div>
+
+
+                </section>
+
+
+
+
+
+
+<!-- IDENTIDAD VISUAL -->
+
+
+<section class="dashboard-panel">
+
+
+    <div class="panel-header">
+
+        <h3>
+            Identidad visual
+        </h3>
+
+    </div>
+
+
+
+    <div class="visual-identity-card">
+
+
+
+        <!-- COLOR PRINCIPAL -->
+
+        <div class="visual-color-item">
+
+
+            <span>
+                Color principal
+            </span>
+
+
+
+            <div class="color-preview">
+
+
+                <span
+                    class="color-box"
+                    data-color="<%= agencia.color_primario || '#0b1f3a' %>"
+                ></span>
+
+
+
+                <strong>
+                    <%= agencia.color_primario || "#0b1f3a" %>
+                </strong>
+
+
+            </div>
+
+
+        </div>
+
+        <!-- COLOR SECUNDARIO -->
+
+        <div class="visual-color-item">
+
+
+            <span>
+                Color secundario
+            </span>
+
+
+
+            <div class="color-preview">
+
+
+                <span
+                    class="color-box"
+                    data-color="<%= agencia.color_secundario || '#ff8a00' %>"
+                ></span>
+
+
+
+                <strong>
+                    <%= agencia.color_secundario || "#ff8a00" %>
+                </strong>
+
+
+            </div>
+
+
+        </div>
+
+
+
+    </div>
+
+
+</section>
+
+
+            <!-- SUSCRIPCIÓN -->
+
+
+            <section class="dashboard-panel">
+
+
+                <div class="panel-header">
+
+                    <h3>
+                        Suscripción actual
+                    </h3>
+
+                </div>
+
+
+
+
+                <div class="detail-list">
+
+
+                    <div>
+
+                        <span>
+                            Plan
+                        </span>
+
+                        <strong>
+                            <%= agencia.plan_nombre || "Sin plan" %>
+                        </strong>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            Estado
+                        </span>
+
+                        <strong>
+                            <%= agencia.suscripcion_estado || "Sin suscripción" %>
+                        </strong>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            Fecha inicio
+                        </span>
+
+                        <strong>
+                            <%= agencia.fecha_inicio 
+    ? new Date(agencia.fecha_inicio).toLocaleDateString("es-DO")
+    : "No disponible"
+%>
+                        </strong>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            Precio acordado
+                        </span>
+
+                        <strong>
+                            USD $<%= agencia.precio_acordado || "0.00" %>
+                        </strong>
+
+                    </div>
+
+
+
+                </div>
+
+
+            </section>
+
+
+
+
+
+            <footer class="admin-footer">
+
+                <span>
+                    AutoRentCar Platform
+                </span>
+
+
+                <span>
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+
+            </footer>
+
+
+
+
+        </main>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script src="/js/admin.js"></script>
+
+<script>
+
+document
+.querySelectorAll(".color-box")
+.forEach(box => {
+
+    box.style.backgroundColor =
+        box.dataset.color;
+
+});
+
+</script>
+
+</body>
+
+</html>

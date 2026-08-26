@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="admin-shell">
+
+
+    <!-- SIDEBAR -->
+
+    <%- include("../partials/sidebar") %>
+
+
+
+
+    <div class="admin-content-wrapper">
+
+
+        <!-- HEADER -->
+
+        <%- include("../partials/header") %>
+
+
+
+
+
+        <main class="admin-main-content">
+
+
+
+            <!-- ==========================================
+                 REGRESAR
+            =========================================== -->
+
+
+            <div class="form-page-top">
+
+
+                <a
+                    href="/admin/agencias/<%= agencia.id %>"
+                    class="back-link"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Volver al detalle
+
+
+                </a>
+
+
+            </div>
+
+
+
+
+
+
+            <!-- ==========================================
+                 ENCABEZADO
+            =========================================== -->
+
+
+            <section
+                class="agency-profile-hero"
+            >
+
+
+                <div class="agency-profile-main">
+
+
+                    <div class="agency-profile-logo">
+
+    <% if (agencia.logo) { %>
+
+        <img
+            src="<%= agencia.logo %>"
+            alt="<%= agencia.nombre %>"
+        >
+
+    <% } else { %>
+
+        <span>
+
+            <%= agencia.nombre
+                .charAt(0)
+                .toUpperCase()
+            %>
+
+        </span>
+
+    <% } %>
+
+</div>
+
+
+
+
+                    <div class="agency-profile-info">
+
+
+                        <span class="profile-label">
+
+                            Gestión de usuarios
+
+                        </span>
+
+
+                        <h1>
+
+                            <%= agencia.nombre %>
+
+                        </h1>
+
+
+                        <p>
+
+                            Usuarios asociados a esta agencia
+
+                        </p>
+
+
+                    </div>
+
+
+
+                </div>
+
+
+
+                <div>
+
+
+                    <a
+    href="/admin/agencias/<%= agencia.id %>/usuarios/nuevo"
+    class="quick-action-btn"
+>
+
+    <i class="fa-solid fa-user-plus"></i>
+
+    <span>
+        Nuevo usuario
+    </span>
+
+</a>
+
+
+                </div>
+
+
+
+            </section>
+
+
+
+
+
+
+
+
+            <!-- ==========================================
+                 TABLA USUARIOS
+            =========================================== -->
+
+
+            <section
+                class="dashboard-panel"
+            >
+
+
+                <div class="panel-header">
+
+
+                    <div>
+
+                        <span class="panel-eyebrow">
+
+                            Usuarios
+
+                        </span>
+
+
+                        <h3>
+
+                            Usuarios registrados
+
+                        </h3>
+
+
+                    </div>
+
+
+
+                </div>
+
+
+
+
+
+                <div class="table-container">
+
+
+                    <table class="admin-table">
+
+
+                        <thead>
+
+
+                            <tr>
+
+                                <th>
+                                    Nombre
+                                </th>
+
+
+                                <th>
+                                    Correo
+                                </th>
+
+
+                                <th>
+                                    Rol
+                                </th>
+
+
+                                <th>
+                                    Estado
+                                </th>
+
+
+                                <th>
+                                    Último acceso
+                                </th>
+
+
+                                <th>
+                                    Acciones
+                                </th>
+
+
+                            </tr>
+
+
+                        </thead>
+
+
+
+
+                        <tbody>
+
+
+
+                        <% if (usuarios.length === 0) { %>
+
+
+                            <tr>
+
+
+                                <td
+                                    colspan="6"
+                                    class="empty-state"
+                                >
+
+
+                                    <i class="fa-solid fa-users-slash"></i>
+
+
+                                    <p>
+
+                                        Esta agencia todavía no tiene usuarios registrados.
+
+                                    </p>
+
+
+                                </td>
+
+
+                            </tr>
+
+
+
+                        <% } %>
+
+
+
+
+
+                        <% usuarios.forEach(usuario => { %>
+
+
+                            <tr>
+
+
+
+                                <td>
+
+
+                                    <div class="table-user">
+
+
+                                        <div class="user-avatar">
+
+
+                                            <%= usuario.nombre
+                                                .charAt(0)
+                                                .toUpperCase()
+                                            %>
+
+
+                                        </div>
+
+
+                                        <div>
+
+
+                                            <strong>
+
+                                                <%= usuario.nombre %>
+
+                                                <%= usuario.apellido || "" %>
+
+                                            </strong>
+
+
+                                        </div>
+
+
+                                    </div>
+
+
+                                </td>
+
+
+
+
+
+
+                                <td>
+
+                                    <%= usuario.correo %>
+
+                                </td>
+
+
+
+
+
+
+                                <td>
+
+
+                                    <span class="role-badge">
+
+                                        <%= usuario.rol %>
+
+                                    </span>
+
+
+                                </td>
+
+
+
+
+
+
+                                <td>
+
+
+                                    <span
+                                        class="status-badge status-<%= usuario.estado %>"
+                                    >
+
+                                        <span class="status-dot"></span>
+
+
+                                        <%= usuario.estado %>
+
+
+                                    </span>
+
+
+                                </td>
+
+
+
+
+
+
+                                <td>
+
+
+                                    <%= usuario.ultimo_acceso || "Nunca" %>
+
+
+                                </td>
+
+
+
+
+
+
+                                <td>
+
+    <a
+        href="/admin/agencias/<%= agencia.id %>/usuarios/<%= usuario.id %>/editar"
+        class="table-action"
+        title="Editar usuario"
+    >
+
+        <i class="fa-solid fa-pen"></i>
+
+    </a>
+
+
+</td>
+
+
+
+
+                            </tr>
+
+
+
+
+                        <% }) %>
+
+
+
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+
+            </section>
+
+
+
+
+
+
+
+            <footer class="admin-footer">
+
+
+                <span>
+                    AutoRentCar Platform
+                </span>
+
+
+                <span>
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+
+            </footer>
+
+
+
+
+
+        </main>
+
+
+
+    </div>
+
+
+
+</div>
+
+<script src="/js/admin.js"></script>
+
+
+</body>
+
+
+</html>
+

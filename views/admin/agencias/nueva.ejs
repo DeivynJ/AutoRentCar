@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+</head>
+
+<body>
+
+<div class="admin-shell">
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="admin-content-wrapper">
+
+        <%- include("../partials/header") %>
+
+
+        <main class="admin-main-content">
+
+
+            <!-- =======================================
+                 NAVEGACIÓN
+            ======================================== -->
+
+            <div class="form-page-top">
+
+                <a
+                    href="/admin/agencias"
+                    class="back-link"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    <span>
+                        Volver a agencias
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <!-- =======================================
+                 HERO
+            ======================================== -->
+
+            <section
+                class="module-hero form-module-hero"
+                data-animate="fade-up"
+            >
+
+                <div>
+
+                    <div class="module-hero-badge">
+
+                        <i class="fa-solid fa-building-circle-check"></i>
+
+                        <span>
+                            Nueva organización
+                        </span>
+
+                    </div>
+
+
+                    <h2>
+                        Registrar nueva agencia
+                    </h2>
+
+
+                    <p>
+                        Crea una nueva organización dentro de la
+                        plataforma y configura desde el inicio sus
+                        datos comerciales, plan, estado e identidad
+                        visual.
+                    </p>
+
+                </div>
+
+
+                <div class="form-hero-icon">
+
+                    <i class="fa-solid fa-building"></i>
+
+                </div>
+
+            </section>
+
+
+            <!-- =======================================
+                 ERROR
+            ======================================== -->
+
+            <% if (error) { %>
+
+                <div
+                    class="admin-alert admin-alert-danger"
+                    data-animate="fade-up"
+                >
+
+                    <i class="fa-solid fa-circle-exclamation"></i>
+
+                    <div>
+
+                        <strong>
+                            No pudimos registrar la agencia
+                        </strong>
+
+                        <span>
+                            <%= error %>
+                        </span>
+
+                    </div>
+
+                </div>
+
+            <% } %>
+
+
+            <!-- =======================================
+                 FORMULARIO
+            ======================================== -->
+
+            <form
+                action="/admin/agencias/nueva"
+                method="POST"
+                enctype="multipart/form-data"
+                class="agency-form"
+                id="agency-form"
+            >
+
+
+                <div class="agency-form-layout">
+
+
+                    <!-- =================================
+                         COLUMNA PRINCIPAL
+                    ================================== -->
+
+                    <div class="agency-form-main">
+
+
+                        <!-- =================================
+                             DATOS GENERALES
+                        ================================== -->
+
+                        <section
+                            class="form-card"
+                            data-animate="fade-up"
+                        >
+
+                            <div class="form-card-header">
+
+                                <div class="form-card-icon">
+
+                                    <i class="fa-solid fa-building"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Información principal
+                                    </span>
+
+                                    <h3>
+                                        Datos de la agencia
+                                    </h3>
+
+                                    <p>
+                                        Información comercial que
+                                        identifica la organización.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-grid">
+
+
+                                <div class="form-field">
+
+                                    <label for="nombre">
+
+                                        Nombre comercial
+
+                                        <strong>*</strong>
+
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="nombre"
+                                        name="nombre"
+                                        value="<%= datos.nombre || '' %>"
+                                        placeholder="Ej. Caribe Rent Car"
+                                        maxlength="150"
+                                        required
+                                    >
+
+                                </div>
+
+
+                                <div class="form-field">
+
+                                    <label for="nombre_legal">
+                                        Nombre legal
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="nombre_legal"
+                                        name="nombre_legal"
+                                        value="<%= datos.nombre_legal || '' %>"
+                                        placeholder="Razón social"
+                                        maxlength="180"
+                                    >
+
+                                </div>
+
+
+                                <div class="form-field">
+
+                                    <label for="identificacion_fiscal">
+                                        RNC / Identificación fiscal
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="identificacion_fiscal"
+                                        name="identificacion_fiscal"
+                                        value="<%= datos.identificacion_fiscal || '' %>"
+                                        placeholder="Opcional"
+                                        maxlength="50"
+                                    >
+
+                                </div>
+
+
+                                <div class="form-field">
+
+                                    <label for="correo">
+
+                                        Correo electrónico
+
+                                        <strong>*</strong>
+
+                                    </label>
+
+                                    <input
+                                        type="email"
+                                        id="correo"
+                                        name="correo"
+                                        value="<%= datos.correo || '' %>"
+                                        placeholder="contacto@agencia.com"
+                                        maxlength="150"
+                                        required
+                                    >
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =================================
+                             CONTACTO
+                        ================================== -->
+
+                        <section
+                            class="form-card"
+                            data-animate="fade-up"
+                        >
+
+                            <div class="form-card-header">
+
+                                <div class="form-card-icon">
+
+                                    <i class="fa-solid fa-address-book"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Comunicación
+                                    </span>
+
+                                    <h3>
+                                        Contacto
+                                    </h3>
+
+                                    <p>
+                                        Canales que utilizará la agencia
+                                        para atender a sus clientes.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-grid">
+
+
+                                <div class="form-field">
+
+                                    <label for="telefono">
+                                        Teléfono
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="telefono"
+                                        name="telefono"
+                                        value="<%= datos.telefono || '' %>"
+                                        placeholder="+1 809-000-0000"
+                                        maxlength="30"
+                                    >
+
+                                </div>
+
+
+                                <div class="form-field">
+
+                                    <label for="whatsapp">
+                                        WhatsApp
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="whatsapp"
+                                        name="whatsapp"
+                                        value="<%= datos.whatsapp || '' %>"
+                                        placeholder="+1 809-000-0000"
+                                        maxlength="30"
+                                    >
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =================================
+                             UBICACIÓN
+                        ================================== -->
+
+                        <section
+                            class="form-card"
+                            data-animate="fade-up"
+                        >
+
+                            <div class="form-card-header">
+
+                                <div class="form-card-icon">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Localización
+                                    </span>
+
+                                    <h3>
+                                        Ubicación principal
+                                    </h3>
+
+                                    <p>
+                                        Más adelante cada agencia podrá
+                                        administrar múltiples sucursales.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-grid">
+
+
+                                <div class="form-field form-field-full">
+
+                                    <label for="direccion">
+                                        Dirección
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="direccion"
+                                        name="direccion"
+                                        value="<%= datos.direccion || '' %>"
+                                        placeholder="Dirección principal"
+                                        maxlength="255"
+                                    >
+
+                                </div>
+
+
+                                <div class="form-field">
+
+                                    <label for="ciudad">
+                                        Ciudad
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="ciudad"
+                                        name="ciudad"
+                                        value="<%= datos.ciudad || '' %>"
+                                        placeholder="Ej. Santiago"
+                                        maxlength="100"
+                                    >
+
+                                </div>
+
+
+                                <div class="form-field">
+
+                                    <label for="provincia">
+                                        Provincia
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="provincia"
+                                        name="provincia"
+                                        value="<%= datos.provincia || '' %>"
+                                        placeholder="Ej. Santiago"
+                                        maxlength="100"
+                                    >
+
+                                </div>
+
+
+                                <div class="form-field form-field-full">
+
+                                    <label for="pais">
+                                        País
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="pais"
+                                        name="pais"
+                                        value="<%= datos.pais || 'República Dominicana' %>"
+                                        maxlength="100"
+                                    >
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =================================
+                             IDENTIDAD VISUAL
+                        ================================== -->
+
+                        <section
+                            class="form-card"
+                            data-animate="fade-up"
+                        >
+
+                            <div class="form-card-header">
+
+                                <div class="form-card-icon">
+
+                                    <i class="fa-solid fa-palette"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Personalización
+                                    </span>
+
+                                    <h3>
+                                        Identidad visual
+                                    </h3>
+
+                                    <p>
+                                        Define el logo y los colores que
+                                        identificarán la interfaz de esta
+                                        agencia. La agencia podrá modificar
+                                        estos datos posteriormente desde su
+                                        propia configuración.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-grid">
+
+
+                                <!-- =========================
+                                     LOGO
+                                ========================== -->
+
+                                <div class="form-field form-field-full">
+
+                                    <label for="logo">
+                                        Logo de la agencia
+                                    </label>
+
+
+                                    <div class="agency-logo-upload">
+
+
+                                        <!-- PREVIEW LOGO -->
+
+                                        <div
+                                            class="agency-logo-preview"
+                                            id="agency-logo-preview"
+                                        >
+
+                                            <i
+                                                class="fa-regular fa-image"
+                                                id="agency-logo-placeholder"
+                                            ></i>
+
+
+                                            <img
+                                                id="agency-logo-image"
+                                                src=""
+                                                alt="Vista previa del logo de la agencia"
+                                                hidden
+                                            >
+
+                                        </div>
+
+
+                                        <!-- SELECTOR -->
+
+                                        <div class="agency-logo-upload-content">
+
+                                            <input
+                                                type="file"
+                                                id="logo"
+                                                name="logo"
+                                                accept="image/png,image/jpeg,image/webp"
+                                            >
+
+
+                                            <label
+                                                for="logo"
+                                                class="agency-logo-button"
+                                            >
+
+                                                <i class="fa-solid fa-cloud-arrow-up"></i>
+
+                                                <span>
+                                                    Seleccionar logo
+                                                </span>
+
+                                            </label>
+
+
+                                            <small id="agency-logo-name">
+                                                Ningún archivo seleccionado
+                                            </small>
+
+
+                                            <p>
+                                                Puedes subir un archivo PNG,
+                                                JPG, JPEG o WebP. Tamaño máximo:
+                                                3 MB. Para mejores resultados se
+                                                recomienda un logo con fondo
+                                                transparente.
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- =========================
+                                     COLOR PRINCIPAL
+                                ========================== -->
+
+                                <div class="form-field">
+
+                                    <label for="color_primario">
+
+                                        Color principal
+                                        de la interfaz
+
+                                    </label>
+
+
+                                    <div class="color-field">
+
+                                        <input
+                                            type="color"
+                                            id="color_primario"
+                                            name="color_primario"
+                                            value="<%= datos.color_primario || '#0b1f3a' %>"
+                                        >
+
+
+                                        <span id="color-primario-value">
+
+                                            <%= datos.color_primario || '#0b1f3a' %>
+
+                                        </span>
+
+                                    </div>
+
+
+                                    <small class="form-field-help">
+
+                                        Se utilizará como base para
+                                        encabezados, navegación y otros
+                                        elementos principales de la
+                                        interfaz de la agencia.
+
+                                    </small>
+
+                                </div>
+
+
+                                <!-- =========================
+                                     COLOR SECUNDARIO
+                                ========================== -->
+
+                                <div class="form-field">
+
+                                    <label for="color_secundario">
+
+                                        Color secundario
+                                        de la interfaz
+
+                                    </label>
+
+
+                                    <div class="color-field">
+
+                                        <input
+                                            type="color"
+                                            id="color_secundario"
+                                            name="color_secundario"
+                                            value="<%= datos.color_secundario || '#ff8a00' %>"
+                                        >
+
+
+                                        <span id="color-secundario-value">
+
+                                            <%= datos.color_secundario || '#ff8a00' %>
+
+                                        </span>
+
+                                    </div>
+
+
+                                    <small class="form-field-help">
+
+                                        Se utilizará como color de
+                                        acento para botones, enlaces,
+                                        indicadores y elementos destacados.
+
+                                    </small>
+
+                                </div>
+
+
+                                <!-- =========================
+                                     PREVIEW INTERFAZ
+                                ========================== -->
+
+                                <div class="form-field form-field-full">
+
+                                    <label>
+                                        Vista previa de identidad
+                                    </label>
+
+
+                                    <div
+                                        class="agency-interface-preview"
+                                        id="agency-interface-preview"
+                                    >
+
+
+                                        <!-- HEADER PREVIEW -->
+
+                                        <div
+                                            class="agency-interface-preview-header"
+                                            id="agency-interface-preview-header"
+                                        >
+
+                                            <div class="agency-interface-brand">
+
+
+                                                <!-- MINI LOGO -->
+
+                                                <div
+                                                    class="agency-interface-logo-mini"
+                                                    id="agency-interface-logo-mini"
+                                                >
+
+                                                    <i class="fa-regular fa-image"></i>
+
+                                                </div>
+
+
+                                                <!-- NOMBRE -->
+
+                                                <strong id="brand-preview-name">
+
+                                                    <%= datos.nombre || "Nueva agencia" %>
+
+                                                </strong>
+
+                                            </div>
+
+
+                                            <!-- BOTÓN PREVIEW -->
+
+                                            <span
+                                                class="agency-interface-preview-button"
+                                                id="agency-interface-preview-button"
+                                            >
+
+                                                Reservar
+
+                                            </span>
+
+                                        </div>
+
+
+                                        <!-- BODY PREVIEW -->
+
+                                        <div class="agency-interface-preview-body">
+
+                                            <small>
+                                                Vista previa de interfaz
+                                            </small>
+
+                                            <strong>
+                                                Identidad de la agencia
+                                            </strong>
+
+                                            <p>
+                                                Esta representación permite
+                                                visualizar cómo pueden combinarse
+                                                el logo y los colores seleccionados.
+                                                La interfaz final utilizará esta
+                                                identidad en los componentes
+                                                configurables de la agencia.
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                    </div>
+
+
+                    <!-- =================================
+                         COLUMNA LATERAL
+                    ================================== -->
+
+                    <aside class="agency-form-sidebar">
+
+
+                        <!-- =================================
+                             PLAN
+                        ================================== -->
+
+                        <section
+                            class="form-card sticky-card"
+                            data-animate="fade-up"
+                        >
+
+                            <div class="form-card-header">
+
+                                <div class="form-card-icon">
+
+                                    <i class="fa-solid fa-layer-group"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Servicio
+                                    </span>
+
+                                    <h3>
+                                        Plan inicial
+                                    </h3>
+
+                                    <p>
+                                        Define las condiciones iniciales
+                                        de servicio de esta agencia.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- PLAN -->
+
+                            <div class="form-field">
+
+                                <label for="plan_id">
+
+                                    Plan
+
+                                    <strong>*</strong>
+
+                                </label>
+
+
+                                <select
+                                    id="plan_id"
+                                    name="plan_id"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Selecciona un plan
+                                    </option>
+
+
+                                    <% planes.forEach((plan) => { %>
+
+                                        <option
+                                            value="<%= plan.id %>"
+                                            <%= Number(datos.plan_id) === Number(plan.id) ? "selected" : "" %>
+                                        >
+
+                                            <%= plan.nombre %>
+
+                                        </option>
+
+                                    <% }); %>
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- INFORMACIÓN PLANES -->
+
+                            <div class="plan-form-list">
+
+                                <% planes.forEach((plan) => { %>
+
+                                    <div
+                                        class="plan-form-item"
+                                        data-plan-card="<%= plan.id %>"
+                                    >
+
+                                        <strong>
+                                            <%= plan.nombre %>
+                                        </strong>
+
+
+                                     <span>
+
+    <% if (plan.limite_vehiculos) { %>
+
+        Hasta
+        <%= plan.limite_vehiculos %>
+        vehículos
+
+    <% } else { %>
+
+        Vehículos ilimitados
+
+    <% } %>
+
+</span>
+
+                                    </div>
+
+                                <% }); %>
+
+                            </div>
+
+
+                            <div class="form-divider"></div>
+
+
+                            <!-- ESTADO -->
+
+                            <div class="form-field">
+
+                                <label for="estado">
+                                    Estado inicial
+                                </label>
+
+
+                                <select
+                                    id="estado"
+                                    name="estado"
+                                >
+
+                                    <option
+                                        value="prueba"
+                                        <%= !datos.estado || datos.estado === "prueba" ? "selected" : "" %>
+                                    >
+                                        Período de prueba
+                                    </option>
+
+
+                                    <option
+                                        value="activa"
+                                        <%= datos.estado === "activa" ? "selected" : "" %>
+                                    >
+                                        Activa
+                                    </option>
+
+
+                                    <option
+                                        value="suspendida"
+                                        <%= datos.estado === "suspendida" ? "selected" : "" %>
+                                    >
+                                        Suspendida
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- INFORMACIÓN -->
+
+                            <div class="form-info-box">
+
+                                <i class="fa-solid fa-circle-info"></i>
+
+                                <p>
+                                    Al registrar la agencia también
+                                    se creará automáticamente su
+                                    primera suscripción asociada
+                                    al plan seleccionado.
+                                </p>
+
+                            </div>
+
+
+                            <!-- ACCIONES -->
+
+                            <div class="form-actions">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary form-submit"
+                                >
+
+                                    <i class="fa-solid fa-floppy-disk"></i>
+
+                                    <span>
+                                        Registrar agencia
+                                    </span>
+
+                                </button>
+
+
+                                <a
+                                    href="/admin/agencias"
+                                    class="btn form-cancel"
+                                >
+
+                                    Cancelar
+
+                                </a>
+
+                            </div>
+
+                        </section>
+
+                    </aside>
+
+                </div>
+
+            </form>
+
+
+            <!-- =======================================
+                 FOOTER
+            ======================================== -->
+
+            <footer class="admin-footer">
+
+                <span>
+                    AutoRentCar Platform
+                </span>
+
+                <span>
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<script src="/js/admin.js"></script>
+
+<script src="/js/agencia-form.js"></script>
+
+</body>
+
+</html>

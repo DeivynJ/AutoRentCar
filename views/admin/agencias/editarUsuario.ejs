@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+>
+
+</head>
+
+
+<body>
+
+
+<div class="admin-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+
+    <div class="admin-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+
+        <main class="admin-main-content">
+
+
+            <div class="form-page-top">
+
+
+                <a
+                    href="/admin/agencias/<%= agencia.id %>/usuarios"
+                    class="back-link"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Volver a usuarios
+
+                </a>
+
+
+            </div>
+
+
+
+
+
+            <section class="dashboard-panel">
+
+
+                <div class="panel-header">
+
+
+                    <div>
+
+                        <span class="panel-eyebrow">
+
+                            Editar usuario
+
+                        </span>
+
+
+                        <h3>
+
+                            Modificar información de <%= usuarioEditar.nombre %>
+
+                        </h3>
+
+
+                        <p>
+
+                            Actualiza los datos y permisos del usuario.
+
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+
+
+                <div class="user-form-card">
+
+
+                    <form
+
+                        method="POST"
+
+                        action="/admin/agencias/<%= agencia.id %>/usuarios/<%= usuarioEditar.id %>/editar"
+
+                    >
+
+
+
+                        <div class="user-form-grid">
+
+
+
+
+
+                            <div class="user-form-group">
+
+                                <label>
+                                    Nombre
+                                </label>
+
+
+                                <input
+
+                                    type="text"
+
+                                    name="nombre"
+
+                                    value="<%= usuarioEditar.nombre %>"
+
+                                    required
+
+                                >
+
+                            </div>
+
+
+
+
+
+
+                            <div class="user-form-group">
+
+                                <label>
+                                    Apellido
+                                </label>
+
+
+                                <input
+
+                                    type="text"
+
+                                    name="apellido"
+
+                                    value="<%= usuarioEditar.apellido || '' %>"
+
+                                >
+
+                            </div>
+
+
+
+
+
+
+                            <div class="user-form-group">
+
+                                <label>
+                                    Correo electrónico
+                                </label>
+
+
+                                <input
+
+                                    type="email"
+
+                                    name="correo"
+
+                                    value="<%= usuarioEditar.correo %>"
+
+                                    required
+
+                                >
+
+                            </div>
+
+
+
+
+
+
+                            <div class="user-form-group">
+
+                                <label>
+                                    Teléfono
+                                </label>
+
+
+                                <input
+
+                                    type="text"
+
+                                    name="telefono"
+
+                                    value="<%= usuarioEditar.telefono || '' %>"
+
+                                >
+
+                            </div>
+
+
+
+
+
+
+                            <div class="user-form-group">
+
+                                <label>
+                                    Rol
+                                </label>
+
+
+                                <select
+
+                                    name="rol_id"
+
+                                    required
+
+                                >
+
+
+                                    <% roles.forEach(rol => { %>
+
+
+                                        <option
+
+                                            value="<%= rol.id %>"
+
+                                            <%= Number(usuarioEditar.rol_id) === Number(rol.id) ? "selected" : "" %>
+
+                                        >
+
+                                            <%= rol.nombre %>
+
+                                        </option>
+
+
+                                    <% }) %>
+
+
+                                </select>
+
+
+                            </div>
+
+
+
+
+
+
+                            <div class="user-form-group">
+
+                                <label>
+                                    Estado
+                                </label>
+
+
+                                <select
+
+                                    name="estado"
+
+                                >
+
+
+                                    <option
+
+                                        value="activo"
+
+                                        <%= usuarioEditar.estado === "activo" ? "selected" : "" %>
+
+                                    >
+
+                                        Activo
+
+                                    </option>
+
+
+
+                                    <option
+
+                                        value="inactivo"
+
+                                        <%= usuarioEditar.estado === "inactivo" ? "selected" : "" %>
+
+                                    >
+
+                                        Inactivo
+
+                                    </option>
+
+
+                                </select>
+
+
+                            </div>
+
+
+
+
+
+                        </div>
+
+
+
+
+
+                        <div class="user-form-actions">
+
+
+    <a
+
+        href="/admin/agencias/<%= agencia.id %>/usuarios"
+
+        class="form-cancel btn"
+
+    >
+
+        <i class="fa-solid fa-xmark"></i>
+
+        Cancelar
+
+    </a>
+
+
+
+
+
+                            <button
+
+                                type="submit"
+
+                                class="user-btn-create"
+
+                            >
+
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                
+                                Guardar cambios
+
+                            </button>
+
+
+
+                        </div>
+
+
+
+
+
+                    </form>
+
+
+                </div>
+
+
+            </section>
+
+
+
+        </main>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script src="/js/admin.js"></script>
+
+
+</body>
+
+</html>

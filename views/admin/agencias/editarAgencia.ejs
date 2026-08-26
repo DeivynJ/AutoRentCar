@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+    <link
+
+rel="stylesheet"
+
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+
+/>
+
+</head>
+
+
+<body>
+
+
+<div class="admin-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="admin-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+
+        <main class="admin-main-content">
+
+
+
+            <div class="form-page-top">
+
+
+                <a
+                    href="/admin/agencias/<%= agencia.id %>"
+                    class="back-link"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Volver al detalle
+
+                </a>
+
+
+            </div>
+
+
+
+
+
+
+            <section class="dashboard-panel">
+
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="panel-eyebrow">
+
+                            Editar agencia
+
+                        </span>
+
+
+                        <h3>
+
+                            Modificar información de <%= agencia.nombre %>
+
+                        </h3>
+
+
+                        <p>
+
+                            Actualiza los datos generales y la identidad visual.
+
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+
+
+
+
+                <div class="user-form-card">
+
+
+                    <form
+
+                        method="POST"
+
+                        action="/admin/agencias/<%= agencia.id %>/editar"
+
+                        enctype="multipart/form-data"
+
+                    >
+
+
+
+
+                        <div class="user-form-grid">
+
+
+    <div class="user-form-group">
+
+        <label>
+            Nombre comercial
+        </label>
+
+        <input
+            type="text"
+            name="nombre"
+            value="<%= agencia.nombre || '' %>"
+            required
+        >
+
+    </div>
+
+
+    <div class="user-form-group">
+
+        <label>
+            Nombre legal
+        </label>
+
+        <input
+            type="text"
+            name="nombre_legal"
+            value="<%= agencia.nombre_legal || '' %>"
+        >
+
+    </div>
+
+
+    <div class="user-form-group">
+
+        <label>
+            Identificación fiscal
+        </label>
+
+        <input
+            type="text"
+            name="identificacion_fiscal"
+            value="<%= agencia.identificacion_fiscal || '' %>"
+        >
+
+    </div>
+
+
+    <div class="user-form-group">
+
+        <label>
+            Correo electrónico
+        </label>
+
+        <input
+            type="email"
+            name="correo"
+            value="<%= agencia.correo || '' %>"
+            required
+        >
+
+    </div>
+
+
+    <div class="user-form-group">
+
+        <label>
+            Teléfono
+        </label>
+
+        <input
+            type="text"
+            name="telefono"
+            value="<%= agencia.telefono || '' %>"
+        >
+
+    </div>
+
+
+    <div class="user-form-group">
+
+        <label>
+            WhatsApp
+        </label>
+
+        <input
+            type="text"
+            name="whatsapp"
+            value="<%= agencia.whatsapp || '' %>"
+        >
+
+    </div>
+
+
+    <div class="user-form-group user-form-full">
+
+        <label>
+            Dirección
+        </label>
+
+        <input
+            type="text"
+            name="direccion"
+            value="<%= agencia.direccion || '' %>"
+        >
+
+    </div>
+
+
+    <div class="user-form-group">
+
+        <label>
+            Ciudad
+        </label>
+
+        <input
+            type="text"
+            name="ciudad"
+            value="<%= agencia.ciudad || '' %>"
+        >
+
+    </div>
+
+
+    <div class="user-form-group">
+
+        <label>
+            Provincia
+        </label>
+
+        <input
+            type="text"
+            name="provincia"
+            value="<%= agencia.provincia || '' %>"
+        >
+
+    </div>
+
+
+    <div class="user-form-group user-form-full">
+
+        <label>
+            País
+        </label>
+
+        <input
+            type="text"
+            name="pais"
+            value="<%= agencia.pais || 'República Dominicana' %>"
+        >
+
+    </div>
+
+
+    <div class="user-form-group">
+
+        <label>
+            Color principal
+        </label>
+
+        <input
+            type="color"
+            name="color_primario"
+            value="<%= agencia.color_primario || '#0b1f3a' %>"
+        >
+
+    </div>
+
+
+    <div class="user-form-group">
+
+        <label>
+            Color secundario
+        </label>
+
+        <input
+            type="color"
+            name="color_secundario"
+            value="<%= agencia.color_secundario || '#ff8a00' %>"
+        >
+
+    </div>
+
+
+    <% if (agencia.logo) { %>
+
+        <div class="user-form-group user-form-full">
+
+            <label>
+                Logo actual
+            </label>
+
+            <div class="agency-logo-preview">
+
+                <img
+                    src="<%= agencia.logo %>?v=<%= Date.now() %>"
+                    alt="Logo de <%= agencia.nombre %>"
+                >
+
+            </div>
+
+        </div>
+
+    <% } %>
+
+
+    <div class="user-form-group user-form-full">
+
+        <label>
+            Nuevo logo (opcional)
+        </label>
+
+        <input
+            type="file"
+            name="logo"
+            accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+        >
+
+    </div>
+
+
+</div>
+
+                        <div class="user-form-actions">
+
+
+                            <a
+
+                                href="/admin/agencias/<%= agencia.id %>"
+
+                                class="form-cancel btn"
+
+                            >
+
+                                Cancelar
+
+                            </a>
+
+
+
+
+
+                            <button
+
+                                type="submit"
+
+                                class="user-btn-create"
+
+                            >
+
+                                <i class="fa-solid fa-save"></i>
+
+                                Guardar cambios
+
+                            </button>
+
+
+
+                        </div>
+
+
+
+
+                    </form>
+
+
+
+                </div>
+
+
+
+
+            </section>
+
+
+
+
+        </main>
+
+
+
+    </div>
+
+
+
+</div>
+
+
+<script src="/js/admin.js"></script>
+
+
+</body>
+
+</html>

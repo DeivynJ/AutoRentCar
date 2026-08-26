@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Gestión de agencias de AutoRentCar."
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <!-- GOOGLE FONTS -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- FONT AWESOME -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <!-- CSS ADMIN -->
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+</head>
+
+<body>
+
+<div class="admin-shell">
+
+
+    <!-- ===============================================
+         SIDEBAR
+    ================================================ -->
+
+    <%- include("../partials/sidebar") %>
+
+
+    <!-- ===============================================
+         CONTENIDO
+    ================================================ -->
+
+    <div class="admin-content-wrapper">
+
+
+        <!-- HEADER -->
+
+        <%- include("../partials/header") %>
+
+
+        <main class="admin-main-content">
+
+
+            <!-- =======================================
+                 ENCABEZADO DEL MÓDULO
+            ======================================== -->
+
+            <section
+                class="module-hero"
+                data-animate="fade-up"
+            >
+
+                <div>
+
+                    <div class="module-hero-badge">
+
+                        <i class="fa-solid fa-building"></i>
+
+                        <span>
+                            Gestión multiagencia
+                        </span>
+
+                    </div>
+
+
+                    <h2>
+                        Administra las agencias
+                        de la plataforma
+                    </h2>
+
+
+                    <p>
+                        Consulta las agencias registradas,
+                        su estado, ubicación y plan actual.
+                        Desde este módulo podrás gestionar
+                        cada organización de forma independiente.
+                    </p>
+
+                </div>
+
+
+                <div class="module-hero-actions">
+
+                    <a
+                        href="/admin/agencias/nueva"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="fa-solid fa-plus"></i>
+
+                        <span>
+                            Nueva agencia
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- =======================================
+                 MENSAJE DE ÉXITO
+            ======================================== -->
+
+            <% if (mensajeExito) { %>
+
+                <div
+                    class="admin-alert admin-alert-success"
+                    data-animate="fade-up"
+                >
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    <div>
+
+                        <strong>
+                            Operación completada
+                        </strong>
+
+                        <span>
+                            <%= mensajeExito %>
+                        </span>
+
+                    </div>
+
+                </div>
+
+            <% } %>
+
+
+            <!-- =======================================
+                 ESTADÍSTICAS
+            ======================================== -->
+
+            <section class="dashboard-stats agency-stats">
+
+
+                <!-- TOTAL -->
+
+                <article
+                    class="stat-card"
+                    data-animate="fade-up"
+                >
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-blue">
+
+                            <i class="fa-solid fa-building"></i>
+
+                        </div>
+
+                        <span class="stat-label">
+                            Registradas
+                        </span>
+
+                    </div>
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            Total de agencias
+                        </span>
+
+                        <strong class="stat-value">
+                            <%= estadisticasAgencias.total %>
+                        </strong>
+
+                    </div>
+
+                    <div class="stat-footer">
+
+                        <span class="stat-status neutral">
+
+                            <i class="fa-solid fa-database"></i>
+
+                            En la plataforma
+
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ACTIVAS -->
+
+                <article
+                    class="stat-card"
+                    data-animate="fade-up"
+                >
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-green">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        </div>
+
+                        <span class="stat-label">
+                            Operativas
+                        </span>
+
+                    </div>
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            Agencias activas
+                        </span>
+
+                        <strong class="stat-value">
+                            <%= estadisticasAgencias.activas %>
+                        </strong>
+
+                    </div>
+
+                    <div class="stat-footer">
+
+                        <span class="stat-status positive">
+
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+
+                            En servicio
+
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+                <!-- PRUEBA -->
+
+                <article
+                    class="stat-card"
+                    data-animate="fade-up"
+                >
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-orange">
+
+                            <i class="fa-solid fa-hourglass-half"></i>
+
+                        </div>
+
+                        <span class="stat-label">
+                            Evaluación
+                        </span>
+
+                    </div>
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            En período de prueba
+                        </span>
+
+                        <strong class="stat-value">
+                            <%= estadisticasAgencias.prueba %>
+                        </strong>
+
+                    </div>
+
+                    <div class="stat-footer">
+
+                        <span class="stat-status neutral">
+
+                            <i class="fa-solid fa-clock"></i>
+
+                            Temporal
+
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+                <!-- SUSPENDIDAS -->
+
+                <article
+                    class="stat-card"
+                    data-animate="fade-up"
+                >
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-purple">
+
+                            <i class="fa-solid fa-circle-pause"></i>
+
+                        </div>
+
+                        <span class="stat-label">
+                            Restringidas
+                        </span>
+
+                    </div>
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            Agencias suspendidas
+                        </span>
+
+                        <strong class="stat-value">
+                            <%= estadisticasAgencias.suspendidas %>
+                        </strong>
+
+                    </div>
+
+                    <div class="stat-footer">
+
+                        <span class="stat-status neutral">
+
+                            <i class="fa-solid fa-shield"></i>
+
+                            Acceso limitado
+
+                        </span>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- =======================================
+                 LISTADO
+            ======================================== -->
+
+            <section
+                class="dashboard-panel agencies-panel"
+                data-animate="fade-up"
+            >
+
+                <!-- CABECERA -->
+
+                <div class="panel-header agencies-panel-header">
+
+                    <div>
+
+                        <span class="panel-eyebrow">
+                            Directorio
+                        </span>
+
+                        <h3>
+                            Todas las agencias
+                        </h3>
+
+                        <p>
+                            Busca y filtra las organizaciones
+                            registradas en la plataforma.
+                        </p>
+
+                    </div>
+
+
+                    <div class="agency-toolbar">
+
+
+                        <!-- BUSCADOR -->
+
+                        <div class="agency-search">
+
+                            <i class="fa-solid fa-magnifying-glass"></i>
+
+                            <input
+                                type="search"
+                                id="agency-search"
+                                placeholder="Buscar agencia..."
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+
+                        <!-- FILTRO -->
+
+                        <div class="agency-filter">
+
+                            <i class="fa-solid fa-filter"></i>
+
+                            <select id="agency-status-filter">
+
+                                <option value="">
+                                    Todos los estados
+                                </option>
+
+                                <option value="activa">
+                                    Activas
+                                </option>
+
+                                <option value="prueba">
+                                    En prueba
+                                </option>
+
+                                <option value="suspendida">
+                                    Suspendidas
+                                </option>
+
+                                <option value="vencida">
+                                    Vencidas
+                                </option>
+
+                                <option value="cancelada">
+                                    Canceladas
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TABLA -->
+
+                <div class="admin-table-wrapper">
+
+                    <table
+                        class="admin-table agencies-table"
+                        id="agencies-table"
+                    >
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Agencia
+                                </th>
+
+                                <th>
+                                    Ubicación
+                                </th>
+
+                                <th>
+                                    Plan
+                                </th>
+
+                                <th>
+                                    Suscripción
+                                </th>
+
+                                <th>
+                                    Estado
+                                </th>
+
+                                <th>
+                                    Registro
+                                </th>
+
+                                <th>
+                                    Acción
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="agencies-table-body">
+
+
+                        <% if (agencias.length) { %>
+
+
+                            <% agencias.forEach((agencia) => { %>
+
+
+                                <tr
+                                    class="agency-row"
+
+                                    data-search="<%= (
+                                        agencia.nombre + ' ' +
+                                        (agencia.ciudad || '') + ' ' +
+                                        (agencia.provincia || '') + ' ' +
+                                        (agencia.correo || '')
+                                    ).toLowerCase() %>"
+
+                                    data-status="<%= agencia.estado %>"
+                                >
+
+
+                                    <!-- AGENCIA -->
+
+                                    <td>
+
+                                        <div class="table-agency">
+
+                                            <div class="table-agency-avatar">
+
+                                                <%= agencia.nombre
+                                                    .charAt(0)
+                                                    .toUpperCase() %>
+
+                                            </div>
+
+
+                                            <div>
+
+                                                <strong>
+                                                    <%= agencia.nombre %>
+                                                </strong>
+
+                                                <span>
+                                                    <%= agencia.correo || "Sin correo" %>
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- UBICACIÓN -->
+
+                                    <td>
+
+                                        <div class="table-location">
+
+                                            <i class="fa-solid fa-location-dot"></i>
+
+                                            <span>
+
+                                                <% if (agencia.ciudad || agencia.provincia) { %>
+
+                                                    <%= agencia.ciudad || "" %>
+
+                                                    <% if (
+                                                        agencia.ciudad &&
+                                                        agencia.provincia
+                                                    ) { %>
+                                                        ,
+                                                    <% } %>
+
+                                                    <%= agencia.provincia || "" %>
+
+                                                <% } else { %>
+
+                                                    No especificada
+
+                                                <% } %>
+
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- PLAN -->
+
+                                    <td>
+
+                                        <% if (agencia.plan_nombre) { %>
+
+                                            <span class="plan-badge">
+
+                                                <i class="fa-solid fa-layer-group"></i>
+
+                                                <%= agencia.plan_nombre %>
+
+                                            </span>
+
+                                        <% } else { %>
+
+                                            <span class="table-muted">
+                                                Sin plan
+                                            </span>
+
+                                        <% } %>
+
+                                    </td>
+
+
+                                    <!-- SUSCRIPCIÓN -->
+
+                                    <td>
+
+                                        <% if (agencia.suscripcion_estado) { %>
+
+                                            <span
+                                                class="subscription-badge subscription-<%= agencia.suscripcion_estado %>"
+                                            >
+
+                                                <%= agencia.suscripcion_estado %>
+
+                                            </span>
+
+                                        <% } else { %>
+
+                                            <span class="table-muted">
+                                                Sin suscripción
+                                            </span>
+
+                                        <% } %>
+
+                                    </td>
+
+
+                                    <!-- ESTADO -->
+
+                                    <td>
+
+                                        <span
+                                            class="status-badge status-<%= agencia.estado %>"
+                                        >
+
+                                            <span class="status-dot"></span>
+
+                                            <%= agencia.estado %>
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- REGISTRO -->
+
+                                    <td>
+
+                                        <span class="table-date">
+
+                                            <%= new Date(
+                                                agencia.fecha_creacion
+                                            ).toLocaleDateString(
+                                                "es-DO",
+                                                {
+                                                    day:
+                                                        "2-digit",
+
+                                                    month:
+                                                        "short",
+
+                                                    year:
+                                                        "numeric"
+                                                }
+                                            ) %>
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- ACCIÓN -->
+
+                                    <td>
+
+                                       <a
+    href="/admin/agencias/<%= agencia.id %>"
+    class="table-action"
+    title="Ver detalle de agencia"
+>
+    <i class="fa-solid fa-arrow-right"></i>
+</a>
+
+                                    </td>
+
+                                </tr>
+
+
+                            <% }); %>
+
+
+                        <% } else { %>
+
+
+                            <tr>
+
+                                <td
+                                    colspan="7"
+                                    class="table-empty"
+                                >
+
+                                    <div>
+
+                                        <i class="fa-regular fa-building"></i>
+
+                                        <strong>
+                                            No hay agencias registradas
+                                        </strong>
+
+                                        <span>
+                                            Registra la primera agencia
+                                            para comenzar.
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                        <% } %>
+
+
+                        </tbody>
+
+                    </table>
+
+
+                    <!-- SIN RESULTADOS DE BÚSQUEDA -->
+
+                    <div
+                        class="agency-no-results"
+                        id="agency-no-results"
+                        hidden
+                    >
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        <strong>
+                            No encontramos resultados
+                        </strong>
+
+                        <span>
+                            Intenta cambiar la búsqueda
+                            o el filtro seleccionado.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =======================================
+                 FOOTER
+            ======================================== -->
+
+            <footer class="admin-footer">
+
+                <span>
+                    AutoRentCar Platform
+                </span>
+
+                <span>
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<!-- JS GENERAL -->
+
+<script src="/js/admin.js"></script>
+
+
+<!-- JS DEL MÓDULO -->
+
+<script src="/js/agencias.js"></script>
+
+
+</body>
+
+</html>

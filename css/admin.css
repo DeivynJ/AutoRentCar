@@ -3569,3 +3569,2749 @@ small {
             0.01ms !important;
     }
 }
+/* =========================================================
+   MÓDULO - AGENCIAS
+========================================================= */
+
+.module-hero {
+
+    min-height: 190px;
+
+    margin-bottom: 22px;
+
+    padding: 30px 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 30px;
+
+    position: relative;
+
+    border:
+        1px solid
+        var(--admin-border);
+
+    border-radius:
+        var(--admin-radius-large);
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff 0%,
+            #fbfcff 55%,
+            #fff8ef 100%
+        );
+
+    box-shadow:
+        0 10px 30px
+        rgba(
+            11,
+            31,
+            58,
+            0.04
+        );
+
+    overflow: hidden;
+}
+
+
+.module-hero::after {
+
+    content: "";
+
+    width: 220px;
+    height: 220px;
+
+    position: absolute;
+
+    right: -100px;
+    top: -110px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(
+            255,
+            138,
+            0,
+            0.07
+        );
+}
+
+
+.module-hero > div {
+
+    position: relative;
+    z-index: 2;
+}
+
+
+.module-hero-badge {
+
+    width: fit-content;
+
+    margin-bottom: 13px;
+
+    padding:
+        7px 11px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    border-radius: 999px;
+
+    color:
+        var(--admin-secondary);
+
+    background:
+        rgba(
+            255,
+            138,
+            0,
+            0.08
+        );
+
+    font-size: 0.68rem;
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing:
+        0.07em;
+}
+
+
+.module-hero h2 {
+
+    max-width: 650px;
+
+    margin-bottom: 10px;
+
+    font-size:
+        clamp(
+            1.55rem,
+            3vw,
+            2.15rem
+        );
+
+    line-height: 1.15;
+
+    letter-spacing:
+        -0.035em;
+}
+
+
+.module-hero p {
+
+    max-width: 720px;
+
+    color:
+        var(--admin-text-soft);
+
+    font-size: 0.82rem;
+
+    line-height: 1.7;
+}
+
+
+.module-hero-actions {
+
+    flex: 0 0 auto;
+}
+
+
+.module-hero-actions
+.btn-primary {
+
+    min-height: 46px;
+}
+
+
+/* =========================================================
+   ESTADÍSTICAS AGENCIAS
+========================================================= */
+
+.agency-stats {
+
+    margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.agencies-panel-header {
+
+    align-items: center;
+}
+
+
+.agency-toolbar {
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.agency-search,
+.agency-filter {
+
+    min-height: 42px;
+
+    display: flex;
+    align-items: center;
+
+    border:
+        1px solid
+        var(--admin-border);
+
+    border-radius: 10px;
+
+    background:
+        #ffffff;
+
+    transition:
+        var(--admin-transition);
+}
+
+
+.agency-search {
+
+    width: 250px;
+
+    padding:
+        0 12px;
+}
+
+
+.agency-search:focus-within,
+.agency-filter:focus-within {
+
+    border-color:
+        rgba(
+            255,
+            138,
+            0,
+            0.55
+        );
+
+    box-shadow:
+        0 0 0 4px
+        rgba(
+            255,
+            138,
+            0,
+            0.07
+        );
+}
+
+
+.agency-search i,
+.agency-filter i {
+
+    color:
+        #9aa5b5;
+
+    font-size: 0.78rem;
+}
+
+
+.agency-search input {
+
+    width: 100%;
+
+    padding-left: 9px;
+
+    border: none;
+    outline: none;
+
+    color:
+        var(--admin-text);
+
+    background:
+        transparent;
+
+    font-size: 0.72rem;
+}
+
+
+.agency-search input::placeholder {
+
+    color:
+        #a5afbc;
+}
+
+
+.agency-filter {
+
+    padding-left: 12px;
+}
+
+
+.agency-filter select {
+
+    min-width: 160px;
+
+    padding:
+        0 30px
+        0 9px;
+
+    border: none;
+    outline: none;
+
+    color:
+        #647186;
+
+    background:
+        transparent;
+
+    font-size: 0.7rem;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   PLAN Y SUSCRIPCIÓN
+========================================================= */
+
+.plan-badge {
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 6px;
+
+    padding:
+        6px 9px;
+
+    border-radius: 8px;
+
+    color:
+        #46586f;
+
+    background:
+        #f2f5f9;
+
+    font-size: 0.67rem;
+    font-weight: 700;
+}
+
+
+.plan-badge i {
+
+    color:
+        var(--admin-secondary);
+}
+
+
+.subscription-badge {
+
+    display: inline-flex;
+
+    padding:
+        6px 9px;
+
+    border-radius: 999px;
+
+    font-size: 0.64rem;
+    font-weight: 800;
+
+    text-transform: capitalize;
+}
+
+
+.subscription-activa {
+
+    color:
+        #18784e;
+
+    background:
+        #e8f8f0;
+}
+
+
+.subscription-prueba {
+
+    color:
+        #2b67b1;
+
+    background:
+        #edf4ff;
+}
+
+
+.subscription-vencida {
+
+    color:
+        #a26100;
+
+    background:
+        #fff6df;
+}
+
+
+.subscription-suspendida {
+
+    color:
+        #a26100;
+
+    background:
+        #fff3df;
+}
+
+
+.subscription-cancelada {
+
+    color:
+        #b52d2d;
+
+    background:
+        #fff0f0;
+}
+
+
+.table-muted {
+
+    color:
+        #9aa5b4;
+
+    font-size: 0.68rem;
+}
+
+
+/* =========================================================
+   SIN RESULTADOS
+========================================================= */
+
+.agency-no-results {
+
+    min-height: 220px;
+
+    padding: 35px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    color:
+        var(--admin-text-soft);
+
+    text-align: center;
+}
+
+
+.agency-no-results[hidden] {
+
+    display: none;
+}
+
+
+.agency-no-results i {
+
+    margin-bottom: 6px;
+
+    color:
+        #b0bac6;
+
+    font-size: 1.7rem;
+}
+
+
+.agency-no-results strong {
+
+    color:
+        var(--admin-text);
+
+    font-size: 0.82rem;
+}
+
+
+.agency-no-results span {
+
+    font-size: 0.7rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE AGENCIAS
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .module-hero {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+
+    .module-hero-actions {
+
+        width: 100%;
+    }
+
+
+    .module-hero-actions
+    .btn {
+
+        width: 100%;
+    }
+
+
+    .agencies-panel-header {
+
+        align-items:
+            flex-start;
+    }
+
+
+    .agency-toolbar {
+
+        width: 100%;
+
+        align-items:
+            stretch;
+
+        flex-direction:
+            column;
+    }
+
+
+    .agency-search,
+    .agency-filter {
+
+        width: 100%;
+    }
+
+
+    .agency-filter select {
+
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 560px) {
+
+    .module-hero {
+
+        padding:
+            24px 20px;
+    }
+
+
+    .module-hero h2 {
+
+        font-size: 1.5rem;
+    }
+
+
+    .module-hero p {
+
+        font-size: 0.78rem;
+    }
+
+}
+/* =========================================================
+   FORMULARIO - NUEVA AGENCIA
+========================================================= */
+
+.form-page-top {
+    margin-bottom: 14px;
+}
+
+.back-link {
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    color:
+        var(--admin-text-soft);
+
+    font-size: 0.74rem;
+    font-weight: 700;
+
+    transition:
+        var(--admin-transition);
+}
+
+.back-link:hover {
+
+    color:
+        var(--admin-secondary);
+
+    transform:
+        translateX(-2px);
+}
+
+
+/* =========================================================
+   HERO FORMULARIO
+========================================================= */
+
+.form-module-hero {
+
+    min-height: 175px;
+}
+
+.form-hero-icon {
+
+    flex: 0 0 90px;
+
+    width: 90px;
+    height: 90px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 25px;
+
+    color:
+        var(--admin-secondary);
+
+    background:
+        var(--admin-primary);
+
+    font-size: 1.9rem;
+
+    box-shadow:
+        0 15px 35px
+        rgba(
+            11,
+            31,
+            58,
+            0.15
+        );
+}
+
+
+/* =========================================================
+   ALERTAS
+========================================================= */
+
+.admin-alert {
+
+    margin-bottom: 20px;
+
+    padding: 15px 17px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    border-radius:
+        12px;
+
+    font-size:
+        0.75rem;
+}
+
+.admin-alert > i {
+
+    margin-top: 3px;
+}
+
+.admin-alert strong,
+.admin-alert span {
+
+    display: block;
+}
+
+.admin-alert strong {
+
+    margin-bottom: 4px;
+
+    font-size: 0.78rem;
+}
+
+.admin-alert span {
+
+    line-height: 1.55;
+}
+
+.admin-alert-danger {
+
+    border:
+        1px solid
+        #fecaca;
+
+    color:
+        #991b1b;
+
+    background:
+        #fff1f2;
+}
+
+.admin-alert-success {
+
+    border:
+        1px solid
+        #bbf7d0;
+
+    color:
+        #166534;
+
+    background:
+        #f0fdf4;
+}
+
+
+/* =========================================================
+   LAYOUT FORMULARIO
+========================================================= */
+
+.agency-form-layout {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(300px, 360px);
+
+    align-items: start;
+
+    gap: 18px;
+}
+
+.agency-form-main {
+
+    display: grid;
+
+    gap: 18px;
+}
+
+.agency-form-sidebar {
+
+    min-width: 0;
+}
+
+
+/* =========================================================
+   CARD FORMULARIO
+========================================================= */
+
+.form-card {
+
+    padding: 22px;
+
+    border:
+        1px solid
+        var(--admin-border);
+
+    border-radius:
+        var(--admin-radius);
+
+    background:
+        #ffffff;
+
+    box-shadow:
+        0 8px 24px
+        rgba(
+            11,
+            31,
+            58,
+            0.035
+        );
+}
+
+.sticky-card {
+
+    position: sticky;
+
+    top:
+        calc(
+            var(--topbar-height) +
+            18px
+        );
+}
+
+
+/* =========================================================
+   HEADER CARD
+========================================================= */
+
+.form-card-header {
+
+    margin-bottom: 22px;
+
+    padding-bottom: 17px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    border-bottom:
+        1px solid
+        #edf1f5;
+}
+
+.form-card-icon {
+
+    flex: 0 0 42px;
+
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 11px;
+
+    color:
+        var(--admin-secondary);
+
+    background:
+        rgba(
+            255,
+            138,
+            0,
+            0.09
+        );
+}
+
+.form-card-header span {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    color:
+        var(--admin-secondary);
+
+    font-size: 0.62rem;
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing:
+        0.08em;
+}
+
+.form-card-header h3 {
+
+    margin-bottom: 4px;
+
+    font-size: 1rem;
+}
+
+.form-card-header p {
+
+    color:
+        var(--admin-text-soft);
+
+    font-size: 0.7rem;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   GRID CAMPOS
+========================================================= */
+
+.form-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap:
+        18px 16px;
+}
+
+.form-field-full {
+
+    grid-column:
+        1 / -1;
+}
+
+
+/* =========================================================
+   CAMPOS
+========================================================= */
+
+.form-field label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color:
+        #344257;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.form-field label strong {
+
+    color:
+        var(--admin-secondary);
+}
+
+.form-field input:not(
+    [type="color"]
+),
+.form-field select,
+.form-field textarea {
+
+    width: 100%;
+    min-height: 46px;
+
+    padding:
+        0 13px;
+
+    border:
+        1px solid
+        var(--admin-border);
+
+    border-radius: 10px;
+
+    outline: none;
+
+    color:
+        var(--admin-text);
+
+    background:
+        #fbfcfe;
+
+    font-size: 0.74rem;
+
+    transition:
+        var(--admin-transition);
+}
+
+.form-field textarea {
+
+    min-height: 120px;
+
+    padding:
+        12px 13px;
+
+    resize: vertical;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+
+    border-color:
+        rgba(
+            255,
+            138,
+            0,
+            0.65
+        );
+
+    background:
+        #ffffff;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(
+            255,
+            138,
+            0,
+            0.07
+        );
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+
+    color:
+        #a8b1bd;
+}
+
+
+/* =========================================================
+   COLORES
+========================================================= */
+
+.color-field {
+
+    min-height: 48px;
+
+    padding:
+        5px 11px
+        5px 6px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    border:
+        1px solid
+        var(--admin-border);
+
+    border-radius:
+        10px;
+
+    background:
+        #fbfcfe;
+}
+
+.color-field input[type="color"] {
+
+    flex:
+        0 0 38px;
+
+    width: 38px;
+    height: 36px;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background:
+        transparent;
+
+    cursor: pointer;
+}
+
+.color-field span {
+
+    color:
+        #657286;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   PREVIEW MARCA
+========================================================= */
+
+.brand-preview {
+
+    padding: 15px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    border:
+        1px solid
+        var(--admin-border);
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fbfcfe,
+            #f7f9fc
+        );
+}
+
+.brand-preview-logo {
+
+    flex: 0 0 54px;
+
+    width: 54px;
+    height: 54px;
+
+    display: grid;
+    place-items: center;
+
+    border:
+        2px solid
+        var(--admin-secondary);
+
+    border-radius: 15px;
+
+    background:
+        var(--admin-primary);
+
+    color:
+        var(--admin-secondary);
+
+    font-size: 1.15rem;
+
+    transition:
+        var(--admin-transition);
+}
+
+.brand-preview small,
+.brand-preview strong,
+.brand-preview span {
+
+    display: block;
+}
+
+.brand-preview small {
+
+    margin-bottom: 3px;
+
+    color:
+        var(--admin-secondary);
+
+    font-size: 0.58rem;
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+.brand-preview strong {
+
+    margin-bottom: 3px;
+
+    font-size: 0.82rem;
+}
+
+.brand-preview span {
+
+    color:
+        var(--admin-text-soft);
+
+    font-size: 0.64rem;
+}
+
+
+/* =========================================================
+   PLANES
+========================================================= */
+
+.plan-form-list {
+
+    margin-top: 15px;
+
+    display: grid;
+
+    gap: 8px;
+}
+
+.plan-form-item {
+
+    padding: 11px;
+
+    border:
+        1px solid
+        #edf1f5;
+
+    border-radius: 10px;
+
+    background:
+        #fafbfd;
+
+    transition:
+        var(--admin-transition);
+}
+
+.plan-form-item strong,
+.plan-form-item span {
+
+    display: block;
+}
+
+.plan-form-item strong {
+
+    margin-bottom: 3px;
+
+    font-size: 0.7rem;
+}
+
+.plan-form-item span {
+
+    color:
+        var(--admin-text-soft);
+
+    font-size: 0.61rem;
+}
+
+.plan-form-item.selected {
+
+    border-color:
+        rgba(
+            255,
+            138,
+            0,
+            0.4
+        );
+
+    background:
+        rgba(
+            255,
+            138,
+            0,
+            0.055
+        );
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            255,
+            138,
+            0,
+            0.04
+        );
+}
+
+.plan-form-item.selected strong {
+
+    color:
+        var(--admin-secondary);
+}
+
+
+/* =========================================================
+   DIVISOR / INFO
+========================================================= */
+
+.form-divider {
+
+    height: 1px;
+
+    margin:
+        20px 0;
+
+    background:
+        var(--admin-border);
+}
+
+.form-info-box {
+
+    margin-top: 18px;
+
+    padding: 12px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 9px;
+
+    border-radius: 10px;
+
+    color:
+        #53657d;
+
+    background:
+        #f2f6fb;
+}
+
+.form-info-box i {
+
+    margin-top: 2px;
+
+    color:
+        #2878d4;
+}
+
+.form-info-box p {
+
+    font-size: 0.64rem;
+
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   ACCIONES
+========================================================= */
+
+.form-actions {
+
+    margin-top: 20px;
+
+    display: grid;
+
+    gap: 9px;
+}
+
+.form-submit {
+
+    width: 100%;
+
+    min-height: 47px;
+}
+
+.form-cancel {
+
+    width: 100%;
+
+    min-height: 43px;
+
+    color:
+        #68778b;
+
+    background:
+        #f3f5f8;
+}
+
+.form-cancel:hover {
+
+    color:
+        var(--admin-primary);
+
+    background:
+        #e9edf2;
+}
+
+
+/* =========================================================
+   RESPONSIVE FORMULARIO
+========================================================= */
+
+@media (max-width: 1050px) {
+
+    .agency-form-layout {
+
+        grid-template-columns:
+            1fr;
+    }
+
+    .sticky-card {
+
+        position: static;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .form-grid {
+
+        grid-template-columns:
+            1fr;
+    }
+
+    .form-field-full {
+
+        grid-column: auto;
+    }
+
+    .form-card {
+
+        padding: 18px;
+    }
+
+    .form-module-hero
+    .form-hero-icon {
+
+        display: none;
+    }
+
+}
+/* =========================================================
+   LOGO DE AGENCIA
+========================================================= */
+
+.agency-logo-upload {
+
+    padding: 16px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+
+    border:
+        1px dashed
+        #cfd7e3;
+
+    border-radius:
+        14px;
+
+    background:
+        #fafbfd;
+}
+
+
+.agency-logo-preview {
+
+    flex: 0 0 110px;
+
+    width: 110px;
+    height: 110px;
+
+    display: grid;
+    place-items: center;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        var(--admin-border);
+
+    border-radius:
+        16px;
+
+    color:
+        #a1acb9;
+
+    background:
+        #ffffff;
+
+    font-size:
+        1.8rem;
+}
+
+
+.agency-logo-preview img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    padding: 8px;
+}
+
+
+.agency-logo-upload-content {
+
+    flex: 1;
+
+    min-width: 0;
+}
+
+
+.agency-logo-upload-content
+input[type="file"] {
+
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+.agency-logo-button {
+
+    width: fit-content;
+
+    min-height: 41px;
+
+    margin-bottom: 9px;
+
+    padding:
+        0 13px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    border-radius:
+        9px;
+
+    color:
+        var(--admin-primary);
+
+    background:
+        #edf2f7;
+
+    font-size:
+        0.7rem;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        var(--admin-transition);
+}
+
+
+.agency-logo-button:hover {
+
+    color:
+        var(--admin-secondary);
+
+    background:
+        #e7edf4;
+}
+
+
+.agency-logo-upload-content small {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    color:
+        #66758a;
+
+    font-size: 0.65rem;
+
+    overflow-wrap: anywhere;
+}
+
+
+.agency-logo-upload-content p {
+
+    color:
+        var(--admin-text-soft);
+
+    font-size: 0.62rem;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   PREVIEW DE INTERFAZ
+========================================================= */
+
+.agency-interface-preview {
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        var(--admin-border);
+
+    border-radius:
+        14px;
+
+    background:
+        #ffffff;
+}
+
+
+.agency-interface-preview-header {
+
+    min-height: 66px;
+
+    padding:
+        11px 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    color:
+        #ffffff;
+
+    background:
+        var(--admin-primary);
+
+    transition:
+        background
+        var(--admin-transition);
+}
+
+
+.agency-interface-brand {
+
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.agency-interface-brand strong {
+
+    max-width: 300px;
+
+    overflow: hidden;
+
+    font-size: 0.75rem;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+.agency-interface-logo-mini {
+
+    flex: 0 0 42px;
+
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    overflow: hidden;
+
+    border-radius:
+        10px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.12
+        );
+}
+
+
+.agency-interface-logo-mini img {
+
+    width: 100%;
+    height: 100%;
+
+    padding: 4px;
+
+    object-fit: contain;
+
+    background:
+        #ffffff;
+}
+
+
+.agency-interface-preview-button {
+
+    flex: 0 0 auto;
+
+    padding:
+        8px 12px;
+
+    border-radius:
+        8px;
+
+    color:
+        #ffffff;
+
+    background:
+        var(--admin-secondary);
+
+    font-size: 0.63rem;
+
+    font-weight: 800;
+}
+
+
+.agency-interface-preview-body {
+
+    padding: 16px;
+}
+
+
+.agency-interface-preview-body small,
+.agency-interface-preview-body strong {
+
+    display: block;
+}
+
+
+.agency-interface-preview-body small {
+
+    margin-bottom: 4px;
+
+    color:
+        var(--admin-secondary);
+
+    font-size: 0.58rem;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+
+.agency-interface-preview-body strong {
+
+    margin-bottom: 5px;
+
+    font-size: 0.82rem;
+}
+
+
+.agency-interface-preview-body p {
+
+    color:
+        var(--admin-text-soft);
+
+    font-size: 0.67rem;
+
+    line-height: 1.55;
+}
+
+
+@media (max-width: 600px) {
+
+    .agency-logo-upload {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+
+    .agency-logo-preview {
+
+        width: 100%;
+        height: 150px;
+
+        flex-basis: auto;
+    }
+
+}
+
+/* =========================================================
+   PERFIL AGENCIA MEJORADO
+========================================================= */
+
+
+.agency-profile-hero {
+
+    padding:30px;
+
+    border-radius:22px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0b1f3a,
+            #162b4d
+        );
+
+    color:white;
+
+    overflow:hidden;
+
+}
+
+.agency-profile-info h1 {
+
+    color:white;
+
+}
+
+
+.agency-profile-info p {
+
+    color:rgba(255,255,255,.75);
+
+}
+
+
+.profile-label {
+
+    color:rgba(255,255,255,.75);
+
+}
+
+.agency-profile-info h1 {
+
+    color:white;
+
+}
+
+
+.agency-profile-info p {
+
+    color:rgba(255,255,255,.75);
+
+}
+
+
+.profile-label {
+
+    color:rgba(255,255,255,.75);
+
+}
+
+
+.agency-profile-main {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+
+
+.agency-profile-logo {
+
+    width:90px;
+
+    height:90px;
+
+    border-radius:20px;
+
+    background:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.15);
+
+}
+
+
+
+.agency-profile-logo img {
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:contain;
+
+    padding:8px;
+
+}
+
+
+
+.agency-profile-logo span {
+
+    width:100%;
+    height:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:42px;
+
+    font-weight:800;
+
+    color:
+        var(--admin-primary);
+
+    background:
+        #ffffff;
+
+}
+
+
+
+.profile-label {
+
+    font-size:.75rem;
+
+    opacity:.8;
+
+    text-transform:uppercase;
+
+}
+
+
+
+.agency-profile-info h1 {
+
+    margin:5px 0;
+
+    font-size:2rem;
+
+}
+
+
+
+.agency-profile-info p {
+
+    opacity:.8;
+
+}
+
+
+
+
+.agency-profile-actions {
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+
+}
+
+
+
+.agency-profile-actions .btn {
+
+    background:white;
+
+    color:#263238;
+
+}
+
+.agency-profile-actions {
+
+    margin-left:auto;
+
+}
+
+.agency-profile-actions .btn:hover {
+
+    transform:translateY(-2px);
+
+}
+
+
+.visual-color-item {
+
+    padding:15px;
+
+    border-radius:15px;
+
+    background:#f8fafc;
+
+}
+
+
+
+.visual-color-item > span {
+
+    display:block;
+
+    margin-bottom:10px;
+
+    font-size:.75rem;
+
+    font-weight:700;
+
+    color:#64748b;
+
+}
+
+
+
+.color-preview {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+
+
+.color-preview span {
+
+    width:55px;
+
+    height:35px;
+
+    border-radius:10px;
+
+    border:1px solid #ddd;
+
+}
+
+
+
+.color-preview strong {
+
+    font-size:.85rem;
+
+}
+
+
+
+
+@media(max-width:900px){
+
+
+    .agency-profile-hero {
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+
+    .visual-identity-card {
+
+        grid-template-columns:1fr;
+
+    }
+
+
+}
+/* =========================================================
+   DETALLE DE AGENCIA
+========================================================= */
+
+
+.detail-list {
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:14px;
+
+}
+
+
+.detail-list > div {
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:14px 16px;
+
+    background:#f8fafc;
+
+    border-radius:14px;
+
+    border:1px solid #edf2f7;
+
+}
+
+
+
+.detail-list span {
+
+    color:#64748b;
+
+    font-size:.85rem;
+
+    font-weight:600;
+
+}
+
+
+
+.detail-list strong {
+
+    color:#111827;
+
+    font-size:.9rem;
+
+    font-weight:700;
+
+}
+
+.visual-identity-card {
+
+    display:grid;
+
+    grid-template-columns:
+
+        repeat(2,1fr);
+
+    gap:20px;
+
+}
+
+
+.visual-color-item {
+
+    padding:18px;
+
+    border-radius:16px;
+
+    background:#f8fafc;
+
+}
+
+
+
+.color-preview {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.color-box {
+
+    width:65px;
+
+    height:40px;
+
+    border-radius:12px;
+
+    display:block;
+
+    box-shadow:
+
+        inset 0 0 0 1px rgba(0,0,0,.08);
+
+}
+
+
+.color-preview strong {
+
+    font-size:.9rem;
+
+}
+
+.agency-detail-stats .stat-card {
+
+    min-height:150px;
+
+    transition:.3s ease;
+
+}
+
+.agency-detail-stats .stat-card:hover {
+
+    transform:translateY(-5px);
+
+    box-shadow:
+
+    0 15px 35px rgba(0,0,0,.08);
+
+}
+
+@media(max-width:768px){
+
+
+    .detail-list > div {
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:8px;
+
+    }
+
+    .visual-identity-card {
+
+        grid-template-columns:1fr;
+
+    }
+
+
+}
+
+/* ==========================================
+   BOTÓN ACCIÓN RÁPIDA
+   NUEVO USUARIO
+========================================== */
+
+.quick-action-btn {
+
+    background:
+        #ff8a00;
+
+    color:
+        #ffffff !important;
+
+    padding:
+        14px 36px;
+
+    min-width:
+        190px;
+
+    height:
+        48px;
+
+    border-radius:
+        12px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        12px;
+
+    font-size:
+        15px;
+
+    font-weight:
+        700;
+
+    text-decoration:
+        none;
+
+    border:
+        none;
+
+    cursor:
+        pointer;
+
+    box-shadow:
+        0 8px 18px rgba(255, 138, 0, .25);
+
+    transition:
+        all .25s ease;
+
+}
+
+
+.quick-action-btn i {
+
+    font-size:
+        16px;
+
+}
+
+
+.quick-action-btn:hover {
+
+    background:
+        #ff9d2e;
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 12px 25px rgba(255, 138, 0, .35);
+
+}
+
+/* ==========================================
+   FORMULARIO - NUEVO USUARIO AGENCIA
+========================================== */
+
+
+.user-form-card {
+
+    padding: 22px;
+
+    border:
+        1px solid
+        var(--admin-border);
+
+    border-radius:
+        var(--admin-radius);
+
+    background:
+        #ffffff;
+
+    box-shadow:
+        0 8px 24px
+        rgba(
+            11,
+            31,
+            58,
+            0.035
+        );
+
+}
+
+
+.user-form-grid {
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0,1fr));
+
+    gap:
+        18px 20px;
+
+}
+
+
+.user-form-group {
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+.user-form-group label {
+
+    margin-bottom:8px;
+
+    color:
+        #344257;
+
+    font-size:.72rem;
+
+    font-weight:700;
+
+}
+
+
+.user-form-group input,
+.user-form-group select {
+
+
+    width:100%;
+
+    min-height:46px;
+
+    padding:
+        0 13px;
+
+
+    border:
+        1px solid
+        var(--admin-border);
+
+
+    border-radius:10px;
+
+
+    outline:none;
+
+
+    background:#fbfcfe;
+
+
+    color:
+        var(--admin-text);
+
+
+    font-size:.74rem;
+
+
+    transition:
+        var(--admin-transition);
+
+}
+
+
+
+.user-form-group input:focus,
+.user-form-group select:focus {
+
+
+    border-color:
+        var(--admin-secondary);
+
+
+    background:#ffffff;
+
+
+    box-shadow:
+        0 0 0 4px
+        rgba(
+            255,
+            138,
+            0,
+            .08
+        );
+
+}
+
+
+
+.user-form-full {
+
+    grid-column:
+        1 / -1;
+
+}
+
+
+
+.user-form-actions {
+
+    margin-top:25px;
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+/* ==========================================
+   BOTONES FORMULARIO USUARIO
+========================================== */
+
+
+.user-form-actions .form-cancel {
+
+
+    width:auto;
+
+    min-width:120px;
+
+    height:42px;
+
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+
+    padding:0 22px;
+
+
+    border-radius:10px;
+
+
+    background:#f1f3f7;
+
+
+    color:#52627a;
+
+
+    font-size:.75rem;
+
+
+    font-weight:700;
+
+
+}
+
+
+
+.user-form-actions .user-btn-create {
+
+
+    width:auto;
+
+    min-width:160px;
+
+
+    height:42px;
+
+
+    padding:0 22px;
+
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+
+    gap:8px;
+
+
+    border-radius:10px;
+
+
+    font-size:.75rem;
+
+
+}
+
+.user-btn-create {
+
+
+    min-height:46px;
+
+
+    padding:
+        0 25px;
+
+
+    border-radius:10px;
+
+
+    color:white;
+
+
+    background:
+        var(--admin-secondary);
+
+
+    font-size:.75rem;
+
+
+    font-weight:800;
+
+
+    cursor:pointer;
+
+
+    transition:.25s ease;
+
+
+}
+
+
+.user-btn-create:hover {
+
+
+    transform:
+        translateY(-2px);
+
+
+    background:
+        #ff9d2e;
+
+
+}
+
+
+
+@media(max-width:700px){
+
+
+    .user-form-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .user-form-actions {
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .user-btn-create {
+
+        width:100%;
+
+    }
+
+
+}
+
+.agency-profile-logo img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        contain;
+
+    padding:
+        8px;
+
+    border-radius:
+        18px;
+
+}
+
+/* ==========================================
+   BOTONES FORMULARIO USUARIOS
+========================================== */
+
+
+.user-btn-cancel {
+
+
+    min-height:
+        46px;
+
+
+    padding:
+        0 24px;
+
+
+    display:
+        inline-flex;
+
+
+    align-items:
+        center;
+
+
+    justify-content:
+        center;
+
+
+    border-radius:
+        10px;
+
+
+    border:
+        1px solid
+        var(--admin-border);
+
+
+    background:
+        #f5f7fa;
+
+
+    color:
+        #53657d;
+
+
+    font-size:
+        .75rem;
+
+
+    font-weight:
+        800;
+
+
+    text-decoration:
+        none;
+
+
+    cursor:
+        pointer;
+
+
+    transition:
+        .25s ease;
+
+}
+
+
+.user-btn-cancel:hover {
+
+
+    background:
+        #ffffff;
+
+
+    border-color:
+        #cbd5e1;
+
+
+    transform:
+        translateY(-2px);
+
+}
+
+/* ==========================================
+   BOTONES FORMULARIO USUARIOS
+========================================== */
+
+
+.user-form-actions .form-cancel {
+
+    min-height:46px;
+
+    padding:
+        0 25px;
+
+    border-radius:10px;
+
+    background:#f1f3f7;
+
+    color:
+        var(--admin-text);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    font-size:.75rem;
+
+    font-weight:800;
+
+    transition:.25s ease;
+
+}
+
+
+.user-form-actions .form-cancel:hover {
+
+    background:#e5e9f0;
+
+}
+
+/* ==========================================
+   AVATAR USUARIOS
+========================================== */
+
+
+.table-user {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+
+
+.user-avatar {
+
+    width:38px;
+
+    height:38px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    flex-shrink:0;
+
+    background:
+        rgba(255,138,0,.12);
+
+    color:
+        var(--admin-secondary);
+
+    font-size:.85rem;
+
+    font-weight:800;
+
+}
