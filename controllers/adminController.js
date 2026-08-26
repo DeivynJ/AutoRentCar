@@ -171,6 +171,60 @@ async function esRolAgenciaValido(
 }
 
 /* =========================================================
+   VALIDAR FECHA YYYY-MM-DD
+========================================================= */
+
+function esFechaISOValida(
+    valor
+) {
+
+    if (
+        typeof valor !== "string" ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(
+            valor
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    const [
+        anio,
+        mes,
+        dia
+    ] = valor
+        .split("-")
+        .map(Number);
+
+
+    const fecha =
+        new Date(
+            Date.UTC(
+                anio,
+                mes - 1,
+                dia
+            )
+        );
+
+
+    return (
+
+        fecha.getUTCFullYear() ===
+            anio &&
+
+        fecha.getUTCMonth() ===
+            mes - 1 &&
+
+        fecha.getUTCDate() ===
+            dia
+
+    );
+
+}
+
+/* =========================================================
    VALIDAR COLOR HEXADECIMAL
 ========================================================= */
 
@@ -3251,6 +3305,863 @@ if (!rolValido) {
 
 }
 
+/* =========================================================
+   MOSTRAR SUSCRIPCIONES
+========================================================= */
+
+async function mostrarSuscripciones(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        const suscripciones =
+            await conexion.query(
+                `
+                SELECT
+
+                    a.id
+                        AS agencia_id,
+
+                    a.nombre
+                        AS agencia_nombre,
+
+                    a.correo
+                        AS agencia_correo,
+
+                    a.estado
+                        AS agencia_estado,
+
+                    s.id
+                        AS suscripcion_id,
+
+                    s.estado
+                        AS suscripcion_estado,
+
+                    s.fecha_inicio,
+
+                    s.fecha_fin,
+
+                    s.precio_acordado,
+
+                    s.renovacion_automatica,
+
+                    p.id
+                        AS plan_id,
+
+                    p.nombre
+                        AS plan_nombre,
+
+                    p.precio_mensual
+
+                FROM agencias a
+
+
+                LEFT JOIN suscripciones s
+
+                    ON s.id = (
+
+                        SELECT
+                            s2.id
+
+                        FROM suscripciones s2
+
+                        WHERE
+                            s2.agencia_id = a.id
+
+                        ORDER BY
+                            s2.id DESC
+
+                        LIMIT 1
+
+                    )
+
+
+                LEFT JOIN planes p
+
+                    ON p.id = s.plan_id
+
+
+                ORDER BY
+                    a.nombre ASC
+                `
+            );
+
+
+        const estadisticas = {
+
+            total:
+                suscripciones.filter(
+                    item =>
+                        item.suscripcion_id
+                ).length,
+
+            activas:
+                suscripciones.filter(
+                    item =>
+                        item.suscripcion_estado ===
+                        "activa"
+                ).length,
+
+            prueba:
+                suscripciones.filter(
+                    item =>
+                        item.suscripcion_estado ===
+                        "prueba"
+                ).length,
+
+            suspendidas:
+                suscripciones.filter(
+                    item =>
+                        item.suscripcion_estado ===
+                        "suspendida"
+                ).length
+
+        };
+
+
+       return res.render(
+    "admin/suscripciones/index",
+    {
+
+        titulo:
+            "Suscripciones",
+
+        subtituloPagina:
+            "Gestión de suscripciones",
+
+        paginaActual:
+            "suscripciones",
+
+        usuario:
+            req.session.usuario,
+
+        suscripciones,
+
+        estadisticas,
+
+        mensajeExito:
+            req.query.actualizada === "1"
+                ? "La suscripción fue actualizada correctamente."
+                : null
+
+    }
+);
+
+
+    } catch (error) {
+
+        console.error(
+            "Error mostrando suscripciones:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible cargar las suscripciones."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+   MOSTRAR SUSCRIPCIÓN DE AGENCIA
+========================================================= */
+
+async function mostrarSuscripcionAgencia(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        const agenciaId =
+            Number(
+                req.params.id
+            );
+
+
+        if (
+            !Number.isInteger(
+                agenciaId
+            ) ||
+            agenciaId <= 0
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "ID de agencia inválido."
+                );
+
+        }
+
+
+        const agencias =
+            await conexion.query(
+                `
+                SELECT
+
+                    id,
+                    nombre,
+                    correo,
+                    estado,
+                    logo
+
+                FROM agencias
+
+                WHERE id = ?
+
+                LIMIT 1
+                `,
+                [
+                    agenciaId
+                ]
+            );
+
+
+        if (
+            agencias.length === 0
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "Agencia no encontrada."
+                );
+
+        }
+
+
+        const agencia =
+            agencias[0];
+
+
+        const planes =
+            await conexion.query(
+                `
+                SELECT
+
+                    id,
+                    nombre,
+                    descripcion,
+                    precio_mensual,
+                    limite_vehiculos,
+                    limite_sucursales,
+                    limite_empleados
+
+                FROM planes
+
+                WHERE activo = 1
+
+                ORDER BY id ASC
+                `
+            );
+
+
+        const suscripciones =
+            await conexion.query(
+                `
+                SELECT
+
+                    s.id,
+                    s.plan_id,
+
+                    DATE_FORMAT(
+                        s.fecha_inicio,
+                        '%Y-%m-%d'
+                    ) AS fecha_inicio,
+
+                    DATE_FORMAT(
+                        s.fecha_fin,
+                        '%Y-%m-%d'
+                    ) AS fecha_fin,
+
+                    s.estado,
+                    s.precio_acordado,
+                    s.renovacion_automatica,
+
+                    p.nombre
+                        AS plan_nombre
+
+                FROM suscripciones s
+
+                INNER JOIN planes p
+                    ON p.id = s.plan_id
+
+                WHERE s.agencia_id = ?
+
+                ORDER BY
+                    s.id DESC
+
+                LIMIT 1
+                `,
+                [
+                    agenciaId
+                ]
+            );
+
+
+        const resultadoHoy =
+            await conexion.query(
+                `
+                SELECT
+                    DATE_FORMAT(
+                        CURDATE(),
+                        '%Y-%m-%d'
+                    ) AS hoy
+                `
+            );
+
+
+        const hoy =
+            resultadoHoy[0].hoy;
+
+
+        const suscripcion =
+            suscripciones.length
+                ? suscripciones[0]
+                : null;
+
+
+        return res.render(
+            "admin/suscripciones/editar",
+            {
+
+                titulo:
+                    `Suscripción - ${agencia.nombre}`,
+
+                subtituloPagina:
+                    "Administrar suscripción",
+
+                paginaActual:
+                    "suscripciones",
+
+                usuario:
+                    req.session.usuario,
+
+                agencia,
+
+                planes,
+
+                suscripcion,
+
+                hoy
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error mostrando suscripción:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible cargar la suscripción."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+   ACTUALIZAR SUSCRIPCIÓN DE AGENCIA
+========================================================= */
+
+async function actualizarSuscripcionAgencia(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        const agenciaId =
+            Number(
+                req.params.id
+            );
+
+
+        const planId =
+            Number(
+                req.body.plan_id
+            );
+
+
+        const estado =
+            String(
+                req.body.estado ||
+                ""
+            ).trim();
+
+
+        const fechaInicio =
+            String(
+                req.body.fecha_inicio ||
+                ""
+            ).trim();
+
+
+        const fechaFin =
+            String(
+                req.body.fecha_fin ||
+                ""
+            ).trim();
+
+
+        const precioTexto =
+            String(
+                req.body.precio_acordado ??
+                ""
+            ).trim();
+
+
+        const precioAcordado =
+            Number(
+                precioTexto
+            );
+
+
+        const renovacionAutomatica =
+            req.body.renovacion_automatica ===
+            "1";
+
+
+        if (
+            !Number.isInteger(
+                agenciaId
+            ) ||
+            agenciaId <= 0
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "Agencia inválida."
+                );
+
+        }
+
+
+        if (
+            !Number.isInteger(
+                planId
+            ) ||
+            planId <= 0
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "Selecciona un plan válido."
+                );
+
+        }
+
+
+        const estadosPermitidos = [
+
+            "prueba",
+
+            "activa",
+
+            "vencida",
+
+            "suspendida",
+
+            "cancelada"
+
+        ];
+
+
+        if (
+            !estadosPermitidos.includes(
+                estado
+            )
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "El estado de la suscripción no es válido."
+                );
+
+        }
+
+
+        if (
+            !esFechaISOValida(
+                fechaInicio
+            )
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "La fecha de inicio no es válida."
+                );
+
+        }
+
+
+        if (
+            fechaFin &&
+            !esFechaISOValida(
+                fechaFin
+            )
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "La fecha de vencimiento no es válida."
+                );
+
+        }
+
+
+        if (
+            fechaFin &&
+            fechaFin < fechaInicio
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "La fecha de vencimiento no puede ser anterior a la fecha de inicio."
+                );
+
+        }
+
+
+        if (
+            precioTexto === "" ||
+            !Number.isFinite(
+                precioAcordado
+            ) ||
+            precioAcordado < 0
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "Introduce un precio acordado válido."
+                );
+
+        }
+
+
+        await conexion.beginTransaction();
+
+
+        const agencias =
+            await conexion.query(
+                `
+                SELECT
+                    id
+                FROM agencias
+                WHERE id = ?
+                LIMIT 1
+                FOR UPDATE
+                `,
+                [
+                    agenciaId
+                ]
+            );
+
+
+        if (
+            agencias.length === 0
+        ) {
+
+            await conexion.rollback();
+
+
+            return res
+                .status(404)
+                .send(
+                    "Agencia no encontrada."
+                );
+
+        }
+
+
+        const planes =
+            await conexion.query(
+                `
+                SELECT
+
+                    id,
+                    precio_mensual
+
+                FROM planes
+
+                WHERE id = ?
+                AND activo = 1
+
+                LIMIT 1
+                `,
+                [
+                    planId
+                ]
+            );
+
+
+        if (
+            planes.length === 0
+        ) {
+
+            await conexion.rollback();
+
+
+            return res
+                .status(400)
+                .send(
+                    "El plan seleccionado no está disponible."
+                );
+
+        }
+
+
+        const suscripciones =
+            await conexion.query(
+                `
+                SELECT
+                    id
+                FROM suscripciones
+                WHERE agencia_id = ?
+                ORDER BY id DESC
+                LIMIT 1
+                FOR UPDATE
+                `,
+                [
+                    agenciaId
+                ]
+            );
+
+
+        if (
+            suscripciones.length > 0
+        ) {
+
+            await conexion.query(
+                `
+                UPDATE suscripciones
+
+                SET
+
+                    plan_id = ?,
+
+                    fecha_inicio = ?,
+
+                    fecha_fin = ?,
+
+                    estado = ?,
+
+                    precio_acordado = ?,
+
+                    renovacion_automatica = ?
+
+                WHERE id = ?
+                `,
+                [
+
+                    planId,
+
+                    fechaInicio,
+
+                    fechaFin ||
+                        null,
+
+                    estado,
+
+                    precioAcordado,
+
+                    renovacionAutomatica,
+
+                    suscripciones[0].id
+
+                ]
+            );
+
+        } else {
+
+            await conexion.query(
+                `
+                INSERT INTO suscripciones (
+
+                    agencia_id,
+
+                    plan_id,
+
+                    fecha_inicio,
+
+                    fecha_fin,
+
+                    estado,
+
+                    precio_acordado,
+
+                    renovacion_automatica
+
+                )
+
+                VALUES (
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?
+                )
+                `,
+                [
+
+                    agenciaId,
+
+                    planId,
+
+                    fechaInicio,
+
+                    fechaFin ||
+                        null,
+
+                    estado,
+
+                    precioAcordado,
+
+                    renovacionAutomatica
+
+                ]
+            );
+
+        }
+
+
+        /*
+         * El estado de la agencia queda sincronizado
+         * con su suscripción actual.
+         */
+
+        await conexion.query(
+            `
+            UPDATE agencias
+
+            SET
+                estado = ?
+
+            WHERE id = ?
+            `,
+            [
+
+                estado,
+
+                agenciaId
+
+            ]
+        );
+
+
+        await conexion.commit();
+
+
+return res.redirect(
+    "/admin/suscripciones?actualizada=1"
+);
+
+
+    } catch (error) {
+
+        if (conexion) {
+
+            try {
+
+                await conexion.rollback();
+
+            } catch {
+
+                // La conexión puede no tener
+                // una transacción activa.
+
+            }
+
+        }
+
+
+        console.error(
+            "Error actualizando suscripción:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible actualizar la suscripción."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
 module.exports = {
 
     mostrarDashboard,
@@ -3275,6 +4186,12 @@ module.exports = {
 
     mostrarEditarUsuario,
 
-    actualizarUsuario
+    actualizarUsuario,
+
+    mostrarSuscripciones,
+
+    mostrarSuscripcionAgencia,
+
+    actualizarSuscripcionAgencia
 
 };

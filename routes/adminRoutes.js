@@ -25,7 +25,13 @@ const {
 
     mostrarEditarUsuario,
 
-    actualizarUsuario
+    actualizarUsuario,
+
+    mostrarSuscripciones,
+
+    mostrarSuscripcionAgencia,
+    
+    actualizarSuscripcionAgencia
 
 
 } = require(
@@ -153,4 +159,25 @@ router.post(
     actualizarUsuario
 );
 
+/* =========================================================
+   SUSCRIPCIONES
+========================================================= */
+
+router.get(
+    "/admin/suscripciones",
+    mostrarSuscripciones
+);
+
+router.get(
+    "/admin/agencias/:id/suscripcion",
+    mostrarSuscripcionAgencia
+);
+
+
+router.post(
+    "/admin/agencias/:id/suscripcion",
+    actualizarSuscripcionAgencia
+);
+
 module.exports = router;
+

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="admin-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="admin-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+        <main class="admin-main-content">
+
+
+            <!-- =====================================
+                 ENCABEZADO
+            ====================================== -->
+
+            <section class="module-hero">
+
+                <div>
+
+                    <div class="module-hero-badge">
+
+                        <i class="fa-solid fa-file-signature"></i>
+
+                        <span>
+                            Gestión comercial
+                        </span>
+
+                    </div>
+
+
+                    <h2>
+                        Suscripciones de agencias
+                    </h2>
+
+
+                    <p>
+                        Consulta el plan, estado,
+                        vigencia y precio acordado
+                        de cada agencia registrada
+                        en AutoRentCar Platform.
+                    </p>
+
+                </div>
+
+            </section>
+
+            <% if (mensajeExito) { %>
+
+    <div
+        class="admin-alert admin-alert-success"
+        data-animate="fade-up"
+    >
+
+        <i class="fa-solid fa-circle-check"></i>
+
+
+        <div>
+
+            <strong>
+                Operación completada
+            </strong>
+
+            <span>
+                <%= mensajeExito %>
+            </span>
+
+        </div>
+
+    </div>
+
+<% } %>
+
+
+            <!-- =====================================
+                 ESTADÍSTICAS
+            ====================================== -->
+
+            <section class="dashboard-stats agency-stats">
+
+
+                <article class="stat-card">
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-blue">
+
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+
+                        </div>
+
+                        <span class="stat-label">
+                            Registradas
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            Suscripciones
+                        </span>
+
+                        <strong class="stat-value">
+                            <%= estadisticas.total %>
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+                <article class="stat-card">
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-green">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        </div>
+
+                        <span class="stat-label">
+                            Operativas
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            Activas
+                        </span>
+
+                        <strong class="stat-value">
+                            <%= estadisticas.activas %>
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+                <article class="stat-card">
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-orange">
+
+                            <i class="fa-solid fa-hourglass-half"></i>
+
+                        </div>
+
+                        <span class="stat-label">
+                            Evaluación
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            En prueba
+                        </span>
+
+                        <strong class="stat-value">
+                            <%= estadisticas.prueba %>
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+                <article class="stat-card">
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-purple">
+
+                            <i class="fa-solid fa-pause"></i>
+
+                        </div>
+
+                        <span class="stat-label">
+                            Restringidas
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            Suspendidas
+                        </span>
+
+                        <strong class="stat-value">
+                            <%= estadisticas.suspendidas %>
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+            </section>
+
+
+            <!-- =====================================
+                 TABLA
+            ====================================== -->
+
+            <section class="dashboard-panel">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h3>
+                            Suscripciones actuales
+                        </h3>
+
+                        <p>
+                            Estado comercial actual
+                            de cada agencia.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-table-wrapper">
+
+
+                    <table class="admin-table">
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Agencia
+                                </th>
+
+                                <th>
+                                    Plan
+                                </th>
+
+                                <th>
+                                    Estado
+                                </th>
+
+                                <th>
+                                    Inicio
+                                </th>
+
+                                <th>
+                                    Vencimiento
+                                </th>
+
+                                <th>
+                                    Precio
+                                </th>
+
+                                <th>
+                                    Renovación
+                                </th>
+
+                                <th>
+                                    Acción
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                        <% if (suscripciones.length) { %>
+
+
+                            <% suscripciones.forEach((item) => { %>
+
+
+                                <tr>
+
+
+                                    <td>
+
+                                        <div class="table-agency">
+
+                                            <div class="table-agency-avatar">
+
+                                                <%= item.agencia_nombre
+                                                    .charAt(0)
+                                                    .toUpperCase() %>
+
+                                            </div>
+
+
+                                            <div>
+
+                                                <strong>
+                                                    <%= item.agencia_nombre %>
+                                                </strong>
+
+                                                <span>
+                                                    <%= item.agencia_correo || "Sin correo" %>
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <% if (item.plan_nombre) { %>
+
+                                            <span class="plan-badge">
+
+                                                <i class="fa-solid fa-layer-group"></i>
+
+                                                <%= item.plan_nombre %>
+
+                                            </span>
+
+                                        <% } else { %>
+
+                                            <span class="table-muted">
+                                                Sin plan
+                                            </span>
+
+                                        <% } %>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <% if (item.suscripcion_estado) { %>
+
+                                            <span
+                                                class="subscription-badge subscription-<%= item.suscripcion_estado %>"
+                                            >
+
+                                                <%= item.suscripcion_estado %>
+
+                                            </span>
+
+                                        <% } else { %>
+
+                                            <span class="table-muted">
+                                                Sin suscripción
+                                            </span>
+
+                                        <% } %>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="table-date">
+
+                                            <%= item.fecha_inicio
+                                                ? new Date(
+                                                    item.fecha_inicio
+                                                ).toLocaleDateString(
+                                                    "es-DO"
+                                                )
+                                                : "No disponible"
+                                            %>
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="table-date">
+
+                                            <%= item.fecha_fin
+                                                ? new Date(
+                                                    item.fecha_fin
+                                                ).toLocaleDateString(
+                                                    "es-DO"
+                                                )
+                                                : "Sin vencimiento"
+                                            %>
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <strong>
+
+                                            USD $<%= Number(
+                                                item.precio_acordado || 0
+                                            ).toFixed(2) %>
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <% if (item.renovacion_automatica) { %>
+
+                                            <span class="status-badge status-activa">
+
+                                                <span class="status-dot"></span>
+
+                                                Automática
+
+                                            </span>
+
+                                        <% } else { %>
+
+                                            <span class="table-muted">
+                                                Manual
+                                            </span>
+
+                                        <% } %>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <a
+    href="/admin/agencias/<%= item.agencia_id %>/suscripcion"
+    class="table-action"
+    title="Administrar suscripción"
+>
+
+    <i class="fa-solid fa-pen-to-square"></i>
+
+</a>
+
+                                    </td>
+
+
+                                </tr>
+
+
+                            <% }); %>
+
+
+                        <% } else { %>
+
+
+                            <tr>
+
+                                <td colspan="8">
+
+                                    <div class="table-muted">
+                                        No existen agencias registradas.
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                        <% } %>
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+            </section>
+
+
+            <footer class="admin-footer">
+
+                <span>
+                    AutoRentCar Platform
+                </span>
+
+                <span>
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+            </footer>
+
+
+        </main>
+
+
+    </div>
+
+
+</div>
+
+
+<script src="/js/admin.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="admin-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="admin-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+        <main class="admin-main-content">
+
+
+            <div class="form-page-top">
+
+                <a
+                    href="/admin/suscripciones"
+                    class="back-link"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    <span>
+                        Volver a suscripciones
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <section class="module-hero">
+
+                <div>
+
+                    <div class="module-hero-badge">
+
+                        <i class="fa-solid fa-file-signature"></i>
+
+                        <span>
+                            Suscripción de agencia
+                        </span>
+
+                    </div>
+
+
+                    <h2>
+                        <%= agencia.nombre %>
+                    </h2>
+
+
+                    <p>
+                        Administra el plan, estado,
+                        vigencia y condiciones comerciales
+                        de esta agencia.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <section class="user-form-card">
+
+
+                <form
+                    method="POST"
+                    action="/admin/agencias/<%= agencia.id %>/suscripcion"
+                >
+
+
+                    <div class="user-form-grid">
+
+
+                        <div class="user-form-group">
+
+                            <label for="plan_id">
+                                Plan
+                            </label>
+
+                            <select
+                                id="plan_id"
+                                name="plan_id"
+                                required
+                            >
+
+                                <option value="">
+                                    Selecciona un plan
+                                </option>
+
+
+                                <% planes.forEach((plan) => { %>
+
+                                    <option
+                                        value="<%= plan.id %>"
+                                        <%= suscripcion && Number(suscripcion.plan_id) === Number(plan.id)
+                                            ? "selected"
+                                            : ""
+                                        %>
+                                    >
+
+                                        <%= plan.nombre %>
+
+                                    </option>
+
+                                <% }); %>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="user-form-group">
+
+                            <label for="estado">
+                                Estado
+                            </label>
+
+                            <select
+                                id="estado"
+                                name="estado"
+                                required
+                            >
+
+                                <option
+                                    value="prueba"
+                                    <%= (!suscripcion || suscripcion.estado === "prueba")
+                                        ? "selected"
+                                        : ""
+                                    %>
+                                >
+                                    Prueba
+                                </option>
+
+                                <option
+                                    value="activa"
+                                    <%= suscripcion && suscripcion.estado === "activa"
+                                        ? "selected"
+                                        : ""
+                                    %>
+                                >
+                                    Activa
+                                </option>
+
+                                <option
+                                    value="suspendida"
+                                    <%= suscripcion && suscripcion.estado === "suspendida"
+                                        ? "selected"
+                                        : ""
+                                    %>
+                                >
+                                    Suspendida
+                                </option>
+
+                                <option
+                                    value="vencida"
+                                    <%= suscripcion && suscripcion.estado === "vencida"
+                                        ? "selected"
+                                        : ""
+                                    %>
+                                >
+                                    Vencida
+                                </option>
+
+                                <option
+                                    value="cancelada"
+                                    <%= suscripcion && suscripcion.estado === "cancelada"
+                                        ? "selected"
+                                        : ""
+                                    %>
+                                >
+                                    Cancelada
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="user-form-group">
+
+                            <label for="fecha_inicio">
+                                Fecha de inicio
+                            </label>
+
+                            <input
+                                type="date"
+                                id="fecha_inicio"
+                                name="fecha_inicio"
+                                value="<%= suscripcion
+                                    ? suscripcion.fecha_inicio
+                                    : hoy
+                                %>"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="user-form-group">
+
+                            <label for="fecha_fin">
+                                Fecha de vencimiento
+                            </label>
+
+                            <input
+                                type="date"
+                                id="fecha_fin"
+                                name="fecha_fin"
+                                value="<%= suscripcion && suscripcion.fecha_fin
+                                    ? suscripcion.fecha_fin
+                                    : ""
+                                %>"
+                            >
+
+                        </div>
+
+
+                        <div class="user-form-group">
+
+                            <label for="precio_acordado">
+                                Precio acordado (USD)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="precio_acordado"
+                                name="precio_acordado"
+                                min="0"
+                                step="0.01"
+                                value="<%= suscripcion && suscripcion.precio_acordado !== null
+                                    ? Number(suscripcion.precio_acordado).toFixed(2)
+                                    : "0.00"
+                                %>"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="user-form-group">
+
+                            <label for="renovacion_automatica">
+                                Renovación
+                            </label>
+
+                            <select
+                                id="renovacion_automatica"
+                                name="renovacion_automatica"
+                            >
+
+                                <option
+                                    value="0"
+                                    <%= !suscripcion || !suscripcion.renovacion_automatica
+                                        ? "selected"
+                                        : ""
+                                    %>
+                                >
+                                    Manual
+                                </option>
+
+                                <option
+                                    value="1"
+                                    <%= suscripcion && suscripcion.renovacion_automatica
+                                        ? "selected"
+                                        : ""
+                                    %>
+                                >
+                                    Automática
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <% if (suscripcion) { %>
+
+                        <div
+                            style="
+                                margin-top: 22px;
+                                padding: 16px 18px;
+                                border: 1px solid var(--admin-border);
+                                border-radius: 12px;
+                                background: #f8fafc;
+                            "
+                        >
+
+                            <strong
+                                style="
+                                    display: block;
+                                    margin-bottom: 7px;
+                                    font-size: .78rem;
+                                "
+                            >
+                                Suscripción actual
+                            </strong>
+
+                            <span
+                                style="
+                                    color: #66758a;
+                                    font-size: .74rem;
+                                "
+                            >
+
+                                Plan:
+                                <strong>
+                                    <%= suscripcion.plan_nombre %>
+                                </strong>
+
+                                · Estado:
+                                <strong>
+                                    <%= suscripcion.estado %>
+                                </strong>
+
+                            </span>
+
+                        </div>
+
+                    <% } %>
+
+
+                    <div class="user-form-actions">
+
+                        <a
+                            href="/admin/suscripciones"
+                            class="form-cancel"
+                        >
+
+                            Cancelar
+
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="user-btn-create"
+                        >
+
+                            <i class="fa-solid fa-floppy-disk"></i>
+
+                            Guardar suscripción
+
+                        </button>
+
+                    </div>
+
+
+                </form>
+
+
+            </section>
+
+
+            <footer class="admin-footer">
+
+                <span>
+                    AutoRentCar Platform
+                </span>
+
+                <span>
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+            </footer>
+
+
+        </main>
+
+
+    </div>
+
+
+</div>
+
+
+<script src="/js/admin.js"></script>
+
+
+</body>
+
+</html>
