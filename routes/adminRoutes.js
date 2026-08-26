@@ -31,7 +31,17 @@ const {
 
     mostrarSuscripcionAgencia,
     
-    actualizarSuscripcionAgencia
+    actualizarSuscripcionAgencia,
+
+     mostrarPlanes,
+     
+     mostrarNuevoPlan,
+      
+      crearPlan,
+
+      mostrarEditarPlan,
+      
+      actualizarPlan
 
 
 } = require(
@@ -177,6 +187,37 @@ router.get(
 router.post(
     "/admin/agencias/:id/suscripcion",
     actualizarSuscripcionAgencia
+);
+
+/* =========================================================
+   PLANES
+========================================================= */
+
+router.get(
+    "/admin/planes",
+    mostrarPlanes
+);
+
+router.get(
+    "/admin/planes/nuevo",
+    mostrarNuevoPlan
+);
+
+
+router.post(
+    "/admin/planes/nuevo",
+    crearPlan
+);
+
+router.get(
+    "/admin/planes/:id/editar",
+    mostrarEditarPlan
+);
+
+
+router.post(
+    "/admin/planes/:id/editar",
+    actualizarPlan
 );
 
 module.exports = router;

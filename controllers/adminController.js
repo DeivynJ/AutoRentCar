@@ -4162,6 +4162,1070 @@ return res.redirect(
 
 }
 
+/* =========================================================
+   MOSTRAR PLANES
+========================================================= */
+
+async function mostrarPlanes(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        const planes =
+            await conexion.query(
+                `
+                SELECT
+
+                    id,
+
+                    nombre,
+
+                    descripcion,
+
+                    precio_mensual,
+
+                    limite_vehiculos,
+
+                    limite_sucursales,
+
+                    limite_empleados,
+
+                    activo
+
+                FROM planes
+
+                ORDER BY
+                    id ASC
+                `
+            );
+
+
+        const estadisticas = {
+
+            total:
+                planes.length,
+
+            activos:
+                planes.filter(
+                    plan =>
+                        Number(plan.activo) === 1
+                ).length,
+
+            inactivos:
+                planes.filter(
+                    plan =>
+                        Number(plan.activo) === 0
+                ).length
+
+        };
+
+
+        return res.render(
+            "admin/planes/index",
+            {
+
+                titulo:
+                    "Planes",
+
+                subtituloPagina:
+                    "Gestión de planes",
+
+                paginaActual:
+                    "planes",
+
+                usuario:
+                    req.session.usuario,
+
+                planes,
+
+                estadisticas,
+
+               mensajeExito:
+
+    req.query.creado === "1"
+
+        ? "El plan fue creado correctamente."
+
+        : req.query.actualizado === "1"
+
+            ? "El plan fue actualizado correctamente."
+
+            : null
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error mostrando planes:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible cargar los planes."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+   MOSTRAR NUEVO PLAN
+========================================================= */
+
+async function mostrarNuevoPlan(
+    req,
+    res
+) {
+
+    return res.render(
+        "admin/planes/nuevo",
+        {
+
+            titulo:
+                "Nuevo plan",
+
+            subtituloPagina:
+                "Crear plan",
+
+            paginaActual:
+                "planes",
+
+            usuario:
+                req.session.usuario,
+
+            error:
+                null,
+
+            datos:
+                {}
+
+        }
+    );
+
+}
+
+/* =========================================================
+   CREAR PLAN
+========================================================= */
+
+async function crearPlan(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    const datos = {
+
+        nombre:
+            String(
+                req.body.nombre ||
+                ""
+            ).trim(),
+
+        descripcion:
+            String(
+                req.body.descripcion ||
+                ""
+            ).trim(),
+
+        precio_mensual:
+            String(
+                req.body.precio_mensual ??
+                ""
+            ).trim(),
+
+        limite_vehiculos:
+            String(
+                req.body.limite_vehiculos ??
+                ""
+            ).trim(),
+
+        limite_sucursales:
+            String(
+                req.body.limite_sucursales ??
+                ""
+            ).trim(),
+
+        limite_empleados:
+            String(
+                req.body.limite_empleados ??
+                ""
+            ).trim(),
+
+        activo:
+            req.body.activo === "0"
+                ? 0
+                : 1
+
+    };
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        /* -------------------------------------------------
+           VALIDAR NOMBRE
+        ------------------------------------------------- */
+
+        if (!datos.nombre) {
+
+            return res
+                .status(400)
+                .render(
+                    "admin/planes/nuevo",
+                    {
+
+                        titulo:
+                            "Nuevo plan",
+
+                        subtituloPagina:
+                            "Crear plan",
+
+                        paginaActual:
+                            "planes",
+
+                        usuario:
+                            req.session.usuario,
+
+                        datos,
+
+                        error:
+                            "El nombre del plan es obligatorio."
+
+                    }
+                );
+
+        }
+
+
+        /* -------------------------------------------------
+           VALIDAR PRECIO
+        ------------------------------------------------- */
+
+        const precioMensual =
+            Number(
+                datos.precio_mensual
+            );
+
+
+        if (
+            datos.precio_mensual === "" ||
+            !Number.isFinite(
+                precioMensual
+            ) ||
+            precioMensual < 0
+        ) {
+
+            return res
+                .status(400)
+                .render(
+                    "admin/planes/nuevo",
+                    {
+
+                        titulo:
+                            "Nuevo plan",
+
+                        subtituloPagina:
+                            "Crear plan",
+
+                        paginaActual:
+                            "planes",
+
+                        usuario:
+                            req.session.usuario,
+
+                        datos,
+
+                        error:
+                            "Introduce un precio mensual válido."
+
+                    }
+                );
+
+        }
+
+
+        /* -------------------------------------------------
+           CONVERTIR Y VALIDAR LÍMITES
+        ------------------------------------------------- */
+
+        function convertirLimite(
+            valor
+        ) {
+
+            if (
+                valor === ""
+            ) {
+
+                return null;
+
+            }
+
+
+            const numero =
+                Number(
+                    valor
+                );
+
+
+            if (
+                !Number.isInteger(
+                    numero
+                ) ||
+                numero < 1
+            ) {
+
+                return false;
+
+            }
+
+
+            return numero;
+
+        }
+
+
+        const limiteVehiculos =
+            convertirLimite(
+                datos.limite_vehiculos
+            );
+
+
+        const limiteSucursales =
+            convertirLimite(
+                datos.limite_sucursales
+            );
+
+
+        const limiteEmpleados =
+            convertirLimite(
+                datos.limite_empleados
+            );
+
+
+        if (
+            limiteVehiculos === false ||
+            limiteSucursales === false ||
+            limiteEmpleados === false
+        ) {
+
+            return res
+                .status(400)
+                .render(
+                    "admin/planes/nuevo",
+                    {
+
+                        titulo:
+                            "Nuevo plan",
+
+                        subtituloPagina:
+                            "Crear plan",
+
+                        paginaActual:
+                            "planes",
+
+                        usuario:
+                            req.session.usuario,
+
+                        datos,
+
+                        error:
+                            "Los límites deben ser números enteros mayores que cero o dejarse vacíos para indicar que son ilimitados."
+
+                    }
+                );
+
+        }
+
+
+        /* -------------------------------------------------
+           VALIDAR NOMBRE DUPLICADO
+        ------------------------------------------------- */
+
+        const planExistente =
+            await conexion.query(
+                `
+                SELECT
+                    id
+                FROM planes
+                WHERE LOWER(nombre) = LOWER(?)
+                LIMIT 1
+                `,
+                [
+                    datos.nombre
+                ]
+            );
+
+
+        if (
+            planExistente.length >
+            0
+        ) {
+
+            return res
+                .status(409)
+                .render(
+                    "admin/planes/nuevo",
+                    {
+
+                        titulo:
+                            "Nuevo plan",
+
+                        subtituloPagina:
+                            "Crear plan",
+
+                        paginaActual:
+                            "planes",
+
+                        usuario:
+                            req.session.usuario,
+
+                        datos,
+
+                        error:
+                            "Ya existe un plan registrado con ese nombre."
+
+                    }
+                );
+
+        }
+
+
+        /* -------------------------------------------------
+           CREAR PLAN
+        ------------------------------------------------- */
+
+        await conexion.query(
+            `
+            INSERT INTO planes (
+
+                nombre,
+
+                descripcion,
+
+                precio_mensual,
+
+                limite_vehiculos,
+
+                limite_sucursales,
+
+                limite_empleados,
+
+                activo
+
+            )
+
+            VALUES (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?
+            )
+            `,
+            [
+
+                datos.nombre,
+
+                datos.descripcion ||
+                    null,
+
+                precioMensual,
+
+                limiteVehiculos,
+
+                limiteSucursales,
+
+                limiteEmpleados,
+
+                datos.activo
+
+            ]
+        );
+
+
+        return res.redirect(
+            "/admin/planes?creado=1"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error creando plan:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible crear el plan."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+   MOSTRAR EDITAR PLAN
+========================================================= */
+
+async function mostrarEditarPlan(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        const planId =
+            Number(
+                req.params.id
+            );
+
+
+        if (
+            !Number.isInteger(
+                planId
+            ) ||
+            planId <= 0
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "ID de plan inválido."
+                );
+
+        }
+
+
+        const resultado =
+            await conexion.query(
+                `
+                SELECT
+
+                    id,
+
+                    nombre,
+
+                    descripcion,
+
+                    precio_mensual,
+
+                    limite_vehiculos,
+
+                    limite_sucursales,
+
+                    limite_empleados,
+
+                    activo
+
+                FROM planes
+
+                WHERE id = ?
+
+                LIMIT 1
+                `,
+                [
+                    planId
+                ]
+            );
+
+
+        if (
+            resultado.length === 0
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "Plan no encontrado."
+                );
+
+        }
+
+
+        return res.render(
+            "admin/planes/editar",
+            {
+
+                titulo:
+                    "Editar plan",
+
+                subtituloPagina:
+                    "Modificar plan",
+
+                paginaActual:
+                    "planes",
+
+                usuario:
+                    req.session.usuario,
+
+                plan:
+                    resultado[0],
+
+                error:
+                    null
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error cargando plan:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible cargar el plan."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   ACTUALIZAR PLAN
+========================================================= */
+
+async function actualizarPlan(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        const planId =
+            Number(
+                req.params.id
+            );
+
+
+        if (
+            !Number.isInteger(
+                planId
+            ) ||
+            planId <= 0
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "ID de plan inválido."
+                );
+
+        }
+
+
+        const datos = {
+
+            nombre:
+                String(
+                    req.body.nombre ||
+                    ""
+                ).trim(),
+
+            descripcion:
+                String(
+                    req.body.descripcion ||
+                    ""
+                ).trim(),
+
+            precio_mensual:
+                String(
+                    req.body.precio_mensual ??
+                    ""
+                ).trim(),
+
+            limite_vehiculos:
+                String(
+                    req.body.limite_vehiculos ??
+                    ""
+                ).trim(),
+
+            limite_sucursales:
+                String(
+                    req.body.limite_sucursales ??
+                    ""
+                ).trim(),
+
+            limite_empleados:
+                String(
+                    req.body.limite_empleados ??
+                    ""
+                ).trim(),
+
+            activo:
+                req.body.activo === "0"
+                    ? 0
+                    : 1
+
+        };
+
+
+        function renderizarError(
+            mensaje,
+            estadoHttp = 400
+        ) {
+
+            return res
+                .status(
+                    estadoHttp
+                )
+                .render(
+                    "admin/planes/editar",
+                    {
+
+                        titulo:
+                            "Editar plan",
+
+                        subtituloPagina:
+                            "Modificar plan",
+
+                        paginaActual:
+                            "planes",
+
+                        usuario:
+                            req.session.usuario,
+
+                        plan:
+                        {
+
+                            id:
+                                planId,
+
+                            nombre:
+                                datos.nombre,
+
+                            descripcion:
+                                datos.descripcion,
+
+                            precio_mensual:
+                                datos.precio_mensual,
+
+                            limite_vehiculos:
+                                datos.limite_vehiculos,
+
+                            limite_sucursales:
+                                datos.limite_sucursales,
+
+                            limite_empleados:
+                                datos.limite_empleados,
+
+                            activo:
+                                datos.activo
+
+                        },
+
+                        error:
+                            mensaje
+
+                    }
+                );
+
+        }
+
+
+        if (!datos.nombre) {
+
+            return renderizarError(
+                "El nombre del plan es obligatorio."
+            );
+
+        }
+
+
+        const precioMensual =
+            Number(
+                datos.precio_mensual
+            );
+
+
+        if (
+            datos.precio_mensual === "" ||
+            !Number.isFinite(
+                precioMensual
+            ) ||
+            precioMensual < 0
+        ) {
+
+            return renderizarError(
+                "Introduce un precio mensual válido."
+            );
+
+        }
+
+
+        function convertirLimite(
+            valor
+        ) {
+
+            if (valor === "") {
+
+                return null;
+
+            }
+
+
+            const numero =
+                Number(
+                    valor
+                );
+
+
+            if (
+                !Number.isInteger(
+                    numero
+                ) ||
+                numero < 1
+            ) {
+
+                return false;
+
+            }
+
+
+            return numero;
+
+        }
+
+
+        const limiteVehiculos =
+            convertirLimite(
+                datos.limite_vehiculos
+            );
+
+
+        const limiteSucursales =
+            convertirLimite(
+                datos.limite_sucursales
+            );
+
+
+        const limiteEmpleados =
+            convertirLimite(
+                datos.limite_empleados
+            );
+
+
+        if (
+            limiteVehiculos === false ||
+            limiteSucursales === false ||
+            limiteEmpleados === false
+        ) {
+
+            return renderizarError(
+                "Los límites deben ser números enteros mayores que cero o dejarse vacíos para indicar que son ilimitados."
+            );
+
+        }
+
+
+        const planActual =
+            await conexion.query(
+                `
+                SELECT
+                    id
+                FROM planes
+                WHERE id = ?
+                LIMIT 1
+                `,
+                [
+                    planId
+                ]
+            );
+
+
+        if (
+            planActual.length === 0
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "Plan no encontrado."
+                );
+
+        }
+
+
+        const nombreDuplicado =
+            await conexion.query(
+                `
+                SELECT
+                    id
+                FROM planes
+                WHERE LOWER(nombre) = LOWER(?)
+                AND id <> ?
+                LIMIT 1
+                `,
+                [
+                    datos.nombre,
+                    planId
+                ]
+            );
+
+
+        if (
+            nombreDuplicado.length >
+            0
+        ) {
+
+            return renderizarError(
+                "Ya existe otro plan registrado con ese nombre.",
+                409
+            );
+
+        }
+
+
+        await conexion.query(
+            `
+            UPDATE planes
+
+            SET
+
+                nombre = ?,
+
+                descripcion = ?,
+
+                precio_mensual = ?,
+
+                limite_vehiculos = ?,
+
+                limite_sucursales = ?,
+
+                limite_empleados = ?,
+
+                activo = ?
+
+            WHERE id = ?
+            `,
+            [
+
+                datos.nombre,
+
+                datos.descripcion ||
+                    null,
+
+                precioMensual,
+
+                limiteVehiculos,
+
+                limiteSucursales,
+
+                limiteEmpleados,
+
+                datos.activo,
+
+                planId
+
+            ]
+        );
+
+
+        return res.redirect(
+            "/admin/planes?actualizado=1"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error actualizando plan:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible actualizar el plan."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
 module.exports = {
 
     mostrarDashboard,
@@ -4192,6 +5256,16 @@ module.exports = {
 
     mostrarSuscripcionAgencia,
 
-    actualizarSuscripcionAgencia
+    actualizarSuscripcionAgencia,
+
+    mostrarPlanes,
+
+    mostrarNuevoPlan,
+
+    crearPlan,
+
+    mostrarEditarPlan,
+
+    actualizarPlan
 
 };

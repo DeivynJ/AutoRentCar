@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="admin-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="admin-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+        <main class="admin-main-content">
+
+
+            <!-- =====================================
+                 ENCABEZADO
+            ====================================== -->
+
+            <section class="module-hero">
+
+
+                <div>
+
+                    <div class="module-hero-badge">
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+                        <span>
+                            Configuración comercial
+                        </span>
+
+                    </div>
+
+
+                    <h2>
+                        Planes de AutoRentCar
+                    </h2>
+
+
+                    <p>
+                        Administra los planes disponibles
+                        para las agencias suscritas a la
+                        plataforma.
+                    </p>
+
+                </div>
+
+
+            </section>
+
+
+            <!-- =====================================
+                 MENSAJE DE ÉXITO
+            ====================================== -->
+
+            <% if (mensajeExito) { %>
+
+                <div class="admin-alert admin-alert-success">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+
+                    <div>
+
+                        <strong>
+                            Operación completada
+                        </strong>
+
+                        <span>
+                            <%= mensajeExito %>
+                        </span>
+
+                    </div>
+
+                </div>
+
+            <% } %>
+
+
+            <!-- =====================================
+                 ESTADÍSTICAS
+            ====================================== -->
+
+            <section class="dashboard-stats agency-stats">
+
+
+                <article class="stat-card">
+
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-blue">
+
+                            <i class="fa-solid fa-layer-group"></i>
+
+                        </div>
+
+
+                        <span class="stat-label">
+                            Catálogo
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            Total de planes
+                        </span>
+
+                        <strong class="stat-value">
+
+                            <%= estadisticas.total %>
+
+                        </strong>
+
+                    </div>
+
+
+                </article>
+
+
+                <article class="stat-card">
+
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-green">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        </div>
+
+
+                        <span class="stat-label">
+                            Disponibles
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            Activos
+                        </span>
+
+                        <strong class="stat-value">
+
+                            <%= estadisticas.activos %>
+
+                        </strong>
+
+                    </div>
+
+
+                </article>
+
+
+                <article class="stat-card">
+
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-orange">
+
+                            <i class="fa-solid fa-circle-pause"></i>
+
+                        </div>
+
+
+                        <span class="stat-label">
+                            No disponibles
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            Inactivos
+                        </span>
+
+                        <strong class="stat-value">
+
+                            <%= estadisticas.inactivos %>
+
+                        </strong>
+
+                    </div>
+
+
+                </article>
+
+
+            </section>
+
+
+            <!-- =====================================
+                 TABLA DE PLANES
+            ====================================== -->
+
+            <section class="dashboard-panel">
+
+
+                <div class="panel-header">
+
+
+                    <div>
+
+                        <h3>
+                            Planes disponibles
+                        </h3>
+
+
+                        <p>
+                            Configuración actual de los
+                            planes comerciales.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="/admin/planes/nuevo"
+                        class="user-btn-create"
+                    >
+
+                        <i class="fa-solid fa-plus"></i>
+
+                        Nuevo plan
+
+                    </a>
+
+
+                </div>
+
+
+                <div class="admin-table-wrapper">
+
+
+                    <table class="admin-table">
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Plan
+                                </th>
+
+                                <th>
+                                    Precio
+                                </th>
+
+                                <th>
+                                    Vehículos
+                                </th>
+
+                                <th>
+                                    Sucursales
+                                </th>
+
+                                <th>
+                                    Empleados
+                                </th>
+
+                                <th>
+                                    Estado
+                                </th>
+
+                                <th>
+                                    Acción
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                        <% if (planes.length) { %>
+
+
+                            <% planes.forEach((plan) => { %>
+
+
+                                <tr>
+
+
+                                    <td>
+
+                                        <div>
+
+                                            <strong>
+                                                <%= plan.nombre %>
+                                            </strong>
+
+
+                                            <span
+                                                class="table-muted"
+                                                style="display:block; margin-top:4px;"
+                                            >
+
+                                                <%= plan.descripcion || "Sin descripción" %>
+
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <strong>
+
+                                            USD $<%= Number(
+                                                plan.precio_mensual || 0
+                                            ).toFixed(2) %>
+
+                                        </strong>
+
+                                        <span
+                                            class="table-muted"
+                                            style="display:block;"
+                                        >
+                                            / mes
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <%= plan.limite_vehiculos !== null
+                                            ? plan.limite_vehiculos
+                                            : "Ilimitados"
+                                        %>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <%= plan.limite_sucursales !== null
+                                            ? plan.limite_sucursales
+                                            : "Ilimitadas"
+                                        %>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <%= plan.limite_empleados !== null
+                                            ? plan.limite_empleados
+                                            : "Ilimitados"
+                                        %>
+
+                                    </td>
+
+
+                                    <td>
+
+
+                                        <% if (Number(plan.activo) === 1) { %>
+
+                                            <span class="status-badge status-activa">
+
+                                                <span class="status-dot"></span>
+
+                                                Activo
+
+                                            </span>
+
+                                        <% } else { %>
+
+                                            <span class="subscription-badge subscription-suspendida">
+
+                                                Inactivo
+
+                                            </span>
+
+                                        <% } %>
+
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <a
+                                            href="/admin/planes/<%= plan.id %>/editar"
+                                            class="table-action"
+                                            title="Editar plan"
+                                        >
+
+                                            <i class="fa-solid fa-pen-to-square"></i>
+
+                                        </a>
+
+                                    </td>
+
+
+                                </tr>
+
+
+                            <% }); %>
+
+
+                        <% } else { %>
+
+
+                            <tr>
+
+                                <td colspan="7">
+
+                                    <div class="table-muted">
+
+                                        No existen planes registrados.
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                        <% } %>
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+            </section>
+
+
+            <footer class="admin-footer">
+
+                <span>
+                    AutoRentCar Platform
+                </span>
+
+                <span>
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+            </footer>
+
+
+        </main>
+
+
+    </div>
+
+
+</div>
+
+
+<script src="/js/admin.js"></script>
+
+
+</body>
+
+</html>

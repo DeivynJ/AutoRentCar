@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="admin-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="admin-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+        <main class="admin-main-content">
+
+
+            <div class="form-page-top">
+
+                <a
+                    href="/admin/planes"
+                    class="back-link"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    <span>
+                        Volver a planes
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <section class="module-hero">
+
+
+                <div>
+
+                    <div class="module-hero-badge">
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+                        <span>
+                            Configuración comercial
+                        </span>
+
+                    </div>
+
+
+                    <h2>
+                        Nuevo plan
+                    </h2>
+
+
+                    <p>
+                        Define las condiciones y límites
+                        que tendrá este plan dentro de
+                        AutoRentCar Platform.
+                    </p>
+
+                </div>
+
+
+            </section>
+
+
+            <% if (error) { %>
+
+                <div class="admin-alert admin-alert-error">
+
+                    <i class="fa-solid fa-circle-exclamation"></i>
+
+                    <div>
+
+                        <strong>
+                            No fue posible guardar
+                        </strong>
+
+                        <span>
+                            <%= error %>
+                        </span>
+
+                    </div>
+
+                </div>
+
+            <% } %>
+
+
+            <section class="user-form-card">
+
+
+                <form
+                    method="POST"
+                    action="/admin/planes/nuevo"
+                >
+
+
+                    <div class="user-form-grid">
+
+
+                        <div class="user-form-group">
+
+                            <label for="nombre">
+                                Nombre del plan
+                            </label>
+
+                            <input
+                                type="text"
+                                id="nombre"
+                                name="nombre"
+                                maxlength="100"
+                                value="<%= datos.nombre || '' %>"
+                                placeholder="Ej. Profesional"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="user-form-group">
+
+                            <label for="precio_mensual">
+                                Precio mensual (USD)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="precio_mensual"
+                                name="precio_mensual"
+                                min="0"
+                                step="0.01"
+                                value="<%= datos.precio_mensual ?? '' %>"
+                                placeholder="0.00"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="user-form-group user-form-full">
+
+                            <label for="descripcion">
+                                Descripción
+                            </label>
+
+                            <textarea
+                                id="descripcion"
+                                name="descripcion"
+                                rows="4"
+                                maxlength="500"
+                                placeholder="Describe brevemente las características del plan."
+                            ><%= datos.descripcion || '' %></textarea>
+
+                        </div>
+
+
+                        <div class="user-form-group">
+
+                            <label for="limite_vehiculos">
+                                Límite de vehículos
+                            </label>
+
+                            <input
+                                type="number"
+                                id="limite_vehiculos"
+                                name="limite_vehiculos"
+                                min="1"
+                                step="1"
+                                value="<%= datos.limite_vehiculos ?? '' %>"
+                                placeholder="Vacío = ilimitado"
+                            >
+
+                        </div>
+
+
+                        <div class="user-form-group">
+
+                            <label for="limite_sucursales">
+                                Límite de sucursales
+                            </label>
+
+                            <input
+                                type="number"
+                                id="limite_sucursales"
+                                name="limite_sucursales"
+                                min="1"
+                                step="1"
+                                value="<%= datos.limite_sucursales ?? '' %>"
+                                placeholder="Vacío = ilimitado"
+                            >
+
+                        </div>
+
+
+                        <div class="user-form-group">
+
+                            <label for="limite_empleados">
+                                Límite de empleados
+                            </label>
+
+                            <input
+                                type="number"
+                                id="limite_empleados"
+                                name="limite_empleados"
+                                min="1"
+                                step="1"
+                                value="<%= datos.limite_empleados ?? '' %>"
+                                placeholder="Vacío = ilimitado"
+                            >
+
+                        </div>
+
+
+                        <div class="user-form-group">
+
+                            <label for="activo">
+                                Estado del plan
+                            </label>
+
+                            <select
+                                id="activo"
+                                name="activo"
+                            >
+
+                                <option
+                                    value="1"
+                                    <%= String(datos.activo ?? "1") === "1"
+                                        ? "selected"
+                                        : ""
+                                    %>
+                                >
+                                    Activo
+                                </option>
+
+
+                                <option
+                                    value="0"
+                                    <%= String(datos.activo ?? "1") === "0"
+                                        ? "selected"
+                                        : ""
+                                    %>
+                                >
+                                    Inactivo
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="user-form-actions">
+
+
+                        <a
+                            href="/admin/planes"
+                            class="form-cancel"
+                        >
+                            Cancelar
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="user-btn-create"
+                        >
+
+                            <i class="fa-solid fa-floppy-disk"></i>
+
+                            Guardar plan
+
+                        </button>
+
+
+                    </div>
+
+
+                </form>
+
+
+            </section>
+
+
+            <footer class="admin-footer">
+
+                <span>
+                    AutoRentCar Platform
+                </span>
+
+                <span>
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+            </footer>
+
+
+        </main>
+
+
+    </div>
+
+
+</div>
+
+
+<script src="/js/admin.js"></script>
+
+
+</body>
+
+</html>
