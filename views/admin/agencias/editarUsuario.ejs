@@ -103,7 +103,36 @@
 
                 </div>
 
+<!-- =====================================
+     MENSAJE DE ERROR
+====================================== -->
 
+<% if (
+    typeof error !== "undefined" &&
+    error
+) { %>
+
+    <div class="admin-alert admin-alert-danger">
+
+        <i class="fa-solid fa-circle-exclamation"></i>
+
+
+        <div>
+
+            <strong>
+                No fue posible actualizar el usuario
+            </strong>
+
+
+            <span>
+                <%= error %>
+            </span>
+
+        </div>
+
+    </div>
+
+<% } %>
 
 
 

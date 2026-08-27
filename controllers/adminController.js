@@ -171,6 +171,63 @@ async function esRolAgenciaValido(
 }
 
 /* =========================================================
+   OBTENER SUSCRIPCIÓN Y PLAN ACTUAL DE AGENCIA
+========================================================= */
+
+async function obtenerSuscripcionActualAgencia(
+    conexion,
+    agenciaId
+) {
+
+    const resultado =
+        await conexion.query(
+            `
+            SELECT
+
+                s.id
+                    AS suscripcion_id,
+
+                s.estado
+                    AS suscripcion_estado,
+
+                p.id
+                    AS plan_id,
+
+                p.nombre
+                    AS plan_nombre,
+
+                p.limite_vehiculos,
+
+                p.limite_sucursales,
+
+                p.limite_empleados
+
+            FROM suscripciones s
+
+            INNER JOIN planes p
+                ON p.id = s.plan_id
+
+            WHERE
+                s.agencia_id = ?
+
+            ORDER BY
+                s.id DESC
+
+            LIMIT 1
+            `,
+            [
+                agenciaId
+            ]
+        );
+
+
+    return resultado.length
+        ? resultado[0]
+        : null;
+
+}
+
+/* =========================================================
    VALIDAR FECHA YYYY-MM-DD
 ========================================================= */
 
@@ -1822,35 +1879,30 @@ async function mostrarEditarAgencia(
 
         }
 
-
-
-
-
         return res.render(
-            "admin/agencias/editarAgencia",
-            {
+    "admin/agencias/editarAgencia",
+    {
 
-                titulo:
-                    "Editar agencia",
+        titulo:
+            "Editar agencia",
 
+        subtituloPagina:
+            "Modificar agencia",
 
-                subtituloPagina:
-                    "Modificar agencia",
+        paginaActual:
+            "agencias",
 
+        usuario:
+            req.session.usuario,
 
-                paginaActual:
-                    "agencias",
+        agencia:
+            agencia[0],
 
+        error:
+            null
 
-                usuario:
-                    req.session.usuario,
-
-
-                agencia:
-                    agencia[0]
-
-            }
-        );
+    }
+);
 
 
 
@@ -2429,37 +2481,35 @@ async function mostrarNuevoUsuario(
             );
 
 
-
-
-
         return res.render(
-            "admin/agencias/nuevoUsuario",
-            {
+    "admin/agencias/nuevoUsuario",
+    {
 
-                titulo:
-                    "Nuevo usuario",
+        titulo:
+            "Nuevo usuario",
 
-                subtituloPagina:
-                    "Crear usuario de agencia",
+        subtituloPagina:
+            "Crear usuario de agencia",
 
-                paginaActual:
-                    "agencias",
+        paginaActual:
+            "agencias",
 
+        usuario:
+            req.session.usuario,
 
-                usuario:
-                    req.session.usuario,
+        agencia:
+            agencia[0],
 
+        roles,
 
-                agencia:
-                    agencia[0],
+        error:
+            null,
 
+        datos:
+            {}
 
-                roles
-
-
-            }
-        );
-
+    }
+);
 
 
     } catch(error){
@@ -2594,7 +2644,6 @@ async function crearUsuarioAgencia(
 
         }
 
-
         const expresionCorreo =
             /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -2650,18 +2699,24 @@ async function crearUsuarioAgencia(
 
 
         const agencia =
-            await conexion.query(
-                `
-                    SELECT
-                        id
-                    FROM agencias
-                    WHERE id = ?
-                    LIMIT 1
-                `,
-                [
-                    agenciaId
-                ]
-            );
+    await conexion.query(
+        `
+            SELECT
+
+                id,
+                nombre,
+                logo
+
+            FROM agencias
+
+            WHERE id = ?
+
+            LIMIT 1
+        `,
+        [
+            agenciaId
+        ]
+    );
 
 
         if (
@@ -2694,6 +2749,174 @@ async function crearUsuarioAgencia(
 
         }
 
+        /* -------------------------------------------------
+   VALIDAR SUSCRIPCIÓN Y LÍMITE DE USUARIOS
+------------------------------------------------- */
+
+const suscripcionActual =
+    await obtenerSuscripcionActualAgencia(
+        conexion,
+        agenciaId
+    );
+
+
+if (!suscripcionActual) {
+
+    return res
+        .status(409)
+        .send(
+            "La agencia no tiene una suscripción asociada."
+        );
+
+}
+
+
+const estadosConAcceso = [
+    "prueba",
+    "activa"
+];
+
+
+if (
+    !estadosConAcceso.includes(
+        suscripcionActual.suscripcion_estado
+    )
+) {
+
+    return res
+        .status(409)
+        .send(
+            "No se pueden activar nuevos usuarios porque la suscripción de la agencia no está activa."
+        );
+
+}
+
+
+/*
+ * Solamente una cuenta activa consume
+ * capacidad del plan.
+ */
+
+if (
+    datos.estado === "activo" &&
+    suscripcionActual.limite_empleados !== null
+) {
+
+    const usuariosActivos =
+        await conexion.query(
+            `
+            SELECT
+                COUNT(*) AS total
+            FROM usuarios
+            WHERE
+                agencia_id = ?
+                AND estado = 'activo'
+            `,
+            [
+                agenciaId
+            ]
+        );
+
+
+    const totalUsuariosActivos =
+        Number(
+            usuariosActivos[0].total ||
+            0
+        );
+
+
+    const limiteUsuarios =
+        Number(
+            suscripcionActual.limite_empleados
+        );
+
+
+    if (
+    totalUsuariosActivos >=
+    limiteUsuarios
+) {
+
+    const roles =
+        await conexion.query(
+            `
+            SELECT
+
+                id,
+                nombre
+
+            FROM roles
+
+            WHERE id IN (2,3)
+
+            AND activo = 1
+
+            ORDER BY nivel ASC
+            `
+        );
+
+
+    const textoLimite =
+        limiteUsuarios === 1
+
+            ? "1 usuario activo"
+
+            : `${limiteUsuarios} usuarios activos`;
+
+
+    return res
+        .status(409)
+        .render(
+            "admin/agencias/nuevoUsuario",
+            {
+
+                titulo:
+                    "Nuevo usuario",
+
+                subtituloPagina:
+                    "Crear usuario de agencia",
+
+                paginaActual:
+                    "agencias",
+
+                usuario:
+                    req.session.usuario,
+
+                agencia:
+                    agencia[0],
+
+                roles,
+
+                error:
+                    `La agencia alcanzó el límite de ${textoLimite} permitido por el plan ${suscripcionActual.plan_nombre}.`,
+
+                datos:
+                {
+
+                    nombre:
+                        datos.nombre,
+
+                    apellido:
+                        datos.apellido,
+
+                    correo:
+                        datos.correo,
+
+                    telefono:
+                        datos.telefono,
+
+                    rol_id:
+                        datos.rolId,
+
+                    estado:
+                        datos.estado
+
+                }
+
+            }
+        );
+    }
+
+}
 
         const usuarioExistente =
             await conexion.query(
@@ -2711,18 +2934,82 @@ async function crearUsuarioAgencia(
 
 
         if (
-            usuarioExistente.length >
-            0
-        ) {
+    usuarioExistente.length >
+    0
+) {
 
-            return res
-                .status(409)
-                .send(
-                    "El correo ya está registrado."
-                );
+    const roles =
+        await conexion.query(
+            `
+            SELECT
 
-        }
+                id,
+                nombre
 
+            FROM roles
+
+            WHERE id IN (2,3)
+
+            AND activo = 1
+
+            ORDER BY nivel ASC
+            `
+        );
+
+
+    return res
+        .status(409)
+        .render(
+            "admin/agencias/nuevoUsuario",
+            {
+
+                titulo:
+                    "Nuevo usuario",
+
+                subtituloPagina:
+                    "Crear usuario de agencia",
+
+                paginaActual:
+                    "agencias",
+
+                usuario:
+                    req.session.usuario,
+
+                agencia:
+                    agencia[0],
+
+                roles,
+
+                error:
+                    "El correo electrónico ya está registrado.",
+
+                datos:
+                {
+
+                    nombre:
+                        datos.nombre,
+
+                    apellido:
+                        datos.apellido,
+
+                    correo:
+                        datos.correo,
+
+                    telefono:
+                        datos.telefono,
+
+                    rol_id:
+                        datos.rolId,
+
+                    estado:
+                        datos.estado
+
+                }
+
+            }
+        );
+
+}
 
         const passwordHash =
             await bcrypt.hash(
@@ -2985,11 +3272,11 @@ async function mostrarEditarUsuario(
 
 
                 usuarioEditar:
-                    usuario[0],
-
-
-                roles
-
+                usuario[0],
+                
+                roles,
+            
+                error: null
 
             }
         );
@@ -3075,76 +3362,242 @@ async function actualizarUsuario(
         } = req.body;
 
 
-const rolId =
-    Number(
-        rol_id
-    );
+
+        const rolId =
+            Number(
+                rol_id
+            );
 
 
-const estadosPermitidos = [
-    "activo",
-    "inactivo"
-];
+
+        const estadosPermitidos = [
+            "activo",
+            "inactivo"
+        ];
 
 
-if (
-    !nombre ||
-    !String(nombre).trim() ||
-    !correo ||
-    !String(correo).trim()
-) {
 
-    return res
-        .status(400)
-        .send(
-            "Nombre y correo son obligatorios."
-        );
+        /* -------------------------------------------------
+           MOSTRAR ERRORES DENTRO DEL FORMULARIO
+        ------------------------------------------------- */
 
-}
+        async function renderizarErrorEdicion(
+            mensaje,
+            estadoHttp = 400
+        ) {
 
 
-if (
-    !estadosPermitidos.includes(
-        estado
-    )
-) {
+            const agenciaResultado =
+                await conexion.query(
+                    `
+                    SELECT
 
-    return res
-        .status(400)
-        .send(
-            "El estado seleccionado no es válido."
-        );
+                        id,
+                        nombre,
+                        logo
 
-}
+                    FROM agencias
+
+                    WHERE id = ?
+
+                    LIMIT 1
+                    `,
+                    [
+                        agenciaId
+                    ]
+                );
 
 
-const rolValido =
-    await esRolAgenciaValido(
-        conexion,
-        rolId
-    );
+
+            if (
+                agenciaResultado.length === 0
+            ) {
+
+                return res
+                    .status(404)
+                    .send(
+                        "Agencia no encontrada."
+                    );
+
+            }
 
 
-if (!rolValido) {
 
-    return res
-        .status(400)
-        .send(
-            "El rol seleccionado no está permitido."
-        );
+            const roles =
+                await conexion.query(
+                    `
+                    SELECT
 
-}
+                        id,
+                        nombre
 
-        // Validar que el usuario pertenezca a la agencia
+                    FROM roles
+
+                    WHERE id IN (2,3)
+
+                    AND activo = 1
+
+                    ORDER BY nivel ASC
+                    `
+                );
+
+
+
+            return res
+                .status(
+                    estadoHttp
+                )
+                .render(
+                    "admin/agencias/editarUsuario",
+                    {
+
+                        titulo:
+                            "Editar usuario",
+
+
+                        subtituloPagina:
+                            "Modificar usuario",
+
+
+                        paginaActual:
+                            "agencias",
+
+
+                        usuario:
+                            req.session.usuario,
+
+
+                        agencia:
+                            agenciaResultado[0],
+
+
+                        usuarioEditar:
+                        {
+
+                            id:
+                                usuarioId,
+
+
+                            nombre:
+                                String(
+                                    nombre ||
+                                    ""
+                                ).trim(),
+
+
+                            apellido:
+                                String(
+                                    apellido ||
+                                    ""
+                                ).trim(),
+
+
+                            correo:
+                                String(
+                                    correo ||
+                                    ""
+                                ).trim(),
+
+
+                            telefono:
+                                String(
+                                    telefono ||
+                                    ""
+                                ).trim(),
+
+
+                            rol_id:
+                                rolId,
+
+
+                            estado:
+                                estado
+
+                        },
+
+
+                        roles,
+
+
+                        error:
+                            mensaje
+
+                    }
+                );
+
+        }
+
+
+
+        /* -------------------------------------------------
+           VALIDACIONES BÁSICAS
+        ------------------------------------------------- */
+
+        if (
+            !nombre ||
+            !String(nombre).trim() ||
+            !correo ||
+            !String(correo).trim()
+        ) {
+
+            return await renderizarErrorEdicion(
+                "Nombre y correo son obligatorios."
+            );
+
+        }
+
+
+
+        if (
+            !estadosPermitidos.includes(
+                estado
+            )
+        ) {
+
+            return await renderizarErrorEdicion(
+                "El estado seleccionado no es válido."
+            );
+
+        }
+
+
+
+        const rolValido =
+            await esRolAgenciaValido(
+                conexion,
+                rolId
+            );
+
+
+
+        if (!rolValido) {
+
+            return await renderizarErrorEdicion(
+                "El rol seleccionado no está permitido."
+            );
+
+        }
+
+
+
+        /* -------------------------------------------------
+           VALIDAR QUE EL USUARIO PERTENEZCA A LA AGENCIA
+        ------------------------------------------------- */
 
         const usuario =
             await conexion.query(
                 `
                 SELECT
-                    id
+
+                    id,
+                    estado
+
                 FROM usuarios
+
                 WHERE id = ?
+
                 AND agencia_id = ?
+
                 LIMIT 1
                 `,
                 [
@@ -3158,9 +3611,9 @@ if (!rolValido) {
 
 
 
-        if(
+        if (
             usuario.length === 0
-        ){
+        ) {
 
             return res
                 .status(404)
@@ -3172,16 +3625,139 @@ if (!rolValido) {
 
 
 
+        /* -------------------------------------------------
+           VALIDAR ACTIVACIÓN SEGÚN EL PLAN
+        ------------------------------------------------- */
+
+        const seEstaActivando =
+            usuario[0].estado !== "activo" &&
+            estado === "activo";
 
 
 
-        // Validar correo duplicado
+        if (seEstaActivando) {
+
+
+            const suscripcionActual =
+                await obtenerSuscripcionActualAgencia(
+                    conexion,
+                    agenciaId
+                );
+
+
+
+            if (!suscripcionActual) {
+
+                return await renderizarErrorEdicion(
+                    "La agencia no tiene una suscripción asociada.",
+                    409
+                );
+
+            }
+
+
+
+            const estadosConAcceso = [
+                "prueba",
+                "activa"
+            ];
+
+
+
+            if (
+                !estadosConAcceso.includes(
+                    suscripcionActual.suscripcion_estado
+                )
+            ) {
+
+                return await renderizarErrorEdicion(
+                    "No se puede activar este usuario porque la suscripción de la agencia no está activa.",
+                    409
+                );
+
+            }
+
+
+
+            if (
+                suscripcionActual.limite_empleados !== null
+            ) {
+
+
+                const usuariosActivos =
+                    await conexion.query(
+                        `
+                        SELECT
+
+                            COUNT(*) AS total
+
+                        FROM usuarios
+
+                        WHERE agencia_id = ?
+
+                        AND estado = 'activo'
+                        `,
+                        [
+                            agenciaId
+                        ]
+                    );
+
+
+
+                const totalUsuariosActivos =
+                    Number(
+                        usuariosActivos[0].total ||
+                        0
+                    );
+
+
+
+                const limiteUsuarios =
+                    Number(
+                        suscripcionActual.limite_empleados
+                    );
+
+
+
+                if (
+                    totalUsuariosActivos >=
+                    limiteUsuarios
+                ) {
+
+
+                    const textoLimite =
+                        limiteUsuarios === 1
+
+                            ? "1 usuario activo"
+
+                            : `${limiteUsuarios} usuarios activos`;
+
+
+
+                    return await renderizarErrorEdicion(
+                        `No es posible activar este usuario. El plan ${suscripcionActual.plan_nombre} permite un máximo de ${textoLimite}.`,
+                        409
+                    );
+
+                }
+
+            }
+
+        }
+
+
+
+        /* -------------------------------------------------
+           VALIDAR CORREO DUPLICADO
+        ------------------------------------------------- */
 
         const correoExiste =
             await conexion.query(
                 `
                 SELECT
+
                     id
+
                 FROM usuarios
 
                 WHERE correo = ?
@@ -3201,22 +3777,22 @@ if (!rolValido) {
 
 
 
-        if(
+        if (
             correoExiste.length > 0
-        ){
+        ) {
 
-            return res
-                .send(
-                    "El correo ya está registrado."
-                );
+            return await renderizarErrorEdicion(
+                "El correo ya está registrado.",
+                409
+            );
 
         }
 
 
 
-
-
-
+        /* -------------------------------------------------
+           ACTUALIZAR USUARIO
+        ------------------------------------------------- */
 
         await conexion.query(
             `
@@ -3239,7 +3815,6 @@ if (!rolValido) {
             WHERE id = ?
 
             AND agencia_id = ?
-
             `,
             [
 
@@ -3264,14 +3839,9 @@ if (!rolValido) {
 
 
 
-
-
-
         return res.redirect(
             `/admin/agencias/${agenciaId}/usuarios`
         );
-
-
 
 
 
@@ -3565,25 +4135,50 @@ async function mostrarSuscripcionAgencia(
 
 
         const planes =
-            await conexion.query(
-                `
+    await conexion.query(
+        `
+        SELECT
+
+            id,
+            nombre,
+            descripcion,
+            precio_mensual,
+            limite_vehiculos,
+            limite_sucursales,
+            limite_empleados,
+            activo
+
+        FROM planes
+
+        WHERE
+
+            activo = 1
+
+            OR id = (
+
                 SELECT
+                    plan_id
 
-                    id,
-                    nombre,
-                    descripcion,
-                    precio_mensual,
-                    limite_vehiculos,
-                    limite_sucursales,
-                    limite_empleados
+                FROM suscripciones
 
-                FROM planes
+                WHERE agencia_id = ?
 
-                WHERE activo = 1
+                ORDER BY id DESC
 
-                ORDER BY id ASC
-                `
-            );
+                LIMIT 1
+
+            )
+
+        ORDER BY
+
+            activo DESC,
+
+            id ASC
+        `,
+        [
+            agenciaId
+        ]
+    );
 
 
         const suscripciones =
@@ -3933,27 +4528,50 @@ async function actualizarSuscripcionAgencia(
 
         }
 
+       const planes =
+    await conexion.query(
+        `
+        SELECT
 
-        const planes =
-            await conexion.query(
-                `
+            id,
+            precio_mensual,
+            activo
+
+        FROM planes
+
+        WHERE id = ?
+
+        AND (
+
+            activo = 1
+
+            OR id = (
+
                 SELECT
+                    plan_id
 
-                    id,
-                    precio_mensual
+                FROM suscripciones
 
-                FROM planes
+                WHERE agencia_id = ?
 
-                WHERE id = ?
-                AND activo = 1
+                ORDER BY id DESC
 
                 LIMIT 1
-                `,
-                [
-                    planId
-                ]
-            );
 
+            )
+
+        )
+
+        LIMIT 1
+        `,
+        [
+
+            planId,
+
+            agenciaId
+
+        ]
+    );
 
         if (
             planes.length === 0
@@ -4425,6 +5043,75 @@ async function crearPlan(
                 );
 
         }
+
+/* -------------------------------------------------
+   VALIDAR LONGITUD DE CAMPOS
+------------------------------------------------- */
+
+if (
+    datos.nombre.length > 80
+) {
+
+    return res
+        .status(400)
+        .render(
+            "admin/planes/nuevo",
+            {
+
+                titulo:
+                    "Nuevo plan",
+
+                subtituloPagina:
+                    "Crear plan",
+
+                paginaActual:
+                    "planes",
+
+                usuario:
+                    req.session.usuario,
+
+                datos,
+
+                error:
+                    "El nombre del plan no puede superar los 80 caracteres."
+
+            }
+        );
+
+}
+
+
+if (
+    datos.descripcion.length > 255
+) {
+
+    return res
+        .status(400)
+        .render(
+            "admin/planes/nuevo",
+            {
+
+                titulo:
+                    "Nuevo plan",
+
+                subtituloPagina:
+                    "Crear plan",
+
+                paginaActual:
+                    "planes",
+
+                usuario:
+                    req.session.usuario,
+
+                datos,
+
+                error:
+                    "La descripción no puede superar los 255 caracteres."
+
+            }
+        );
+
+}
 
 
         /* -------------------------------------------------
@@ -5003,6 +5690,27 @@ async function actualizarPlan(
             );
 
         }
+
+        if (
+    datos.nombre.length > 80
+) {
+
+    return renderizarError(
+        "El nombre del plan no puede superar los 80 caracteres."
+    );
+
+}
+
+
+if (
+    datos.descripcion.length > 255
+) {
+
+    return renderizarError(
+        "La descripción no puede superar los 255 caracteres."
+    );
+
+}
 
 
         const precioMensual =

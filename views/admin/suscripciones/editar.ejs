@@ -143,19 +143,24 @@
 
                                 <% planes.forEach((plan) => { %>
 
-                                    <option
-                                        value="<%= plan.id %>"
-                                        <%= suscripcion && Number(suscripcion.plan_id) === Number(plan.id)
-                                            ? "selected"
-                                            : ""
-                                        %>
-                                    >
+    <option
+        value="<%= plan.id %>"
+        <%= suscripcion && Number(suscripcion.plan_id) === Number(plan.id)
+            ? "selected"
+            : ""
+        %>
+    >
 
-                                        <%= plan.nombre %>
+        <%= plan.nombre %>
 
-                                    </option>
+        <%= Number(plan.activo) === 0
+            ? " — Inactivo (plan actual)"
+            : ""
+        %>
 
-                                <% }); %>
+    </option>
+
+<% }); %>
 
                             </select>
 

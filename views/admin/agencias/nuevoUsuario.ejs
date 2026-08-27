@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
@@ -16,15 +17,15 @@
 
 
     <link
-    rel="stylesheet"
-    href="/css/admin.css"
-/>
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
 
 
-<link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-/>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
 
 </head>
 
@@ -38,17 +39,18 @@
     <%- include("../partials/sidebar") %>
 
 
-
     <div class="admin-content-wrapper">
 
 
         <%- include("../partials/header") %>
 
 
-
         <main class="admin-main-content">
 
 
+            <!-- =====================================
+                 VOLVER
+            ====================================== -->
 
             <div class="form-page-top">
 
@@ -63,15 +65,15 @@
 
                 </a>
 
-
             </div>
 
 
 
-
+            <!-- =====================================
+                 FORMULARIO
+            ====================================== -->
 
             <section class="dashboard-panel">
-
 
 
                 <div class="panel-header">
@@ -80,25 +82,18 @@
                     <div>
 
                         <span class="panel-eyebrow">
-
                             Nuevo usuario
-
                         </span>
 
 
                         <h3>
-
                             Crear usuario para <%= agencia.nombre %>
-
                         </h3>
 
 
                         <p>
-
                             Registra un nuevo miembro dentro de esta agencia.
-
                         </p>
-
 
                     </div>
 
@@ -107,292 +102,256 @@
 
 
 
+                <!-- =====================================
+                     MENSAJE DE ERROR
+                ====================================== -->
 
+                <% if (error) { %>
+
+                    <div class="admin-alert admin-alert-error">
+
+                        <i class="fa-solid fa-circle-exclamation"></i>
+
+
+                        <div>
+
+                            <strong>
+                                No fue posible crear el usuario
+                            </strong>
+
+
+                            <span>
+                                <%= error %>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
 
                 <div class="user-form-card">
 
 
-
                     <form
-
                         method="POST"
-
                         action="/admin/agencias/<%= agencia.id %>/usuarios/nuevo"
-
                     >
-
 
 
                         <div class="user-form-grid">
 
 
 
-
+                            <!-- NOMBRE -->
 
                             <div class="user-form-group">
 
                                 <label>
-
                                     Nombre
-
                                 </label>
 
 
                                 <input
-
                                     type="text"
-
                                     name="nombre"
-
+                                    value="<%= datos.nombre || '' %>"
                                     placeholder="Ingrese nombre"
-
                                     required
-
                                 >
 
                             </div>
 
+                            
 
 
 
-
-
+                            <!-- APELLIDO -->
 
                             <div class="user-form-group">
 
                                 <label>
-
                                     Apellido
-
                                 </label>
 
 
                                 <input
-
                                     type="text"
-
                                     name="apellido"
-
+                                    value="<%= datos.apellido || '' %>"
                                     placeholder="Ingrese apellido"
-
                                 >
 
                             </div>
 
 
 
-
-
-
+                            <!-- CORREO -->
 
                             <div class="user-form-group">
 
                                 <label>
-
                                     Correo electrónico
-
                                 </label>
 
 
                                 <input
-
                                     type="email"
-
                                     name="correo"
-
+                                    value="<%= datos.correo || '' %>"
                                     placeholder="correo@ejemplo.com"
-
                                     required
-
                                 >
 
                             </div>
 
 
 
-
-
-
+                            <!-- TELÉFONO -->
 
                             <div class="user-form-group">
 
                                 <label>
-
                                     Teléfono
-
                                 </label>
 
 
                                 <input
-
                                     type="text"
-
                                     name="telefono"
-
+                                    value="<%= datos.telefono || '' %>"
                                     placeholder="809-000-0000"
-
                                 >
 
                             </div>
 
 
 
-
-
-
+                            <!-- CONTRASEÑA -->
 
                             <div class="user-form-group">
 
                                 <label>
-
                                     Contraseña
-
                                 </label>
 
 
                                 <input
-
                                     type="password"
-
                                     name="password"
-
-                                    placeholder="Ingrese contraseña"
-
+                                    minlength="8"
+                                    placeholder="Mínimo 8 caracteres"
                                     required
-
                                 >
 
                             </div>
 
 
 
-
-
-
+                            <!-- ROL -->
 
                             <div class="user-form-group">
 
                                 <label>
-
                                     Rol del usuario
-
                                 </label>
 
 
                                 <select
-
                                     name="rol_id"
-
                                     required
-
                                 >
 
                                     <option value="">
-
                                         Seleccionar rol
-
                                     </option>
 
 
-                                    <% roles.forEach(rol => { %>
-
+                                    <% roles.forEach((rol) => { %>
 
                                         <option
-
                                             value="<%= rol.id %>"
-
+                                            <%= Number(datos.rol_id) === Number(rol.id)
+                                                ? "selected"
+                                                : ""
+                                            %>
                                         >
 
                                             <%= rol.nombre %>
 
                                         </option>
 
-
-                                    <% }) %>
+                                    <% }); %>
 
 
                                 </select>
-
 
                             </div>
 
 
 
-
-
-
+                            <!-- ESTADO -->
 
                             <div class="user-form-group">
 
                                 <label>
-
                                     Estado
-
                                 </label>
 
 
                                 <select
-
                                     name="estado"
-
                                 >
 
-                                    <option value="activo">
-
+                                    <option
+                                        value="activo"
+                                        <%= (datos.estado || "activo") === "activo"
+                                            ? "selected"
+                                            : ""
+                                        %>
+                                    >
                                         Activo
-
                                     </option>
 
 
-                                    <option value="inactivo">
-
+                                    <option
+                                        value="inactivo"
+                                        <%= datos.estado === "inactivo"
+                                            ? "selected"
+                                            : ""
+                                        %>
+                                    >
                                         Inactivo
-
                                     </option>
 
 
                                 </select>
 
-
                             </div>
-
-
-
 
 
                         </div>
 
 
 
-
-
-
+                        <!-- =====================================
+                             ACCIONES
+                        ====================================== -->
 
                         <div class="user-form-actions">
 
 
                             <a
-
-    href="/admin/agencias/<%= agencia.id %>/usuarios"
-
-    class="user-btn-cancel"
-
->
-
-    Cancelar
-
-</a>
-
-
-
+                                href="/admin/agencias/<%= agencia.id %>/usuarios"
+                                class="user-btn-cancel"
+                            >
+                                Cancelar
+                            </a>
 
 
                             <button
-
                                 type="submit"
-
                                 class="user-btn-create"
-
                             >
 
                                 <i class="fa-solid fa-user-plus"></i>
@@ -405,57 +364,43 @@
                         </div>
 
 
-
-
-
                     </form>
 
 
-
                 </div>
-
 
 
             </section>
 
 
 
-
-
-
+            <!-- =====================================
+                 FOOTER
+            ====================================== -->
 
             <footer class="admin-footer">
 
 
                 <span>
-
                     AutoRentCar Platform
-
                 </span>
 
 
                 <span>
-
                     © <%= new Date().getFullYear() %>
-
                 </span>
 
 
             </footer>
 
 
-
-
         </main>
-
 
 
     </div>
 
 
-
 </div>
-
 
 
 <script src="/js/admin.js"></script>
