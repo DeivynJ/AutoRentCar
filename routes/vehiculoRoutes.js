@@ -39,6 +39,13 @@ const {
     "../middleware/authMiddleware"
 );
 
+const {
+
+    subirImagenModelo
+
+} = require(
+    "../middleware/uploadVehiculoMiddleware"
+);
 
 const router =
     express.Router();
@@ -109,6 +116,7 @@ router.get(
 
 router.post(
     "/admin/agencias/:id/vehiculos/modelos/:modeloId/editar",
+    subirImagenModelo,
     actualizarModelo
 );
 

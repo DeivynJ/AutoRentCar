@@ -157,11 +157,91 @@
 
                     <form
     method="POST"
+    enctype="multipart/form-data"
     action="/admin/agencias/<%= agencia.id %>/vehiculos/modelos/<%= modeloEditar.id %>/editar"
 >
 
 
                         <div class="user-form-grid">
+
+                            <div class="user-form-group user-form-full">
+
+    <label for="imagen">
+        Imagen principal del modelo
+    </label>
+
+
+    <% if (modeloEditar.imagen) { %>
+
+        <div
+            style="
+                margin-top: 10px;
+                margin-bottom: 18px;
+            "
+        >
+
+            <img
+                src="<%= modeloEditar.imagen %>"
+                alt="<%= modeloEditar.marca %> <%= modeloEditar.nombre %>"
+                style="
+                    width: 100%;
+                    max-width: 360px;
+                    height: 220px;
+                    object-fit: cover;
+                    border-radius: 16px;
+                    display: block;
+                "
+            >
+
+        </div>
+
+    <% } else { %>
+
+        <div class="admin-alert admin-alert-info">
+
+            <i class="fa-solid fa-image"></i>
+
+
+            <div>
+
+                <strong>
+                    Sin imagen principal
+                </strong>
+
+
+                <span>
+                    Este modelo todavía no tiene una imagen
+                    configurada para el catálogo.
+                </span>
+
+            </div>
+
+        </div>
+
+    <% } %>
+
+
+    <input
+        type="file"
+        id="imagen"
+        name="imagen"
+        accept="image/jpeg,image/png,image/webp"
+    >
+
+
+    <span
+        class="table-muted"
+        style="
+            display: block;
+            margin-top: 8px;
+        "
+    >
+        JPG, PNG o WEBP. Tamaño máximo: 5 MB.
+        Si no seleccionas una nueva imagen,
+        se conservará la actual.
+    </span>
+
+</div>
 
 
                             <div class="user-form-group">
@@ -182,31 +262,6 @@
                                 >
 
                             </div>
-
-                            <div class="admin-alert admin-alert-info">
-
-    <i class="fa-solid fa-circle-info"></i>
-
-
-    <div>
-
-        <strong>
-            Estado del modelo
-        </strong>
-
-
-        <span>
-            Si el modelo se establece como Inactivo,
-            sus unidades físicas existentes se conservarán,
-            pero no podrán agregarse nuevas unidades ni
-            reactivarse unidades inactivas hasta volver
-            a activar el modelo.
-        </span>
-
-    </div>
-
-</div>
-
 
 
                             <div class="user-form-group">
@@ -254,52 +309,52 @@
 
                             <div class="user-form-group">
 
-                                <label for="categoria">
-                                    Categoría
-                                </label>
+    <label for="categoria">
+        Categoría
+    </label>
 
 
-                                <select
-                                    id="categoria"
-                                    name="categoria"
-                                    required
-                                >
+    <select
+        id="categoria"
+        name="categoria"
+        required
+    >
 
-                                    <option
-                                        value="economico"
-                                        modeloEditar.categoria === "economico"
-                                            ? "selected"
-                                            : ""
-                                        %>
-                                    >
-                                        Económico
-                                    </option>
-
-
-                                    <option
-                                        value="gama_media"
-                                        modeloEditar.categoria === "gama_media"
-                                            ? "selected"
-                                            : ""
-                                        %>
-                                    >
-                                        Gama media
-                                    </option>
+        <option
+            value="economico"
+            <%= modeloEditar.categoria === "economico"
+                ? "selected"
+                : ""
+            %>
+        >
+            Económico
+        </option>
 
 
-                                    <option
-                                        value="lujo"
-                                       modeloEditar.categoria === "lujo"
-                                            ? "selected"
-                                            : ""
-                                        %>
-                                    >
-                                        Vehículo de lujo
-                                    </option>
+        <option
+            value="gama_media"
+            <%= modeloEditar.categoria === "gama_media"
+                ? "selected"
+                : ""
+            %>
+        >
+            Gama media
+        </option>
 
-                                </select>
 
-                            </div>
+        <option
+            value="lujo"
+            <%= modeloEditar.categoria === "lujo"
+                ? "selected"
+                : ""
+            %>
+        >
+            Vehículo de lujo
+        </option>
+
+    </select>
+
+</div>
 
 
 

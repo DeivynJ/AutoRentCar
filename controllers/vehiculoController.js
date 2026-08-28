@@ -1,9 +1,177 @@
+const fs =
+    require(
+        "fs"
+    );
+
+
+const path =
+    require(
+        "path"
+    );
+
 const {
     pool
 } = require(
     "../config/database"
 );
+/* =========================================================
+   GUARDAR IMAGEN PRINCIPAL DEL MODELO
+========================================================= */
 
+async function guardarImagenModelo(
+    archivo,
+    agenciaId,
+    modeloId
+) {
+
+    const extensiones =
+    {
+
+        "image/jpeg":
+            ".jpg",
+
+        "image/png":
+            ".png",
+
+        "image/webp":
+            ".webp"
+
+    };
+
+
+    const extension =
+        extensiones[
+            archivo.mimetype
+        ];
+
+
+    if (!extension) {
+
+        throw new Error(
+            "Formato de imagen no permitido."
+        );
+
+    }
+
+
+    const directorio =
+        path.join(
+            __dirname,
+            "..",
+            "img",
+            "agencias",
+            String(
+                agenciaId
+            ),
+            "vehiculos",
+            "modelos",
+            String(
+                modeloId
+            )
+        );
+
+
+    await fs.promises.mkdir(
+        directorio,
+        {
+            recursive:
+                true
+        }
+    );
+
+
+    const nombreArchivo =
+        `principal-${Date.now()}${extension}`;
+
+
+    const rutaFisica =
+        path.join(
+            directorio,
+            nombreArchivo
+        );
+
+
+    await fs.promises.writeFile(
+        rutaFisica,
+        archivo.buffer
+    );
+
+
+    return {
+
+        rutaFisica,
+
+        rutaPublica:
+            `/img/agencias/${agenciaId}/vehiculos/modelos/${modeloId}/${nombreArchivo}`
+
+    };
+
+}
+
+
+/* =========================================================
+   ELIMINAR IMAGEN ANTERIOR DEL MODELO
+========================================================= */
+
+async function eliminarImagenModelo(
+    rutaPublica
+) {
+
+    if (
+        !rutaPublica ||
+        !rutaPublica.startsWith(
+            "/img/agencias/"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    const rutaRelativa =
+        rutaPublica.replace(
+            /^\/+/,
+            ""
+        );
+
+
+    const rutaFisica =
+        path.join(
+            __dirname,
+            "..",
+            ...rutaRelativa.split(
+                "/"
+            )
+        );
+
+
+    try {
+
+        await fs.promises.unlink(
+            rutaFisica
+        );
+
+        
+
+
+    } catch (error) {
+
+        if (
+            error.code !==
+            "ENOENT"
+        ) {
+
+            console.error(
+                "Error eliminando imagen anterior del modelo:",
+                error
+            );
+
+        }
+
+    }
+
+}
 
 /* =========================================================
    MOSTRAR VEHÍCULOS DE UNA AGENCIA
@@ -4672,6 +4840,9 @@ async function actualizarModelo(
 
     let conexion;
 
+    let nuevaImagenGuardada =
+    null;
+
 
     const agenciaId =
         Number(
@@ -4776,7 +4947,7 @@ async function actualizarModelo(
                 : "activo"
 
     };
-
+    
 
     try {
 
@@ -4855,6 +5026,27 @@ async function actualizarModelo(
                     ]
                 );
 
+                const imagenResultado =
+    await conexion.query(
+        `
+        SELECT
+            imagen
+
+        FROM modelos_vehiculos
+
+        WHERE
+            id = ?
+
+            AND agencia_id = ?
+
+        LIMIT 1
+        `,
+        [
+            modeloId,
+            agenciaId
+        ]
+    );
+
 
             return res
                 .status(
@@ -4883,12 +5075,17 @@ async function actualizarModelo(
                         {
 
                             id:
-                                modeloId,
+    modeloId,
 
-                            agencia_id:
-                                agenciaId,
+agencia_id:
+    agenciaId,
 
-                            ...datos
+imagen:
+    imagenResultado.length
+        ? imagenResultado[0].imagen
+        : null,
+
+...datos
 
                         },
 
@@ -4916,6 +5113,16 @@ async function actualizarModelo(
                 );
 
         }
+
+        if (
+    req.errorSubidaImagen
+) {
+
+    return await renderizarError(
+        req.errorSubidaImagen
+    );
+
+}
 
 
         if (!datos.marca) {
@@ -5124,11 +5331,11 @@ async function actualizarModelo(
                 `
                 SELECT
 
-                    id,
-                    estado
+    id,
+    estado,
+    imagen
 
-                FROM modelos_vehiculos
-
+FROM modelos_vehiculos
                 WHERE
                     id = ?
 
@@ -5201,6 +5408,46 @@ async function actualizarModelo(
 
         }
 
+        let imagenFinal =
+    modeloActual[0].imagen;
+
+
+if (
+    req.file
+) {
+
+    try {
+
+        nuevaImagenGuardada =
+            await guardarImagenModelo(
+                req.file,
+                agenciaId,
+                modeloId
+            );
+
+
+        imagenFinal =
+            nuevaImagenGuardada
+                .rutaPublica;
+
+
+    } catch (error) {
+
+        console.error(
+            "Error guardando imagen del modelo:",
+            error
+        );
+
+
+        return await renderizarError(
+            "No fue posible guardar la imagen seleccionada.",
+            500
+        );
+
+    }
+
+}
+
 
         await conexion.query(
             `
@@ -5222,6 +5469,7 @@ async function actualizarModelo(
                 destacado = ?,
                 etiqueta = ?,
                 descripcion = ?,
+                imagen = ?,
                 estado = ?
 
             WHERE
@@ -5259,23 +5507,70 @@ async function actualizarModelo(
                     null,
 
                 datos.descripcion ||
-                    null,
+    null,
 
-                datos.estado,
+imagenFinal,
 
-                modeloId,
-                agenciaId
+datos.estado,
+
+modeloId,
+
+agenciaId
 
             ]
         );
 
+        if (
+    nuevaImagenGuardada &&
+    modeloActual[0].imagen &&
+    modeloActual[0].imagen !==
+        nuevaImagenGuardada.rutaPublica
+) {
 
-        return res.redirect(
+    await eliminarImagenModelo(
+        modeloActual[0].imagen
+    );
+
+}
+
+
+                return res.redirect(
             `/admin/agencias/${agenciaId}/vehiculos?modeloActualizado=1`
         );
 
 
     } catch (error) {
+
+        if (
+            nuevaImagenGuardada &&
+            nuevaImagenGuardada.rutaFisica
+        ) {
+
+            try {
+
+                await fs.promises.unlink(
+                    nuevaImagenGuardada.rutaFisica
+                );
+
+
+            } catch (errorEliminandoImagen) {
+
+                if (
+                    errorEliminandoImagen.code !==
+                    "ENOENT"
+                ) {
+
+                    console.error(
+                        "Error limpiando la nueva imagen del modelo:",
+                        errorEliminandoImagen
+                    );
+
+                }
+
+            }
+
+        }
+
 
         console.error(
             "Error actualizando modelo:",
