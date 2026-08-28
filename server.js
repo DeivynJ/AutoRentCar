@@ -77,6 +77,9 @@ const adminRoutes = require(
     "./routes/adminRoutes"
 );
 
+const sucursalRoutes = require(
+    "./routes/sucursalRoutes"
+);
 
 /* =========================================================
    APLICACIÓN
@@ -210,6 +213,9 @@ app.use(
     adminRoutes
 );
 
+app.use(
+    sucursalRoutes
+);
 
 /* =========================================================
    RUTA PRINCIPAL TEMPORAL

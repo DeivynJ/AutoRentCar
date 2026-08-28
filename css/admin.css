@@ -6051,35 +6051,53 @@ input[type="file"] {
 
 .user-btn-create {
 
-
-    min-height:46px;
-
+    min-height:
+        46px;
 
     padding:
         0 25px;
 
+    display:
+        inline-flex;
 
-    border-radius:10px;
+    align-items:
+        center;
 
+    justify-content:
+        center;
 
-    color:white;
+    gap:
+        8px;
 
+    border:
+        none;
+
+    border-radius:
+        10px;
+
+    color:
+        white;
 
     background:
         var(--admin-secondary);
 
+    font-size:
+        .75rem;
 
-    font-size:.75rem;
+    font-weight:
+        800;
 
+    line-height:
+        1;
 
-    font-weight:800;
+    text-decoration:
+        none;
 
+    cursor:
+        pointer;
 
-    cursor:pointer;
-
-
-    transition:.25s ease;
-
+    transition:
+        .25s ease;
 
 }
 

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="admin-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="admin-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+        <main class="admin-main-content">
+
+
+            <div class="form-page-top">
+
+                <a
+                    href="/admin/agencias/<%= agencia.id %>/sucursales"
+                    class="back-link"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Volver a sucursales
+
+                </a>
+
+            </div>
+
+
+
+            <section class="dashboard-panel">
+
+
+                <div class="panel-header">
+
+
+                    <div>
+
+                        <span class="panel-eyebrow">
+                            Nueva sucursal
+                        </span>
+
+
+                        <h3>
+                            Crear sucursal para <%= agencia.nombre %>
+                        </h3>
+
+
+                        <p>
+                            Registra una nueva ubicación operativa
+                            perteneciente a esta agencia.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <% if (error) { %>
+
+                    <div class="admin-alert admin-alert-error">
+
+                        <i class="fa-solid fa-circle-exclamation"></i>
+
+
+                        <div>
+
+                            <strong>
+                                No fue posible crear la sucursal
+                            </strong>
+
+
+                            <span>
+                                <%= error %>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+
+
+                <% if (suscripcion) { %>
+
+                    <div class="admin-alert admin-alert-info">
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+
+                        <div>
+
+                            <strong>
+                                <%= suscripcion.plan_nombre %>
+                            </strong>
+
+
+                            <span>
+
+                                Límite de sucursales activas:
+
+                                <%= suscripcion.limite_sucursales === null
+                                    ? "Ilimitadas"
+                                    : suscripcion.limite_sucursales
+                                %>
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+
+
+                <div class="user-form-card">
+
+
+                    <form
+                        method="POST"
+                        action="/admin/agencias/<%= agencia.id %>/sucursales/nueva"
+                    >
+
+
+                        <div class="user-form-grid">
+
+
+                            <div class="user-form-group">
+
+                                <label for="nombre">
+                                    Nombre de la sucursal
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="nombre"
+                                    name="nombre"
+                                    maxlength="120"
+                                    value="<%= datos.nombre || '' %>"
+                                    placeholder="Ej. Sucursal Aeropuerto"
+                                    required
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="correo">
+                                    Correo electrónico
+                                </label>
+
+
+                                <input
+                                    type="email"
+                                    id="correo"
+                                    name="correo"
+                                    maxlength="150"
+                                    value="<%= datos.correo || '' %>"
+                                    placeholder="sucursal@ejemplo.com"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="telefono">
+                                    Teléfono
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="telefono"
+                                    name="telefono"
+                                    maxlength="30"
+                                    value="<%= datos.telefono || '' %>"
+                                    placeholder="809-000-0000"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="whatsapp">
+                                    WhatsApp
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="whatsapp"
+                                    name="whatsapp"
+                                    maxlength="30"
+                                    value="<%= datos.whatsapp || '' %>"
+                                    placeholder="809-000-0000"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group user-form-full">
+
+                                <label for="direccion">
+                                    Dirección
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="direccion"
+                                    name="direccion"
+                                    maxlength="255"
+                                    value="<%= datos.direccion || '' %>"
+                                    placeholder="Dirección física de la sucursal"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="ciudad">
+                                    Ciudad
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="ciudad"
+                                    name="ciudad"
+                                    maxlength="100"
+                                    value="<%= datos.ciudad || '' %>"
+                                    placeholder="Ej. Santo Domingo"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="provincia">
+                                    Provincia
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="provincia"
+                                    name="provincia"
+                                    maxlength="100"
+                                    value="<%= datos.provincia || '' %>"
+                                    placeholder="Ej. Santo Domingo"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="pais">
+                                    País
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="pais"
+                                    name="pais"
+                                    maxlength="100"
+                                    value="<%= datos.pais || 'República Dominicana' %>"
+                                    required
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="estado">
+                                    Estado
+                                </label>
+
+
+                                <select
+                                    id="estado"
+                                    name="estado"
+                                >
+
+                                    <option
+                                        value="activa"
+                                        <%= datos.estado === "activa"
+                                            ? "selected"
+                                            : ""
+                                        %>
+                                    >
+                                        Activa
+                                    </option>
+
+
+                                    <option
+                                        value="inactiva"
+                                        <%= datos.estado === "inactiva"
+                                            ? "selected"
+                                            : ""
+                                        %>
+                                    >
+                                        Inactiva
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+
+                            <% if (totalSucursales === 0) { %>
+
+                                <div class="user-form-group user-form-full">
+
+                                    <div class="admin-alert admin-alert-info">
+
+                                        <i class="fa-solid fa-star"></i>
+
+
+                                        <div>
+
+                                            <strong>
+                                                Primera sucursal
+                                            </strong>
+
+
+                                            <span>
+                                                Esta sucursal se establecerá
+                                                automáticamente como principal.
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            <% } else { %>
+
+
+                                <div class="user-form-group">
+
+                                    <label for="es_principal">
+                                        Tipo de sucursal
+                                    </label>
+
+
+                                    <select
+                                        id="es_principal"
+                                        name="es_principal"
+                                    >
+
+                                        <option
+                                            value="0"
+                                            <%= datos.es_principal !== "1"
+                                                ? "selected"
+                                                : ""
+                                            %>
+                                        >
+                                            Secundaria
+                                        </option>
+
+
+                                        <option
+                                            value="1"
+                                            <%= datos.es_principal === "1"
+                                                ? "selected"
+                                                : ""
+                                            %>
+                                        >
+                                            Principal
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+
+                            <% } %>
+
+
+                        </div>
+
+
+
+                        <div class="user-form-actions">
+
+
+                            <a
+                                href="/admin/agencias/<%= agencia.id %>/sucursales"
+                                class="user-btn-cancel"
+                            >
+                                Cancelar
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="user-btn-create"
+                            >
+
+                                <i class="fa-solid fa-building-circle-check"></i>
+
+                                Crear sucursal
+
+                            </button>
+
+
+                        </div>
+
+
+                    </form>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <footer class="admin-footer">
+
+                <span>
+                    AutoRentCar Platform
+                </span>
+
+
+                <span>
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+            </footer>
+
+
+        </main>
+
+
+    </div>
+
+
+</div>
+
+
+<script src="/js/admin.js"></script>
+
+
+</body>
+
+</html>

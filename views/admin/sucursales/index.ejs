@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="admin-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="admin-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+        <main class="admin-main-content">
+
+
+            <!-- =====================================
+                 VOLVER
+            ====================================== -->
+
+            <div class="form-page-top">
+
+                <a
+                    href="/admin/agencias/<%= agencia.id %>"
+                    class="back-link"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Volver al detalle
+
+                </a>
+
+            </div>
+
+
+
+            <!-- =====================================
+                 ENCABEZADO DE AGENCIA
+            ====================================== -->
+
+            <section class="agency-profile-hero">
+
+
+                <div class="agency-profile-main">
+
+
+                    <div class="agency-profile-logo">
+
+
+                        <% if (agencia.logo) { %>
+
+                            <img
+                                src="<%= agencia.logo %>"
+                                alt="<%= agencia.nombre %>"
+                            >
+
+                        <% } else { %>
+
+                            <span>
+
+                                <%= agencia.nombre
+                                    .charAt(0)
+                                    .toUpperCase()
+                                %>
+
+                            </span>
+
+                        <% } %>
+
+
+                    </div>
+
+
+                    <div class="agency-profile-info">
+
+
+                        <span class="profile-label">
+                            Gestión de sucursales
+                        </span>
+
+
+                        <h1>
+                            <%= agencia.nombre %>
+                        </h1>
+
+
+                        <p>
+                            Administra las ubicaciones operativas
+                            pertenecientes a esta agencia.
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="agency-profile-status">
+
+
+                    <span
+                        class="status-badge status-<%= agencia.estado %>"
+                    >
+
+                        <span class="status-dot"></span>
+
+                        <%= agencia.estado %>
+
+                    </span>
+
+
+                    <span class="plan-badge">
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+                        <%= suscripcion
+                            ? suscripcion.plan_nombre
+                            : "Sin plan"
+                        %>
+
+                    </span>
+
+
+                </div>
+
+
+            </section>
+
+            <% if (mensajeExito) { %>
+
+    <div class="admin-alert admin-alert-success">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+
+        <div>
+
+            <strong>
+                Operación completada
+            </strong>
+
+
+            <span>
+                <%= mensajeExito %>
+            </span>
+
+        </div>
+
+    </div>
+
+<% } %>
+
+            <!-- =====================================
+                 ESTADÍSTICAS
+            ====================================== -->
+
+            <section class="dashboard-stats agency-detail-stats">
+
+
+                <article class="stat-card">
+
+
+                    <div class="stat-icon stat-icon-blue">
+
+                        <i class="fa-solid fa-building"></i>
+
+                    </div>
+
+
+                    <span class="stat-title">
+                        Total
+                    </span>
+
+
+                    <strong class="stat-value">
+                        <%= resumen.total %>
+                    </strong>
+
+
+                </article>
+
+
+
+                <article class="stat-card">
+
+
+                    <div class="stat-icon stat-icon-green">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                    </div>
+
+
+                    <span class="stat-title">
+                        Activas
+                    </span>
+
+
+                    <strong class="stat-value">
+                        <%= resumen.activas %>
+                    </strong>
+
+
+                </article>
+
+
+
+                <article class="stat-card">
+
+
+                    <div class="stat-icon stat-icon-orange">
+
+                        <i class="fa-solid fa-circle-pause"></i>
+
+                    </div>
+
+
+                    <span class="stat-title">
+                        Inactivas
+                    </span>
+
+
+                    <strong class="stat-value">
+                        <%= resumen.inactivas %>
+                    </strong>
+
+
+                </article>
+
+
+
+                <article class="stat-card">
+
+
+                    <div class="stat-icon stat-icon-purple">
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+                    </div>
+
+
+                    <span class="stat-title">
+                        Límite del plan
+                    </span>
+
+
+                    <strong class="stat-value">
+
+                        <% if (!suscripcion) { %>
+
+                            —
+
+                        <% } else if (
+                            suscripcion.limite_sucursales === null
+                        ) { %>
+
+                            ∞
+
+                        <% } else { %>
+
+                            <%= suscripcion.limite_sucursales %>
+
+                        <% } %>
+
+                    </strong>
+
+
+                </article>
+
+
+            </section>
+
+
+
+            <!-- =====================================
+                 TABLA DE SUCURSALES
+            ====================================== -->
+
+            <section class="dashboard-panel">
+
+
+                <div class="panel-header">
+
+
+                    <div>
+
+                        <span class="panel-eyebrow">
+                            Sucursales
+                        </span>
+
+
+                        <h3>
+                            Sucursales registradas
+                        </h3>
+
+
+                        <p>
+                            Ubicaciones asociadas a
+                            <%= agencia.nombre %>.
+                        </p>
+
+                    </div>
+
+                    <a
+    href="/admin/agencias/<%= agencia.id %>/sucursales/nueva"
+    class="user-btn-create"
+>
+
+    <i class="fa-solid fa-plus"></i>
+
+    Nueva sucursal
+
+</a>
+
+
+                </div>
+
+
+
+                <div class="table-container">
+
+
+                    <table class="admin-table">
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Sucursal
+                                </th>
+
+                                <th>
+                                    Ubicación
+                                </th>
+
+                                <th>
+                                    Contacto
+                                </th>
+
+                                <th>
+                                    Tipo
+                                </th>
+
+                                <th>
+                                    Estado
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                        <% if (sucursales.length === 0) { %>
+
+
+                            <tr>
+
+                                <td
+                                    colspan="5"
+                                    class="table-empty"
+                                >
+
+                                    <div>
+
+                                        <i class="fa-solid fa-building-circle-xmark"></i>
+
+                                        <strong>
+                                            No hay sucursales registradas
+                                        </strong>
+
+                                        <span>
+                                            Esta agencia todavía no tiene
+                                            sucursales configuradas.
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                        <% } %>
+
+
+                        <% sucursales.forEach((sucursal) => { %>
+
+
+                            <tr>
+
+
+                                <td>
+
+                                    <strong>
+                                        <%= sucursal.nombre %>
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+
+                                    <%= [
+                                        sucursal.ciudad,
+                                        sucursal.provincia
+                                    ]
+                                    .filter(Boolean)
+                                    .join(", ") || "No registrada"
+                                    %>
+
+                                </td>
+
+
+                                <td>
+
+                                    <%= sucursal.telefono
+                                        || sucursal.correo
+                                        || "No registrado"
+                                    %>
+
+                                </td>
+
+
+                                <td>
+
+
+                                    <% if (
+                                        Number(
+                                            sucursal.es_principal
+                                        ) === 1
+                                    ) { %>
+
+                                        <span class="plan-badge">
+
+                                            <i class="fa-solid fa-star"></i>
+
+                                            Principal
+
+                                        </span>
+
+                                    <% } else { %>
+
+                                        <span class="table-muted">
+                                            Secundaria
+                                        </span>
+
+                                    <% } %>
+
+
+                                </td>
+
+
+                                <td>
+
+
+                                    <% if (
+                                        sucursal.estado === "activa"
+                                    ) { %>
+
+                                        <span class="status-badge status-activa">
+
+                                            <span class="status-dot"></span>
+
+                                            Activa
+
+                                        </span>
+
+                                    <% } else { %>
+
+                                        <span class="status-badge status-suspendida">
+
+                                            <span class="status-dot"></span>
+
+                                            Inactiva
+
+                                        </span>
+
+                                    <% } %>
+
+
+                                </td>
+
+
+                            </tr>
+
+
+                        <% }); %>
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <footer class="admin-footer">
+
+
+                <span>
+                    AutoRentCar Platform
+                </span>
+
+
+                <span>
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+
+            </footer>
+
+
+        </main>
+
+
+    </div>
+
+
+</div>
+
+
+<script src="/js/admin.js"></script>
+
+
+</body>
+
+</html>
