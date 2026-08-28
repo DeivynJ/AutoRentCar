@@ -362,7 +362,11 @@ mensajeExito:
 
             ? "La unidad del vehículo fue agregada correctamente."
 
-            : null
+            : req.query.modeloActualizado === "1"
+
+                ? "El modelo de vehículo fue actualizado correctamente."
+
+                : null
 
             }
         );
@@ -4422,6 +4426,883 @@ async function actualizarUnidad(
 }
 
 /* =========================================================
+   MOSTRAR EDITAR MODELO
+========================================================= */
+
+async function mostrarEditarModelo(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        const agenciaId =
+            Number(
+                req.params.id
+            );
+
+
+        const modeloId =
+            Number(
+                req.params.modeloId
+            );
+
+
+        if (
+            !Number.isInteger(agenciaId) ||
+            agenciaId <= 0 ||
+            !Number.isInteger(modeloId) ||
+            modeloId <= 0
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "Datos del modelo inválidos."
+                );
+
+        }
+
+
+        const agenciaResultado =
+            await conexion.query(
+                `
+                SELECT
+
+                    id,
+                    nombre,
+                    logo,
+                    estado
+
+                FROM agencias
+
+                WHERE id = ?
+
+                LIMIT 1
+                `,
+                [
+                    agenciaId
+                ]
+            );
+
+
+        if (
+            agenciaResultado.length === 0
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "Agencia no encontrada."
+                );
+
+        }
+
+
+        const modeloResultado =
+            await conexion.query(
+                `
+                SELECT
+
+                    id,
+                    agencia_id,
+                    nombre,
+                    marca,
+                    anio,
+                    categoria,
+                    precio_diario,
+                    transmision,
+                    combustible,
+                    pasajeros,
+                    puertas,
+                    equipaje,
+                    aire_acondicionado,
+                    destacado,
+                    etiqueta,
+                    descripcion,
+                    imagen,
+                    estado
+
+                FROM modelos_vehiculos
+
+                WHERE
+                    id = ?
+
+                    AND agencia_id = ?
+
+                LIMIT 1
+                `,
+                [
+                    modeloId,
+                    agenciaId
+                ]
+            );
+
+
+        if (
+            modeloResultado.length === 0
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "Modelo de vehículo no encontrado."
+                );
+
+        }
+
+
+        const resumenResultado =
+            await conexion.query(
+                `
+                SELECT
+
+                    COUNT(*) AS total,
+
+                    SUM(
+                        CASE
+                            WHEN estado <> 'inactivo'
+                                THEN 1
+                            ELSE 0
+                        END
+                    ) AS activas
+
+                FROM vehiculos
+
+                WHERE
+                    agencia_id = ?
+
+                    AND modelo_id = ?
+                `,
+                [
+                    agenciaId,
+                    modeloId
+                ]
+            );
+
+
+        return res.render(
+            "admin/vehiculos/editarModelo",
+            {
+
+                titulo:
+                    "Editar modelo",
+
+                subtituloPagina:
+                    "Modificar modelo",
+
+                paginaActual:
+                    "agencias",
+
+                usuario:
+                    req.session.usuario,
+
+                agencia:
+                    agenciaResultado[0],
+
+                modeloEditar:
+                    modeloResultado[0],
+
+                resumenUnidades:
+                {
+
+                    total:
+                        Number(
+                            resumenResultado[0].total ||
+                            0
+                        ),
+
+                    activas:
+                        Number(
+                            resumenResultado[0].activas ||
+                            0
+                        )
+
+                },
+
+                error:
+                    null
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error mostrando editar modelo:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible cargar el modelo."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+   ACTUALIZAR MODELO DE VEHÍCULO
+========================================================= */
+
+async function actualizarModelo(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    const agenciaId =
+        Number(
+            req.params.id
+        );
+
+
+    const modeloId =
+        Number(
+            req.params.modeloId
+        );
+
+
+    const datos =
+    {
+
+        nombre:
+            String(
+                req.body.nombre ||
+                ""
+            ).trim(),
+
+        marca:
+            String(
+                req.body.marca ||
+                ""
+            ).trim(),
+
+        anio:
+            String(
+                req.body.anio ??
+                ""
+            ).trim(),
+
+        categoria:
+            String(
+                req.body.categoria ||
+                ""
+            ).trim(),
+
+        precio_diario:
+            String(
+                req.body.precio_diario ??
+                ""
+            ).trim(),
+
+        transmision:
+            String(
+                req.body.transmision ||
+                ""
+            ).trim(),
+
+        combustible:
+            String(
+                req.body.combustible ||
+                ""
+            ).trim(),
+
+        pasajeros:
+            String(
+                req.body.pasajeros ??
+                ""
+            ).trim(),
+
+        puertas:
+            String(
+                req.body.puertas ??
+                ""
+            ).trim(),
+
+        equipaje:
+            String(
+                req.body.equipaje ??
+                ""
+            ).trim(),
+
+        aire_acondicionado:
+            req.body.aire_acondicionado === "0"
+                ? "0"
+                : "1",
+
+        destacado:
+            req.body.destacado === "1"
+                ? "1"
+                : "0",
+
+        etiqueta:
+            String(
+                req.body.etiqueta ||
+                ""
+            ).trim(),
+
+        descripcion:
+            String(
+                req.body.descripcion ||
+                ""
+            ).trim(),
+
+        estado:
+            req.body.estado === "inactivo"
+                ? "inactivo"
+                : "activo"
+
+    };
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        if (
+            !Number.isInteger(agenciaId) ||
+            agenciaId <= 0 ||
+            !Number.isInteger(modeloId) ||
+            modeloId <= 0
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "Datos del modelo inválidos."
+                );
+
+        }
+
+
+        async function renderizarError(
+            mensaje,
+            estadoHttp = 400
+        ) {
+
+            const agenciaResultado =
+                await conexion.query(
+                    `
+                    SELECT
+
+                        id,
+                        nombre,
+                        logo,
+                        estado
+
+                    FROM agencias
+
+                    WHERE id = ?
+
+                    LIMIT 1
+                    `,
+                    [
+                        agenciaId
+                    ]
+                );
+
+
+            const resumenResultado =
+                await conexion.query(
+                    `
+                    SELECT
+
+                        COUNT(*) AS total,
+
+                        SUM(
+                            CASE
+                                WHEN estado <> 'inactivo'
+                                    THEN 1
+                                ELSE 0
+                            END
+                        ) AS activas
+
+                    FROM vehiculos
+
+                    WHERE
+                        agencia_id = ?
+
+                        AND modelo_id = ?
+                    `,
+                    [
+                        agenciaId,
+                        modeloId
+                    ]
+                );
+
+
+            return res
+                .status(
+                    estadoHttp
+                )
+                .render(
+                    "admin/vehiculos/editarModelo",
+                    {
+
+                        titulo:
+                            "Editar modelo",
+
+                        subtituloPagina:
+                            "Modificar modelo",
+
+                        paginaActual:
+                            "agencias",
+
+                        usuario:
+                            req.session.usuario,
+
+                        agencia:
+                            agenciaResultado[0],
+
+                        modeloEditar:
+                        {
+
+                            id:
+                                modeloId,
+
+                            agencia_id:
+                                agenciaId,
+
+                            ...datos
+
+                        },
+
+                        resumenUnidades:
+                        {
+
+                            total:
+                                Number(
+                                    resumenResultado[0].total ||
+                                    0
+                                ),
+
+                            activas:
+                                Number(
+                                    resumenResultado[0].activas ||
+                                    0
+                                )
+
+                        },
+
+                        error:
+                            mensaje
+
+                    }
+                );
+
+        }
+
+
+        if (!datos.marca) {
+
+            return await renderizarError(
+                "La marca del vehículo es obligatoria."
+            );
+
+        }
+
+
+        if (!datos.nombre) {
+
+            return await renderizarError(
+                "El nombre del modelo es obligatorio."
+            );
+
+        }
+
+
+        if (
+            datos.marca.length > 80 ||
+            datos.nombre.length > 120
+        ) {
+
+            return await renderizarError(
+                "La marca o el modelo superan la longitud permitida."
+            );
+
+        }
+
+
+        const categoriasValidas =
+        [
+            "economico",
+            "gama_media",
+            "lujo"
+        ];
+
+
+        if (
+            !categoriasValidas.includes(
+                datos.categoria
+            )
+        ) {
+
+            return await renderizarError(
+                "La categoría seleccionada no es válida."
+            );
+
+        }
+
+
+        const precioDiario =
+            Number(
+                datos.precio_diario
+            );
+
+
+        if (
+            datos.precio_diario === "" ||
+            !Number.isFinite(precioDiario) ||
+            precioDiario < 0
+        ) {
+
+            return await renderizarError(
+                "Introduce un precio diario válido."
+            );
+
+        }
+
+
+        let anio =
+            null;
+
+
+        if (datos.anio !== "") {
+
+            anio =
+                Number(
+                    datos.anio
+                );
+
+
+            const anioMaximo =
+                new Date()
+                    .getFullYear() +
+                1;
+
+
+            if (
+                !Number.isInteger(anio) ||
+                anio < 1900 ||
+                anio > anioMaximo
+            ) {
+
+                return await renderizarError(
+                    `El año debe estar entre 1900 y ${anioMaximo}.`
+                );
+
+            }
+
+        }
+
+
+        function enteroOpcional(
+            valor
+        ) {
+
+            if (valor === "") {
+
+                return null;
+
+            }
+
+
+            const numero =
+                Number(
+                    valor
+                );
+
+
+            if (
+                !Number.isInteger(numero) ||
+                numero < 0 ||
+                numero > 255
+            ) {
+
+                return false;
+
+            }
+
+
+            return numero;
+
+        }
+
+
+        const pasajeros =
+            enteroOpcional(
+                datos.pasajeros
+            );
+
+
+        const puertas =
+            enteroOpcional(
+                datos.puertas
+            );
+
+
+        const equipaje =
+            enteroOpcional(
+                datos.equipaje
+            );
+
+
+        if (
+            pasajeros === false ||
+            puertas === false ||
+            equipaje === false
+        ) {
+
+            return await renderizarError(
+                "Pasajeros, puertas y equipaje deben contener valores enteros válidos."
+            );
+
+        }
+
+
+        if (
+            datos.transmision.length > 50 ||
+            datos.combustible.length > 50
+        ) {
+
+            return await renderizarError(
+                "Transmisión y combustible no pueden superar los 50 caracteres."
+            );
+
+        }
+
+
+        if (
+            datos.etiqueta.length > 80
+        ) {
+
+            return await renderizarError(
+                "La etiqueta no puede superar los 80 caracteres."
+            );
+
+        }
+
+
+        if (
+            datos.descripcion.length > 500
+        ) {
+
+            return await renderizarError(
+                "La descripción no puede superar los 500 caracteres."
+            );
+
+        }
+
+
+        const modeloActual =
+            await conexion.query(
+                `
+                SELECT
+
+                    id,
+                    estado
+
+                FROM modelos_vehiculos
+
+                WHERE
+                    id = ?
+
+                    AND agencia_id = ?
+
+                LIMIT 1
+                `,
+                [
+                    modeloId,
+                    agenciaId
+                ]
+            );
+
+
+        if (
+            modeloActual.length === 0
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "Modelo de vehículo no encontrado."
+                );
+
+        }
+
+
+        const duplicado =
+            await conexion.query(
+                `
+                SELECT
+                    id
+
+                FROM modelos_vehiculos
+
+                WHERE
+                    agencia_id = ?
+
+                    AND LOWER(marca) =
+                        LOWER(?)
+
+                    AND LOWER(nombre) =
+                        LOWER(?)
+
+                    AND COALESCE(anio, 0) =
+                        COALESCE(?, 0)
+
+                    AND id <> ?
+
+                LIMIT 1
+                `,
+                [
+                    agenciaId,
+                    datos.marca,
+                    datos.nombre,
+                    anio,
+                    modeloId
+                ]
+            );
+
+
+        if (
+            duplicado.length > 0
+        ) {
+
+            return await renderizarError(
+                "Ya existe otro modelo con la misma marca, nombre y año dentro de esta agencia.",
+                409
+            );
+
+        }
+
+
+        await conexion.query(
+            `
+            UPDATE modelos_vehiculos
+
+            SET
+
+                nombre = ?,
+                marca = ?,
+                anio = ?,
+                categoria = ?,
+                precio_diario = ?,
+                transmision = ?,
+                combustible = ?,
+                pasajeros = ?,
+                puertas = ?,
+                equipaje = ?,
+                aire_acondicionado = ?,
+                destacado = ?,
+                etiqueta = ?,
+                descripcion = ?,
+                estado = ?
+
+            WHERE
+                id = ?
+
+                AND agencia_id = ?
+            `,
+            [
+
+                datos.nombre,
+                datos.marca,
+                anio,
+                datos.categoria,
+                precioDiario,
+
+                datos.transmision ||
+                    null,
+
+                datos.combustible ||
+                    null,
+
+                pasajeros,
+                puertas,
+                equipaje,
+
+                datos.aire_acondicionado === "1"
+                    ? 1
+                    : 0,
+
+                datos.destacado === "1"
+                    ? 1
+                    : 0,
+
+                datos.etiqueta ||
+                    null,
+
+                datos.descripcion ||
+                    null,
+
+                datos.estado,
+
+                modeloId,
+                agenciaId
+
+            ]
+        );
+
+
+        return res.redirect(
+            `/admin/agencias/${agenciaId}/vehiculos?modeloActualizado=1`
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error actualizando modelo:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible actualizar el modelo."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
+/* =========================================================
    EXPORTACIONES
 ========================================================= */
 
@@ -4441,6 +5322,10 @@ module.exports = {
 
     mostrarEditarUnidad,
 
-    actualizarUnidad
+    actualizarUnidad,
+
+     mostrarEditarModelo,
+
+    actualizarModelo
 
 };

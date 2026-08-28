@@ -20,7 +20,11 @@ const {
 
     mostrarEditarUnidad,
 
-    actualizarUnidad
+    actualizarUnidad,
+
+    mostrarEditarModelo,
+    
+    actualizarModelo
 
 } = require(
     "../controllers/vehiculoController"
@@ -95,6 +99,17 @@ router.get(
 router.post(
     "/admin/agencias/:id/vehiculos/modelos/:modeloId/unidades/:unidadId/editar",
     actualizarUnidad
+);
+
+router.get(
+    "/admin/agencias/:id/vehiculos/modelos/:modeloId/editar",
+    mostrarEditarModelo
+);
+
+
+router.post(
+    "/admin/agencias/:id/vehiculos/modelos/:modeloId/editar",
+    actualizarModelo
 );
 
 /* =========================================================

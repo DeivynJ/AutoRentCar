@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="admin-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="admin-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+        <main class="admin-main-content">
+
+
+            <div class="form-page-top">
+
+                <a
+                    href="/admin/agencias/<%= agencia.id %>/vehiculos"
+                    class="back-link"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Volver a vehículos
+
+                </a>
+
+            </div>
+
+
+
+            <section class="dashboard-panel">
+
+
+                <div class="panel-header">
+
+
+                    <div>
+
+                        <span class="panel-eyebrow">
+    Editar modelo
+</span>
+
+
+<h3>
+    <%= modeloEditar.marca %>
+    <%= modeloEditar.nombre %>
+
+    <% if (modeloEditar.anio) { %>
+        <%= modeloEditar.anio %>
+    <% } %>
+</h3>
+
+
+<p>
+    Modifica las características comerciales
+    de este modelo de vehículo.
+</p>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <% if (error) { %>
+
+                    <div class="admin-alert admin-alert-error">
+
+                        <i class="fa-solid fa-circle-exclamation"></i>
+
+
+                        <div>
+
+                            <strong>
+    No fue posible actualizar el modelo
+</strong>
+
+
+                            <span>
+                                <%= error %>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+
+
+                <div class="admin-alert admin-alert-info">
+
+    <i class="fa-solid fa-car-side"></i>
+
+
+    <div>
+
+        <strong>
+            Unidades asociadas
+        </strong>
+
+
+        <span>
+            Este modelo tiene
+            <%= resumenUnidades.total %>
+            unidades registradas y
+            <%= resumenUnidades.activas %>
+            activas.
+        </span>
+
+    </div>
+
+</div>
+
+
+
+                <div class="user-form-card">
+
+
+                    <form
+    method="POST"
+    action="/admin/agencias/<%= agencia.id %>/vehiculos/modelos/<%= modeloEditar.id %>/editar"
+>
+
+
+                        <div class="user-form-grid">
+
+
+                            <div class="user-form-group">
+
+                                <label for="marca">
+                                    Marca
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="marca"
+                                    name="marca"
+                                    maxlength="80"
+                                    value="<%= modeloEditar.marca || '' %>"
+                                    placeholder="Ej. Toyota"
+                                    required
+                                >
+
+                            </div>
+
+                            <div class="admin-alert admin-alert-info">
+
+    <i class="fa-solid fa-circle-info"></i>
+
+
+    <div>
+
+        <strong>
+            Estado del modelo
+        </strong>
+
+
+        <span>
+            Si el modelo se establece como Inactivo,
+            sus unidades físicas existentes se conservarán,
+            pero no podrán agregarse nuevas unidades ni
+            reactivarse unidades inactivas hasta volver
+            a activar el modelo.
+        </span>
+
+    </div>
+
+</div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="nombre">
+                                    Modelo
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="nombre"
+                                    name="nombre"
+                                    maxlength="120"
+                                    value="<%= modeloEditar.nombre || '' %>"
+                                    placeholder="Ej. Corolla"
+                                    required
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="anio">
+                                    Año
+                                </label>
+
+
+                                <input
+                                    type="number"
+                                    id="anio"
+                                    name="anio"
+                                    min="1900"
+                                    max="<%= new Date().getFullYear() + 1 %>"
+                                    step="1"
+                                    value="<%= modeloEditar.anio || '' %>"
+                                    placeholder="Ej. 2026"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="categoria">
+                                    Categoría
+                                </label>
+
+
+                                <select
+                                    id="categoria"
+                                    name="categoria"
+                                    required
+                                >
+
+                                    <option
+                                        value="economico"
+                                        modeloEditar.categoria === "economico"
+                                            ? "selected"
+                                            : ""
+                                        %>
+                                    >
+                                        Económico
+                                    </option>
+
+
+                                    <option
+                                        value="gama_media"
+                                        modeloEditar.categoria === "gama_media"
+                                            ? "selected"
+                                            : ""
+                                        %>
+                                    >
+                                        Gama media
+                                    </option>
+
+
+                                    <option
+                                        value="lujo"
+                                       modeloEditar.categoria === "lujo"
+                                            ? "selected"
+                                            : ""
+                                        %>
+                                    >
+                                        Vehículo de lujo
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="precio_diario">
+                                    Precio diario (USD)
+                                </label>
+
+
+                                <input
+                                    type="number"
+                                    id="precio_diario"
+                                    name="precio_diario"
+                                    min="0"
+                                    step="0.01"
+                                   value="<%= Number(modeloEditar.precio_diario || 0).toFixed(2) %>"
+                                    placeholder="Ej. 45.00"
+                                    required
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="transmision">
+                                    Transmisión
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="transmision"
+                                    name="transmision"
+                                    maxlength="50"
+                                   value="<%= modeloEditar.transmision || '' %>"
+                                    placeholder="Ej. Automática"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="combustible">
+                                    Combustible
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="combustible"
+                                    name="combustible"
+                                    maxlength="50"
+                                    value="<%= modeloEditar.combustible || '' %>"
+                                    placeholder="Ej. Gasolina"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="pasajeros">
+                                    Pasajeros
+                                </label>
+
+
+                                <input
+                                    type="number"
+                                    id="pasajeros"
+                                    name="pasajeros"
+                                    min="0"
+                                    step="1"
+                                    value="<%= modeloEditar.pasajeros ?? '' %>"
+                                    placeholder="Ej. 5"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="puertas">
+                                    Puertas
+                                </label>
+
+
+                                <input
+                                    type="number"
+                                    id="puertas"
+                                    name="puertas"
+                                    min="0"
+                                    step="1"
+                                    value="<%= modeloEditar.puertas ?? '' %>"
+                                    placeholder="Ej. 4"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="equipaje">
+                                    Equipaje
+                                </label>
+
+
+                                <input
+                                    type="number"
+                                    id="equipaje"
+                                    name="equipaje"
+                                    min="0"
+                                    step="1"
+                                    value="<%= modeloEditar.equipaje ?? '' %>"
+                                    placeholder="Ej. 2"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="aire_acondicionado">
+                                    Aire acondicionado
+                                </label>
+
+
+                                <select
+                                    id="aire_acondicionado"
+                                    name="aire_acondicionado"
+                                >
+
+                                    <option
+                                        value="1"
+                                        <%= Number(modeloEditar.aire_acondicionado) === 1
+    ? "selected"
+    : ""
+%>
+                                    >
+                                        Sí
+                                    </option>
+
+
+                                    <option
+                                        value="0"
+                                        <%= Number(modeloEditar.aire_acondicionado) === 0
+    ? "selected"
+    : ""
+%>
+                                    >
+                                        No
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="destacado">
+                                    Destacado
+                                </label>
+
+
+                                <select
+                                    id="destacado"
+                                    name="destacado"
+                                >
+
+                                    <option
+                                        value="0"
+                                        <%= Number(modeloEditar.destacado) !== 1
+    ? "selected"
+    : ""
+%>
+                                    >
+                                        No
+                                    </option>
+
+
+                                    <option
+                                        value="1"
+                                        <%= Number(modeloEditar.destacado) === 1
+    ? "selected"
+    : ""
+%>
+                                    >
+                                        Sí
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="etiqueta">
+                                    Etiqueta
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="etiqueta"
+                                    name="etiqueta"
+                                    maxlength="80"
+                                    value="<%= modeloEditar.etiqueta || '' %>"
+                                    placeholder="Ej. Más reservado"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="estado">
+                                    Estado
+                                </label>
+
+
+                                <select
+                                    id="estado"
+                                    name="estado"
+                                >
+
+                                    <option
+                                        value="activo"
+                                        <%= modeloEditar.estado === "activo"
+    ? "selected"
+    : ""
+%>
+                                    >
+                                        Activo
+                                    </option>
+
+
+                                    <option
+                                        value="inactivo"
+                                        <%= modeloEditar.estado === "inactivo"
+    ? "selected"
+    : ""
+%>
+                                    >
+                                        Inactivo
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+
+                            <div class="user-form-group user-form-full">
+
+                                <label for="descripcion">
+                                    Descripción
+                                </label>
+
+
+                                <textarea
+                                    id="descripcion"
+                                    name="descripcion"
+                                    rows="4"
+                                    maxlength="500"
+                                    placeholder="Describe las características principales del vehículo."
+                                ><%= modeloEditar.descripcion || '' %></textarea>
+
+                            </div>
+
+
+                        </div>
+
+                        <div class="admin-alert admin-alert-info">
+
+    <i class="fa-solid fa-circle-info"></i>
+
+
+    <div>
+
+        <strong>
+            Estado del modelo
+        </strong>
+
+
+        <span>
+            Si el modelo se establece como Inactivo,
+            sus unidades físicas existentes se conservarán,
+            pero no podrán agregarse nuevas unidades ni
+            reactivarse unidades inactivas hasta volver
+            a activar el modelo.
+        </span>
+
+    </div>
+
+</div>
+
+
+                        <div class="user-form-actions">
+
+
+                            <a
+                                href="/admin/agencias/<%= agencia.id %>/vehiculos"
+                                class="user-btn-cancel"
+                            >
+                                Cancelar
+                            </a>
+
+
+                            <button
+    type="submit"
+    class="user-btn-create"
+>
+
+    <i class="fa-solid fa-floppy-disk"></i>
+
+    Guardar cambios
+
+</button>
+
+
+                        </div>
+
+
+                    </form>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <footer class="admin-footer">
+
+                <span>
+                    AutoRentCar Platform
+                </span>
+
+
+                <span>
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+            </footer>
+
+
+        </main>
+
+
+    </div>
+
+
+</div>
+
+
+<script src="/js/admin.js"></script>
+
+
+</body>
+
+</html>
