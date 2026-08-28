@@ -48,20 +48,16 @@
         <main class="admin-main-content">
 
 
-            <!-- =====================================
-                 VOLVER
-            ====================================== -->
-
             <div class="form-page-top">
 
                 <a
-                    href="/admin/agencias/<%= agencia.id %>"
+                    href="/admin/agencias/<%= agencia.id %>/vehiculos"
                     class="back-link"
                 >
 
                     <i class="fa-solid fa-arrow-left"></i>
 
-                    Volver al detalle
+                    Volver a vehículos
 
                 </a>
 
@@ -69,59 +65,35 @@
 
 
 
-            <!-- =====================================
-                 AGENCIA
-            ====================================== -->
-
             <section class="agency-profile-hero">
 
 
                 <div class="agency-profile-main">
 
 
-                    <div class="agency-profile-logo">
-
-
-                        <% if (agencia.logo) { %>
-
-                            <img
-                                src="<%= agencia.logo %>"
-                                alt="<%= agencia.nombre %>"
-                            >
-
-                        <% } else { %>
-
-                            <span>
-
-                                <%= agencia.nombre
-                                    .charAt(0)
-                                    .toUpperCase()
-                                %>
-
-                            </span>
-
-                        <% } %>
-
-
-                    </div>
-
-
                     <div class="agency-profile-info">
 
 
                         <span class="profile-label">
-                            Gestión de vehículos
+                            Unidades físicas
                         </span>
 
 
                         <h1>
-                            <%= agencia.nombre %>
+
+                            <%= modelo.marca %>
+                            <%= modelo.nombre %>
+
+                            <% if (modelo.anio) { %>
+                                <%= modelo.anio %>
+                            <% } %>
+
                         </h1>
 
 
                         <p>
-                            Administra los modelos y las unidades
-                            físicas de la flota.
+                            Vehículos físicos registrados para este modelo
+                            dentro de <%= agencia.nombre %>.
                         </p>
 
 
@@ -132,17 +104,6 @@
 
 
                 <div class="agency-profile-status">
-
-
-                    <span
-                        class="status-badge status-<%= agencia.estado %>"
-                    >
-
-                        <span class="status-dot"></span>
-
-                        <%= agencia.estado %>
-
-                    </span>
 
 
                     <span class="plan-badge">
@@ -162,35 +123,33 @@
 
             </section>
 
+
+
             <% if (mensajeExito) { %>
 
-    <div class="admin-alert admin-alert-success">
+                <div class="admin-alert admin-alert-success">
 
-        <i class="fa-solid fa-circle-check"></i>
-
-
-        <div>
-
-            <strong>
-                Operación completada
-            </strong>
+                    <i class="fa-solid fa-circle-check"></i>
 
 
-            <span>
-                <%= mensajeExito %>
-            </span>
+                    <div>
 
-        </div>
-
-    </div>
-
-<% } %>
+                        <strong>
+                            Operación completada
+                        </strong>
 
 
+                        <span>
+                            <%= mensajeExito %>
+                        </span>
 
-            <!-- =====================================
-                 ESTADÍSTICAS
-            ====================================== -->
+                    </div>
+
+                </div>
+
+            <% } %>
+
+
 
             <section class="dashboard-stats agency-detail-stats">
 
@@ -199,18 +158,16 @@
 
                     <div class="stat-icon stat-icon-blue">
 
-                        <i class="fa-solid fa-car-side"></i>
+                        <i class="fa-solid fa-cars"></i>
 
                     </div>
 
-
                     <span class="stat-title">
-                        Modelos
+                        Total del modelo
                     </span>
 
-
                     <strong class="stat-value">
-                        <%= resumen.modelos %>
+                        <%= resumen.total %>
                     </strong>
 
                 </article>
@@ -221,18 +178,16 @@
 
                     <div class="stat-icon stat-icon-purple">
 
-                        <i class="fa-solid fa-cars"></i>
+                        <i class="fa-solid fa-car-side"></i>
 
                     </div>
 
-
                     <span class="stat-title">
-                        Unidades
+                        Activas
                     </span>
 
-
                     <strong class="stat-value">
-                        <%= resumen.unidades %>
+                        <%= resumen.activas %>
                     </strong>
 
                 </article>
@@ -247,11 +202,9 @@
 
                     </div>
 
-
                     <span class="stat-title">
                         Disponibles
                     </span>
-
 
                     <strong class="stat-value">
                         <%= resumen.disponibles %>
@@ -269,19 +222,18 @@
 
                     </div>
 
-
                     <span class="stat-title">
-                        Límite del plan
+                        Uso global del plan
                     </span>
-
 
                     <strong class="stat-value">
 
-                        <% if (!suscripcion) { %>
+                        <%= vehiculosActivos %>
 
-                            —
+                        /
 
-                        <% } else if (
+                        <% if (
+                            !suscripcion ||
                             suscripcion.limite_vehiculos === null
                         ) { %>
 
@@ -302,10 +254,6 @@
 
 
 
-            <!-- =====================================
-                 TABLA DE MODELOS
-            ====================================== -->
-
             <section class="dashboard-panel">
 
 
@@ -315,32 +263,37 @@
                     <div>
 
                         <span class="panel-eyebrow">
-                            Flota
+                            Inventario físico
                         </span>
 
 
                         <h3>
-                            Modelos registrados
+                            Unidades registradas
                         </h3>
 
 
                         <p>
-                            Catálogo de vehículos pertenecientes
-                            a <%= agencia.nombre %>.
+                            Consulta el estado y ubicación de cada
+                            vehículo físico.
                         </p>
 
                     </div>
 
-                    <a
-    href="/admin/agencias/<%= agencia.id %>/vehiculos/modelos/nuevo"
-    class="user-btn-create"
->
 
-    <i class="fa-solid fa-plus"></i>
+                    <% if (modelo.estado === "activo") { %>
 
-    Nuevo modelo
+                        <a
+                            href="/admin/agencias/<%= agencia.id %>/vehiculos/modelos/<%= modelo.id %>/unidades/nueva"
+                            class="user-btn-create"
+                        >
 
-</a>
+                            <i class="fa-solid fa-plus"></i>
+
+                            Agregar unidad
+
+                        </a>
+
+                    <% } %>
 
 
                 </div>
@@ -358,23 +311,23 @@
                             <tr>
 
                                 <th>
-                                    Modelo
+                                    Código
                                 </th>
 
                                 <th>
-                                    Categoría
+                                    Placa
                                 </th>
 
                                 <th>
-                                    Precio diario
+                                    Sucursal
                                 </th>
 
                                 <th>
-                                    Unidades
+                                    Color
                                 </th>
 
                                 <th>
-                                    Disponibles
+                                    Kilometraje
                                 </th>
 
                                 <th>
@@ -382,7 +335,7 @@
                                 </th>
 
                                 <th>
-                                     Acción
+                                    Acción
                                 </th>
 
                             </tr>
@@ -393,7 +346,7 @@
                         <tbody>
 
 
-                        <% if (modelos.length === 0) { %>
+                        <% if (unidades.length === 0) { %>
 
                             <tr>
 
@@ -408,13 +361,13 @@
 
 
                                         <strong>
-                                            No hay vehículos registrados
+                                            No hay unidades registradas
                                         </strong>
 
 
                                         <span>
-                                            Esta agencia todavía no tiene
-                                            modelos de vehículos configurados.
+                                            Este modelo todavía no tiene
+                                            vehículos físicos asociados.
                                         </span>
 
                                     </div>
@@ -427,7 +380,7 @@
 
 
 
-                        <% modelos.forEach((modelo) => { %>
+                        <% unidades.forEach((unidad) => { %>
 
 
                             <tr>
@@ -436,137 +389,96 @@
                                 <td>
 
                                     <strong>
+                                        <%= unidad.codigo_interno %>
+                                    </strong>
 
-                                        <%= modelo.marca %>
-                                        <%= modelo.nombre %>
+                                </td>
 
+
+                                <td>
+
+                                    <%= unidad.placa || "Sin placa" %>
+
+                                </td>
+
+
+                                <td>
+
+                                    <strong>
+                                        <%= unidad.sucursal_nombre %>
                                     </strong>
 
 
-                                    <% if (modelo.anio) { %>
+                                    <% if (
+                                        Number(
+                                            unidad.es_principal
+                                        ) === 1
+                                    ) { %>
 
                                         <span
                                             class="table-muted"
                                             style="display:block;"
                                         >
+                                            Principal
+                                        </span>
 
-                                            <%= modelo.anio %>
+                                    <% } %>
 
+
+                                    <% if (
+                                        unidad.sucursal_estado !== "activa"
+                                    ) { %>
+
+                                        <span
+                                            class="table-muted"
+                                            style="display:block;"
+                                        >
+                                            Sucursal inactiva
                                         </span>
 
                                     <% } %>
 
                                 </td>
 
-                                <td>
-
-
-    <a
-        href="/admin/agencias/<%= agencia.id %>/vehiculos/modelos/<%= modelo.id %>/unidades"
-        class="table-action"
-        title="Ver unidades"
-    >
-
-        <i class="fa-solid fa-list"></i>
-
-    </a>
-
-
-    <% if (modelo.estado === "activo") { %>
-
-        <a
-            href="/admin/agencias/<%= agencia.id %>/vehiculos/modelos/<%= modelo.id %>/unidades/nueva"
-            class="table-action"
-            title="Agregar unidad"
-        >
-
-            <i class="fa-solid fa-plus"></i>
-
-        </a>
-
-    <% } %>
-
-
-</td>
-
-
 
                                 <td>
 
-                                    <% if (
-                                        modelo.categoria === "economico"
-                                    ) { %>
-
-                                        Económico
-
-                                    <% } else if (
-                                        modelo.categoria === "gama_media"
-                                    ) { %>
-
-                                        Gama media
-
-                                    <% } else { %>
-
-                                        Vehículo de lujo
-
-                                    <% } %>
+                                    <%= unidad.color || "No registrado" %>
 
                                 </td>
-
-
-
-                                <td>
-
-                                    <strong>
-
-                                        USD $<%= Number(
-                                            modelo.precio_diario ||
-                                            0
-                                        ).toFixed(2) %>
-
-                                    </strong>
-
-                                </td>
-
 
 
                                 <td>
 
                                     <%= Number(
-                                        modelo.total_unidades ||
+                                        unidad.kilometraje ||
                                         0
-                                    ) %>
+                                    ).toLocaleString("es-DO") %>
+
+                                    km
 
                                 </td>
 
 
-
                                 <td>
 
-                                    <%= Number(
-                                        modelo.disponibles ||
-                                        0
-                                    ) %>
-
-                                </td>
-
-
-
-                                <td>
 
                                     <% if (
-                                        modelo.estado === "activo"
+                                        unidad.estado === "disponible"
                                     ) { %>
 
                                         <span class="status-badge status-activa">
 
                                             <span class="status-dot"></span>
 
-                                            Activo
+                                            Disponible
 
                                         </span>
 
-                                    <% } else { %>
+
+                                    <% } else if (
+                                        unidad.estado === "inactivo"
+                                    ) { %>
 
                                         <span class="status-badge status-suspendida">
 
@@ -576,7 +488,37 @@
 
                                         </span>
 
+
+                                    <% } else { %>
+
+                                        <span class="plan-badge">
+
+                                            <%= unidad.estado
+                                                .charAt(0)
+                                                .toUpperCase()
+                                                +
+                                                unidad.estado.slice(1)
+                                            %>
+
+                                        </span>
+
                                     <% } %>
+
+
+                                </td>
+
+
+                                <td>
+
+                                    <a
+                                        href="/admin/agencias/<%= agencia.id %>/vehiculos/modelos/<%= modelo.id %>/unidades/<%= unidad.id %>/editar"
+                                        class="table-action"
+                                        title="Editar unidad"
+                                    >
+
+                                        <i class="fa-solid fa-pen-to-square"></i>
+
+                                    </a>
 
                                 </td>
 

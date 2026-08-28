@@ -6,7 +6,21 @@ const express =
 
 const {
 
-    mostrarVehiculosAgencia
+    mostrarVehiculosAgencia,
+
+    mostrarNuevoModelo,
+
+    crearModelo,
+
+    mostrarNuevaUnidad,
+
+    crearUnidad,
+
+    mostrarUnidadesModelo,
+
+    mostrarEditarUnidad,
+
+    actualizarUnidad
 
 } = require(
     "../controllers/vehiculoController"
@@ -44,6 +58,44 @@ router.get(
     mostrarVehiculosAgencia
 );
 
+router.get(
+    "/admin/agencias/:id/vehiculos/modelos/nuevo",
+    mostrarNuevoModelo
+);
+
+
+router.post(
+    "/admin/agencias/:id/vehiculos/modelos/nuevo",
+    crearModelo
+);
+
+router.get(
+    "/admin/agencias/:id/vehiculos/modelos/:modeloId/unidades/nueva",
+    mostrarNuevaUnidad
+);
+
+
+router.post(
+    "/admin/agencias/:id/vehiculos/modelos/:modeloId/unidades/nueva",
+    crearUnidad
+);
+
+router.get(
+    "/admin/agencias/:id/vehiculos/modelos/:modeloId/unidades",
+    mostrarUnidadesModelo
+);
+
+
+router.get(
+    "/admin/agencias/:id/vehiculos/modelos/:modeloId/unidades/:unidadId/editar",
+    mostrarEditarUnidad
+);
+
+
+router.post(
+    "/admin/agencias/:id/vehiculos/modelos/:modeloId/unidades/:unidadId/editar",
+    actualizarUnidad
+);
 
 /* =========================================================
    EXPORTACIÓN

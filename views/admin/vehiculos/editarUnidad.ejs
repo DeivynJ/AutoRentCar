@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="admin-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="admin-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+        <main class="admin-main-content">
+
+
+            <div class="form-page-top">
+
+                <a
+                    href="/admin/agencias/<%= agencia.id %>/vehiculos/modelos/<%= modelo.id %>/unidades"
+                    class="back-link"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Volver a unidades
+
+                </a>
+
+            </div>
+
+
+
+            <section class="dashboard-panel">
+
+
+                <div class="panel-header">
+
+
+                    <div>
+
+                        <span class="panel-eyebrow">
+                            Editar unidad física
+                        </span>
+
+
+                        <h3>
+
+                            <%= modelo.marca %>
+                            <%= modelo.nombre %>
+
+                            —
+                            <%= unidadEditar.codigo_interno %>
+
+                        </h3>
+
+
+                        <p>
+                            Modifica la información operativa
+                            de este vehículo.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <% if (error) { %>
+
+                    <div class="admin-alert admin-alert-error">
+
+                        <i class="fa-solid fa-circle-exclamation"></i>
+
+
+                        <div>
+
+                            <strong>
+                                No fue posible actualizar el vehículo
+                            </strong>
+
+
+                            <span>
+                                <%= error %>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+
+
+                <% if (suscripcion) { %>
+
+                    <div class="admin-alert admin-alert-info">
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+
+                        <div>
+
+                            <strong>
+                                <%= suscripcion.plan_nombre %>
+                            </strong>
+
+
+                            <span>
+
+                                Uso actual:
+
+                                <%= vehiculosActivos %>
+
+                                /
+
+                                <%= suscripcion.limite_vehiculos === null
+                                    ? "Ilimitado"
+                                    : suscripcion.limite_vehiculos
+                                %>
+
+                                vehículos activos.
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+
+
+                <div class="user-form-card">
+
+
+                    <form
+                        method="POST"
+                        action="/admin/agencias/<%= agencia.id %>/vehiculos/modelos/<%= modelo.id %>/unidades/<%= unidadEditar.id %>/editar"
+                    >
+
+
+                        <div class="user-form-grid">
+
+
+                            <div class="user-form-group">
+
+                                <label for="codigo_interno">
+                                    Código interno
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="codigo_interno"
+                                    name="codigo_interno"
+                                    maxlength="50"
+                                    value="<%= unidadEditar.codigo_interno || '' %>"
+                                    required
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="placa">
+                                    Placa
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="placa"
+                                    name="placa"
+                                    maxlength="30"
+                                    value="<%= unidadEditar.placa || '' %>"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="vin">
+                                    VIN
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="vin"
+                                    name="vin"
+                                    maxlength="50"
+                                    value="<%= unidadEditar.vin || '' %>"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="color">
+                                    Color
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="color"
+                                    name="color"
+                                    maxlength="50"
+                                    value="<%= unidadEditar.color || '' %>"
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="kilometraje">
+                                    Kilometraje
+                                </label>
+
+
+                                <input
+                                    type="number"
+                                    id="kilometraje"
+                                    name="kilometraje"
+                                    min="0"
+                                    step="1"
+                                    value="<%= unidadEditar.kilometraje ?? 0 %>"
+                                    required
+                                >
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="sucursal_id">
+                                    Sucursal
+                                </label>
+
+
+                                <select
+                                    id="sucursal_id"
+                                    name="sucursal_id"
+                                    required
+                                >
+
+
+                                    <% sucursales.forEach((sucursal) => { %>
+
+                                        <option
+                                            value="<%= sucursal.id %>"
+                                            <%= Number(unidadEditar.sucursal_id) === Number(sucursal.id)
+                                                ? "selected"
+                                                : ""
+                                            %>
+                                        >
+
+                                            <%= sucursal.nombre %>
+
+                                            <%= Number(sucursal.es_principal) === 1
+                                                ? " — Principal"
+                                                : ""
+                                            %>
+
+                                            <%= sucursal.estado !== "activa"
+                                                ? " — Inactiva"
+                                                : ""
+                                            %>
+
+                                        </option>
+
+                                    <% }); %>
+
+
+                                </select>
+
+                            </div>
+
+
+
+                            <div class="user-form-group">
+
+                                <label for="estado">
+                                    Estado
+                                </label>
+
+
+                                <select
+                                    id="estado"
+                                    name="estado"
+                                >
+
+                                    <option
+                                        value="disponible"
+                                        <%= unidadEditar.estado === "disponible"
+                                            ? "selected"
+                                            : ""
+                                        %>
+                                    >
+                                        Disponible
+                                    </option>
+
+
+                                    <option
+                                        value="reservado"
+                                        <%= unidadEditar.estado === "reservado"
+                                            ? "selected"
+                                            : ""
+                                        %>
+                                    >
+                                        Reservado
+                                    </option>
+
+
+                                    <option
+                                        value="alquilado"
+                                        <%= unidadEditar.estado === "alquilado"
+                                            ? "selected"
+                                            : ""
+                                        %>
+                                    >
+                                        Alquilado
+                                    </option>
+
+
+                                    <option
+                                        value="mantenimiento"
+                                        <%= unidadEditar.estado === "mantenimiento"
+                                            ? "selected"
+                                            : ""
+                                        %>
+                                    >
+                                        Mantenimiento
+                                    </option>
+
+
+                                    <option
+                                        value="inactivo"
+                                        <%= unidadEditar.estado === "inactivo"
+                                            ? "selected"
+                                            : ""
+                                        %>
+                                    >
+                                        Inactivo
+                                    </option>
+
+
+                                </select>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="admin-alert admin-alert-info">
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+
+                            <div>
+
+                                <strong>
+                                    Estado y límite del plan
+                                </strong>
+
+
+                                <span>
+                                    Una unidad inactiva deja de consumir
+                                    capacidad. Al reactivarla, AutoRentCar
+                                    comprobará nuevamente el límite contratado.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="user-form-actions">
+
+
+                            <a
+                                href="/admin/agencias/<%= agencia.id %>/vehiculos/modelos/<%= modelo.id %>/unidades"
+                                class="user-btn-cancel"
+                            >
+                                Cancelar
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="user-btn-create"
+                            >
+
+                                <i class="fa-solid fa-floppy-disk"></i>
+
+                                Guardar cambios
+
+                            </button>
+
+
+                        </div>
+
+
+                    </form>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <footer class="admin-footer">
+
+                <span>
+                    AutoRentCar Platform
+                </span>
+
+
+                <span>
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+            </footer>
+
+
+        </main>
+
+
+    </div>
+
+
+</div>
+
+
+<script src="/js/admin.js"></script>
+
+
+</body>
+
+</html>
