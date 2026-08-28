@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="admin-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="admin-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+        <main class="admin-main-content">
+
+
+            <!-- =====================================
+                 VOLVER
+            ====================================== -->
+
+            <div class="form-page-top">
+
+                <a
+                    href="/admin/agencias/<%= agencia.id %>"
+                    class="back-link"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Volver al detalle
+
+                </a>
+
+            </div>
+
+
+
+            <!-- =====================================
+                 AGENCIA
+            ====================================== -->
+
+            <section class="agency-profile-hero">
+
+
+                <div class="agency-profile-main">
+
+
+                    <div class="agency-profile-logo">
+
+
+                        <% if (agencia.logo) { %>
+
+                            <img
+                                src="<%= agencia.logo %>"
+                                alt="<%= agencia.nombre %>"
+                            >
+
+                        <% } else { %>
+
+                            <span>
+
+                                <%= agencia.nombre
+                                    .charAt(0)
+                                    .toUpperCase()
+                                %>
+
+                            </span>
+
+                        <% } %>
+
+
+                    </div>
+
+
+                    <div class="agency-profile-info">
+
+
+                        <span class="profile-label">
+                            Gestión de vehículos
+                        </span>
+
+
+                        <h1>
+                            <%= agencia.nombre %>
+                        </h1>
+
+
+                        <p>
+                            Administra los modelos y las unidades
+                            físicas de la flota.
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="agency-profile-status">
+
+
+                    <span
+                        class="status-badge status-<%= agencia.estado %>"
+                    >
+
+                        <span class="status-dot"></span>
+
+                        <%= agencia.estado %>
+
+                    </span>
+
+
+                    <span class="plan-badge">
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+                        <%= suscripcion
+                            ? suscripcion.plan_nombre
+                            : "Sin plan"
+                        %>
+
+                    </span>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =====================================
+                 ESTADÍSTICAS
+            ====================================== -->
+
+            <section class="dashboard-stats agency-detail-stats">
+
+
+                <article class="stat-card">
+
+                    <div class="stat-icon stat-icon-blue">
+
+                        <i class="fa-solid fa-car-side"></i>
+
+                    </div>
+
+
+                    <span class="stat-title">
+                        Modelos
+                    </span>
+
+
+                    <strong class="stat-value">
+                        <%= resumen.modelos %>
+                    </strong>
+
+                </article>
+
+
+
+                <article class="stat-card">
+
+                    <div class="stat-icon stat-icon-purple">
+
+                        <i class="fa-solid fa-cars"></i>
+
+                    </div>
+
+
+                    <span class="stat-title">
+                        Unidades
+                    </span>
+
+
+                    <strong class="stat-value">
+                        <%= resumen.unidades %>
+                    </strong>
+
+                </article>
+
+
+
+                <article class="stat-card">
+
+                    <div class="stat-icon stat-icon-green">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                    </div>
+
+
+                    <span class="stat-title">
+                        Disponibles
+                    </span>
+
+
+                    <strong class="stat-value">
+                        <%= resumen.disponibles %>
+                    </strong>
+
+                </article>
+
+
+
+                <article class="stat-card">
+
+                    <div class="stat-icon stat-icon-orange">
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+                    </div>
+
+
+                    <span class="stat-title">
+                        Límite del plan
+                    </span>
+
+
+                    <strong class="stat-value">
+
+                        <% if (!suscripcion) { %>
+
+                            —
+
+                        <% } else if (
+                            suscripcion.limite_vehiculos === null
+                        ) { %>
+
+                            ∞
+
+                        <% } else { %>
+
+                            <%= suscripcion.limite_vehiculos %>
+
+                        <% } %>
+
+                    </strong>
+
+                </article>
+
+
+            </section>
+
+
+
+            <!-- =====================================
+                 TABLA DE MODELOS
+            ====================================== -->
+
+            <section class="dashboard-panel">
+
+
+                <div class="panel-header">
+
+
+                    <div>
+
+                        <span class="panel-eyebrow">
+                            Flota
+                        </span>
+
+
+                        <h3>
+                            Modelos registrados
+                        </h3>
+
+
+                        <p>
+                            Catálogo de vehículos pertenecientes
+                            a <%= agencia.nombre %>.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <div class="table-container">
+
+
+                    <table class="admin-table">
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Modelo
+                                </th>
+
+                                <th>
+                                    Categoría
+                                </th>
+
+                                <th>
+                                    Precio diario
+                                </th>
+
+                                <th>
+                                    Unidades
+                                </th>
+
+                                <th>
+                                    Disponibles
+                                </th>
+
+                                <th>
+                                    Estado
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                        <% if (modelos.length === 0) { %>
+
+                            <tr>
+
+                                <td
+                                    colspan="6"
+                                    class="table-empty"
+                                >
+
+                                    <div>
+
+                                        <i class="fa-solid fa-car-burst"></i>
+
+
+                                        <strong>
+                                            No hay vehículos registrados
+                                        </strong>
+
+
+                                        <span>
+                                            Esta agencia todavía no tiene
+                                            modelos de vehículos configurados.
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <% } %>
+
+
+
+                        <% modelos.forEach((modelo) => { %>
+
+
+                            <tr>
+
+
+                                <td>
+
+                                    <strong>
+
+                                        <%= modelo.marca %>
+                                        <%= modelo.nombre %>
+
+                                    </strong>
+
+
+                                    <% if (modelo.anio) { %>
+
+                                        <span
+                                            class="table-muted"
+                                            style="display:block;"
+                                        >
+
+                                            <%= modelo.anio %>
+
+                                        </span>
+
+                                    <% } %>
+
+                                </td>
+
+
+
+                                <td>
+
+                                    <% if (
+                                        modelo.categoria === "economico"
+                                    ) { %>
+
+                                        Económico
+
+                                    <% } else if (
+                                        modelo.categoria === "gama_media"
+                                    ) { %>
+
+                                        Gama media
+
+                                    <% } else { %>
+
+                                        Vehículo de lujo
+
+                                    <% } %>
+
+                                </td>
+
+
+
+                                <td>
+
+                                    <strong>
+
+                                        USD $<%= Number(
+                                            modelo.precio_diario ||
+                                            0
+                                        ).toFixed(2) %>
+
+                                    </strong>
+
+                                </td>
+
+
+
+                                <td>
+
+                                    <%= Number(
+                                        modelo.total_unidades ||
+                                        0
+                                    ) %>
+
+                                </td>
+
+
+
+                                <td>
+
+                                    <%= Number(
+                                        modelo.disponibles ||
+                                        0
+                                    ) %>
+
+                                </td>
+
+
+
+                                <td>
+
+                                    <% if (
+                                        modelo.estado === "activo"
+                                    ) { %>
+
+                                        <span class="status-badge status-activa">
+
+                                            <span class="status-dot"></span>
+
+                                            Activo
+
+                                        </span>
+
+                                    <% } else { %>
+
+                                        <span class="status-badge status-suspendida">
+
+                                            <span class="status-dot"></span>
+
+                                            Inactivo
+
+                                        </span>
+
+                                    <% } %>
+
+                                </td>
+
+
+                            </tr>
+
+
+                        <% }); %>
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <footer class="admin-footer">
+
+                <span>
+                    AutoRentCar Platform
+                </span>
+
+
+                <span>
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+            </footer>
+
+
+        </main>
+
+
+    </div>
+
+
+</div>
+
+
+<script src="/js/admin.js"></script>
+
+
+</body>
+
+</html>

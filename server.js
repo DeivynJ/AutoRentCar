@@ -81,6 +81,10 @@ const sucursalRoutes = require(
     "./routes/sucursalRoutes"
 );
 
+const vehiculoRoutes = require(
+    "./routes/vehiculoRoutes"
+);
+
 /* =========================================================
    APLICACIÓN
 ========================================================= */
@@ -215,6 +219,10 @@ app.use(
 
 app.use(
     sucursalRoutes
+);
+
+app.use(
+    vehiculoRoutes
 );
 
 /* =========================================================
