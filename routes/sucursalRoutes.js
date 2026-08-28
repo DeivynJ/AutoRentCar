@@ -10,7 +10,11 @@ const {
 
     mostrarNuevaSucursal,
 
-    crearSucursal
+    crearSucursal,
+
+    mostrarEditarSucursal,
+
+    actualizarSucursal
 
 } = require(
     "../controllers/sucursalController"
@@ -58,6 +62,18 @@ router.post(
     "/admin/agencias/:id/sucursales/nueva",
     crearSucursal
 );
+
+router.get(
+    "/admin/agencias/:id/sucursales/:sucursalId/editar",
+    mostrarEditarSucursal
+);
+
+
+router.post(
+    "/admin/agencias/:id/sucursales/:sucursalId/editar",
+    actualizarSucursal
+);
+
 
 /* =========================================================
    EXPORTACIÓN

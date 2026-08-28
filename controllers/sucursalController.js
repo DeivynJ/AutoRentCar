@@ -202,47 +202,53 @@ async function mostrarSucursalesAgencia(
 
 
         return res.render(
-            "admin/sucursales/index",
-            {
+    "admin/sucursales/index",
+    {
 
-                titulo:
-                    "Sucursales",
+        titulo:
+            "Sucursales",
 
-                subtituloPagina:
-                    agencia.nombre,
+        subtituloPagina:
+            agencia.nombre,
 
-                paginaActual:
-                    "agencias",
+        paginaActual:
+            "agencias",
 
-                usuario:
-                    req.session.usuario,
+        usuario:
+            req.session.usuario,
 
-                agencia,
+        agencia,
 
-                suscripcion,
+        suscripcion,
 
-                sucursales,
+        sucursales,
 
-                resumen:
-{
+        resumen:
+        {
 
-    total:
-        sucursales.length,
+            total:
+                sucursales.length,
 
-    activas,
+            activas,
 
-    inactivas
+            inactivas
 
-},
+        },
 
+       mensajeExito:
 
-mensajeExito:
     req.query.creada === "1"
-        ? "La sucursal fue creada correctamente."
-        : null
 
-            }
-        );
+        ? "La sucursal fue creada correctamente."
+
+        : req.query.actualizada === "1"
+
+            ? "La sucursal fue actualizada correctamente."
+
+            : null
+
+    }
+);
 
 
     } catch (error) {
@@ -1254,6 +1260,1005 @@ async function crearSucursal(
     }
 
 }
+
+/* =========================================================
+   MOSTRAR EDITAR SUCURSAL
+========================================================= */
+
+async function mostrarEditarSucursal(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        const agenciaId =
+            Number(
+                req.params.id
+            );
+
+
+        const sucursalId =
+            Number(
+                req.params.sucursalId
+            );
+
+
+        if (
+            !Number.isInteger(agenciaId) ||
+            agenciaId <= 0 ||
+            !Number.isInteger(sucursalId) ||
+            sucursalId <= 0
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "Datos de sucursal inválidos."
+                );
+
+        }
+
+
+        const agenciaResultado =
+            await conexion.query(
+                `
+                SELECT
+
+                    id,
+                    nombre,
+                    logo,
+                    estado
+
+                FROM agencias
+
+                WHERE id = ?
+
+                LIMIT 1
+                `,
+                [
+                    agenciaId
+                ]
+            );
+
+
+        if (
+            agenciaResultado.length === 0
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "Agencia no encontrada."
+                );
+
+        }
+
+
+        const sucursalResultado =
+            await conexion.query(
+                `
+                SELECT
+
+                    id,
+                    agencia_id,
+                    nombre,
+                    correo,
+                    telefono,
+                    whatsapp,
+                    direccion,
+                    ciudad,
+                    provincia,
+                    pais,
+                    es_principal,
+                    estado
+
+                FROM sucursales
+
+                WHERE
+                    id = ?
+
+                    AND agencia_id = ?
+
+                LIMIT 1
+                `,
+                [
+                    sucursalId,
+                    agenciaId
+                ]
+            );
+
+
+        if (
+            sucursalResultado.length === 0
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "Sucursal no encontrada."
+                );
+
+        }
+
+
+        const suscripcionResultado =
+            await conexion.query(
+                `
+                SELECT
+
+                    s.estado
+                        AS suscripcion_estado,
+
+                    p.nombre
+                        AS plan_nombre,
+
+                    p.limite_sucursales
+
+                FROM suscripciones s
+
+                INNER JOIN planes p
+                    ON p.id = s.plan_id
+
+                WHERE
+                    s.agencia_id = ?
+
+                ORDER BY
+                    s.id DESC
+
+                LIMIT 1
+                `,
+                [
+                    agenciaId
+                ]
+            );
+
+
+        return res.render(
+            "admin/sucursales/editar",
+            {
+
+                titulo:
+                    "Editar sucursal",
+
+                subtituloPagina:
+                    "Modificar sucursal",
+
+                paginaActual:
+                    "agencias",
+
+                usuario:
+                    req.session.usuario,
+
+                agencia:
+                    agenciaResultado[0],
+
+                sucursalEditar:
+                    sucursalResultado[0],
+
+                suscripcion:
+                    suscripcionResultado.length
+                        ? suscripcionResultado[0]
+                        : null,
+
+                error:
+                    null
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error mostrando editar sucursal:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible cargar la sucursal."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   ACTUALIZAR SUCURSAL
+========================================================= */
+
+async function actualizarSucursal(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    const agenciaId =
+        Number(
+            req.params.id
+        );
+
+
+    const sucursalId =
+        Number(
+            req.params.sucursalId
+        );
+
+
+    const datos =
+    {
+
+        nombre:
+            String(
+                req.body.nombre ||
+                ""
+            ).trim(),
+
+        correo:
+            String(
+                req.body.correo ||
+                ""
+            ).trim(),
+
+        telefono:
+            String(
+                req.body.telefono ||
+                ""
+            ).trim(),
+
+        whatsapp:
+            String(
+                req.body.whatsapp ||
+                ""
+            ).trim(),
+
+        direccion:
+            String(
+                req.body.direccion ||
+                ""
+            ).trim(),
+
+        ciudad:
+            String(
+                req.body.ciudad ||
+                ""
+            ).trim(),
+
+        provincia:
+            String(
+                req.body.provincia ||
+                ""
+            ).trim(),
+
+        pais:
+            String(
+                req.body.pais ||
+                "República Dominicana"
+            ).trim(),
+
+        es_principal:
+            req.body.es_principal === "1"
+                ? "1"
+                : "0",
+
+        estado:
+            req.body.estado === "inactiva"
+                ? "inactiva"
+                : "activa"
+
+    };
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        if (
+            !Number.isInteger(agenciaId) ||
+            agenciaId <= 0 ||
+            !Number.isInteger(sucursalId) ||
+            sucursalId <= 0
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "Datos de sucursal inválidos."
+                );
+
+        }
+
+
+        /* -------------------------------------------------
+           MOSTRAR ERRORES EN EL FORMULARIO
+        ------------------------------------------------- */
+
+        async function renderizarError(
+            mensaje,
+            estadoHttp = 400
+        ) {
+
+            const agenciaResultado =
+                await conexion.query(
+                    `
+                    SELECT
+
+                        id,
+                        nombre,
+                        logo,
+                        estado
+
+                    FROM agencias
+
+                    WHERE id = ?
+
+                    LIMIT 1
+                    `,
+                    [
+                        agenciaId
+                    ]
+                );
+
+
+            const suscripcionResultado =
+                await conexion.query(
+                    `
+                    SELECT
+
+                        s.estado
+                            AS suscripcion_estado,
+
+                        p.nombre
+                            AS plan_nombre,
+
+                        p.limite_sucursales
+
+                    FROM suscripciones s
+
+                    INNER JOIN planes p
+                        ON p.id = s.plan_id
+
+                    WHERE
+                        s.agencia_id = ?
+
+                    ORDER BY
+                        s.id DESC
+
+                    LIMIT 1
+                    `,
+                    [
+                        agenciaId
+                    ]
+                );
+
+
+            return res
+                .status(
+                    estadoHttp
+                )
+                .render(
+                    "admin/sucursales/editar",
+                    {
+
+                        titulo:
+                            "Editar sucursal",
+
+                        subtituloPagina:
+                            "Modificar sucursal",
+
+                        paginaActual:
+                            "agencias",
+
+                        usuario:
+                            req.session.usuario,
+
+                        agencia:
+                            agenciaResultado[0],
+
+                        sucursalEditar:
+                        {
+
+                            id:
+                                sucursalId,
+
+                            agencia_id:
+                                agenciaId,
+
+                            ...datos
+
+                        },
+
+                        suscripcion:
+                            suscripcionResultado.length
+                                ? suscripcionResultado[0]
+                                : null,
+
+                        error:
+                            mensaje
+
+                    }
+                );
+
+        }
+
+
+        /* -------------------------------------------------
+           VALIDACIONES
+        ------------------------------------------------- */
+
+        if (!datos.nombre) {
+
+            return await renderizarError(
+                "El nombre de la sucursal es obligatorio."
+            );
+
+        }
+
+
+        if (
+            datos.nombre.length > 120
+        ) {
+
+            return await renderizarError(
+                "El nombre de la sucursal no puede superar los 120 caracteres."
+            );
+
+        }
+
+
+        if (
+            datos.correo.length > 150
+        ) {
+
+            return await renderizarError(
+                "El correo no puede superar los 150 caracteres."
+            );
+
+        }
+
+
+        if (
+            datos.telefono.length > 30 ||
+            datos.whatsapp.length > 30
+        ) {
+
+            return await renderizarError(
+                "El teléfono y WhatsApp no pueden superar los 30 caracteres."
+            );
+
+        }
+
+
+        if (
+            datos.direccion.length > 255
+        ) {
+
+            return await renderizarError(
+                "La dirección no puede superar los 255 caracteres."
+            );
+
+        }
+
+
+        if (
+            datos.ciudad.length > 100 ||
+            datos.provincia.length > 100 ||
+            datos.pais.length > 100
+        ) {
+
+            return await renderizarError(
+                "La ciudad, provincia y país no pueden superar los 100 caracteres."
+            );
+
+        }
+
+
+        if (
+            datos.correo &&
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                datos.correo
+            )
+        ) {
+
+            return await renderizarError(
+                "Introduce un correo electrónico válido."
+            );
+
+        }
+
+
+        await conexion.beginTransaction();
+
+
+        /* -------------------------------------------------
+           BLOQUEAR AGENCIA
+        ------------------------------------------------- */
+
+        const agenciaResultado =
+            await conexion.query(
+                `
+                SELECT
+                    id
+
+                FROM agencias
+
+                WHERE id = ?
+
+                LIMIT 1
+
+                FOR UPDATE
+                `,
+                [
+                    agenciaId
+                ]
+            );
+
+
+        if (
+            agenciaResultado.length === 0
+        ) {
+
+            await conexion.rollback();
+
+
+            return res
+                .status(404)
+                .send(
+                    "Agencia no encontrada."
+                );
+
+        }
+
+
+        /* -------------------------------------------------
+           SUCURSAL ACTUAL
+        ------------------------------------------------- */
+
+        const sucursalActualResultado =
+            await conexion.query(
+                `
+                SELECT
+
+                    id,
+                    estado,
+                    es_principal
+
+                FROM sucursales
+
+                WHERE
+                    id = ?
+
+                    AND agencia_id = ?
+
+                LIMIT 1
+
+                FOR UPDATE
+                `,
+                [
+                    sucursalId,
+                    agenciaId
+                ]
+            );
+
+
+        if (
+            sucursalActualResultado.length === 0
+        ) {
+
+            await conexion.rollback();
+
+
+            return res
+                .status(404)
+                .send(
+                    "Sucursal no encontrada."
+                );
+
+        }
+
+
+        const sucursalActual =
+            sucursalActualResultado[0];
+
+
+        /* -------------------------------------------------
+           NOMBRE DUPLICADO
+        ------------------------------------------------- */
+
+        const duplicada =
+            await conexion.query(
+                `
+                SELECT
+                    id
+
+                FROM sucursales
+
+                WHERE
+                    agencia_id = ?
+
+                    AND LOWER(nombre) =
+                        LOWER(?)
+
+                    AND id <> ?
+
+                LIMIT 1
+                `,
+                [
+                    agenciaId,
+                    datos.nombre,
+                    sucursalId
+                ]
+            );
+
+
+        if (
+            duplicada.length > 0
+        ) {
+
+            await conexion.rollback();
+
+
+            return await renderizarError(
+                "Ya existe otra sucursal con ese nombre dentro de esta agencia.",
+                409
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           PROTEGER LA SUCURSAL PRINCIPAL
+        ------------------------------------------------- */
+
+        const actualmentePrincipal =
+            Number(
+                sucursalActual.es_principal
+            ) === 1;
+
+
+        if (
+            actualmentePrincipal &&
+            datos.es_principal !== "1"
+        ) {
+
+            await conexion.rollback();
+
+
+            return await renderizarError(
+                "Para cambiar la sucursal principal, edita otra sucursal y márcala como Principal. La sucursal principal actual cambiará automáticamente a Secundaria.",
+                409
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           VALIDAR REACTIVACIÓN
+        ------------------------------------------------- */
+
+        const seEstaActivando =
+            sucursalActual.estado !== "activa" &&
+            datos.estado === "activa";
+
+
+        if (seEstaActivando) {
+
+            const suscripcionResultado =
+                await conexion.query(
+                    `
+                    SELECT
+
+                        s.estado
+                            AS suscripcion_estado,
+
+                        p.nombre
+                            AS plan_nombre,
+
+                        p.limite_sucursales
+
+                    FROM suscripciones s
+
+                    INNER JOIN planes p
+                        ON p.id = s.plan_id
+
+                    WHERE
+                        s.agencia_id = ?
+
+                    ORDER BY
+                        s.id DESC
+
+                    LIMIT 1
+                    `,
+                    [
+                        agenciaId
+                    ]
+                );
+
+
+            if (
+                suscripcionResultado.length === 0
+            ) {
+
+                await conexion.rollback();
+
+
+                return await renderizarError(
+                    "La agencia no tiene una suscripción asociada.",
+                    409
+                );
+
+            }
+
+
+            const suscripcion =
+                suscripcionResultado[0];
+
+
+            const estadosConAcceso =
+            [
+                "prueba",
+                "activa"
+            ];
+
+
+            if (
+                !estadosConAcceso.includes(
+                    suscripcion.suscripcion_estado
+                )
+            ) {
+
+                await conexion.rollback();
+
+
+                return await renderizarError(
+                    "No se puede activar esta sucursal porque la suscripción de la agencia no está activa.",
+                    409
+                );
+
+            }
+
+
+            if (
+                suscripcion.limite_sucursales !== null
+            ) {
+
+                const activasResultado =
+                    await conexion.query(
+                        `
+                        SELECT
+                            COUNT(*) AS total
+
+                        FROM sucursales
+
+                        WHERE
+                            agencia_id = ?
+
+                            AND estado = 'activa'
+
+                            AND id <> ?
+                        `,
+                        [
+                            agenciaId,
+                            sucursalId
+                        ]
+                    );
+
+
+                const totalActivas =
+                    Number(
+                        activasResultado[0].total ||
+                        0
+                    );
+
+
+                const limiteSucursales =
+                    Number(
+                        suscripcion.limite_sucursales
+                    );
+
+
+                if (
+                    totalActivas >=
+                    limiteSucursales
+                ) {
+
+                    await conexion.rollback();
+
+
+                    const textoLimite =
+                        limiteSucursales === 1
+                            ? "1 sucursal activa"
+                            : `${limiteSucursales} sucursales activas`;
+
+
+                    return await renderizarError(
+                        `No es posible activar esta sucursal. El plan ${suscripcion.plan_nombre} permite un máximo de ${textoLimite}.`,
+                        409
+                    );
+
+                }
+
+            }
+
+        }
+
+
+        /* -------------------------------------------------
+           CAMBIAR PRINCIPAL
+        ------------------------------------------------- */
+
+        if (
+            datos.es_principal === "1" &&
+            !actualmentePrincipal
+        ) {
+
+            await conexion.query(
+                `
+                UPDATE sucursales
+
+                SET
+                    es_principal = 0
+
+                WHERE
+                    agencia_id = ?
+
+                    AND id <> ?
+                `,
+                [
+                    agenciaId,
+                    sucursalId
+                ]
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           ACTUALIZAR
+        ------------------------------------------------- */
+
+        await conexion.query(
+            `
+            UPDATE sucursales
+
+            SET
+
+                nombre = ?,
+
+                correo = ?,
+
+                telefono = ?,
+
+                whatsapp = ?,
+
+                direccion = ?,
+
+                ciudad = ?,
+
+                provincia = ?,
+
+                pais = ?,
+
+                es_principal = ?,
+
+                estado = ?
+
+            WHERE
+                id = ?
+
+                AND agencia_id = ?
+            `,
+            [
+
+                datos.nombre,
+
+                datos.correo ||
+                    null,
+
+                datos.telefono ||
+                    null,
+
+                datos.whatsapp ||
+                    null,
+
+                datos.direccion ||
+                    null,
+
+                datos.ciudad ||
+                    null,
+
+                datos.provincia ||
+                    null,
+
+                datos.pais,
+
+                datos.es_principal === "1"
+                    ? 1
+                    : 0,
+
+                datos.estado,
+
+                sucursalId,
+
+                agenciaId
+
+            ]
+        );
+
+
+        await conexion.commit();
+
+
+        return res.redirect(
+            `/admin/agencias/${agenciaId}/sucursales?actualizada=1`
+        );
+
+
+    } catch (error) {
+
+        if (conexion) {
+
+            try {
+
+                await conexion.rollback();
+
+            } catch (_) {
+
+                // Sin acción.
+
+            }
+
+        }
+
+
+        console.error(
+            "Error actualizando sucursal:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible actualizar la sucursal."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
 /* =========================================================
    EXPORTACIONES
 ========================================================= */
@@ -1264,6 +2269,10 @@ module.exports = {
 
     mostrarNuevaSucursal,
 
-    crearSucursal
+    crearSucursal,
+
+    mostrarEditarSucursal,
+
+    actualizarSucursal
 
 };

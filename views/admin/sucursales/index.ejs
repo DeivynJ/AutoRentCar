@@ -383,6 +383,10 @@
                                     Estado
                                 </th>
 
+                                <th>
+                                    Acción
+                                </th>
+
                             </tr>
 
                         </thead>
@@ -397,9 +401,9 @@
                             <tr>
 
                                 <td
-                                    colspan="5"
-                                    class="table-empty"
-                                >
+    colspan="6"
+    class="table-empty"
+>
 
                                     <div>
 
@@ -520,7 +524,19 @@
 
 
                                 </td>
+<td>
 
+    <a
+        href="/admin/agencias/<%= agencia.id %>/sucursales/<%= sucursal.id %>/editar"
+        class="table-action"
+        title="Editar sucursal"
+    >
+
+        <i class="fa-solid fa-pen-to-square"></i>
+
+    </a>
+
+</td>
 
                             </tr>
 
