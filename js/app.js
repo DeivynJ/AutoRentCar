@@ -3,6 +3,9 @@
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    configurarNavegacionMultiagencia();
+
     configurarMenuMovil();
     configurarModoOscuro();
     configurarPreguntasFrecuentes();
@@ -11,7 +14,1195 @@ document.addEventListener("DOMContentLoaded", () => {
     colocarAnioActual();
     cargarPreferenciaVisual();
     configurarFormularioContacto();
+    cargarIdentidadAgenciaPublica();
+
 });
+
+/* =========================================================
+   CONTEXTO PÚBLICO DE AGENCIA
+========================================================= */
+
+function obtenerSlugAgenciaPublica() {
+
+    const parametros =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const slug =
+        String(
+            parametros.get("agencia") ||
+            "autorentcar"
+        )
+            .trim()
+            .toLowerCase();
+
+
+    return slug ||
+        "autorentcar";
+
+}
+
+
+/* =========================================================
+   NAVEGACIÓN MULTIAGENCIA GLOBAL
+========================================================= */
+
+function configurarNavegacionMultiagencia() {
+
+    const slug =
+        obtenerSlugAgenciaPublica();
+
+
+    const paginasPublicas =
+        new Set(
+            [
+                "index.html",
+                "vehiculos.html",
+                "reserva.html",
+                "confirmacion.html",
+                "mis-reservas.html",
+                "nosotros.html",
+                "contacto.html"
+            ]
+        );
+
+
+    const enlaces =
+        document.querySelectorAll(
+            "a[href]"
+        );
+
+
+    enlaces.forEach(
+        (enlace) => {
+
+            const href =
+                String(
+                    enlace.getAttribute(
+                        "href"
+                    ) ||
+                    ""
+                ).trim();
+
+
+            if (!href) {
+
+                return;
+
+            }
+
+
+            /*
+             * Los enlaces externos y acciones
+             * especiales no deben modificarse.
+             */
+
+            if (
+                href.startsWith("mailto:") ||
+                href.startsWith("tel:") ||
+                href.startsWith("javascript:")
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+             * Si el enlace apunta a una sección de
+             * la página actual, conservamos el hash.
+             *
+             * Ejemplo dentro de Inicio:
+             * #servicios
+             */
+
+            if (
+                href.startsWith("#")
+            ) {
+
+                return;
+
+            }
+
+
+            let url;
+
+
+            try {
+
+                url =
+                    new URL(
+                        href,
+                        window.location.href
+                    );
+
+            } catch (error) {
+
+                return;
+
+            }
+
+
+            /*
+             * No modificamos WhatsApp,
+             * redes sociales ni sitios externos.
+             */
+
+            if (
+                url.origin !==
+                window.location.origin
+            ) {
+
+                return;
+
+            }
+
+
+            const partesRuta =
+                url.pathname.split("/");
+
+
+            const nombreArchivo =
+                partesRuta[
+                    partesRuta.length - 1
+                ];
+
+
+            if (
+                !paginasPublicas.has(
+                    nombreArchivo
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+             * Conservamos cualquier parámetro
+             * existente y agregamos la agencia.
+             */
+
+            url.searchParams.set(
+                "agencia",
+                slug
+            );
+
+
+            enlace.setAttribute(
+                "href",
+                `${url.pathname}${url.search}${url.hash}`
+            );
+
+        }
+    );
+
+}
+
+/* =========================================================
+   IDENTIDAD PÚBLICA DE LA AGENCIA
+========================================================= */
+
+let agenciaPublicaActual = null;
+
+
+async function cargarIdentidadAgenciaPublica() {
+
+    const slug =
+        obtenerSlugAgenciaPublica();
+
+
+    try {
+
+        const respuesta =
+            await fetch(
+                `/api/agencias/${encodeURIComponent(
+                    slug
+                )}/catalogo`,
+                {
+
+                    method:
+                        "GET",
+
+                    headers:
+                    {
+
+                        Accept:
+                            "application/json"
+
+                    },
+
+                    cache:
+                        "no-store"
+
+                }
+            );
+
+
+        const datos =
+            await respuesta.json();
+
+
+        if (
+            !respuesta.ok ||
+            datos?.ok !== true ||
+            !datos?.agencia
+        ) {
+
+            throw new Error(
+                datos?.mensaje ||
+                "No fue posible cargar la información de la agencia."
+            );
+
+        }
+
+
+        agenciaPublicaActual =
+            datos.agencia;
+
+
+        /*
+         * También dejamos disponible la agencia
+         * globalmente para las funciones que
+         * añadiremos después:
+         *
+         * contacto
+         * colores
+         * PDF
+         * WhatsApp
+         * branding
+         */
+
+        window.AutoRentCarAgencia =
+            agenciaPublicaActual;
+
+
+        aplicarIdentidadAgenciaPublica(
+            agenciaPublicaActual
+        );
+
+        aplicarContactoAgenciaPublica(
+            agenciaPublicaActual
+        
+        );
+
+
+    } catch (error) {
+
+        /*
+         * Si por alguna razón falla la API,
+         * mantenemos la identidad original
+         * de AutoRentCar y no rompemos la página.
+         */
+
+        console.error(
+            "No fue posible cargar la identidad pública de la agencia:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   APLICAR NOMBRE Y LOGO
+========================================================= */
+
+function aplicarIdentidadAgenciaPublica(
+    agencia
+) {
+
+    if (!agencia) {
+
+        return;
+
+    }
+
+
+    const nombre =
+        String(
+            agencia.nombre ||
+            "AutoRentCar"
+        ).trim();
+
+
+    const logo =
+        String(
+            agencia.logo ||
+            ""
+        ).trim();
+        
+
+
+    /* -----------------------------------------------------
+       NOMBRE EN LOS LOGOS
+    ----------------------------------------------------- */
+
+    const nombresLogo =
+        document.querySelectorAll(
+            ".logo-texto"
+        );
+
+
+    nombresLogo.forEach(
+        (elemento) => {
+
+            elemento.textContent =
+                nombre;
+
+        }
+    );
+
+
+    /* -----------------------------------------------------
+       ACCESIBILIDAD DE LOS LOGOS
+    ----------------------------------------------------- */
+
+    const enlacesLogo =
+        document.querySelectorAll(
+            "a.logo"
+        );
+
+
+    enlacesLogo.forEach(
+        (enlace) => {
+
+            enlace.setAttribute(
+                "aria-label",
+                `Ir al inicio de ${nombre}`
+            );
+
+        }
+    );
+
+
+    /* -----------------------------------------------------
+       IMAGEN DEL LOGO
+    ----------------------------------------------------- */
+
+    if (logo) {
+
+        const contenedoresLogo =
+            document.querySelectorAll(
+                ".logo-icono"
+            );
+
+
+        contenedoresLogo.forEach(
+            (contenedor) => {
+
+                contenedor.classList.add(
+                    "logo-icono-imagen"
+                );
+
+
+                const imagen =
+                    document.createElement(
+                        "img"
+                    );
+
+
+                imagen.src =
+                    logo;
+
+
+                imagen.alt =
+                    `Logo de ${nombre}`;
+
+
+                imagen.loading =
+                    "eager";
+
+
+                contenedor.replaceChildren(
+                    imagen
+                );
+
+            }
+        );
+
+    }
+
+
+    /* -----------------------------------------------------
+       TÍTULO DEL NAVEGADOR
+    ----------------------------------------------------- */
+
+    if (
+        document.title.includes(
+            "AutoRentCar"
+        )
+    ) {
+
+        document.title =
+            document.title.replace(
+                /AutoRentCar/g,
+                nombre
+            );
+
+    }
+
+}
+
+/* =========================================================
+   CONTACTO PÚBLICO DE LA AGENCIA
+========================================================= */
+
+function aplicarContactoAgenciaPublica(
+    agencia
+) {
+
+    if (!agencia) {
+
+        return;
+
+    }
+
+
+    const contacto =
+        agencia.contacto ||
+        {};
+
+
+    const nombre =
+        String(
+            agencia.nombre ||
+            "AutoRentCar"
+        ).trim();
+
+
+    const correo =
+        String(
+            contacto.correo ||
+            ""
+        ).trim();
+
+
+    const whatsapp =
+        String(
+            contacto.whatsapp ||
+            ""
+        ).trim();
+
+
+    const telefono =
+        String(
+            contacto.telefono ||
+            whatsapp ||
+            ""
+        ).trim();
+
+
+    const ciudad =
+        String(
+            contacto.ciudad ||
+            ""
+        ).trim();
+
+
+    const provincia =
+        String(
+            contacto.provincia ||
+            ""
+        ).trim();
+
+
+    const pais =
+        String(
+            contacto.pais ||
+            ""
+        ).trim();
+
+
+    const direccion =
+        String(
+            contacto.direccion ||
+            ""
+        ).trim();
+
+
+    const ubicacionCorta =
+        construirUbicacionCortaAgencia(
+            ciudad,
+            provincia,
+            pais
+        );
+
+
+    const direccionCompleta =
+        construirDireccionCompletaAgencia(
+            direccion,
+            ciudad,
+            provincia,
+            pais
+        );
+
+
+    /* -----------------------------------------------------
+       BARRA SUPERIOR
+    ----------------------------------------------------- */
+
+    document
+        .querySelectorAll(
+            ".informacion-contacto"
+        )
+        .forEach(
+            (contenedor) => {
+
+                const elementos =
+                    contenedor.querySelectorAll(
+                        "span"
+                    );
+
+
+                elementos.forEach(
+                    (elemento) => {
+
+                        if (
+                            elemento.querySelector(
+                                ".fa-phone"
+                            ) &&
+                            telefono
+                        ) {
+
+                            reemplazarTextoConIcono(
+                                elemento,
+                                telefono
+                            );
+
+                        }
+
+
+                        if (
+                            elemento.querySelector(
+                                ".fa-envelope"
+                            ) &&
+                            correo
+                        ) {
+
+                            reemplazarTextoConIcono(
+                                elemento,
+                                correo
+                            );
+
+                        }
+
+
+                        if (
+                            elemento.querySelector(
+                                ".fa-location-dot"
+                            ) &&
+                            ubicacionCorta
+                        ) {
+
+                            reemplazarTextoConIcono(
+                                elemento,
+                                ubicacionCorta
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+    /* -----------------------------------------------------
+       PIE DE PÁGINA
+    ----------------------------------------------------- */
+
+    document
+        .querySelectorAll(
+            ".pie-columna"
+        )
+        .forEach(
+            (columna) => {
+
+                const titulo =
+                    columna.querySelector(
+                        "h3"
+                    );
+
+
+                if (
+                    !titulo ||
+                    titulo.textContent
+                        .trim()
+                        .toLowerCase() !==
+                        "contacto"
+                ) {
+
+                    return;
+
+                }
+
+
+                columna
+                    .querySelectorAll(
+                        "p"
+                    )
+                    .forEach(
+                        (elemento) => {
+
+                            if (
+                                elemento.querySelector(
+                                    ".fa-location-dot"
+                                ) &&
+                                ubicacionCorta
+                            ) {
+
+                                reemplazarTextoConIcono(
+                                    elemento,
+                                    ubicacionCorta
+                                );
+
+                            }
+
+
+                            if (
+                                elemento.querySelector(
+                                    ".fa-phone"
+                                ) &&
+                                telefono
+                            ) {
+
+                                reemplazarTextoConIcono(
+                                    elemento,
+                                    telefono
+                                );
+
+                            }
+
+
+                            if (
+                                elemento.querySelector(
+                                    ".fa-envelope"
+                                ) &&
+                                correo
+                            ) {
+
+                                reemplazarTextoConIcono(
+                                    elemento,
+                                    correo
+                                );
+
+                            }
+
+                        }
+                    );
+
+            }
+        );
+
+
+    /* -----------------------------------------------------
+       ENLACES DE TELÉFONO
+    ----------------------------------------------------- */
+
+    if (telefono) {
+
+        const numeroTelefono =
+            normalizarTelefonoEnlaceAgencia(
+                telefono,
+                pais
+            );
+
+
+        document
+            .querySelectorAll(
+                'a[href^="tel:"]'
+            )
+            .forEach(
+                (enlace) => {
+
+                    if (numeroTelefono) {
+
+                        enlace.href =
+                            `tel:+${numeroTelefono}`;
+
+                    }
+
+
+                    enlace.textContent =
+                        telefono;
+
+                }
+            );
+
+    }
+
+
+    /* -----------------------------------------------------
+       ENLACES DE CORREO
+    ----------------------------------------------------- */
+
+    if (correo) {
+
+        document
+            .querySelectorAll(
+                'a[href^="mailto:"]'
+            )
+            .forEach(
+                (enlace) => {
+
+                    enlace.href =
+                        `mailto:${correo}`;
+
+
+                    enlace.textContent =
+                        correo;
+
+                }
+            );
+
+    }
+
+
+    /* -----------------------------------------------------
+       WHATSAPP
+    ----------------------------------------------------- */
+
+    if (whatsapp) {
+
+        const numeroWhatsApp =
+            normalizarTelefonoEnlaceAgencia(
+                whatsapp,
+                pais
+            );
+
+
+        if (numeroWhatsApp) {
+
+            const mensaje =
+                encodeURIComponent(
+                    `Hola, deseo información sobre los servicios de ${nombre}.`
+                );
+
+
+            const enlaceWhatsApp =
+                `https://wa.me/${numeroWhatsApp}?text=${mensaje}`;
+
+
+            const enlacesWhatsApp =
+                document.querySelectorAll(
+                    [
+                        ".boton-whatsapp",
+                        'a[href*="wa.me"]',
+                        'a[aria-label="WhatsApp"]'
+                    ].join(",")
+                );
+
+
+            enlacesWhatsApp.forEach(
+                (enlace) => {
+
+                    enlace.href =
+                        enlaceWhatsApp;
+
+
+                    enlace.setAttribute(
+                        "target",
+                        "_blank"
+                    );
+
+
+                    enlace.setAttribute(
+                        "rel",
+                        "noopener noreferrer"
+                    );
+
+
+                    enlace.setAttribute(
+                        "aria-label",
+                        `Contactar a ${nombre} por WhatsApp`
+                    );
+
+                }
+            );
+
+        }
+
+    }
+
+
+    /* -----------------------------------------------------
+       TARJETAS DE CONTACTO
+    ----------------------------------------------------- */
+
+    document
+        .querySelectorAll(
+            ".tarjeta-contacto"
+        )
+        .forEach(
+            (tarjeta) => {
+
+                if (
+                    tarjeta.querySelector(
+                        ".fa-phone"
+                    )
+                ) {
+
+                    const enlace =
+                        tarjeta.querySelector(
+                            'a[href^="tel:"]'
+                        );
+
+
+                    if (
+                        enlace &&
+                        telefono
+                    ) {
+
+                        enlace.textContent =
+                            telefono;
+
+                    }
+
+                }
+
+
+                if (
+                    tarjeta.querySelector(
+                        ".fa-envelope"
+                    )
+                ) {
+
+                    const enlace =
+                        tarjeta.querySelector(
+                            'a[href^="mailto:"]'
+                        );
+
+
+                    if (
+                        enlace &&
+                        correo
+                    ) {
+
+                        enlace.textContent =
+                            correo;
+
+                    }
+
+                }
+
+
+                if (
+                    tarjeta.querySelector(
+                        ".fa-location-dot"
+                    )
+                ) {
+
+                    const ubicacion =
+                        tarjeta.querySelector(
+                            "strong"
+                        );
+
+
+                    const detalle =
+                        tarjeta.querySelector(
+                            "small"
+                        );
+
+
+                    if (
+                        ubicacion &&
+                        ubicacionCorta
+                    ) {
+
+                        ubicacion.textContent =
+                            ubicacionCorta;
+
+                    }
+
+
+                    if (
+                        detalle &&
+                        direccionCompleta
+                    ) {
+
+                        detalle.textContent =
+                            direccionCompleta;
+
+                    }
+
+                }
+
+            }
+        );
+
+
+    /* -----------------------------------------------------
+       COMPROBANTE EN PANTALLA
+    ----------------------------------------------------- */
+
+    const pieComprobante =
+        document.querySelector(
+            ".comprobante-pie > div:last-child"
+        );
+
+
+    if (pieComprobante) {
+
+        const nombreComprobante =
+            pieComprobante.querySelector(
+                "strong"
+            );
+
+
+        const lineas =
+            pieComprobante.querySelectorAll(
+                "span"
+            );
+
+
+        if (nombreComprobante) {
+
+            nombreComprobante.textContent =
+                nombre;
+
+        }
+
+
+        if (
+            lineas[0] &&
+            ubicacionCorta
+        ) {
+
+            lineas[0].textContent =
+                ubicacionCorta;
+
+        }
+
+
+        if (
+            lineas[1] &&
+            telefono
+        ) {
+
+            lineas[1].textContent =
+                telefono;
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   REEMPLAZAR TEXTO CONSERVANDO ICONO
+========================================================= */
+
+function reemplazarTextoConIcono(
+    elemento,
+    texto
+) {
+
+    if (
+        !elemento ||
+        !texto
+    ) {
+
+        return;
+
+    }
+
+
+    const icono =
+        elemento.querySelector(
+            "i"
+        );
+
+
+    elemento.replaceChildren();
+
+
+    if (icono) {
+
+        elemento.appendChild(
+            icono
+        );
+
+
+        elemento.append(
+            " "
+        );
+
+    }
+
+
+    elemento.append(
+        texto
+    );
+
+}
+
+
+/* =========================================================
+   UBICACIÓN CORTA
+========================================================= */
+
+function construirUbicacionCortaAgencia(
+    ciudad,
+    provincia,
+    pais
+) {
+
+    const partes =
+        [];
+
+
+    if (ciudad) {
+
+        partes.push(
+            ciudad
+        );
+
+    } else if (provincia) {
+
+        partes.push(
+            provincia
+        );
+
+    }
+
+
+    if (
+        pais &&
+        !partes.includes(
+            pais
+        )
+    ) {
+
+        partes.push(
+            pais
+        );
+
+    }
+
+
+    return partes.join(
+        ", "
+    );
+
+}
+
+
+/* =========================================================
+   DIRECCIÓN COMPLETA
+========================================================= */
+
+function construirDireccionCompletaAgencia(
+    direccion,
+    ciudad,
+    provincia,
+    pais
+) {
+
+    const partes =
+        [
+            direccion,
+            ciudad,
+            provincia,
+            pais
+        ]
+            .map(
+                (parte) =>
+                    String(
+                        parte ||
+                        ""
+                    ).trim()
+            )
+            .filter(
+                Boolean
+            );
+
+
+    return [
+        ...new Set(
+            partes
+        )
+    ].join(
+        ", "
+    );
+
+}
+
+
+/* =========================================================
+   NORMALIZAR TELÉFONO PARA ENLACES
+========================================================= */
+
+function normalizarTelefonoEnlaceAgencia(
+    numero,
+    pais
+) {
+
+    let digitos =
+        String(
+            numero ||
+            ""
+        ).replace(
+            /\D/g,
+            ""
+        );
+
+
+    if (!digitos) {
+
+        return "";
+
+    }
+
+
+    const paisNormalizado =
+        String(
+            pais ||
+            ""
+        )
+            .toLowerCase()
+            .normalize(
+                "NFD"
+            )
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            );
+
+
+    /*
+     * República Dominicana pertenece al código
+     * internacional +1.
+     */
+
+    if (
+        (
+            paisNormalizado.includes(
+                "republica dominicana"
+            ) ||
+            paisNormalizado.includes(
+                "dominican republic"
+            )
+        ) &&
+        digitos.length === 10
+    ) {
+
+        digitos =
+            `1${digitos}`;
+
+    }
+
+
+    return digitos;
+
+}
+
 
 /* =========================================================
    MENÚ RESPONSIVE PARA CELULARES

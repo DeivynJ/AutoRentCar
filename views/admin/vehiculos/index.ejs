@@ -435,28 +435,96 @@
 
                                 <td>
 
-                                    <strong>
+    <div
+        style="
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 220px;
+        "
+    >
 
-                                        <%= modelo.marca %>
-                                        <%= modelo.nombre %>
 
-                                    </strong>
+        <div
+            style="
+                width: 76px;
+                height: 52px;
+                border-radius: 10px;
+                overflow: hidden;
+                flex-shrink: 0;
+                background: rgba(255,255,255,0.05);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            "
+        >
 
 
-                                    <% if (modelo.anio) { %>
+            <% if (modelo.imagen) { %>
 
-                                        <span
-                                            class="table-muted"
-                                            style="display:block;"
-                                        >
+                <img
+                    src="<%= modelo.imagen %>"
+                    alt="<%= modelo.marca %> <%= modelo.nombre %>"
+                    style="
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        display: block;
+                    "
+                >
 
-                                            <%= modelo.anio %>
+            <% } else { %>
 
-                                        </span>
+                <i
+                    class="fa-solid fa-car-side"
+                    style="
+                        opacity: 0.45;
+                        font-size: 20px;
+                    "
+                ></i>
 
-                                    <% } %>
+            <% } %>
 
-                                </td>
+
+        </div>
+
+
+        <div>
+
+            <strong
+                style="
+                    display: block;
+                "
+            >
+
+                <%= modelo.marca %>
+                <%= modelo.nombre %>
+
+            </strong>
+
+
+            <% if (modelo.anio) { %>
+
+                <span
+                    class="table-muted"
+                    style="
+                        display: block;
+                        margin-top: 3px;
+                    "
+                >
+
+                    <%= modelo.anio %>
+
+                </span>
+
+            <% } %>
+
+        </div>
+
+
+    </div>
+
+</td>
 
                                <td>
 

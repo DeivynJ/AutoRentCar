@@ -23,13 +23,60 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =========================================================
+   CONTEXTO DE AGENCIA
+========================================================= */
+
+function obtenerSlugAgenciaReserva() {
+
+    const parametros =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const slug =
+        String(
+            parametros.get("agencia") ||
+            "autorentcar"
+        )
+            .trim()
+            .toLowerCase();
+
+
+    return slug ||
+        "autorentcar";
+
+}
+
+
+function obtenerClaveVehiculoSeleccionadoReserva() {
+
+    return `autorentcarVehiculoSeleccionado:${obtenerSlugAgenciaReserva()}`;
+
+}
+
+
+function obtenerClaveReservacionesReserva() {
+
+    return `autorentcarReservaciones:${obtenerSlugAgenciaReserva()}`;
+
+}
+
+
+function obtenerClaveUltimaReservacionReserva() {
+
+    return `autorentcarUltimaReservacion:${obtenerSlugAgenciaReserva()}`;
+
+}
+
+/* =========================================================
    CARGAR VEHÍCULO SELECCIONADO
 ========================================================= */
 
 function cargarVehiculoReserva() {
     const guardado = localStorage.getItem(
-        "autorentcarVehiculoSeleccionado"
-    );
+    obtenerClaveVehiculoSeleccionadoReserva()
+);
 
     if (!guardado) {
         vehiculoReserva = null;
@@ -47,14 +94,40 @@ function cargarVehiculoReserva() {
         vehiculoReserva = null;
 
         localStorage.removeItem(
-            "autorentcarVehiculoSeleccionado"
-        );
+    obtenerClaveVehiculoSeleccionadoReserva()
+);
 
         console.error(
             "No se pudo cargar el vehículo seleccionado.",
             error
         );
     }
+
+    const slugAgenciaActual =
+    obtenerSlugAgenciaReserva();
+
+
+if (
+    vehiculoReserva &&
+    vehiculoReserva.agenciaSlug &&
+    vehiculoReserva.agenciaSlug !==
+        slugAgenciaActual
+) {
+
+    console.error(
+        "El vehículo seleccionado pertenece a otra agencia."
+    );
+
+
+    localStorage.removeItem(
+        obtenerClaveVehiculoSeleccionadoReserva()
+    );
+
+
+    vehiculoReserva = null;
+    cantidadDisponibleReserva = 0;
+
+}
 
     const contenedor = document.getElementById(
         "vehiculo-reserva-seleccionado"
@@ -1255,18 +1328,18 @@ function configurarEnvioReservacion() {
                 guardadas.push(reservacion);
 
                 localStorage.setItem(
-                    "autorentcarReservaciones",
-                    JSON.stringify(guardadas)
-                );
+    obtenerClaveReservacionesReserva(),
+    JSON.stringify(guardadas)
+);
 
                 localStorage.setItem(
-                    "autorentcarUltimaReservacion",
-                    JSON.stringify(reservacion)
-                );
+    obtenerClaveUltimaReservacionReserva(),
+    JSON.stringify(reservacion)
+);
 
                 localStorage.removeItem(
-                    "autorentcarVehiculoSeleccionado"
-                );
+    obtenerClaveVehiculoSeleccionadoReserva()
+);
 
                 mostrarNotificacion(
                     "Reservación registrada",
@@ -1276,9 +1349,17 @@ function configurarEnvioReservacion() {
                 );
 
                 setTimeout(() => {
-                    window.location.href =
-                        "confirmacion.html";
-                }, 1200);
+
+    const slugAgencia =
+        obtenerSlugAgenciaReserva();
+
+
+    window.location.href =
+        `confirmacion.html?agencia=${encodeURIComponent(
+            slugAgencia
+        )}`;
+
+}, 1200);
             } catch (error) {
                 reservacionEnProceso = false;
 
@@ -1312,8 +1393,8 @@ function configurarEnvioReservacion() {
 
 function obtenerReservacionesGuardadas() {
     const contenido = localStorage.getItem(
-        "autorentcarReservaciones"
-    );
+    obtenerClaveReservacionesReserva()
+);
 
     if (!contenido) {
         return [];
@@ -1656,6 +1737,24 @@ function construirReservacion() {
 
         estado:
             "Pendiente de confirmación",
+
+        agencia: {
+
+    id:
+        Number(
+            vehiculoReserva.agenciaId ||
+            0
+        ),
+
+    slug:
+        vehiculoReserva.agenciaSlug ||
+        obtenerSlugAgenciaReserva(),
+
+    nombre:
+        vehiculoReserva.agenciaNombre ||
+        ""
+
+},
 
         vehiculo: {
             ...vehiculoReserva

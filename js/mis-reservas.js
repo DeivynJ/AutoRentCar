@@ -12,13 +12,95 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =========================================================
+   CONTEXTO DE AGENCIA
+========================================================= */
+
+function obtenerSlugAgenciaMisReservas() {
+
+    const parametros =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const slug =
+        String(
+            parametros.get("agencia") ||
+            "autorentcar"
+        )
+            .trim()
+            .toLowerCase();
+
+
+    return slug ||
+        "autorentcar";
+
+}
+
+
+function obtenerClaveReservacionesMisReservas() {
+
+    return `autorentcarReservaciones:${obtenerSlugAgenciaMisReservas()}`;
+
+}
+
+
+function obtenerClaveUltimaReservacionMisReservas() {
+
+    return `autorentcarUltimaReservacion:${obtenerSlugAgenciaMisReservas()}`;
+
+}
+
+
+/* =========================================================
+   VALIDAR AGENCIA DE RESERVACIÓN
+========================================================= */
+
+function reservacionPerteneceAgenciaActual(
+    reservacion
+) {
+
+    const slugActual =
+        obtenerSlugAgenciaMisReservas();
+
+
+    const slugReservacion =
+        String(
+            reservacion?.agencia?.slug ||
+            reservacion?.vehiculo?.agenciaSlug ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    /*
+     * Permitimos reservaciones antiguas que todavía
+     * no tengan información de agencia.
+     */
+
+    if (!slugReservacion) {
+
+        return true;
+
+    }
+
+
+    return (
+        slugReservacion ===
+        slugActual
+    );
+
+}
+
+/* =========================================================
    CARGAR DATOS
 ========================================================= */
 
 function cargarReservacionesUsuario() {
     const contenido = localStorage.getItem(
-        "autorentcarReservaciones"
-    );
+    obtenerClaveReservacionesMisReservas()
+);
 
     if (!contenido) {
         reservacionesUsuario = [];
@@ -29,9 +111,11 @@ function cargarReservacionesUsuario() {
             );
 
             reservacionesUsuario =
-                Array.isArray(reservaciones)
-                    ? reservaciones
-                    : [];
+    Array.isArray(reservaciones)
+        ? reservaciones.filter(
+            reservacionPerteneceAgenciaActual
+        )
+        : [];
         } catch (error) {
             reservacionesUsuario = [];
 
@@ -1240,11 +1324,11 @@ function convertirFechaSimple(fechaTexto) {
 function guardarReservacionesActualizadas() {
     try {
         localStorage.setItem(
-            "autorentcarReservaciones",
-            JSON.stringify(
-                reservacionesUsuario
-            )
-        );
+    obtenerClaveReservacionesMisReservas(),
+    JSON.stringify(
+        reservacionesUsuario
+    )
+);
 
         actualizarUltimaReservacionGuardada();
 
@@ -1265,8 +1349,8 @@ function guardarReservacionesActualizadas() {
 
 function actualizarUltimaReservacionGuardada() {
     const contenido = localStorage.getItem(
-        "autorentcarUltimaReservacion"
-    );
+    obtenerClaveUltimaReservacionMisReservas()
+);
 
     if (!contenido) {
         return;
@@ -1280,8 +1364,8 @@ function actualizarUltimaReservacionGuardada() {
         );
     } catch (error) {
         localStorage.removeItem(
-            "autorentcarUltimaReservacion"
-        );
+    obtenerClaveUltimaReservacionMisReservas()
+);
 
         console.error(
             "La última reservación guardada no pudo leerse.",
@@ -1307,9 +1391,10 @@ function actualizarUltimaReservacionGuardada() {
     }
 
     localStorage.setItem(
-        "autorentcarUltimaReservacion",
-        JSON.stringify(actualizada)
-    );
+    obtenerClaveUltimaReservacionMisReservas(),
+    JSON.stringify(actualizada)
+);
+
 }
 
 /* =========================================================

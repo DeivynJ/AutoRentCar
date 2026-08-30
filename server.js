@@ -85,6 +85,10 @@ const vehiculoRoutes = require(
     "./routes/vehiculoRoutes"
 );
 
+const publicRoutes = require(
+    "./routes/publicRoutes"
+);
+
 /* =========================================================
    APLICACIÓN
 ========================================================= */
@@ -223,6 +227,10 @@ app.use(
 
 app.use(
     vehiculoRoutes
+);
+
+app.use(
+    publicRoutes
 );
 
 /* =========================================================

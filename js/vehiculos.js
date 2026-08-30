@@ -8,216 +8,424 @@ const CATEGORIAS_VEHICULOS = [
     "Vehículo de lujo"
 ];
 
-const vehiculos = [
-    {
-        id: 1,
-        nombre: "Toyota Corolla",
-        marca: "Toyota",
-        categoria: "Económico",
-        categoriaTexto: "Económico",
-        precio: 45,
-        cantidadTotal: 5,
-        transmision: "Automática",
-        combustible: "Gasolina",
-        pasajeros: 5,
-        puertas: 4,
-        equipaje: 2,
-        aire: true,
-        destacado: true,
-        etiqueta: "Más reservado",
-        descripcion:
-            "Cómodo, seguro y económico, ideal para recorridos urbanos, viajes de trabajo y desplazamientos familiares.",
-        imagen:
-            "img/autos/Toyota-Corolla.jpg"
-    },
+let vehiculos = [];
 
-    {
-        id: 2,
-        nombre: "Hyundai Tucson",
-        marca: "Hyundai",
-        categoria: "Gama media",
-        categoriaTexto: "Gama media",
-        precio: 70,
-        cantidadTotal: 3,
-        transmision: "Automática",
-        combustible: "Gasolina",
-        pasajeros: 5,
-        puertas: 4,
-        equipaje: 4,
-        aire: true,
-        destacado: true,
-        etiqueta: "Recomendado",
-        descripcion:
-            "Moderna con excelente espacio interior, gran comodidad y buen rendimiento para viajes familiares o recorridos largos.",
-        imagen:
-            "img/autos/Tuscon.jpg"
-    },
+let agenciaCatalogo = null;
+    
+/* =========================================================
+   CATÁLOGO DINÁMICO
+========================================================= */
 
-    {
-        id: 3,
-        nombre: "Kia GT",
-        marca: "Kia",
-        categoria: "Económico",
-        categoriaTexto: "Económico",
-        precio: 40,
-        cantidadTotal: 4,
-        transmision: "Automática",
-        combustible: "Gasolina",
-        pasajeros: 4,
-        puertas: 4,
-        equipaje: 1,
-        aire: true,
-        destacado: true,
-        etiqueta: "Mejor precio",
-        descripcion:
-            "Vehículo compacto, eficiente y fácil de conducir, perfecto para moverse por la ciudad y reducir el consumo de combustible.",
-        imagen:
-            "img/autos/Kia-k5-GT.jpg"
-    },
+function obtenerSlugAgenciaCatalogo() {
 
-    {
-        id: 4,
-        nombre: "Honda CR-V",
-        marca: "Honda",
-        categoria: "Gama media",
-        categoriaTexto: "Gama media",
-        precio: 55,
-        cantidadTotal: 2,
-        transmision: "Automática",
-        combustible: "Gasolina",
-        pasajeros: 5,
-        puertas: 4,
-        equipaje: 4,
-        aire: true,
-        destacado: false,
-        etiqueta: "Familiar",
-        descripcion:
-            "Espaciosa y confiable, diseñada para brindar comodidad, estabilidad y seguridad durante recorridos largos.",
-        imagen:
-            "img/autos/Honda-CRV.jpg"
-    },
+    const parametros =
+        new URLSearchParams(
+            window.location.search
+        );
 
-    {
-        id: 5,
-        nombre: "Mercedes-Benz",
-        marca: "Mercedes-Benz",
-        categoria: "Vehículo de lujo",
-        categoriaTexto: "Vehículo de lujo",
-        precio: 550,
-        cantidadTotal: 2,
-        transmision: "Automática",
-        combustible: "Gasolina",
-        pasajeros: 5,
-        puertas: 4,
-        equipaje: 3,
-        aire: true,
-        destacado: false,
-        etiqueta: "Premium",
-        descripcion:
-            "Vehículo de lujo y sofisticado con interior de alta calidad, tecnología moderna y una experiencia de conducción superior.",
-        imagen:
-            "img/autos/Mercedes-Benz.jpg"
-    },
 
-    {
-        id: 6,
-        nombre: "Hyundai Sonata",
-        marca: "Hyundai",
-        categoria: "Económico",
-        categoriaTexto: "Económico",
-        precio: 60,
-        cantidadTotal: 3,
-        transmision: "Automática",
-        combustible: "Gasolina",
-        pasajeros: 5,
-        puertas: 4,
-        equipaje: 3,
-        aire: true,
-        destacado: false,
-        etiqueta: "Eficiente",
-        descripcion:
-            "Práctico con excelente rendimiento de combustible, amplio espacio interior y conducción cómoda.",
-        imagen:
-            "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=1200&q=80"
-    },
+    const slug =
+        String(
+            parametros.get("agencia") ||
+            "autorentcar"
+        )
+            .trim()
+            .toLowerCase();
 
-    {
-        id: 7,
-        nombre: "Mercedes-Benz AMG",
-        marca: "Mercedes-Benz",
-        categoria: "Vehículo de lujo",
-        categoriaTexto: "Vehículo de lujo",
-        precio: 160,
-        cantidadTotal: 1,
-        transmision: "Automática",
-        combustible: "Gasolina",
-        pasajeros: 4,
-        puertas: 4,
-        equipaje: 1,
-        aire: true,
-        destacado: false,
-        etiqueta: "Gama media",
-        descripcion:
-            "Automóvil compacto y ligero, adecuado para recorridos cortos, calles urbanas y estacionamientos pequeños.",
-        imagen:
-            "https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1200&q=80"
-    },
 
-    {
-        id: 8,
-        nombre: "BMW X5",
-        marca: "BMW",
-        categoria: "Vehículo de lujo",
-        categoriaTexto: "Vehículo de lujo",
-        precio: 350,
-        cantidadTotal: 2,
-        transmision: "Automática",
-        combustible: "Gasolina",
-        pasajeros: 5,
-        puertas: 4,
-        equipaje: 5,
-        aire: true,
-        destacado: false,
-        etiqueta: "Exclusivo",
-        descripcion:
-            "Premium con diseño deportivo, gran potencia, tecnología avanzada y un interior espacioso y elegante.",
-        imagen:
-            "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80"
-    },
+    return slug ||
+        "autorentcar";
 
-    {
-        id: 9,
-        nombre: "Ford",
-        marca: "Ford",
-        categoria: "Gama media",
-        categoriaTexto: "Gama media",
-        precio: 110,
-        cantidadTotal: 3,
-        transmision: "Automática",
-        combustible: "Gasolina",
-        pasajeros: 5,
-        puertas: 4,
-        equipaje: 3,
-        aire: true,
-        destacado: false,
-        etiqueta: "Aventura",
-        descripcion:
-            "Vehículo resistente y versátil, ideal para aventuras, excursiones y trayectos que requieren mayor capacidad.",
-        imagen:
-            "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80"
+}
+
+
+async function cargarCatalogoDesdeAPI() {
+
+    const slug =
+        obtenerSlugAgenciaCatalogo();
+
+
+    try {
+
+        const respuesta =
+            await fetch(
+                `/api/agencias/${encodeURIComponent(slug)}/catalogo`,
+                {
+
+                    method:
+                        "GET",
+
+                    headers:
+                    {
+
+                        Accept:
+                            "application/json"
+
+                    },
+
+                    cache:
+                        "no-store"
+
+                }
+            );
+
+
+        let datos = null;
+
+
+        try {
+
+            datos =
+                await respuesta.json();
+
+        } catch (error) {
+
+            console.error(
+                "La respuesta del catálogo no contiene JSON válido.",
+                error
+            );
+
+        }
+
+
+        if (
+            !respuesta.ok ||
+            !datos ||
+            datos.ok !== true
+        ) {
+
+            throw new Error(
+                datos?.mensaje ||
+                "No fue posible cargar el catálogo."
+            );
+
+        }
+
+
+        agenciaCatalogo =
+            datos.agencia ||
+            null;
+
+
+        const catalogoRecibido =
+            Array.isArray(
+                datos.catalogo?.vehiculos
+            )
+                ? datos.catalogo.vehiculos
+                : [];
+
+
+        vehiculos =
+            catalogoRecibido.map(
+                (vehiculo) => {
+
+                    return {
+
+                        ...vehiculo,
+
+                        id:
+                            Number(
+                                vehiculo.id
+                            ),
+
+                        precio:
+                            Number(
+                                vehiculo.precio ||
+                                0
+                            ),
+
+                        cantidadTotal:
+                            Number(
+                                vehiculo.cantidadTotal ||
+                                0
+                            ),
+
+                        disponibles:
+                            Number(
+                                vehiculo.disponibles ||
+                                0
+                            ),
+
+                        pasajeros:
+                            Number(
+                                vehiculo.pasajeros ||
+                                0
+                            ),
+
+                        puertas:
+                            Number(
+                                vehiculo.puertas ||
+                                0
+                            ),
+
+                        equipaje:
+                            Number(
+                                vehiculo.equipaje ||
+                                0
+                            ),
+
+                        destacado:
+                            Boolean(
+                                vehiculo.destacado
+                            ),
+
+                        aire:
+                            Boolean(
+                                vehiculo.aire
+                            ),
+
+                        agenciaId:
+                            Number(
+                                datos.agencia?.id ||
+                                0
+                            ),
+
+                        agenciaSlug:
+                            datos.agencia?.slug ||
+                            slug,
+
+                        agenciaNombre:
+                            datos.agencia?.nombre ||
+                            ""
+
+                    };
+
+                }
+            );
+
+
+        actualizarEnlacesCatalogoAgencia();
+
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(
+            "Error cargando catálogo público:",
+            error
+        );
+
+
+        vehiculos = [];
+
+        agenciaCatalogo = null;
+
+
+        mostrarErrorCargaCatalogo(
+            error.message ||
+            "No fue posible cargar los vehículos."
+        );
+
+
+        return false;
+
     }
-];
 
+}
+
+
+/* =========================================================
+   CONSERVAR AGENCIA EN ENLACES DEL CATÁLOGO
+========================================================= */
+
+function actualizarEnlacesCatalogoAgencia() {
+
+    const slug =
+        agenciaCatalogo?.slug;
+
+
+    if (!slug) {
+
+        return;
+
+    }
+
+
+    const enlaces =
+        document.querySelectorAll(
+            'a[href^="vehiculos.html"]'
+        );
+
+
+    enlaces.forEach(
+        (enlace) => {
+
+            const href =
+                enlace.getAttribute(
+                    "href"
+                );
+
+
+            if (!href) {
+
+                return;
+
+            }
+
+
+            const url =
+                new URL(
+                    href,
+                    window.location.href
+                );
+
+
+            url.searchParams.set(
+                "agencia",
+                slug
+            );
+
+
+            const parametros =
+                url.searchParams.toString();
+
+
+            enlace.setAttribute(
+                "href",
+                parametros
+                    ? `vehiculos.html?${parametros}`
+                    : "vehiculos.html"
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ERROR AL CARGAR CATÁLOGO
+========================================================= */
+
+function mostrarErrorCargaCatalogo(
+    mensaje
+) {
+
+    const contenedor =
+        document.getElementById(
+            "contenedor-todos-vehiculos"
+        );
+
+
+    const cantidadVehiculos =
+        document.getElementById(
+            "cantidad-vehiculos"
+        );
+
+
+    const sinResultados =
+        document.getElementById(
+            "sin-resultados"
+        );
+
+
+    if (contenedor) {
+
+        contenedor.innerHTML = "";
+
+    }
+
+
+    if (cantidadVehiculos) {
+
+        cantidadVehiculos.textContent =
+            "0 vehículos";
+
+    }
+
+
+    if (sinResultados) {
+
+        const titulo =
+            sinResultados.querySelector(
+                "h3"
+            );
+
+
+        const texto =
+            sinResultados.querySelector(
+                "p"
+            );
+
+
+        const boton =
+            sinResultados.querySelector(
+                "#boton-restablecer-resultados"
+            );
+
+
+        if (titulo) {
+
+            titulo.textContent =
+                "No fue posible cargar el catálogo";
+
+        }
+
+
+        if (texto) {
+
+            texto.textContent =
+                mensaje;
+
+        }
+
+
+        if (boton) {
+
+            boton.style.display =
+                "none";
+
+        }
+
+
+        sinResultados.classList.add(
+            "visible"
+        );
+
+    }
+
+
+    if (
+        typeof mostrarNotificacion ===
+        "function"
+    ) {
+
+        mostrarNotificacion(
+            "Catálogo no disponible",
+            mensaje
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   CLAVE DE FAVORITOS POR AGENCIA
+========================================================= */
+
+function obtenerClaveFavoritos() {
+
+    const slug =
+        agenciaCatalogo?.slug ||
+        obtenerSlugAgenciaCatalogo();
+
+
+    return `autorentcarFavoritos:${slug}`;
+
+}
 /* =========================================================
    FAVORITOS
 ========================================================= */
 
-let favoritos = obtenerFavoritosGuardados();
+let favoritos = [];
 
 function obtenerFavoritosGuardados() {
     const contenido = localStorage.getItem(
-        "autorentcarFavoritos"
-    );
+    obtenerClaveFavoritos()
+);
 
     if (!contenido) {
         return [];
@@ -249,8 +457,8 @@ function obtenerFavoritosGuardados() {
         );
 
         localStorage.removeItem(
-            "autorentcarFavoritos"
-        );
+    obtenerClaveFavoritos()
+);
 
         return [];
     }
@@ -259,9 +467,9 @@ function obtenerFavoritosGuardados() {
 function guardarFavoritos() {
     try {
         localStorage.setItem(
-            "autorentcarFavoritos",
-            JSON.stringify(favoritos)
-        );
+    obtenerClaveFavoritos(),
+    JSON.stringify(favoritos)
+);
     } catch (error) {
         console.error(
             "No fue posible guardar los favoritos.",
@@ -279,10 +487,31 @@ function guardarFavoritos() {
    INICIAR
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
-    mostrarVehiculosDestacados();
-    configurarCatalogoVehiculos();
-});
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+        const catalogoCargado =
+            await cargarCatalogoDesdeAPI();
+
+
+        if (!catalogoCargado) {
+
+            return;
+
+        }
+
+
+        favoritos =
+            obtenerFavoritosGuardados();
+
+
+        mostrarVehiculosDestacados();
+
+        configurarCatalogoVehiculos();
+
+    }
+);
 
 /* =========================================================
    CREAR TARJETA
@@ -692,10 +921,14 @@ function seleccionarVehiculo(id) {
     }
 
     try {
-        localStorage.setItem(
-            "autorentcarVehiculoSeleccionado",
-            JSON.stringify(vehiculo)
-        );
+        const claveVehiculoSeleccionado =
+    `autorentcarVehiculoSeleccionado:${vehiculo.agenciaSlug}`;
+
+
+localStorage.setItem(
+    claveVehiculoSeleccionado,
+    JSON.stringify(vehiculo)
+);
     } catch (error) {
         console.error(
             "No fue posible guardar el vehículo seleccionado.",
@@ -723,9 +956,18 @@ function seleccionarVehiculo(id) {
     );
 
     setTimeout(() => {
-        window.location.href =
-            "reserva.html";
-    }, 700);
+
+    const slugAgencia =
+        vehiculo.agenciaSlug ||
+        obtenerSlugAgenciaCatalogo();
+
+
+    window.location.href =
+        `reserva.html?agencia=${encodeURIComponent(
+            slugAgencia
+        )}`;
+
+  }, 700);
 }
 
 /* =========================================================

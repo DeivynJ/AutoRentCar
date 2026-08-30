@@ -5,9 +5,54 @@
 let ultimaReservacion = null;
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    actualizarEnlacesAgenciaConfirmacion();
+
     cargarConfirmacionReserva();
+
     configurarAccionesConfirmacion();
+
 });
+
+/* =========================================================
+   CONTEXTO DE AGENCIA
+========================================================= */
+
+function obtenerSlugAgenciaConfirmacion() {
+
+    const parametros =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const slug =
+        String(
+            parametros.get("agencia") ||
+            "autorentcar"
+        )
+            .trim()
+            .toLowerCase();
+
+
+    return slug ||
+        "autorentcar";
+
+}
+
+
+function obtenerClaveUltimaReservacionConfirmacion() {
+
+    return `autorentcarUltimaReservacion:${obtenerSlugAgenciaConfirmacion()}`;
+
+}
+
+
+function obtenerClaveReservacionesConfirmacion() {
+
+    return `autorentcarReservaciones:${obtenerSlugAgenciaConfirmacion()}`;
+
+}
 
 /* =========================================================
    CARGAR LA ÚLTIMA RESERVACIÓN
@@ -15,8 +60,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function cargarConfirmacionReserva() {
     const reservacionGuardada = localStorage.getItem(
-        "autorentcarUltimaReservacion"
-    );
+    obtenerClaveUltimaReservacionConfirmacion()
+);
 
     const contenido = document.getElementById(
         "confirmacion-contenido"
@@ -48,6 +93,37 @@ function cargarConfirmacionReserva() {
         return;
     }
 
+    const slugAgenciaActual =
+    obtenerSlugAgenciaConfirmacion();
+
+
+if (
+    ultimaReservacion?.agencia?.slug &&
+    ultimaReservacion.agencia.slug !==
+        slugAgenciaActual
+) {
+
+    console.error(
+        "La reservación pertenece a otra agencia."
+    );
+
+
+    ultimaReservacion = null;
+
+
+    sinDatos?.classList.add(
+        "visible"
+    );
+
+    contenido?.classList.remove(
+        "visible"
+    );
+
+
+    return;
+
+}
+
     if (
         !ultimaReservacion ||
         !ultimaReservacion.vehiculo ||
@@ -65,6 +141,156 @@ function cargarConfirmacionReserva() {
     contenido?.classList.add("visible");
 
     mostrarDatosConfirmacion();
+}
+/* =========================================================
+   CONSERVAR AGENCIA EN LA NAVEGACIÓN
+========================================================= */
+
+function actualizarEnlacesAgenciaConfirmacion() {
+
+    const slug =
+        obtenerSlugAgenciaConfirmacion();
+
+
+    const paginasPublicas =
+        new Set(
+            [
+                "index.html",
+                "vehiculos.html",
+                "reserva.html",
+                "confirmacion.html",
+                "mis-reservas.html",
+                "nosotros.html",
+                "contacto.html"
+            ]
+        );
+
+
+    const enlaces =
+        document.querySelectorAll(
+            "a[href]"
+        );
+
+
+    enlaces.forEach(
+        (enlace) => {
+
+            const href =
+                enlace.getAttribute(
+                    "href"
+                );
+
+
+            if (!href) {
+
+                return;
+
+            }
+
+
+            /*
+             * Servicios pertenece a una sección
+             * de la página de Inicio.
+             */
+
+            if (
+                href === "#servicios" ||
+                href === "index.html#servicios"
+            ) {
+
+                enlace.setAttribute(
+                    "href",
+                    `index.html?agencia=${encodeURIComponent(
+                        slug
+                    )}#servicios`
+                );
+
+
+                return;
+
+            }
+
+
+            if (
+                href.startsWith("#") ||
+                href.startsWith("mailto:") ||
+                href.startsWith("tel:") ||
+                href.startsWith("javascript:")
+            ) {
+
+                return;
+
+            }
+
+
+            let url;
+
+
+            try {
+
+                url =
+                    new URL(
+                        href,
+                        window.location.href
+                    );
+
+            } catch (error) {
+
+                return;
+
+            }
+
+
+            /*
+             * No modificamos WhatsApp,
+             * redes sociales ni sitios externos.
+             */
+
+            if (
+                url.origin !==
+                window.location.origin
+            ) {
+
+                return;
+
+            }
+
+
+            const partesRuta =
+                url.pathname.split("/");
+
+
+            const nombreArchivo =
+                partesRuta[
+                    partesRuta.length - 1
+                ];
+
+
+            if (
+                !paginasPublicas.has(
+                    nombreArchivo
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            url.searchParams.set(
+                "agencia",
+                slug
+            );
+
+
+            enlace.setAttribute(
+                "href",
+                `${url.pathname}${url.search}${url.hash}`
+            );
+
+        }
+    );
+
 }
 
 /* =========================================================
