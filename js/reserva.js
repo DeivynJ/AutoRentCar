@@ -70,6 +70,912 @@ function obtenerClaveUltimaReservacionReserva() {
 }
 
 /* =========================================================
+   API DE DISPONIBILIDAD
+========================================================= */
+
+async function consultarDisponibilidadServidorReserva() {
+
+    if (!vehiculoReserva) {
+
+        throw new Error(
+            "No hay un modelo seleccionado para consultar disponibilidad."
+        );
+
+    }
+
+
+    const slug =
+        obtenerSlugAgenciaReserva();
+
+
+    const modeloId =
+        Number(
+            vehiculoReserva.id
+        );
+
+
+    const cantidad =
+        obtenerCantidadVehiculosSeleccionada();
+
+
+    const fechaRecogida =
+        obtenerValorCampo(
+            "reserva-fecha-recogida"
+        );
+
+
+    const horaRecogida =
+        obtenerValorCampo(
+            "reserva-hora-recogida"
+        );
+
+
+    const fechaEntrega =
+        obtenerValorCampo(
+            "reserva-fecha-entrega"
+        );
+
+
+    const horaEntrega =
+        obtenerValorCampo(
+            "reserva-hora-entrega"
+        );
+
+
+    if (
+        !Number.isInteger(modeloId) ||
+        modeloId < 1
+    ) {
+
+        throw new Error(
+            "El modelo seleccionado no tiene un identificador válido."
+        );
+
+    }
+
+
+    const parametros =
+        new URLSearchParams({
+
+            modeloId:
+                String(
+                    modeloId
+                ),
+
+            cantidad:
+                String(
+                    cantidad
+                ),
+
+            fechaRecogida,
+
+            horaRecogida,
+
+            fechaEntrega,
+
+            horaEntrega
+
+        });
+
+
+    const respuesta =
+        await fetch(
+            `/api/agencias/${encodeURIComponent(
+                slug
+            )}/disponibilidad?${parametros.toString()}`,
+            {
+                method:
+                    "GET",
+
+                headers: {
+                    Accept:
+                        "application/json"
+                }
+            }
+        );
+
+
+    const datos =
+        await respuesta
+            .json()
+            .catch(
+                () => null
+            );
+
+
+    if (
+        !respuesta.ok ||
+        !datos ||
+        datos.ok !== true
+    ) {
+
+        throw new Error(
+            datos?.mensaje ||
+            "No fue posible consultar la disponibilidad."
+        );
+
+    }
+
+
+    const cantidadDisponible =
+        Number(
+            datos.cantidadDisponible
+        );
+
+
+    if (
+        !Number.isInteger(
+            cantidadDisponible
+        ) ||
+        cantidadDisponible < 0
+    ) {
+
+        throw new Error(
+            "El servidor devolvió una disponibilidad no válida."
+        );
+
+    }
+
+
+    return datos;
+
+}
+
+async function actualizarDisponibilidadServidorReserva() {
+
+    if (!vehiculoReserva) {
+        cantidadDisponibleReserva = 0;
+
+        mostrarEstadoDisponibilidadReserva();
+        actualizarControlesCantidad();
+        actualizarResumenReserva();
+
+        return;
+    }
+
+    const fechaRecogida =
+        obtenerValorCampo(
+            "reserva-fecha-recogida"
+        );
+
+    const horaRecogida =
+        obtenerValorCampo(
+            "reserva-hora-recogida"
+        );
+
+    const fechaEntrega =
+        obtenerValorCampo(
+            "reserva-fecha-entrega"
+        );
+
+    const horaEntrega =
+        obtenerValorCampo(
+            "reserva-hora-entrega"
+        );
+
+    if (
+        !fechaRecogida ||
+        !horaRecogida ||
+        !fechaEntrega ||
+        !horaEntrega
+    ) {
+        return;
+    }
+
+    try {
+
+        const datos =
+            await consultarDisponibilidadServidorReserva();
+
+        cantidadDisponibleReserva =
+            Number(
+                datos.cantidadDisponible
+            );
+
+        const cantidadSeleccionada =
+            obtenerCantidadVehiculosSeleccionada();
+
+        if (
+            cantidadDisponibleReserva > 0 &&
+            cantidadSeleccionada >
+                cantidadDisponibleReserva
+        ) {
+            cantidadVehiculosReserva =
+                cantidadDisponibleReserva;
+
+            const campoCantidad =
+                document.getElementById(
+                    "reserva-cantidad-vehiculos"
+                );
+
+            if (campoCantidad) {
+                campoCantidad.value =
+                    String(
+                        cantidadVehiculosReserva
+                    );
+            }
+        }
+
+        if (cantidadDisponibleReserva < 1) {
+            cantidadVehiculosReserva = 1;
+
+            const campoCantidad =
+                document.getElementById(
+                    "reserva-cantidad-vehiculos"
+                );
+
+            if (campoCantidad) {
+                campoCantidad.value = "1";
+            }
+        }
+
+        mostrarEstadoDisponibilidadReserva();
+        actualizarControlesCantidad();
+        actualizarResumenReserva();
+
+    } catch (error) {
+
+        console.error(
+            "No se pudo actualizar la disponibilidad desde el servidor.",
+            error
+        );
+
+    }
+
+}
+
+/* =========================================================
+   DATOS PARA CREAR LA RESERVACIÓN EN EL SERVIDOR
+
+   Solo se envían datos introducidos o seleccionados
+   por el cliente.
+
+   NO se envían como autoridad:
+   - agenciaId
+   - precio
+   - subtotal
+   - descuento
+   - total
+   - disponibilidad
+   - estado
+   - origen
+   - código de reservación
+========================================================= */
+
+function construirDatosReservacionServidor(
+    reservacion
+) {
+
+    if (
+        !reservacion ||
+        !vehiculoReserva
+    ) {
+
+        return null;
+
+    }
+
+
+    const adicionales =
+        Array.from(
+            document.querySelectorAll(
+                ".opcion-adicional input:checked"
+            )
+        )
+            .map(
+                (opcion) =>
+                    String(
+                        opcion.id ||
+                        ""
+                    )
+                        .trim()
+                        .toLowerCase()
+            )
+            .filter(Boolean);
+
+
+    return {
+
+        modeloId:
+            Number(
+                vehiculoReserva.id
+            ),
+
+
+        cantidad:
+            Number(
+                reservacion
+                    .cantidadVehiculos
+            ),
+
+
+        lugarRecogida:
+            reservacion
+                .lugarRecogida,
+
+
+        lugarEntrega:
+            reservacion
+                .lugarEntrega,
+
+
+        fechaRecogida:
+            reservacion
+                .fechaRecogida,
+
+
+        horaRecogida:
+            reservacion
+                .horaRecogida,
+
+
+        fechaEntrega:
+            reservacion
+                .fechaEntrega,
+
+
+        horaEntrega:
+            reservacion
+                .horaEntrega,
+
+
+        cliente: {
+
+            nombre:
+                reservacion
+                    .cliente
+                    .nombre,
+
+            documento:
+                reservacion
+                    .cliente
+                    .documento,
+
+            correo:
+                reservacion
+                    .cliente
+                    .correo,
+
+            telefono:
+                reservacion
+                    .cliente
+                    .telefono,
+
+            edad:
+                Number(
+                    reservacion
+                        .cliente
+                        .edad
+                ),
+
+            licencia:
+                reservacion
+                    .cliente
+                    .licencia
+
+        },
+
+
+        adicionales,
+
+
+        codigoPromocional:
+            reservacion
+                .codigoPromocional ||
+            "",
+
+
+        comentarios:
+            reservacion
+                .comentarios ||
+            ""
+
+    };
+
+}
+
+
+/* =========================================================
+   CREAR RESERVACIÓN REAL EN MARIADB
+========================================================= */
+
+async function crearReservacionServidorReserva(
+    reservacion
+) {
+
+    const datosEnvio =
+        construirDatosReservacionServidor(
+            reservacion
+        );
+
+
+    if (!datosEnvio) {
+
+        throw new Error(
+            "No fue posible preparar los datos de la reservación."
+        );
+
+    }
+
+
+    const slug =
+        obtenerSlugAgenciaReserva();
+
+
+    const respuesta =
+        await fetch(
+            `/api/agencias/${encodeURIComponent(
+                slug
+            )}/reservaciones`,
+            {
+
+                method:
+                    "POST",
+
+
+                headers: {
+
+                    Accept:
+                        "application/json",
+
+                    "Content-Type":
+                        "application/json"
+
+                },
+
+
+                body:
+                    JSON.stringify(
+                        datosEnvio
+                    )
+
+            }
+        );
+
+
+    const datos =
+        await respuesta
+            .json()
+            .catch(
+                () => null
+            );
+
+
+    if (
+        !respuesta.ok ||
+        !datos ||
+        datos.ok !== true
+    ) {
+
+        const error =
+            new Error(
+                datos?.mensaje ||
+                "No fue posible crear la reservación."
+            );
+
+
+        error.codigo =
+            datos?.codigo ||
+            "ERROR_RESERVACION";
+
+
+        if (
+            datos?.cantidadDisponible !==
+            undefined
+        ) {
+
+            error.cantidadDisponible =
+                Number(
+                    datos
+                        .cantidadDisponible
+                );
+
+        }
+
+
+        throw error;
+
+    }
+
+
+    if (
+        !datos.reservacion ||
+        !datos.reservacion.id ||
+        !datos.reservacion.codigo
+    ) {
+
+        throw new Error(
+            "El servidor no devolvió una reservación válida."
+        );
+
+    }
+
+
+    return datos.reservacion;
+
+}
+
+/* =========================================================
+   SINCRONIZAR RESERVACIÓN LOCAL CON MARIADB
+
+   Conserva la estructura que actualmente utilizan
+   confirmacion.js y mis-reservas.js, pero reemplaza
+   los valores importantes por los calculados y
+   devueltos por el backend.
+========================================================= */
+
+function aplicarReservacionServidorEnLocal(
+    reservacionLocal,
+    reservacionServidor
+) {
+
+    if (
+        !reservacionLocal ||
+        !reservacionServidor
+    ) {
+
+        throw new Error(
+            "No fue posible sincronizar la reservación creada."
+        );
+
+    }
+
+
+    const precioDiario =
+        Number(
+            reservacionServidor
+                .precioDiario
+        );
+
+
+    const subtotal =
+        Number(
+            reservacionServidor
+                .subtotal
+        );
+
+
+    const costoAdicionales =
+        Number(
+            reservacionServidor
+                .costoAdicionales
+        );
+
+
+    const descuento =
+        Number(
+            reservacionServidor
+                .descuento
+        );
+
+
+    const total =
+        Number(
+            reservacionServidor
+                .total
+        );
+
+
+    /* -----------------------------------------------------
+       IDENTIFICACIÓN REAL DE MARIADB
+    ----------------------------------------------------- */
+
+    reservacionLocal.id =
+        Number(
+            reservacionServidor.id
+        );
+
+
+    reservacionLocal.codigo =
+        String(
+            reservacionServidor.codigo
+        );
+
+
+    /* -----------------------------------------------------
+       ESTADO
+
+       Conservamos el texto amigable para las pantallas
+       actuales y guardamos también el estado real del
+       backend para la migración posterior.
+    ----------------------------------------------------- */
+
+    reservacionLocal.estadoServidor =
+        reservacionServidor.estado ||
+        "pendiente";
+
+
+    reservacionLocal.estado =
+        reservacionServidor.estado ===
+            "pendiente"
+            ? "Pendiente de confirmación"
+            : reservacionServidor.estado;
+
+
+    /* -----------------------------------------------------
+       AGENCIA
+
+       Conservamos agencia.id del objeto público actual,
+       pero slug y nombre se toman de la respuesta validada.
+    ----------------------------------------------------- */
+
+    reservacionLocal.agencia = {
+
+        ...reservacionLocal.agencia,
+
+        nombre:
+            reservacionServidor
+                .agencia
+                ?.nombre ||
+            reservacionLocal
+                .agencia
+                ?.nombre ||
+            "",
+
+        slug:
+            reservacionServidor
+                .agencia
+                ?.slug ||
+            reservacionLocal
+                .agencia
+                ?.slug ||
+            obtenerSlugAgenciaReserva()
+
+    };
+
+
+    /* -----------------------------------------------------
+       MODELO / VEHÍCULO PÚBLICO
+
+       Se conserva imagen, categoría y demás información
+       pública que ya utiliza el frontend.
+    ----------------------------------------------------- */
+
+    reservacionLocal.vehiculo = {
+
+        ...reservacionLocal.vehiculo,
+
+        id:
+            Number(
+                reservacionServidor
+                    .modelo
+                    ?.id ||
+                reservacionLocal
+                    .vehiculo
+                    ?.id
+            ),
+
+        nombre:
+            reservacionServidor
+                .modelo
+                ?.nombre ||
+            reservacionLocal
+                .vehiculo
+                ?.nombre ||
+            "",
+
+        marca:
+            reservacionServidor
+                .modelo
+                ?.marca ||
+            reservacionLocal
+                .vehiculo
+                ?.marca ||
+            "",
+
+        precio:
+            precioDiario
+
+    };
+
+
+    /* -----------------------------------------------------
+       CANTIDAD Y PERÍODO
+    ----------------------------------------------------- */
+
+    reservacionLocal.cantidadVehiculos =
+        Number(
+            reservacionServidor
+                .cantidadVehiculos
+        );
+
+
+    reservacionLocal.fechaRecogida =
+        reservacionServidor
+            .periodo
+            ?.fechaRecogida ||
+        reservacionLocal
+            .fechaRecogida;
+
+
+    reservacionLocal.horaRecogida =
+        reservacionServidor
+            .periodo
+            ?.horaRecogida ||
+        reservacionLocal
+            .horaRecogida;
+
+
+    reservacionLocal.fechaEntrega =
+        reservacionServidor
+            .periodo
+            ?.fechaEntrega ||
+        reservacionLocal
+            .fechaEntrega;
+
+
+    reservacionLocal.horaEntrega =
+        reservacionServidor
+            .periodo
+            ?.horaEntrega ||
+        reservacionLocal
+            .horaEntrega;
+
+
+    /* -----------------------------------------------------
+       LUGARES
+    ----------------------------------------------------- */
+
+    reservacionLocal.lugarRecogida =
+        reservacionServidor
+            .lugarRecogida ||
+        reservacionLocal
+            .lugarRecogida;
+
+
+    reservacionLocal.lugarEntrega =
+        reservacionServidor
+            .lugarEntrega ||
+        reservacionLocal
+            .lugarEntrega;
+
+
+    /* -----------------------------------------------------
+       CLIENTE
+
+       El endpoint público no devuelve documento ni
+       licencia. Se mantienen los que el cliente escribió
+       para las pantallas locales actuales.
+    ----------------------------------------------------- */
+
+    reservacionLocal.cliente = {
+
+        ...reservacionLocal.cliente,
+
+        nombre:
+            reservacionServidor
+                .cliente
+                ?.nombre ||
+            reservacionLocal
+                .cliente
+                ?.nombre ||
+            "",
+
+        correo:
+            reservacionServidor
+                .cliente
+                ?.correo ||
+            reservacionLocal
+                .cliente
+                ?.correo ||
+            "",
+
+        telefono:
+            reservacionServidor
+                .cliente
+                ?.telefono ||
+            reservacionLocal
+                .cliente
+                ?.telefono ||
+            ""
+
+    };
+
+
+    /* -----------------------------------------------------
+       ADICIONALES
+
+       Aquí ya usamos precio y costo calculados
+       por el backend.
+    ----------------------------------------------------- */
+
+    reservacionLocal.adicionales =
+        Array.isArray(
+            reservacionServidor
+                .adicionales
+        )
+            ? reservacionServidor
+                .adicionales
+                .map(
+                    (adicional) => ({
+
+                        codigo:
+                            adicional.codigo,
+
+                        nombre:
+                            adicional.nombre,
+
+                        precioDiario:
+                            Number(
+                                adicional
+                                    .precioDiario
+                            ),
+
+                        aplicaPorVehiculo:
+                            true,
+
+                        cantidadVehiculos:
+                            Number(
+                                adicional
+                                    .cantidadVehiculos
+                            ),
+
+                        dias:
+                            Number(
+                                adicional.dias
+                            ),
+
+                        costoTotal:
+                            Number(
+                                adicional
+                                    .costoTotal
+                            )
+
+                    })
+                )
+            : [];
+
+
+    /* -----------------------------------------------------
+       IMPORTES REALES
+    ----------------------------------------------------- */
+
+    reservacionLocal.codigoPromocional =
+        reservacionServidor
+            .codigoPromocional ||
+        null;
+
+
+    reservacionLocal.dias =
+        Number(
+            reservacionServidor.dias
+        );
+
+
+    reservacionLocal.precioDiario =
+        precioDiario;
+
+
+    reservacionLocal.subtotal =
+        subtotal;
+
+
+    reservacionLocal.costoAdicionales =
+        costoAdicionales;
+
+
+    reservacionLocal.descuento =
+        descuento;
+
+
+    reservacionLocal.total =
+        total;
+
+
+    reservacionLocal.porcentajeDescuento =
+        subtotal > 0
+            ? (
+                descuento /
+                subtotal
+            ) * 100
+            : 0;
+
+
+    return reservacionLocal;
+
+}
+
+/* =========================================================
    CARGAR VEHÍCULO SELECCIONADO
 ========================================================= */
 
@@ -337,12 +1243,32 @@ function configurarFechasReserva() {
         actualizarResumenReserva();
     });
 
-    entrega.addEventListener("change", () => {
-        actualizarDisponibilidadReserva();
+        entrega.addEventListener("change", () => {
+        actualizarDisponibilidadServidorReserva();
         actualizarResumenReserva();
     });
 
-    actualizarDisponibilidadReserva();
+        const horaRecogida =
+        document.getElementById(
+            "reserva-hora-recogida"
+        );
+
+    const horaEntrega =
+        document.getElementById(
+            "reserva-hora-entrega"
+        );
+
+    horaRecogida?.addEventListener(
+        "change",
+        actualizarDisponibilidadServidorReserva
+    );
+
+    horaEntrega?.addEventListener(
+        "change",
+        actualizarDisponibilidadServidorReserva
+    );
+
+    actualizarDisponibilidadServidorReserva();
     actualizarResumenReserva();
 }
 
@@ -1174,7 +2100,7 @@ function configurarEnvioReservacion() {
 
     formulario.addEventListener(
         "submit",
-        (evento) => {
+        async (evento) => {
             evento.preventDefault();
 
             if (reservacionEnProceso) {
@@ -1189,8 +2115,6 @@ function configurarEnvioReservacion() {
 
                 return;
             }
-
-            actualizarDisponibilidadReserva();
 
             let formularioValido = true;
 
@@ -1286,24 +2210,55 @@ function configurarEnvioReservacion() {
              * Se comprueba nuevamente justo antes
              * de guardar para evitar inconsistencias.
              */
-            const disponibilidadFinal =
-                calcularCantidadDisponibleReserva();
+            let disponibilidadFinalServidor;
 
-            if (
-                reservacion.cantidadVehiculos >
-                disponibilidadFinal
-            ) {
-                mostrarNotificacion(
-                    "Disponibilidad actualizada",
-                    `La disponibilidad cambió. Ahora solo quedan ${formatearCantidadVehiculos(
-                        disponibilidadFinal
-                    )}.`
-                );
+try {
 
-                actualizarDisponibilidadReserva();
+    disponibilidadFinalServidor =
+        await consultarDisponibilidadServidorReserva();
 
-                return;
-            }
+} catch (error) {
+
+    console.error(
+        "No se pudo verificar la disponibilidad final.",
+        error
+    );
+
+    mostrarNotificacion(
+        "No se pudo verificar disponibilidad",
+        "No fue posible comprobar la disponibilidad con el servidor. Inténtalo nuevamente."
+    );
+
+    return;
+}
+
+
+cantidadDisponibleReserva =
+    Number(
+        disponibilidadFinalServidor.cantidadDisponible
+    );
+
+
+mostrarEstadoDisponibilidadReserva();
+actualizarControlesCantidad();
+actualizarResumenReserva();
+
+
+if (
+    !disponibilidadFinalServidor.suficiente ||
+    reservacion.cantidadVehiculos >
+        cantidadDisponibleReserva
+) {
+
+    mostrarNotificacion(
+        "Disponibilidad actualizada",
+        `La disponibilidad cambió. Ahora solo quedan ${formatearCantidadVehiculos(
+            cantidadDisponibleReserva
+        )}.`
+    );
+
+    return;
+}
 
             reservacionEnProceso = true;
 
@@ -1321,68 +2276,161 @@ function configurarEnvioReservacion() {
                 `;
             }
 
-            try {
-                const guardadas =
-                    obtenerReservacionesGuardadas();
+           /* ---------------------------------------------------------
+   CREAR PRIMERO EN MARIADB
+--------------------------------------------------------- */
 
-                guardadas.push(reservacion);
+let reservacionServidor;
 
-                localStorage.setItem(
-    obtenerClaveReservacionesReserva(),
-    JSON.stringify(guardadas)
+try {
+
+    reservacionServidor =
+        await crearReservacionServidorReserva(
+            reservacion
+        );
+
+} catch (error) {
+
+    reservacionEnProceso =
+        false;
+
+    if (botonConfirmar) {
+
+        botonConfirmar.disabled =
+            false;
+
+        botonConfirmar.innerHTML = `
+            Confirmar reservación
+            <i class="fa-solid fa-arrow-right"></i>
+        `;
+
+    }
+
+    console.error(
+        "No fue posible crear la reservación en el servidor.",
+        error
+    );
+
+    if (
+        error.codigo ===
+            "DISPONIBILIDAD_INSUFICIENTE" &&
+        Number.isInteger(
+            error.cantidadDisponible
+        )
+    ) {
+
+        cantidadDisponibleReserva =
+            error.cantidadDisponible;
+
+        mostrarEstadoDisponibilidadReserva();
+        actualizarControlesCantidad();
+        actualizarResumenReserva();
+
+        mostrarNotificacion(
+            "Disponibilidad actualizada",
+            `La disponibilidad cambió. Ahora solo quedan ${formatearCantidadVehiculos(
+                cantidadDisponibleReserva
+            )}.`
+        );
+
+        return;
+
+    }
+
+    mostrarNotificacion(
+        "No se pudo registrar",
+        error.message ||
+        "No fue posible crear la reservación. Inténtalo nuevamente."
+    );
+
+    return;
+
+}
+
+
+/* ---------------------------------------------------------
+   MARIADB YA CONFIRMÓ LA RESERVACIÓN
+--------------------------------------------------------- */
+
+aplicarReservacionServidorEnLocal(
+    reservacion,
+    reservacionServidor
 );
 
-                localStorage.setItem(
-    obtenerClaveUltimaReservacionReserva(),
-    JSON.stringify(reservacion)
+
+/* ---------------------------------------------------------
+   CONSERVAR TEMPORALMENTE EL FLUJO LOCAL
+--------------------------------------------------------- */
+
+try {
+
+    const guardadas =
+        obtenerReservacionesGuardadas();
+
+    guardadas.push(
+        reservacion
+    );
+
+    localStorage.setItem(
+        obtenerClaveReservacionesReserva(),
+        JSON.stringify(
+            guardadas
+        )
+    );
+
+    localStorage.setItem(
+        obtenerClaveUltimaReservacionReserva(),
+        JSON.stringify(
+            reservacion
+        )
+    );
+
+    localStorage.removeItem(
+        obtenerClaveVehiculoSeleccionadoReserva()
+    );
+
+} catch (errorLocal) {
+
+    console.error(
+        "La reservación fue creada en MariaDB, pero no pudo guardarse la copia local.",
+        errorLocal
+    );
+
+    mostrarNotificacion(
+        "Reservación creada",
+        `Tu solicitud ${reservacion.codigo} fue creada correctamente, pero no fue posible guardar la copia local en este navegador. Conserva este código.`
+    );
+
+    return;
+
+}
+
+
+/* ---------------------------------------------------------
+   ÉXITO COMPLETO
+--------------------------------------------------------- */
+
+mostrarNotificacion(
+    "Reservación registrada",
+    `Tu solicitud ${reservacion.codigo} para ${formatearCantidadVehiculos(
+        reservacion.cantidadVehiculos
+    )} fue registrada correctamente.`
 );
 
-                localStorage.removeItem(
-    obtenerClaveVehiculoSeleccionadoReserva()
+setTimeout(
+    () => {
+
+        const slugAgencia =
+            obtenerSlugAgenciaReserva();
+
+        window.location.href =
+            `confirmacion.html?agencia=${encodeURIComponent(
+                slugAgencia
+            )}`;
+
+    },
+    1200
 );
-
-                mostrarNotificacion(
-                    "Reservación registrada",
-                    `Tu solicitud ${reservacion.codigo} para ${formatearCantidadVehiculos(
-                        reservacion.cantidadVehiculos
-                    )} fue registrada correctamente.`
-                );
-
-                setTimeout(() => {
-
-    const slugAgencia =
-        obtenerSlugAgenciaReserva();
-
-
-    window.location.href =
-        `confirmacion.html?agencia=${encodeURIComponent(
-            slugAgencia
-        )}`;
-
-}, 1200);
-            } catch (error) {
-                reservacionEnProceso = false;
-
-                if (botonConfirmar) {
-                    botonConfirmar.disabled =
-                        false;
-
-                    botonConfirmar.innerHTML = `
-                        Confirmar reservación
-                        <i class="fa-solid fa-arrow-right"></i>
-                    `;
-                }
-
-                console.error(
-                    "No fue posible guardar la reservación.",
-                    error
-                );
-
-                mostrarNotificacion(
-                    "Error al registrar",
-                    "No fue posible guardar la reservación. Inténtalo nuevamente."
-                );
-            }
         }
     );
 }

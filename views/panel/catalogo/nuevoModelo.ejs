@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <%- include("../partials/tema") %>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+    <div class="panel-shell">
+
+        <%- include("../partials/sidebar") %>
+
+
+        <div class="panel-content-wrapper">
+
+            <%- include("../partials/header") %>
+
+
+            <main class="panel-main">
+
+
+                <!-- VOLVER -->
+
+                <div class="panel-form-back">
+
+                    <a href="/panel/catalogo">
+
+                        <i class="fa-solid fa-arrow-left"></i>
+
+                        Volver al catálogo
+
+                    </a>
+
+                </div>
+
+
+                <!-- HERO -->
+
+                <section class="panel-module-hero panel-form-hero">
+
+                    <div>
+
+                        <span class="panel-module-badge">
+
+                            <i class="fa-solid fa-plus"></i>
+
+                            Nuevo modelo
+
+                        </span>
+
+
+                        <h2>
+                            Registrar vehículo en el catálogo
+                        </h2>
+
+
+                        <p>
+                            Agrega la información comercial del
+                            modelo que será utilizado por
+                            <strong>
+                                <%= agencia.nombre %>
+                            </strong>.
+                        </p>
+
+                    </div>
+
+
+                    <div class="panel-form-hero-icon">
+
+                        <i class="fa-solid fa-car-side"></i>
+
+                    </div>
+
+                </section>
+
+
+                <% if (error) { %>
+
+                    <div class="panel-alert panel-alert-danger">
+
+                        <i class="fa-solid fa-circle-exclamation"></i>
+
+                        <div>
+
+                            <strong>
+                                No fue posible guardar el modelo
+                            </strong>
+
+                            <span>
+                                <%= error %>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+
+                <!-- FORMULARIO -->
+
+                <form
+                    action="/panel/catalogo/modelos/nuevo"
+                    method="POST"
+                    class="panel-model-form"
+                >
+
+                    <!-- INFORMACIÓN PRINCIPAL -->
+
+                    <section class="panel-form-card">
+
+                        <div class="panel-form-card-header">
+
+                            <span class="panel-form-card-icon">
+
+                                <i class="fa-solid fa-car"></i>
+
+                            </span>
+
+                            <div>
+
+                                <span>
+                                    Información principal
+                                </span>
+
+                                <h3>
+                                    Datos del modelo
+                                </h3>
+
+                                <p>
+                                    Información que identifica
+                                    comercialmente el vehículo.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel-form-grid">
+
+
+                            <div class="panel-form-field">
+
+                                <label for="marca">
+                                    Marca *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="marca"
+                                    name="marca"
+                                    maxlength="80"
+                                    value="<%= datos.marca %>"
+                                    placeholder="Ej.: Toyota"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="nombre">
+                                    Modelo *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="nombre"
+                                    name="nombre"
+                                    maxlength="120"
+                                    value="<%= datos.nombre %>"
+                                    placeholder="Ej.: Corolla"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="anio">
+                                    Año
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="anio"
+                                    name="anio"
+                                    min="1900"
+                                    max="<%= new Date().getFullYear() + 1 %>"
+                                    value="<%= datos.anio %>"
+                                    placeholder="Ej.: 2026"
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="categoria">
+                                    Categoría *
+                                </label>
+
+                                <select
+                                    id="categoria"
+                                    name="categoria"
+                                    required
+                                >
+
+                                    <option
+                                        value="economico"
+                                        <%= datos.categoria === "economico" ? "selected" : "" %>
+                                    >
+                                        Económico
+                                    </option>
+
+                                    <option
+                                        value="gama_media"
+                                        <%= datos.categoria === "gama_media" ? "selected" : "" %>
+                                    >
+                                        Gama media
+                                    </option>
+
+                                    <option
+                                        value="lujo"
+                                        <%= datos.categoria === "lujo" ? "selected" : "" %>
+                                    >
+                                        Vehículo de lujo
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="precio_diario">
+                                    Precio diario (USD) *
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="precio_diario"
+                                    name="precio_diario"
+                                    min="0"
+                                    step="0.01"
+                                    value="<%= datos.precio_diario %>"
+                                    placeholder="Ej.: 50.00"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="estado">
+                                    Estado
+                                </label>
+
+                                <select
+                                    id="estado"
+                                    name="estado"
+                                >
+
+                                    <option
+                                        value="activo"
+                                        <%= datos.estado === "activo" ? "selected" : "" %>
+                                    >
+                                        Activo
+                                    </option>
+
+                                    <option
+                                        value="inactivo"
+                                        <%= datos.estado === "inactivo" ? "selected" : "" %>
+                                    >
+                                        Inactivo
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- CARACTERÍSTICAS -->
+
+                    <section class="panel-form-card">
+
+                        <div class="panel-form-card-header">
+
+                            <span class="panel-form-card-icon">
+
+                                <i class="fa-solid fa-sliders"></i>
+
+                            </span>
+
+                            <div>
+
+                                <span>
+                                    Características
+                                </span>
+
+                                <h3>
+                                    Especificaciones del vehículo
+                                </h3>
+
+                                <p>
+                                    Completa los datos que se
+                                    mostrarán en el catálogo.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel-form-grid">
+
+
+                            <div class="panel-form-field">
+
+                                <label for="transmision">
+                                    Transmisión
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="transmision"
+                                    name="transmision"
+                                    maxlength="50"
+                                    value="<%= datos.transmision %>"
+                                    placeholder="Ej.: Automática"
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="combustible">
+                                    Combustible
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="combustible"
+                                    name="combustible"
+                                    maxlength="50"
+                                    value="<%= datos.combustible %>"
+                                    placeholder="Ej.: Gasolina"
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="pasajeros">
+                                    Pasajeros
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="pasajeros"
+                                    name="pasajeros"
+                                    min="0"
+                                    max="255"
+                                    value="<%= datos.pasajeros %>"
+                                    placeholder="5"
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="puertas">
+                                    Puertas
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="puertas"
+                                    name="puertas"
+                                    min="0"
+                                    max="255"
+                                    value="<%= datos.puertas %>"
+                                    placeholder="4"
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="equipaje">
+                                    Equipaje
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="equipaje"
+                                    name="equipaje"
+                                    min="0"
+                                    max="255"
+                                    value="<%= datos.equipaje %>"
+                                    placeholder="2"
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="aire_acondicionado">
+                                    Aire acondicionado
+                                </label>
+
+                                <select
+                                    id="aire_acondicionado"
+                                    name="aire_acondicionado"
+                                >
+
+                                    <option
+                                        value="1"
+                                        <%= datos.aire_acondicionado === "1" ? "selected" : "" %>
+                                    >
+                                        Sí
+                                    </option>
+
+                                    <option
+                                        value="0"
+                                        <%= datos.aire_acondicionado === "0" ? "selected" : "" %>
+                                    >
+                                        No
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- PRESENTACIÓN -->
+
+                    <section class="panel-form-card">
+
+                        <div class="panel-form-card-header">
+
+                            <span class="panel-form-card-icon">
+
+                                <i class="fa-solid fa-star"></i>
+
+                            </span>
+
+                            <div>
+
+                                <span>
+                                    Presentación
+                                </span>
+
+                                <h3>
+                                    Información del catálogo
+                                </h3>
+
+                                <p>
+                                    Configura cómo se presentará
+                                    comercialmente el modelo.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel-form-grid">
+
+
+                            <div class="panel-form-field">
+
+                                <label for="destacado">
+                                    Destacado
+                                </label>
+
+                                <select
+                                    id="destacado"
+                                    name="destacado"
+                                >
+
+                                    <option
+                                        value="0"
+                                        <%= datos.destacado === "0" ? "selected" : "" %>
+                                    >
+                                        No
+                                    </option>
+
+                                    <option
+                                        value="1"
+                                        <%= datos.destacado === "1" ? "selected" : "" %>
+                                    >
+                                        Sí
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="etiqueta">
+                                    Etiqueta
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="etiqueta"
+                                    name="etiqueta"
+                                    maxlength="80"
+                                    value="<%= datos.etiqueta %>"
+                                    placeholder="Ej.: Recomendado"
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field panel-form-full">
+
+                                <label for="descripcion">
+                                    Descripción
+                                </label>
+
+                                <textarea
+                                    id="descripcion"
+                                    name="descripcion"
+                                    maxlength="500"
+                                    placeholder="Describe brevemente el vehículo..."
+                                ><%= datos.descripcion %></textarea>
+
+                                <small class="panel-field-help">
+                                    Máximo 500 caracteres.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- NOTA -->
+
+                    <div class="panel-form-note">
+
+                        <i class="fa-solid fa-circle-info"></i>
+
+                        <div>
+
+                            <strong>
+                                Modelo comercial
+                            </strong>
+
+                            <p>
+                                Crear un modelo no consume el
+                                límite de vehículos del plan.
+                                Ese límite corresponde a las
+                                unidades físicas que se agreguen
+                                posteriormente.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACCIONES -->
+
+                    <div class="panel-form-actions">
+
+                        <a
+                            href="/panel/catalogo"
+                            class="panel-form-cancel"
+                        >
+                            Cancelar
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="panel-form-submit"
+                        >
+
+                            <i class="fa-solid fa-floppy-disk"></i>
+
+                            Crear modelo
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <footer class="panel-footer">
+
+                    <span>
+                        <%= agencia.nombre %>
+                    </span>
+
+                    <span>
+                        AutoRentCar Platform ·
+                        © <%= new Date().getFullYear() %>
+                    </span>
+
+                </footer>
+
+            </main>
+
+        </div>
+
+    </div>
+
+
+    <script src="/js/panel.js"></script>
+
+</body>
+
+</html>

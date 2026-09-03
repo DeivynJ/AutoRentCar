@@ -315,16 +315,18 @@ async function obtenerCatalogoAgencia(
                     m.imagen,
 
                     COUNT(
-                        CASE
+    CASE
 
-                            WHEN v.estado <> 'inactivo'
-                                THEN 1
+        WHEN v.estado NOT IN (
+            'mantenimiento',
+            'inactivo'
+        )
+            THEN 1
 
-                            ELSE NULL
+        ELSE NULL
 
-                        END
-                    ) AS unidades_activas,
-
+    END
+) AS unidades_activas,
                     COUNT(
                         CASE
 
@@ -371,7 +373,7 @@ async function obtenerCatalogoAgencia(
                     m.imagen
 
                 HAVING
-                    unidades_activas > 0
+                unidades_disponibles > 0
 
                 ORDER BY
 

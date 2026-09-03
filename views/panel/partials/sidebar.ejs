@@ -1,0 +1,298 @@
+<aside
+    class="panel-sidebar"
+    id="panel-sidebar"
+>
+
+    <!-- MARCA -->
+
+    <div class="panel-sidebar-header">
+
+        <a
+            href="/panel"
+            class="panel-brand"
+        >
+
+            <span class="panel-brand-logo">
+
+                <% if (agencia.logo) { %>
+
+                    <img
+                        src="<%= agencia.logo %>"
+                        alt="Logo de <%= agencia.nombre %>"
+                    >
+
+                <% } else { %>
+
+                    <span>
+                        <%= agencia.nombre
+                            .charAt(0)
+                            .toUpperCase() %>
+                    </span>
+
+                <% } %>
+
+            </span>
+
+
+            <span class="panel-brand-info">
+
+                <strong>
+                    <%= agencia.nombre %>
+                </strong>
+
+                <small>
+                    Panel de agencia
+                </small>
+
+            </span>
+
+        </a>
+
+
+        <button
+            type="button"
+            class="panel-sidebar-collapse"
+            id="panel-sidebar-collapse"
+            aria-label="Contraer menú"
+        >
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+    </div>
+
+
+    <!-- USUARIO -->
+
+    <div class="panel-sidebar-user">
+
+        <span class="panel-sidebar-avatar">
+
+            <%= usuario.nombre
+                .charAt(0)
+                .toUpperCase() %>
+
+        </span>
+
+
+        <div class="panel-sidebar-user-info">
+
+            <strong>
+                <%= usuario.nombre %>
+                <%= usuario.apellido || "" %>
+            </strong>
+
+            <span>
+                <%= usuario.rolNombre %>
+            </span>
+
+        </div>
+
+
+        <span
+            class="panel-online-dot"
+            title="Sesión activa"
+        ></span>
+
+    </div>
+
+
+    <!-- NAVEGACIÓN -->
+
+    <nav class="panel-navigation">
+
+        <div class="panel-nav-section">
+
+            <span class="panel-nav-title">
+                Principal
+            </span>
+
+
+            <a
+                href="/panel"
+                class="panel-nav-link <%= paginaActual === 'dashboard' ? 'activo' : '' %>"
+            >
+
+                <span class="panel-nav-icon">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </span>
+
+                <span class="panel-nav-text">
+                    Dashboard
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="panel-nav-section">
+
+            <span class="panel-nav-title">
+                Operaciones
+            </span>
+
+
+            <a
+    href="/panel/reservaciones"
+    class="panel-nav-link <%= paginaActual === 'reservaciones' ? 'activo' : '' %>"
+>
+
+    <span class="panel-nav-icon">
+
+        <i class="fa-solid fa-calendar-check"></i>
+
+    </span>
+
+    <span class="panel-nav-text">
+        Reservaciones
+    </span>
+
+</a>
+
+
+            <a
+    href="/panel/catalogo"
+    class="panel-nav-link <%= paginaActual === 'catalogo' ? 'activo' : '' %>"
+>
+
+    <span class="panel-nav-icon">
+        <i class="fa-solid fa-car-side"></i>
+    </span>
+
+    <span class="panel-nav-text">
+        Catálogo
+    </span>
+
+</a>
+
+
+            <span class="panel-nav-link panel-nav-disabled">
+
+                <span class="panel-nav-icon">
+                    <i class="fa-solid fa-warehouse"></i>
+                </span>
+
+                <span class="panel-nav-text">
+                    Vehículos
+                </span>
+
+            </span>
+
+
+            <span class="panel-nav-link panel-nav-disabled">
+
+                <span class="panel-nav-icon">
+                    <i class="fa-solid fa-users"></i>
+                </span>
+
+                <span class="panel-nav-text">
+                    Clientes
+                </span>
+
+            </span>
+
+
+            <span class="panel-nav-link panel-nav-disabled">
+
+                <span class="panel-nav-icon">
+                    <i class="fa-solid fa-location-dot"></i>
+                </span>
+
+                <span class="panel-nav-text">
+                    Sucursales
+                </span>
+
+            </span>
+
+        </div>
+
+
+        <div class="panel-nav-section">
+
+            <span class="panel-nav-title">
+                Gestión
+            </span>
+
+
+            <span class="panel-nav-link panel-nav-disabled">
+
+                <span class="panel-nav-icon">
+                    <i class="fa-solid fa-chart-line"></i>
+                </span>
+
+                <span class="panel-nav-text">
+                    Reportes
+                </span>
+
+            </span>
+
+
+            <span class="panel-nav-link panel-nav-disabled">
+
+                <span class="panel-nav-icon">
+                    <i class="fa-solid fa-gear"></i>
+                </span>
+
+                <span class="panel-nav-text">
+                    Configuración
+                </span>
+
+            </span>
+
+        </div>
+
+    </nav>
+
+
+    <!-- PIE -->
+
+    <div class="panel-sidebar-footer">
+
+        <div class="panel-plan-box">
+
+            <i class="fa-solid fa-layer-group"></i>
+
+            <div>
+
+                <small>
+                    Plan actual
+                </small>
+
+                <strong>
+                    <%= plan.nombre %>
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <form
+            action="/logout"
+            method="POST"
+        >
+
+            <button
+                type="submit"
+                class="panel-logout"
+            >
+
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+
+                <span>
+                    Cerrar sesión
+                </span>
+
+            </button>
+
+        </form>
+
+    </div>
+
+</aside>
+
+
+<div
+    class="panel-sidebar-overlay"
+    id="panel-sidebar-overlay"
+></div>

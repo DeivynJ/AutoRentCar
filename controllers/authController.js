@@ -4,15 +4,61 @@ const {
     pool
 } = require("../config/database");
 
-async function mostrarLogin(req, res) {
-    if (req.session?.usuario) {
-        return res.redirect("/admin");
+/* =========================================================
+   RUTA DE INICIO SEGÚN EL USUARIO
+========================================================= */
+
+function obtenerRutaInicioUsuario(
+    usuario
+) {
+
+    if (!usuario) {
+        return "/login";
     }
 
-    return res.render("auth/login", {
-        titulo: "Iniciar sesión",
-        error: null
-    });
+    if (
+        usuario.rolCodigo ===
+        "superadmin"
+    ) {
+        return "/admin";
+    }
+
+    if (
+        Number(usuario.agenciaId) > 0
+    ) {
+        return "/panel";
+    }
+
+    return "/login";
+}
+
+async function mostrarLogin(
+    req,
+    res
+) {
+
+    if (
+        req.session?.usuario
+    ) {
+
+        return res.redirect(
+            obtenerRutaInicioUsuario(
+                req.session.usuario
+            )
+        );
+
+    }
+
+    return res.render(
+        "auth/login",
+        {
+            titulo:
+                "Iniciar sesión",
+
+            error:
+                null
+        }
+    );
 }
 
 async function procesarLogin(req, res) {
@@ -92,6 +138,30 @@ async function procesarLogin(req, res) {
             );
         }
 
+        /*
+ * Todo usuario que no sea SuperAdministrador
+ * debe pertenecer a una agencia.
+ */
+
+if (
+    usuario.rol_codigo !==
+        "superadmin" &&
+    !usuario.agencia_id
+) {
+
+    return res.status(403).render(
+        "auth/login",
+        {
+            titulo:
+                "Iniciar sesión",
+
+            error:
+                "Tu cuenta no está asociada a una agencia."
+        }
+    );
+
+}
+
         const passwordCorrecta =
             await bcrypt.compare(
                 password,
@@ -141,7 +211,12 @@ async function procesarLogin(req, res) {
             [usuario.id]
         );
 
-        return res.redirect("/admin");
+        return res.redirect(
+    obtenerRutaInicioUsuario(
+        req.session.usuario
+    )
+);
+
     } catch (error) {
         console.error(
             "Error durante el inicio de sesión:",
@@ -163,23 +238,46 @@ async function procesarLogin(req, res) {
     }
 }
 
-function cerrarSesion(req, res) {
-    req.session.destroy((error) => {
-        if (error) {
-            console.error(
-                "No fue posible cerrar la sesión:",
-                error
-            );
+function cerrarSesion(
+    req,
+    res
+) {
 
-            return res.redirect("/admin");
-        }
-
-        res.clearCookie(
-            "autorentcar.sid"
+    const rutaActual =
+        obtenerRutaInicioUsuario(
+            req.session?.usuario
         );
 
-        return res.redirect("/login");
-    });
+
+    req.session.destroy(
+        (error) => {
+
+            if (error) {
+
+                console.error(
+                    "No fue posible cerrar la sesión:",
+                    error
+                );
+
+
+                return res.redirect(
+                    rutaActual
+                );
+
+            }
+
+
+            res.clearCookie(
+                "autorentcar.sid"
+            );
+
+
+            return res.redirect(
+                "/login"
+            );
+
+        }
+    );
 }
 
 module.exports = {

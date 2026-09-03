@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <%- include("../partials/tema") %>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="panel-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="panel-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+        <main class="panel-main">
+
+
+            <div class="panel-form-back">
+
+                <a href="/panel/catalogo">
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Volver al catálogo
+
+                </a>
+
+            </div>
+
+
+            <% if (mensajeExito) { %>
+
+                <div class="panel-alert panel-alert-success">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+
+                    <div>
+
+                        <strong>
+                            Unidad registrada
+                        </strong>
+
+                        <span>
+                            <%= mensajeExito %>
+                        </span>
+
+                    </div>
+
+                </div>
+
+            <% } %>
+
+
+            <section class="panel-module-hero">
+
+
+                <div>
+
+                    <span class="panel-module-badge">
+
+                        <i class="fa-solid fa-car"></i>
+
+                        Flota física
+
+                    </span>
+
+
+                    <h2>
+
+                        <%= modelo.marca %>
+
+                        <span>
+                            <%= modelo.nombre %>
+                        </span>
+
+                    </h2>
+
+
+                    <p>
+
+                        Administra las unidades físicas
+                        registradas para este modelo dentro
+                        de <strong><%= agencia.nombre %></strong>.
+
+                    </p>
+
+                </div>
+
+
+                <div class="panel-module-actions">
+
+                    <a
+                        href="/panel/vehiculos/modelos/<%= modelo.id %>/unidades/nueva"
+                        class="panel-action-primary"
+                    >
+
+                        <i class="fa-solid fa-plus"></i>
+
+                        Agregar unidad
+
+                    </a>
+
+
+                    <a
+                        href="/vehiculos.html?agencia=<%= agencia.slug %>"
+                        target="_blank"
+                        rel="noopener"
+                        class="panel-action-secondary"
+                    >
+
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                        Ver catálogo público
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- RESUMEN -->
+
+            <section class="panel-summary-grid catalog-summary">
+
+
+                <article class="panel-summary-card">
+
+                    <div class="panel-summary-icon">
+
+                        <i class="fa-solid fa-car-side"></i>
+
+                    </div>
+
+                    <small>
+                        Total
+                    </small>
+
+                    <strong>
+                        <%= resumen.total %>
+                    </strong>
+
+                    <span>
+                        Unidades registradas
+                    </span>
+
+                </article>
+
+
+                <article class="panel-summary-card">
+
+                    <div class="panel-summary-icon">
+
+                        <i class="fa-solid fa-key"></i>
+
+                    </div>
+
+                    <small>
+                        Disponibles
+                    </small>
+
+                    <strong>
+                        <%= resumen.disponibles %>
+                    </strong>
+
+                    <span>
+                        Listas para operar
+                    </span>
+
+                </article>
+
+
+                <article class="panel-summary-card">
+
+                    <div class="panel-summary-icon">
+
+                        <i class="fa-solid fa-calendar-check"></i>
+
+                    </div>
+
+                    <small>
+                        Reservadas
+                    </small>
+
+                    <strong>
+                        <%= resumen.reservadas %>
+                    </strong>
+
+                    <span>
+                        Actualmente reservadas
+                    </span>
+
+                </article>
+
+
+                <article class="panel-summary-card">
+
+                    <div class="panel-summary-icon">
+
+                        <i class="fa-solid fa-screwdriver-wrench"></i>
+
+                    </div>
+
+                    <small>
+                        Mantenimiento
+                    </small>
+
+                    <strong>
+                        <%= resumen.mantenimiento %>
+                    </strong>
+
+                    <span>
+                        Fuera de operación
+                    </span>
+
+                </article>
+
+            </section>
+
+
+            <!-- USO DEL PLAN -->
+
+            <section class="panel-fleet-plan">
+
+                <div>
+
+                    <i class="fa-solid fa-layer-group"></i>
+
+                    <div>
+
+                        <small>
+                            Uso actual del plan
+                        </small>
+
+                        <strong>
+
+                            <%= vehiculosActivos %>
+
+                            /
+
+                            <%= plan.limiteVehiculos === null
+                                ? "Ilimitado"
+                                : plan.limiteVehiculos
+                            %>
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <small>
+                        Plan
+                    </small>
+
+                    <strong>
+                        <%= plan.nombre %>
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <!-- LISTADO -->
+
+            <section class="panel-units-card">
+
+
+                <div class="panel-units-header">
+
+                    <div>
+
+                        <span>
+                            Unidades físicas
+                        </span>
+
+                        <h3>
+                            Vehículos registrados
+                        </h3>
+
+                        <p>
+                            Cada unidad representa un vehículo
+                            real perteneciente a la flota.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <% if (unidades.length) { %>
+
+
+                    <div class="panel-units-table-wrapper">
+
+                        <table class="panel-units-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Código
+                                    </th>
+
+                                    <th>
+                                        Placa
+                                    </th>
+
+                                    <th>
+                                        Color
+                                    </th>
+
+                                    <th>
+                                        Sucursal
+                                    </th>
+
+                                    <th>
+                                        Kilometraje
+                                    </th>
+
+                                    <th>
+                                        Estado
+                                    </th>
+
+                                    <th>
+                                        Acción
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <% unidades.forEach((unidad) => { %>
+
+                                    <tr>
+
+                                        <td>
+
+                                            <strong>
+                                                <%= unidad.codigo_interno %>
+                                            </strong>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <%= unidad.placa || "—" %>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <%= unidad.color || "—" %>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <%= unidad.sucursal_nombre %>
+
+                                            <% if (Number(unidad.es_principal) === 1) { %>
+
+                                                <small class="unit-main-branch">
+                                                    Principal
+                                                </small>
+
+                                            <% } %>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <%= Number(unidad.kilometraje || 0).toLocaleString("en-US") %>
+                                            km
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <span
+                                                class="unit-status unit-status-<%= unidad.estado %>"
+                                            >
+
+                                                <%= unidad.estado %>
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <a
+    href="/panel/vehiculos/modelos/<%= modelo.id %>/unidades/<%= unidad.id %>/editar"
+    class="unit-edit-button"
+>
+
+    <i class="fa-solid fa-pen"></i>
+
+    Editar
+
+</a>
+
+                                        </td>
+
+                                    </tr>
+
+                                <% }); %>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                <% } else { %>
+
+
+                    <div class="catalog-empty">
+
+                        <div>
+
+                            <i class="fa-solid fa-car"></i>
+
+                        </div>
+
+
+                        <h3>
+                            Este modelo todavía no tiene unidades
+                        </h3>
+
+
+                        <p>
+
+                            Registra la primera unidad física para
+                            comenzar a utilizar este modelo dentro
+                            de la flota de la agencia.
+
+                        </p>
+
+
+                        <a
+                            href="/panel/vehiculos/modelos/<%= modelo.id %>/unidades/nueva"
+                            class="panel-action-primary unit-empty-action"
+                        >
+
+                            <i class="fa-solid fa-plus"></i>
+
+                            Agregar primera unidad
+
+                        </a>
+
+                    </div>
+
+
+                <% } %>
+
+
+            </section>
+
+
+            <footer class="panel-footer">
+
+                <span>
+                    <%= agencia.nombre %>
+                </span>
+
+                <span>
+                    AutoRentCar Platform ·
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+            </footer>
+
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<script src="/js/panel.js"></script>
+
+
+</body>
+
+</html>

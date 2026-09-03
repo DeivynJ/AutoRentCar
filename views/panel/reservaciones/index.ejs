@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Reservaciones de <%= agencia.nombre %>."
+    >
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+    <%- include("../partials/tema") %>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+    <div class="panel-shell">
+
+        <%- include("../partials/sidebar") %>
+
+
+        <div class="panel-content-wrapper">
+
+            <%- include("../partials/header") %>
+
+
+            <main class="panel-main">
+
+
+                <!-- =====================================
+                     ENCABEZADO
+                ====================================== -->
+
+                <section class="panel-module-hero">
+
+                    <div>
+
+                        <span class="panel-module-badge">
+
+                            <i class="fa-solid fa-calendar-check"></i>
+
+                            Operaciones
+
+                        </span>
+
+
+                        <h2>
+
+                            Reservaciones de
+
+                            <span>
+                                <%= agencia.nombre %>
+                            </span>
+
+                        </h2>
+
+
+                        <p>
+
+                            Consulta las solicitudes recibidas
+                            y el estado actual de las
+                            reservaciones pertenecientes
+                            exclusivamente a tu agencia.
+
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =====================================
+                     RESUMEN
+                ====================================== -->
+
+                <section class="panel-summary-grid">
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-calendar-days"></i>
+
+                        </div>
+
+                        <small>
+                            Total
+                        </small>
+
+                        <strong>
+                            <%= resumen.total %>
+                        </strong>
+
+                        <span>
+                            Reservaciones registradas
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-clock"></i>
+
+                        </div>
+
+                        <small>
+                            Pendientes
+                        </small>
+
+                        <strong>
+                            <%= resumen.pendientes %>
+                        </strong>
+
+                        <span>
+                            Esperando revisión
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        </div>
+
+                        <small>
+                            Confirmadas
+                        </small>
+
+                        <strong>
+                            <%= resumen.confirmadas %>
+                        </strong>
+
+                        <span>
+                            Solicitudes aprobadas
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-car-side"></i>
+
+                        </div>
+
+                        <small>
+                            En curso
+                        </small>
+
+                        <strong>
+                            <%= resumen.enCurso %>
+                        </strong>
+
+                        <span>
+                            Alquileres activos
+                        </span>
+
+                    </article>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     LISTADO
+                ====================================== -->
+
+                <section class="panel-units-card">
+
+
+                    <div class="panel-units-header">
+
+                        <div>
+
+                            <span>
+                                Gestión de reservaciones
+                            </span>
+
+                            <h3>
+                                Solicitudes registradas
+                            </h3>
+
+                            <p>
+
+                                Las reservaciones pendientes
+                                aparecen primero para facilitar
+                                su revisión.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <% if (reservaciones.length) { %>
+
+
+                        <div class="panel-units-table-wrapper">
+
+                            <table class="panel-units-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Código
+                                        </th>
+
+                                        <th>
+                                            Cliente
+                                        </th>
+
+                                        <th>
+                                            Vehículo
+                                        </th>
+
+                                        <th>
+                                            Cantidad
+                                        </th>
+
+                                        <th>
+                                            Recogida
+                                        </th>
+
+                                        <th>
+                                            Entrega
+                                        </th>
+
+                                        <th>
+                                            Total
+                                        </th>
+
+                                        <th>
+                                            Estado
+                                        </th>
+
+                                        <th>
+                                            Origen
+                                        </th>
+
+                                        <th>
+                                             Acción
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    <% reservaciones.forEach((reservacion) => { %>
+
+                                        <%
+
+                                            let claseEstado =
+                                                "unit-status-reservado";
+
+
+                                            if (
+                                                reservacion.estado ===
+                                                "confirmada"
+                                            ) {
+
+                                                claseEstado =
+                                                    "unit-status-disponible";
+
+                                            }
+
+
+                                            if (
+                                                reservacion.estado ===
+                                                "en_curso"
+                                            ) {
+
+                                                claseEstado =
+                                                    "unit-status-alquilado";
+
+                                            }
+
+
+                                            if (
+                                                [
+                                                    "finalizada",
+                                                    "rechazada",
+                                                    "cancelada"
+                                                ].includes(
+                                                    reservacion.estado
+                                                )
+                                            ) {
+
+                                                claseEstado =
+                                                    "unit-status-inactivo";
+
+                                            }
+
+
+                                            const fechaRecogida =
+                                                reservacion.fecha_recogida
+                                                    ? new Date(
+                                                        reservacion.fecha_recogida
+                                                    )
+                                                        .toISOString()
+                                                        .slice(
+                                                            0,
+                                                            10
+                                                        )
+                                                    : "—";
+
+
+                                            const fechaEntrega =
+                                                reservacion.fecha_entrega
+                                                    ? new Date(
+                                                        reservacion.fecha_entrega
+                                                    )
+                                                        .toISOString()
+                                                        .slice(
+                                                            0,
+                                                            10
+                                                        )
+                                                    : "—";
+
+                                        %>
+
+
+                                        <tr>
+
+
+                                            <td>
+
+                                                <strong>
+                                                    <%= reservacion.codigo %>
+                                                </strong>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <strong>
+                                                    <%= reservacion.cliente_nombre %>
+                                                </strong>
+
+                                                <br>
+
+                                                <small>
+                                                    <%= reservacion.cliente_correo %>
+                                                </small>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <strong>
+                                                    <%= reservacion.modelo_marca %>
+                                                    <%= reservacion.modelo_nombre %>
+                                                </strong>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <%= reservacion.cantidad_vehiculos %>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <%= fechaRecogida %>
+
+                                                <br>
+
+                                                <small>
+                                                    <%= reservacion.hora_recogida %>
+                                                </small>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <%= fechaEntrega %>
+
+                                                <br>
+
+                                                <small>
+                                                    <%= reservacion.hora_entrega %>
+                                                </small>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <strong>
+
+                                                    US$<%= Number(
+                                                        reservacion.total ||
+                                                        0
+                                                    ).toFixed(2) %>
+
+                                                </strong>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <span
+                                                    class="unit-status <%= claseEstado %>"
+                                                >
+
+                                                    <%= reservacion.estado %>
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <%= reservacion.origen === "web"
+                                                    ? "Web"
+                                                    : "Panel" %>
+
+                                            </td>
+
+                                            <td>
+
+    <a
+        href="/panel/reservaciones/<%= reservacion.id %>"
+        class="panel-secondary-button"
+    >
+
+        <i class="fa-solid fa-eye"></i>
+
+        Ver detalle
+
+    </a>
+
+</td>
+
+
+                                        </tr>
+
+                                    <% }); %>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                    <% } else { %>
+
+
+                        <div class="catalog-empty">
+
+                            <div>
+
+                                <i class="fa-solid fa-calendar-check"></i>
+
+                            </div>
+
+
+                            <h3>
+                                Todavía no hay reservaciones
+                            </h3>
+
+
+                            <p>
+
+                                Las nuevas solicitudes recibidas
+                                para esta agencia aparecerán aquí
+                                automáticamente.
+
+                            </p>
+
+                        </div>
+
+
+                    <% } %>
+
+
+                </section>
+
+
+            </main>
+
+
+        </div>
+
+
+    </div>
+
+
+    <script src="/js/panel.js"></script>
+
+</body>
+
+</html>

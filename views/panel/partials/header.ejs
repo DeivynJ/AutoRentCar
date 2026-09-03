@@ -1,0 +1,533 @@
+<header class="panel-topbar">
+
+    <div class="panel-topbar-left">
+
+        <button
+            type="button"
+            class="panel-topbar-icon panel-menu-mobile"
+            id="panel-menu-mobile"
+            aria-label="Abrir menú"
+        >
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div>
+
+            <span class="panel-topbar-eyebrow">
+                <%= subtituloPagina %>
+            </span>
+
+            <h1>
+                <%= titulo %>
+            </h1>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel-topbar-right">
+
+        <!-- =============================================
+             VER SITIO PÚBLICO
+        ============================================== -->
+
+        <a
+            href="/index.html?agencia=<%= encodeURIComponent(agencia.slug) %>"
+            class="panel-site-button"
+            target="_blank"
+            rel="noopener"
+        >
+
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+            <span>
+                Ver sitio
+            </span>
+
+        </a>
+
+
+        <!-- =============================================
+             MODO CLARO / OSCURO
+        ============================================== -->
+
+        <button
+            type="button"
+            class="panel-topbar-icon panel-theme-button"
+            id="panel-theme-toggle"
+            aria-label="Activar modo oscuro"
+            aria-pressed="false"
+            title="Modo oscuro"
+        >
+
+            <i class="fa-regular fa-moon"></i>
+
+        </button>
+
+        <!-- =============================================
+     NOTIFICACIONES
+============================================== -->
+
+<div
+    class="panel-notifications"
+    id="panel-notifications"
+>
+
+    <button
+        type="button"
+        class="panel-topbar-icon panel-notification-button"
+        id="panel-notification-button"
+        aria-label="Abrir notificaciones"
+        aria-expanded="false"
+        aria-controls="panel-notification-menu"
+        title="Notificaciones"
+    >
+
+        <i class="fa-regular fa-bell"></i>
+
+
+        <% if (Number(notificacionesNoLeidas || 0) > 0) { %>
+
+            <span class="panel-notification-badge">
+
+                <%= Number(notificacionesNoLeidas) > 99
+                    ? "99+"
+                    : Number(notificacionesNoLeidas) %>
+
+            </span>
+
+        <% } %>
+
+    </button>
+
+
+    <div
+        class="panel-notification-menu"
+        id="panel-notification-menu"
+    >
+
+        <!-- =====================================
+             ENCABEZADO
+        ====================================== -->
+
+        <div class="panel-notification-header">
+
+            <div>
+
+                <span>
+                    Centro de avisos
+                </span>
+
+                <strong>
+                    Notificaciones
+                </strong>
+
+            </div>
+
+
+            <span class="panel-notification-counter">
+
+                <%= Number(notificacionesNoLeidas || 0) %>
+
+                <%= Number(notificacionesNoLeidas || 0) === 1
+                    ? "nueva"
+                    : "nuevas" %>
+
+            </span>
+
+        </div>
+
+
+        <!-- =====================================
+             FILTROS
+        ====================================== -->
+
+        <div
+            class="panel-notification-filters"
+            aria-label="Filtrar notificaciones"
+        >
+
+            <button
+                type="button"
+                class="panel-notification-filter activo"
+                data-notification-filter="todas"
+                aria-pressed="true"
+            >
+                Todas
+            </button>
+
+
+            <button
+                type="button"
+                class="panel-notification-filter"
+                data-notification-filter="reservaciones"
+                aria-pressed="false"
+            >
+                Reservaciones
+            </button>
+
+
+            <button
+                type="button"
+                class="panel-notification-filter"
+                data-notification-filter="pagos"
+                aria-pressed="false"
+            >
+                Pagos
+            </button>
+
+
+            <button
+                type="button"
+                class="panel-notification-filter"
+                data-notification-filter="suscripcion"
+                aria-pressed="false"
+            >
+                Suscripción
+            </button>
+
+
+            <button
+                type="button"
+                class="panel-notification-filter"
+                data-notification-filter="sistema"
+                aria-pressed="false"
+            >
+                Sistema
+            </button>
+
+        </div>
+
+
+        <!-- =====================================
+             LISTADO
+        ====================================== -->
+
+        <div class="panel-notification-list">
+
+            <%
+
+                const notificacionesSeguras =
+                    Array.isArray(notificacionesPanel)
+                        ? notificacionesPanel
+                        : [];
+
+            %>
+
+
+            <% if (notificacionesSeguras.length) { %>
+
+
+                <% notificacionesSeguras.forEach((notificacion) => { %>
+
+                    <%
+
+                        let iconoNotificacion =
+                            "fa-solid fa-bell";
+
+
+                        let nombreCategoria =
+                            "Sistema";
+
+
+                        if (
+                            notificacion.categoria ===
+                            "reservaciones"
+                        ) {
+
+                            iconoNotificacion =
+                                "fa-solid fa-calendar-check";
+
+                            nombreCategoria =
+                                "Reservaciones";
+
+                        }
+
+
+                        if (
+                            notificacion.categoria ===
+                            "pagos"
+                        ) {
+
+                            iconoNotificacion =
+                                "fa-solid fa-credit-card";
+
+                            nombreCategoria =
+                                "Pagos";
+
+                        }
+
+
+                        if (
+                            notificacion.categoria ===
+                            "suscripcion"
+                        ) {
+
+                            iconoNotificacion =
+                                "fa-solid fa-clock";
+
+                            nombreCategoria =
+                                "Suscripción";
+
+                        }
+
+
+                        let fechaNotificacion =
+                            "Ahora";
+
+
+                        if (
+                            notificacion.fechaCreacion
+                        ) {
+
+                            fechaNotificacion =
+                                new Date(
+                                    notificacion.fechaCreacion
+                                )
+                                    .toLocaleString(
+                                        "es-DO",
+                                        {
+                                            dateStyle:
+                                                "short",
+
+                                            timeStyle:
+                                                "short"
+                                        }
+                                    );
+
+                        }
+
+                    %>
+
+
+                    <form
+                        action="/panel/notificaciones/<%= notificacion.id %>/abrir"
+                        method="POST"
+                        class="panel-notification-item <%= notificacion.leida ? 'leida' : 'no-leida' %>"
+                        data-notification-category="<%= notificacion.categoria %>"
+                    >
+
+                        <button
+                            type="submit"
+                            class="panel-notification-item-button"
+                        >
+
+                            <span class="panel-notification-item-icon">
+
+                                <i class="<%= iconoNotificacion %>"></i>
+
+                            </span>
+
+
+                            <span class="panel-notification-item-content">
+
+                                <span class="panel-notification-item-title">
+
+                                    <strong>
+                                        <%= notificacion.titulo %>
+                                    </strong>
+
+
+                                    <% if (!notificacion.leida) { %>
+
+                                        <span
+                                            class="panel-notification-unread-dot"
+                                            title="No leída"
+                                        ></span>
+
+                                    <% } %>
+
+                                </span>
+
+
+                                <span class="panel-notification-message">
+
+                                    <%= notificacion.mensaje %>
+
+                                </span>
+
+
+                                <span class="panel-notification-meta">
+
+                                    <span>
+                                        <%= nombreCategoria %>
+                                    </span>
+
+                                    <time>
+                                        <%= fechaNotificacion %>
+                                    </time>
+
+                                </span>
+
+                            </span>
+
+                        </button>
+
+                    </form>
+
+                <% }); %>
+
+
+                <p
+                    class="panel-notification-filter-empty"
+                    id="panel-notification-filter-empty"
+                    hidden
+                >
+                    No hay notificaciones de este tipo.
+                </p>
+
+
+            <% } else { %>
+
+
+                <div class="panel-notification-empty">
+
+                    <i class="fa-regular fa-bell"></i>
+
+                    <strong>
+                        Todo está al día
+                    </strong>
+
+                    <span>
+                        No tienes notificaciones por el momento.
+                    </span>
+
+                </div>
+
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+        <!-- =============================================
+             USUARIO
+        ============================================== -->
+
+        <div class="panel-topbar-user">
+
+            <button
+                type="button"
+                class="panel-user-button"
+                id="panel-user-button"
+                aria-expanded="false"
+            >
+
+                <span class="panel-user-avatar">
+
+                    <%= usuario.nombre
+                        .charAt(0)
+                        .toUpperCase() %>
+
+                </span>
+
+                <span class="panel-user-info">
+
+                    <strong>
+                        <%= usuario.nombre %>
+                        <%= usuario.apellido || "" %>
+                    </strong>
+
+                    <small>
+                        <%= usuario.rolNombre %>
+                    </small>
+
+                </span>
+
+                <i class="fa-solid fa-chevron-down panel-user-arrow"></i>
+
+            </button>
+
+
+            <!-- =========================================
+                 MENÚ DEL USUARIO
+            ========================================== -->
+
+            <div
+                class="panel-user-menu"
+                id="panel-user-menu"
+            >
+
+                <div class="panel-user-menu-header">
+
+                    <span class="panel-user-avatar grande">
+
+                        <%= usuario.nombre
+                            .charAt(0)
+                            .toUpperCase() %>
+
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            <%= usuario.nombre %>
+                            <%= usuario.apellido || "" %>
+                        </strong>
+
+                        <span>
+                            <%= usuario.correo %>
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel-user-divider"></div>
+
+
+                <div class="panel-user-agency">
+
+                    <i class="fa-solid fa-building"></i>
+
+                    <div>
+
+                        <small>
+                            Agencia
+                        </small>
+
+                        <strong>
+                            <%= agencia.nombre %>
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel-user-divider"></div>
+
+
+                <form
+                    action="/logout"
+                    method="POST"
+                >
+
+                    <button
+                        type="submit"
+                        class="panel-user-menu-link danger"
+                    >
+
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+
+                        <span>
+                            Cerrar sesión
+                        </span>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>

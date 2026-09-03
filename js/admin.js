@@ -10,6 +10,167 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const body = document.body;
 
+    /* =====================================================
+   MODO CLARO / OSCURO
+===================================================== */
+
+const botonTema =
+    document.getElementById(
+        "admin-theme-toggle"
+    );
+
+
+const CLAVE_TEMA_ADMIN =
+    "autorentcar-admin-tema";
+
+
+function obtenerTemaAdminActual() {
+
+    return (
+        document
+            .documentElement
+            .dataset
+            .adminTema ===
+        "oscuro"
+    )
+        ? "oscuro"
+        : "claro";
+
+}
+
+
+function actualizarBotonTemaAdmin() {
+
+    if (!botonTema) {
+        return;
+    }
+
+
+    const temaOscuro =
+        obtenerTemaAdminActual() ===
+        "oscuro";
+
+
+    const icono =
+        botonTema.querySelector(
+            "i"
+        );
+
+
+    botonTema.setAttribute(
+        "aria-pressed",
+        temaOscuro
+            ? "true"
+            : "false"
+    );
+
+
+    botonTema.setAttribute(
+        "aria-label",
+        temaOscuro
+            ? "Activar modo claro"
+            : "Activar modo oscuro"
+    );
+
+
+    botonTema.setAttribute(
+        "title",
+        temaOscuro
+            ? "Modo claro"
+            : "Modo oscuro"
+    );
+
+
+    if (icono) {
+
+        icono.className =
+            temaOscuro
+                ? "fa-regular fa-sun"
+                : "fa-regular fa-moon";
+
+    }
+
+}
+
+
+function aplicarTemaAdmin(
+    tema,
+    guardar = true
+) {
+
+    const temaSeguro =
+        tema === "oscuro"
+            ? "oscuro"
+            : "claro";
+
+
+    document
+        .documentElement
+        .dataset
+        .adminTema =
+        temaSeguro;
+
+
+    document
+        .documentElement
+        .style
+        .colorScheme =
+        temaSeguro ===
+            "oscuro"
+            ? "dark"
+            : "light";
+
+
+    if (guardar) {
+
+        try {
+
+            localStorage.setItem(
+                CLAVE_TEMA_ADMIN,
+                temaSeguro
+            );
+
+        } catch (error) {
+
+            console.error(
+                "No fue posible guardar el tema administrativo.",
+                error
+            );
+
+        }
+
+    }
+
+
+    actualizarBotonTemaAdmin();
+
+}
+
+
+aplicarTemaAdmin(
+    obtenerTemaAdminActual(),
+    false
+);
+
+
+botonTema?.addEventListener(
+    "click",
+    () => {
+
+        const siguienteTema =
+            obtenerTemaAdminActual() ===
+                "oscuro"
+                ? "claro"
+                : "oscuro";
+
+
+        aplicarTemaAdmin(
+            siguienteTema
+        );
+
+    }
+);
+
     const botonColapsar = document.getElementById(
         "sidebar-collapse-btn"
     );

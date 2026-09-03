@@ -56,6 +56,7 @@ const router =
 ========================================================= */
 
 router.use(
+    "/admin",
     requerirSuperadmin
 );
 

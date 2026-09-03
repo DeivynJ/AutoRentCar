@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Catálogo de vehículos de <%= agencia.nombre %>."
+    >
+
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <%- include("../partials/tema") %>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+    <div class="panel-shell">
+
+
+        <%- include("../partials/sidebar") %>
+
+
+        <div class="panel-content-wrapper">
+
+
+            <%- include("../partials/header") %>
+
+
+            <main class="panel-main">
+
+
+            <% if (mensajeExito) { %>
+
+    <div class="panel-alert panel-alert-success">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <div>
+
+            <strong>
+                Operación completada
+            </strong>
+
+            <span>
+                <%= mensajeExito %>
+            </span>
+
+        </div>
+
+    </div>
+
+<% } %>
+
+
+                <!-- =====================================
+                     ENCABEZADO DEL MÓDULO
+                ====================================== -->
+
+                <section class="panel-module-hero">
+
+                    <div>
+
+                        <span class="panel-module-badge">
+
+                            <i class="fa-solid fa-car-side"></i>
+
+                            Catálogo público
+
+                        </span>
+
+
+                        <h2>
+                            Vehículos de
+                            <span>
+                                <%= agencia.nombre %>
+                            </span>
+                        </h2>
+
+
+                        <p>
+
+                            Consulta los modelos registrados
+                            para tu agencia y el estado de las
+                            unidades que respaldan el catálogo
+                            público.
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="panel-module-actions">
+
+                        <a
+    href="/panel/catalogo/modelos/nuevo"
+    class="panel-action-primary"
+>
+
+    <i class="fa-solid fa-plus"></i>
+
+    Nuevo modelo
+
+</a>
+
+
+                        <a
+                            href="/vehiculos.html?agencia=<%= encodeURIComponent(agencia.slug) %>"
+                            target="_blank"
+                            rel="noopener"
+                            class="panel-action-secondary"
+                        >
+
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                            Ver catálogo público
+
+                        </a>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =====================================
+                     RESUMEN
+                ====================================== -->
+
+                <section class="panel-summary-grid catalog-summary">
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-layer-group"></i>
+
+                        </div>
+
+                        <small>
+                            Modelos
+                        </small>
+
+                        <strong>
+                            <%= resumen.modelos %>
+                        </strong>
+
+                        <span>
+                            Total registrado
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        </div>
+
+                        <small>
+                            Modelos activos
+                        </small>
+
+                        <strong>
+                            <%= resumen.modelosActivos %>
+                        </strong>
+
+                        <span>
+                            Disponibles para operar
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-car"></i>
+
+                        </div>
+
+                        <small>
+                            Unidades activas
+                        </small>
+
+                        <strong>
+                            <%= resumen.unidadesActivas %>
+                        </strong>
+
+                        <span>
+                            Consumen cupo del plan
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-key"></i>
+
+                        </div>
+
+                        <small>
+                            Disponibles
+                        </small>
+
+                        <strong>
+                            <%= resumen.disponibles %>
+                        </strong>
+
+                        <span>
+                            Estado disponible
+                        </span>
+
+                    </article>
+
+                </section>
+
+
+                <!-- =====================================
+                     CATÁLOGO
+                ====================================== -->
+
+                <section class="catalog-panel">
+
+                    <div class="catalog-panel-header">
+
+                        <div>
+
+                            <span>
+                                Gestión comercial
+                            </span>
+
+                            <h3>
+                                Modelos registrados
+                            </h3>
+
+                            <p>
+                                Estos son los modelos asociados
+                                exclusivamente a tu agencia.
+                            </p>
+
+                        </div>
+
+
+                        <div class="catalog-plan-info">
+
+                            <i class="fa-solid fa-layer-group"></i>
+
+                            <div>
+
+                                <small>
+                                    Plan
+                                </small>
+
+                                <strong>
+                                    <%= plan.nombre %>
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <% if (modelos.length) { %>
+
+                        <div class="catalog-grid">
+
+                            <% modelos.forEach((modelo) => { %>
+
+                                <article class="catalog-card">
+
+
+                                    <!-- IMAGEN -->
+
+                                    <div class="catalog-card-image">
+
+                                        <% if (modelo.imagen) { %>
+
+                                            <img
+                                                src="<%= modelo.imagen %>"
+                                                alt="<%= modelo.marca %> <%= modelo.nombre %>"
+                                                loading="lazy"
+                                            >
+
+                                        <% } else { %>
+
+                                            <div class="catalog-no-image">
+
+                                                <i class="fa-solid fa-car-side"></i>
+
+                                                <span>
+                                                    Sin imagen
+                                                </span>
+
+                                            </div>
+
+                                        <% } %>
+
+
+                                        <span
+                                            class="catalog-status catalog-status-<%= modelo.estado %>"
+                                        >
+
+                                            <%= modelo.estado %>
+
+                                        </span>
+
+
+                                        <% if (Number(modelo.destacado) === 1) { %>
+
+                                            <span class="catalog-featured">
+
+                                                <i class="fa-solid fa-star"></i>
+
+                                                Destacado
+
+                                            </span>
+
+                                        <% } %>
+
+                                    </div>
+
+
+                                    <!-- CONTENIDO -->
+
+                                    <div class="catalog-card-content">
+
+                                        <div class="catalog-card-heading">
+
+                                            <div>
+
+                                                <span class="catalog-brand">
+                                                    <%= modelo.marca %>
+                                                </span>
+
+                                                <h3>
+                                                    <%= modelo.nombre %>
+                                                </h3>
+
+                                            </div>
+
+
+                                            <% if (modelo.anio) { %>
+
+                                                <span class="catalog-year">
+                                                    <%= modelo.anio %>
+                                                </span>
+
+                                            <% } %>
+
+                                        </div>
+
+
+                                        <div class="catalog-category">
+
+                                            <% const categorias = {
+                                                economico: "Económico",
+                                                gama_media: "Gama media",
+                                                lujo: "Vehículo de lujo"
+                                            }; %>
+
+                                            <%= categorias[modelo.categoria] || modelo.categoria %>
+
+                                        </div>
+
+
+                                        <div class="catalog-price">
+
+                                            <strong>
+
+                                                <%= new Intl.NumberFormat(
+                                                    "en-US",
+                                                    {
+                                                        style: "currency",
+                                                        currency: "USD"
+                                                    }
+                                                ).format(
+                                                    Number(
+                                                        modelo.precio_diario ||
+                                                        0
+                                                    )
+                                                ) %>
+
+                                            </strong>
+
+                                            <span>
+                                                por día
+                                            </span>
+
+                                        </div>
+
+
+                                        <div class="catalog-features">
+
+                                            <span>
+
+                                                <i class="fa-solid fa-gears"></i>
+
+                                                <%= modelo.transmision || "Sin especificar" %>
+
+                                            </span>
+
+
+                                            <span>
+
+                                                <i class="fa-solid fa-gas-pump"></i>
+
+                                                <%= modelo.combustible || "Sin especificar" %>
+
+                                            </span>
+
+
+                                            <span>
+
+                                                <i class="fa-solid fa-users"></i>
+
+                                                <%= modelo.pasajeros ?? "—" %>
+                                                pasajeros
+
+                                            </span>
+
+                                        </div>
+
+
+                                        <div class="catalog-inventory">
+
+                                            <div>
+
+                                                <small>
+                                                    Unidades activas
+                                                </small>
+
+                                                <strong>
+                                                    <%= Number(modelo.unidades_activas || 0) %>
+                                                </strong>
+
+                                            </div>
+
+
+                                            <div>
+
+                                                <small>
+                                                    Disponibles
+                                                </small>
+
+                                                <strong>
+                                                    <%= Number(modelo.disponibles || 0) %>
+                                                </strong>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="catalog-card-actions">
+
+    <a
+        href="/panel/catalogo/modelos/<%= modelo.id %>/editar"
+        class="catalog-edit-button"
+    >
+
+        <i class="fa-solid fa-pen"></i>
+
+        Editar modelo
+
+    </a>
+
+
+    <a
+        href="/panel/vehiculos/modelos/<%= modelo.id %>/unidades"
+        class="catalog-units-button"
+    >
+
+        <i class="fa-solid fa-car"></i>
+
+        Gestionar unidades
+
+    </a>
+
+</div>
+
+                                    </div>
+
+                                </article>
+
+                            <% }); %>
+
+                        </div>
+
+                    <% } else { %>
+
+
+                        <div class="catalog-empty">
+
+                            <div>
+
+                                <i class="fa-solid fa-car-side"></i>
+
+                            </div>
+
+                            <h3>
+                                Aún no hay modelos registrados
+                            </h3>
+
+                            <p>
+                                Cuando registres el primer modelo
+                                de vehículo de esta agencia,
+                                aparecerá aquí.
+                            </p>
+
+                        </div>
+
+
+                    <% } %>
+
+                </section>
+
+
+                <footer class="panel-footer">
+
+                    <span>
+                        <%= agencia.nombre %>
+                    </span>
+
+                    <span>
+                        AutoRentCar Platform ·
+                        © <%= new Date().getFullYear() %>
+                    </span>
+
+                </footer>
+
+
+            </main>
+
+        </div>
+
+    </div>
+
+
+    <script src="/js/panel.js"></script>
+
+</body>
+
+</html>

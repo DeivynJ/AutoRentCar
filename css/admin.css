@@ -236,6 +236,8 @@ body.sidebar-collapsed
 
     width:
         var(--sidebar-collapsed-width);
+
+    overflow: visible;
 }
 
 
@@ -991,6 +993,12 @@ body.sidebar-collapsed
         center;
 
     gap: 0;
+}
+
+body.sidebar-collapsed
+.sidebar-link-badge {
+
+    display: none;
 }
 
 body.sidebar-collapsed
@@ -6331,5 +6339,781 @@ input[type="file"] {
     font-size:.85rem;
 
     font-weight:800;
+
+}
+
+/* =========================================================
+   MODO OSCURO - SISTEMA ADMINISTRATIVO
+========================================================= */
+
+html[data-admin-tema="oscuro"] {
+
+    color-scheme:
+        dark;
+
+
+    /*
+     * IMPORTANTE:
+     *
+     * No modificamos primary ni secondary.
+     *
+     * Esos colores representan la identidad.
+     * En SuperAdmin son AutoRentCar.
+     * En el futuro serán los de cada agencia.
+     */
+
+    --admin-bg:
+        #07111f;
+
+    --admin-surface:
+        #0f1b2b;
+
+    --admin-surface-alt:
+        #132238;
+
+    --admin-text:
+        #f3f6fb;
+
+    --admin-text-soft:
+        #a8b4c5;
+
+    --admin-border:
+        #26374e;
+
+    --admin-shadow:
+        0 15px 40px
+        rgba(
+            0,
+            0,
+            0,
+            0.22
+        );
+
+    --admin-shadow-hover:
+        0 20px 45px
+        rgba(
+            0,
+            0,
+            0,
+            0.32
+        );
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+body {
+
+    color:
+        var(--admin-text);
+
+    background:
+        var(--admin-bg);
+}
+
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.admin-topbar {
+
+    background:
+        rgba(
+            7,
+            17,
+            31,
+            0.9
+        );
+
+    border-bottom-color:
+        rgba(
+            38,
+            55,
+            78,
+            0.85
+        );
+}
+
+
+html[data-admin-tema="oscuro"]
+.topbar-menu-mobile,
+
+html[data-admin-tema="oscuro"]
+.topbar-icon-button,
+
+html[data-admin-tema="oscuro"]
+.topbar-user-button {
+
+    color:
+        var(--admin-text-soft);
+
+    background:
+        var(--admin-surface);
+
+    border-color:
+        var(--admin-border);
+}
+
+
+html[data-admin-tema="oscuro"]
+.topbar-icon-button:hover,
+
+html[data-admin-tema="oscuro"]
+.topbar-menu-mobile:hover {
+
+    color:
+        var(--admin-secondary);
+
+    background:
+        var(--admin-surface-alt);
+}
+
+
+html[data-admin-tema="oscuro"]
+.admin-theme-button {
+
+    color:
+        var(--admin-secondary);
+
+    border-color:
+        rgba(
+            255,
+            138,
+            0,
+            0.25
+        );
+
+    background:
+        rgba(
+            255,
+            138,
+            0,
+            0.08
+        );
+}
+
+
+html[data-admin-tema="oscuro"]
+.topbar-user-menu {
+
+    background:
+        var(--admin-surface);
+
+    border-color:
+        var(--admin-border);
+
+    box-shadow:
+        0 20px 50px
+        rgba(
+            0,
+            0,
+            0,
+            0.35
+        );
+}
+
+
+html[data-admin-tema="oscuro"]
+.topbar-user-menu-link {
+
+    color:
+        var(--admin-text-soft);
+}
+
+
+html[data-admin-tema="oscuro"]
+.topbar-user-menu-link:hover {
+
+    color:
+        var(--admin-text);
+
+    background:
+        var(--admin-surface-alt);
+}
+
+
+html[data-admin-tema="oscuro"]
+.topbar-user-menu-link.danger:hover {
+
+    color:
+        #f87171;
+
+    background:
+        rgba(
+            220,
+            38,
+            38,
+            0.12
+        );
+}
+
+
+/* =========================================================
+   SIDEBAR COLAPSADO
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+body.sidebar-collapsed
+.sidebar-collapse-btn {
+
+    color:
+        var(--admin-text-soft);
+
+    background:
+        var(--admin-surface);
+
+    border-color:
+        var(--admin-border);
+}
+
+
+/* =========================================================
+   TARJETAS
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.stat-card,
+
+html[data-admin-tema="oscuro"]
+.dashboard-panel,
+
+html[data-admin-tema="oscuro"]
+.form-card,
+
+html[data-admin-tema="oscuro"]
+.user-form-card {
+
+    color:
+        var(--admin-text);
+
+    background:
+        var(--admin-surface);
+
+    border-color:
+        var(--admin-border);
+}
+
+
+html[data-admin-tema="oscuro"]
+.stat-footer {
+
+    border-top-color:
+        var(--admin-border);
+}
+
+
+/* =========================================================
+   HERO DE MÓDULOS
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.module-hero {
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--admin-surface)
+            0%,
+            var(--admin-surface-alt)
+            70%,
+            rgba(
+                255,
+                138,
+                0,
+                0.08
+            )
+            100%
+        );
+
+    border-color:
+        var(--admin-border);
+
+    box-shadow:
+        var(--admin-shadow);
+}
+
+
+/* =========================================================
+   TABLAS
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.admin-table th {
+
+    color:
+        #94a3b8;
+
+    background:
+        var(--admin-surface-alt);
+}
+
+
+html[data-admin-tema="oscuro"]
+.admin-table td {
+
+    color:
+        #b6c2d2;
+
+    border-top-color:
+        var(--admin-border);
+}
+
+
+html[data-admin-tema="oscuro"]
+.admin-table tbody tr:hover {
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.025
+        );
+}
+
+
+html[data-admin-tema="oscuro"]
+.table-agency strong,
+
+html[data-admin-tema="oscuro"]
+.table-empty strong {
+
+    color:
+        var(--admin-text);
+}
+
+
+html[data-admin-tema="oscuro"]
+.table-date {
+
+    color:
+        var(--admin-text-soft);
+}
+
+
+/* =========================================================
+   RESUMEN DEL SISTEMA
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.system-summary-item {
+
+    border-color:
+        var(--admin-border);
+
+    background:
+        var(--admin-surface-alt);
+}
+
+
+html[data-admin-tema="oscuro"]
+.system-summary-footer {
+
+    background:
+        rgba(
+            22,
+            163,
+            106,
+            0.1
+        );
+}
+
+
+/* =========================================================
+   BÚSQUEDA Y FILTROS
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.agency-search,
+
+html[data-admin-tema="oscuro"]
+.agency-filter {
+
+    background:
+        var(--admin-surface-alt);
+
+    border-color:
+        var(--admin-border);
+}
+
+
+html[data-admin-tema="oscuro"]
+.agency-search input,
+
+html[data-admin-tema="oscuro"]
+.agency-filter select {
+
+    color:
+        var(--admin-text);
+}
+
+
+/* =========================================================
+   FORMULARIOS
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.form-field label,
+
+html[data-admin-tema="oscuro"]
+.user-form-group label {
+
+    color:
+        #c6d0dd;
+}
+
+
+html[data-admin-tema="oscuro"]
+.form-field input:not(
+    [type="color"]
+),
+
+html[data-admin-tema="oscuro"]
+.form-field select,
+
+html[data-admin-tema="oscuro"]
+.form-field textarea,
+
+html[data-admin-tema="oscuro"]
+.user-form-group input,
+
+html[data-admin-tema="oscuro"]
+.user-form-group select {
+
+    color:
+        var(--admin-text);
+
+    background:
+        var(--admin-surface-alt);
+
+    border-color:
+        var(--admin-border);
+}
+
+
+html[data-admin-tema="oscuro"]
+.form-field input:focus,
+
+html[data-admin-tema="oscuro"]
+.form-field select:focus,
+
+html[data-admin-tema="oscuro"]
+.form-field textarea:focus,
+
+html[data-admin-tema="oscuro"]
+.user-form-group input:focus,
+
+html[data-admin-tema="oscuro"]
+.user-form-group select:focus {
+
+    color:
+        var(--admin-text);
+
+    background:
+        #17283e;
+}
+
+
+html[data-admin-tema="oscuro"]
+.form-card-header {
+
+    border-bottom-color:
+        var(--admin-border);
+}
+
+
+html[data-admin-tema="oscuro"]
+.color-field {
+
+    background:
+        var(--admin-surface-alt);
+
+    border-color:
+        var(--admin-border);
+}
+
+
+html[data-admin-tema="oscuro"]
+.color-field span {
+
+    color:
+        var(--admin-text-soft);
+}
+
+
+/* =========================================================
+   PREVIEW DE MARCA
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.brand-preview {
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--admin-surface-alt),
+            var(--admin-surface)
+        );
+
+    border-color:
+        var(--admin-border);
+}
+
+
+/* =========================================================
+   PLANES
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.plan-form-item {
+
+    background:
+        var(--admin-surface-alt);
+
+    border-color:
+        var(--admin-border);
+}
+
+
+html[data-admin-tema="oscuro"]
+.plan-form-item.selected {
+
+    background:
+        rgba(
+            255,
+            138,
+            0,
+            0.08
+        );
+}
+
+
+/* =========================================================
+   CUADROS INFORMATIVOS
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.form-info-box {
+
+    color:
+        #aebaca;
+
+    background:
+        #142238;
+}
+
+
+html[data-admin-tema="oscuro"]
+.form-cancel,
+
+html[data-admin-tema="oscuro"]
+.user-form-actions
+.form-cancel,
+
+html[data-admin-tema="oscuro"]
+.user-btn-cancel {
+
+    color:
+        var(--admin-text-soft);
+
+    background:
+        var(--admin-surface-alt);
+
+    border-color:
+        var(--admin-border);
+}
+
+
+html[data-admin-tema="oscuro"]
+.form-cancel:hover,
+
+html[data-admin-tema="oscuro"]
+.user-form-actions
+.form-cancel:hover,
+
+html[data-admin-tema="oscuro"]
+.user-btn-cancel:hover {
+
+    color:
+        var(--admin-text);
+
+    background:
+        #1a2a40;
+
+    border-color:
+        #3a4d67;
+}
+
+
+/* =========================================================
+   LOGO DE AGENCIA
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.agency-logo-upload {
+
+    background:
+        var(--admin-surface-alt);
+
+    border-color:
+        #425169;
+}
+
+
+html[data-admin-tema="oscuro"]
+.agency-logo-preview {
+
+    color:
+        var(--admin-text-soft);
+
+    background:
+        var(--admin-surface);
+}
+
+
+html[data-admin-tema="oscuro"]
+.agency-logo-button {
+
+    color:
+        var(--admin-text);
+
+    background:
+        #1b2b41;
+}
+
+
+html[data-admin-tema="oscuro"]
+.agency-logo-button:hover {
+
+    color:
+        var(--admin-secondary);
+
+    background:
+        #22344d;
+}
+
+
+/* =========================================================
+   PREVIEW INTERFAZ
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.agency-interface-preview {
+
+    background:
+        var(--admin-surface);
+
+    border-color:
+        var(--admin-border);
+}
+
+
+/* =========================================================
+   DETALLE DE AGENCIA
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.visual-color-item,
+
+html[data-admin-tema="oscuro"]
+.detail-list > div {
+
+    background:
+        var(--admin-surface-alt);
+
+    border-color:
+        var(--admin-border);
+}
+
+
+html[data-admin-tema="oscuro"]
+.detail-list span {
+
+    color:
+        var(--admin-text-soft);
+}
+
+
+html[data-admin-tema="oscuro"]
+.detail-list strong {
+
+    color:
+        var(--admin-text);
+}
+
+
+/* =========================================================
+   AVATARES
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.table-user,
+
+html[data-admin-tema="oscuro"]
+.table-agency {
+
+    color:
+        var(--admin-text);
+}
+
+
+/* =========================================================
+   BORDES GENERALES DEL PANEL
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.panel-header {
+
+    border-bottom-color:
+        var(--admin-border);
+}
+
+
+html[data-admin-tema="oscuro"]
+.topbar-user-menu-divider,
+
+html[data-admin-tema="oscuro"]
+.form-divider {
+
+    background:
+        var(--admin-border);
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+html[data-admin-tema="oscuro"]
+.admin-footer {
+
+    color:
+        #8090a5;
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 480px) {
+
+    /*
+     * El CSS original oculta los botones de icono
+     * en móvil. Conservamos visible el selector
+     * claro / oscuro.
+     */
+
+    .topbar-icon-button.admin-theme-button {
+
+        display:
+            grid;
+
+    }
 
 }

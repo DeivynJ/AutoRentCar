@@ -55,10 +55,68 @@ function formatoFecha(fecha) {
 
 }
 
+/* =========================================================
+   FORMATO DE FECHA Y HORA
+========================================================= */
+
+function formatoFechaHora(
+    valor,
+    textoVacio = "Nunca"
+) {
+
+    if (!valor) {
+        return textoVacio;
+    }
+
+
+    const fecha =
+        valor instanceof Date
+            ? valor
+            : new Date(valor);
+
+
+    if (
+        Number.isNaN(
+            fecha.getTime()
+        )
+    ) {
+        return textoVacio;
+    }
+
+
+    return fecha.toLocaleString(
+        "es-DO",
+        {
+            timeZone:
+                "America/Santo_Domingo",
+
+            day:
+                "2-digit",
+
+            month:
+                "long",
+
+            year:
+                "numeric",
+
+            hour:
+                "numeric",
+
+            minute:
+                "2-digit",
+
+            hour12:
+                true
+        }
+    );
+}
+
 module.exports = {
 
     formatoMoneda,
 
-    formatoFecha
+    formatoFecha,
+
+    formatoFechaHora
 
 };

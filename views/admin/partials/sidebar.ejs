@@ -1,3 +1,39 @@
+
+<script>
+    (() => {
+
+        const CLAVE_TEMA_ADMIN =
+            "autorentcar-admin-tema";
+
+        let tema =
+            "claro";
+
+        try {
+
+            if (
+                localStorage.getItem(
+                    CLAVE_TEMA_ADMIN
+                ) === "oscuro"
+            ) {
+
+                tema =
+                    "oscuro";
+
+            }
+
+        } catch (error) {
+
+            tema =
+                "claro";
+
+        }
+
+        document.documentElement.dataset.adminTema =
+            tema;
+
+    })();
+</script>
+
 <aside
     class="admin-sidebar"
     id="admin-sidebar"

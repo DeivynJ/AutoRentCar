@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Detalle de reservación de <%= agencia.nombre %>."
+    >
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+    <%- include("../partials/tema") %>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+    <div class="panel-shell">
+
+        <%- include("../partials/sidebar") %>
+
+
+        <div class="panel-content-wrapper">
+
+            <%- include("../partials/header") %>
+
+
+            <main class="panel-main">
+
+
+                <%
+
+                    function fechaSegura(valor) {
+
+                        if (!valor) {
+
+                            return "—";
+
+                        }
+
+
+                        const fecha =
+                            new Date(
+                                valor
+                            );
+
+
+                        if (
+                            Number.isNaN(
+                                fecha.getTime()
+                            )
+                        ) {
+
+                            return "—";
+
+                        }
+
+
+                        return fecha
+                            .toISOString()
+                            .slice(
+                                0,
+                                10
+                            );
+
+                    }
+
+
+                    function moneda(valor) {
+
+                        return Number(
+                            valor ||
+                            0
+                        ).toFixed(
+                            2
+                        );
+
+                    }
+
+
+                    let claseEstado =
+                        "unit-status-reservado";
+
+
+                    if (
+                        reservacion.estado ===
+                        "confirmada"
+                    ) {
+
+                        claseEstado =
+                            "unit-status-disponible";
+
+                    }
+
+
+                    if (
+                        reservacion.estado ===
+                        "en_curso"
+                    ) {
+
+                        claseEstado =
+                            "unit-status-alquilado";
+
+                    }
+
+
+                    if (
+                        [
+                            "finalizada",
+                            "rechazada",
+                            "cancelada"
+                        ].includes(
+                            reservacion.estado
+                        )
+                    ) {
+
+                        claseEstado =
+                            "unit-status-inactivo";
+
+                    }
+
+                %>
+
+                <!-- =====================================
+     MENSAJES DE RESULTADO
+====================================== -->
+
+<% if (String(queryResultado || "") === "confirmada") { %>
+
+    <div class="panel-reservation-message success">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <span>
+            La reservación fue confirmada correctamente.
+        </span>
+
+    </div>
+
+<% } %>
+
+<% if (String(queryResultado || "") === "pendiente_pago") { %>
+
+    <div class="panel-reservation-message success">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <span>
+
+            La reservación fue aprobada correctamente.
+            Ahora está pendiente del pago del anticipo.
+
+        </span>
+
+    </div>
+
+<% } %>
+
+<% if (String(queryResultado || "") === "rechazada") { %>
+
+    <div class="panel-reservation-message danger">
+
+        <i class="fa-solid fa-circle-xmark"></i>
+
+        <span>
+            La reservación fue rechazada correctamente.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+<% if (String(queryError || "") === "estado") { %>
+
+    <div class="panel-reservation-message warning">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <span>
+            Esta reservación ya había sido procesada.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+                <!-- =====================================
+                     NAVEGACIÓN
+                ====================================== -->
+
+                <section class="panel-module-hero">
+
+                    <div>
+
+                        <a
+                            href="/panel/reservaciones"
+                            class="panel-secondary-button"
+                        >
+
+                            <i class="fa-solid fa-arrow-left"></i>
+
+                            Volver a reservaciones
+
+                        </a>
+
+
+                        <span class="panel-module-badge">
+
+                            <i class="fa-solid fa-calendar-check"></i>
+
+                            Reservación
+
+                        </span>
+
+
+                        <h2>
+
+                            <span>
+                                <%= reservacion.codigo %>
+                            </span>
+
+                        </h2>
+
+
+                        <p>
+
+                            Consulta la información completa
+                            de esta reservación perteneciente
+                            a <%= agencia.nombre %>.
+
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =====================================
+                     RESUMEN PRINCIPAL
+                ====================================== -->
+
+                <section class="panel-summary-grid">
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                        </div>
+
+                        <small>
+                            Estado
+                        </small>
+
+                        <strong>
+
+                            <span class="unit-status <%= claseEstado %>">
+
+                                <%= reservacion.estado %>
+
+                            </span>
+
+                        </strong>
+
+                        <span>
+                            Estado actual de la solicitud
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-car"></i>
+
+                        </div>
+
+                        <small>
+                            Vehículo
+                        </small>
+
+                        <strong>
+
+                            <%= reservacion.modelo_marca %>
+                            <%= reservacion.modelo_nombre %>
+
+                        </strong>
+
+                        <span>
+
+                            <%= reservacion.cantidad_vehiculos %>
+
+                            <%= Number(reservacion.cantidad_vehiculos) === 1
+                                ? "vehículo solicitado"
+                                : "vehículos solicitados" %>
+
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-money-bill-wave"></i>
+
+                        </div>
+
+                        <small>
+                            Total
+                        </small>
+
+                        <strong>
+
+                            US$<%= moneda(resumenPago.total) %>
+
+                        </strong>
+
+                        <span>
+                            Total calculado por el servidor
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-globe"></i>
+
+                        </div>
+
+                        <small>
+                            Origen
+                        </small>
+
+                        <strong>
+
+                            <%= reservacion.origen === "web"
+                                ? "Web"
+                                : "Panel" %>
+
+                        </strong>
+
+                        <span>
+                            Canal de creación
+                        </span>
+
+                    </article>
+
+
+                </section>
+
+                <!-- =====================================
+     ACCIONES DE RESERVACIÓN
+====================================== -->
+
+<section class="panel-units-card">
+
+    <div class="panel-units-header">
+
+        <div>
+
+            <span>
+                Gestión
+            </span>
+
+            <h3>
+                Decisión de la reservación
+            </h3>
+
+            <p>
+
+                Revisa cuidadosamente los datos antes
+                de confirmar o rechazar esta solicitud.
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <% if (reservacion.estado === "pendiente") { %>
+
+        <div class="panel-reservation-actions">
+
+
+            <!-- =================================
+                 CONFIRMAR
+            ================================== -->
+
+            <form
+                action="/panel/reservaciones/<%= reservacion.id %>/confirmar"
+                method="POST"
+                class="panel-reservation-action-form"
+                onsubmit="return confirm('¿Aprobar la reservación <%= reservacion.codigo %>? Se aplicará la política de pago configurada para la agencia.');"
+            >
+
+                <button
+                    type="submit"
+                    class="panel-reservation-action panel-reservation-confirm"
+                >
+
+                    <span class="panel-reservation-action-icon">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                    </span>
+
+
+                    <span>
+
+                        <strong>
+    Aprobar reservación
+</strong>
+
+<small>
+
+    Se aplicará automáticamente la política
+    de anticipo configurada para la agencia.
+
+</small>
+
+                    </span>
+
+                </button>
+
+            </form>
+
+
+            <!-- =================================
+                 RECHAZAR
+            ================================== -->
+
+            <form
+                action="/panel/reservaciones/<%= reservacion.id %>/rechazar"
+                method="POST"
+                class="panel-reservation-action-form"
+                onsubmit="return confirm('¿Seguro que deseas rechazar la reservación <%= reservacion.codigo %>? Esta acción no podrá revertirse desde esta pantalla.');"
+            >
+
+                <button
+                    type="submit"
+                    class="panel-reservation-action panel-reservation-reject"
+                >
+
+                    <span class="panel-reservation-action-icon">
+
+                        <i class="fa-solid fa-circle-xmark"></i>
+
+                    </span>
+
+
+                    <span>
+
+                        <strong>
+                            Rechazar reservación
+                        </strong>
+
+                        <small>
+
+                            La solicitud dejará de consumir
+                            disponibilidad.
+
+                        </small>
+
+                    </span>
+
+                </button>
+
+            </form>
+
+
+        </div>
+
+
+    <% } else { %>
+
+        <div class="panel-reservation-decision-complete">
+
+            <div class="panel-reservation-decision-icon">
+
+                <% if (reservacion.estado === "confirmada") { %>
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                <% } else if (reservacion.estado === "rechazada") { %>
+
+                    <i class="fa-solid fa-circle-xmark"></i>
+
+                <% } else { %>
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                <% } %>
+
+            </div>
+
+
+            <div>
+
+                <% if (reservacion.estado === "pendiente_pago") { %>
+
+    <strong>
+        Reservación aprobada
+    </strong>
+
+    <p>
+
+        Pendiente del anticipo de
+
+        <strong>
+            US$<%= moneda(
+                resumenPago.montoAnticipoRequerido
+            ) %>
+        </strong>
+
+    </p>
+
+<% } else { %>
+
+    <strong>
+        Esta reservación ya fue procesada
+    </strong>
+
+    <p>
+
+        Estado actual:
+
+        <strong>
+            <%= reservacion.estado %>
+        </strong>
+
+    </p>
+
+<% } %>
+
+            </div>
+
+        </div>
+
+    <% } %>
+
+</section>
+
+
+                <!-- =====================================
+                     CLIENTE
+                ====================================== -->
+
+                <section class="panel-units-card">
+
+
+                    <div class="panel-units-header">
+
+                        <div>
+
+                            <span>
+                                Cliente
+                            </span>
+
+                            <h3>
+                                Información del conductor
+                            </h3>
+
+                            <p>
+                                Datos suministrados al realizar
+                                la reservación.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="panel-units-table-wrapper">
+
+                        <table class="panel-units-table">
+
+                            <tbody>
+
+                                <tr>
+
+                                    <th>
+                                        Nombre
+                                    </th>
+
+                                    <td>
+                                        <strong>
+                                            <%= reservacion.cliente_nombre %>
+                                        </strong>
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Documento
+                                    </th>
+
+                                    <td>
+                                        <%= reservacion.cliente_documento %>
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Correo electrónico
+                                    </th>
+
+                                    <td>
+                                        <%= reservacion.cliente_correo %>
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Teléfono
+                                    </th>
+
+                                    <td>
+                                        <%= reservacion.cliente_telefono %>
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Edad
+                                    </th>
+
+                                    <td>
+
+                                        <%= reservacion.cliente_edad %>
+                                        años
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Licencia
+                                    </th>
+
+                                    <td>
+                                        <%= reservacion.cliente_licencia %>
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =====================================
+                     VEHÍCULO Y PERÍODO
+                ====================================== -->
+
+                <section class="panel-units-card">
+
+
+                    <div class="panel-units-header">
+
+                        <div>
+
+                            <span>
+                                Alquiler
+                            </span>
+
+                            <h3>
+                                Vehículo y período
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="panel-units-table-wrapper">
+
+                        <table class="panel-units-table">
+
+                            <tbody>
+
+
+                                <tr>
+
+                                    <th>
+                                        Modelo
+                                    </th>
+
+                                    <td>
+
+                                        <strong>
+
+                                            <%= reservacion.modelo_marca %>
+                                            <%= reservacion.modelo_nombre %>
+
+                                        </strong>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Cantidad
+                                    </th>
+
+                                    <td>
+                                        <%= reservacion.cantidad_vehiculos %>
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Precio diario
+                                    </th>
+
+                                    <td>
+
+                                        US$<%= moneda(
+                                            resumenPago.precioDiario
+                                        ) %>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Fecha de recogida
+                                    </th>
+
+                                    <td>
+
+                                        <%= fechaSegura(
+                                            reservacion.fecha_recogida
+                                        ) %>
+
+                                        —
+
+                                        <%= reservacion.hora_recogida || "—" %>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Lugar de recogida
+                                    </th>
+
+                                    <td>
+                                        <%= reservacion.lugar_recogida %>
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Fecha de entrega
+                                    </th>
+
+                                    <td>
+
+                                        <%= fechaSegura(
+                                            reservacion.fecha_entrega
+                                        ) %>
+
+                                        —
+
+                                        <%= reservacion.hora_entrega || "—" %>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Lugar de entrega
+                                    </th>
+
+                                    <td>
+                                        <%= reservacion.lugar_entrega %>
+                                    </td>
+
+                                </tr>
+
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =====================================
+                     ADICIONALES
+                ====================================== -->
+
+                <section class="panel-units-card">
+
+
+                    <div class="panel-units-header">
+
+                        <div>
+
+                            <span>
+                                Servicios
+                            </span>
+
+                            <h3>
+                                Adicionales
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <% if (adicionales.length) { %>
+
+
+                        <div class="panel-units-table-wrapper">
+
+                            <table class="panel-units-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Servicio
+                                        </th>
+
+                                        <th>
+                                            Precio diario
+                                        </th>
+
+                                        <th>
+                                            Vehículos
+                                        </th>
+
+                                        <th>
+                                            Días
+                                        </th>
+
+                                        <th>
+                                            Total
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+
+                                    <% adicionales.forEach((adicional) => { %>
+
+                                        <tr>
+
+                                            <td>
+
+                                                <strong>
+                                                    <%= adicional.nombre %>
+                                                </strong>
+
+                                            </td>
+
+                                            <td>
+
+                                                US$<%= moneda(
+                                                    adicional.precio_diario
+                                                ) %>
+
+                                            </td>
+
+                                            <td>
+                                                <%= adicional.cantidad_vehiculos %>
+                                            </td>
+
+                                            <td>
+                                                <%= adicional.dias %>
+                                            </td>
+
+                                            <td>
+
+                                                <strong>
+
+                                                    US$<%= moneda(
+                                                        adicional.costo_total
+                                                    ) %>
+
+                                                </strong>
+
+                                            </td>
+
+                                        </tr>
+
+                                    <% }); %>
+
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                    <% } else { %>
+
+
+                        <div class="catalog-empty">
+
+                            <div>
+
+                                <i class="fa-solid fa-circle-check"></i>
+
+                            </div>
+
+                            <h3>
+                                Sin servicios adicionales
+                            </h3>
+
+                            <p>
+                                Esta reservación no incluye
+                                servicios adicionales.
+                            </p>
+
+                        </div>
+
+
+                    <% } %>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     RESUMEN ECONÓMICO
+                ====================================== -->
+
+                <section class="panel-units-card">
+
+
+                    <div class="panel-units-header">
+
+                        <div>
+
+                            <span>
+                                Facturación
+                            </span>
+
+                            <h3>
+                                Resumen económico
+                            </h3>
+
+                            <p>
+                                Importes calculados y almacenados
+                                por el servidor al crear la reserva.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="panel-units-table-wrapper">
+
+                        <table class="panel-units-table">
+
+                            <tbody>
+
+
+                                <tr>
+
+                                    <th>
+                                        Subtotal
+                                    </th>
+
+                                    <td>
+
+                                        US$<%= moneda(
+                                            resumenPago.subtotal
+                                        ) %>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Servicios adicionales
+                                    </th>
+
+                                    <td>
+
+                                        US$<%= moneda(
+                                            resumenPago.adicionales
+                                        ) %>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Descuento
+                                    </th>
+
+                                    <td>
+
+                                        - US$<%= moneda(
+                                            resumenPago.descuento
+                                        ) %>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Código promocional
+                                    </th>
+
+                                    <td>
+
+                                        <%= reservacion.codigo_promocional || "No aplicado" %>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <th>
+                                        Total
+                                    </th>
+
+                                    <td>
+
+                                        <strong>
+
+                                            US$<%= moneda(
+                                                resumenPago.total
+                                            ) %>
+
+                                        </strong>
+
+                                    </td>
+
+                                </tr>
+
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =====================================
+                     OBSERVACIONES
+                ====================================== -->
+
+                <section class="panel-units-card">
+
+
+                    <div class="panel-units-header">
+
+                        <div>
+
+                            <span>
+                                Información adicional
+                            </span>
+
+                            <h3>
+                                Comentarios
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="catalog-empty">
+
+                        <p>
+
+                            <%= reservacion.comentarios
+                                || "El cliente no agregó comentarios a esta reservación." %>
+
+                        </p>
+
+                    </div>
+
+
+                </section>
+
+
+            </main>
+
+        </div>
+
+    </div>
+
+
+    <script src="/js/panel.js"></script>
+
+</body>
+
+</html>

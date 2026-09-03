@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Panel administrativo de <%= agencia.nombre %>."
+    >
+
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <!-- TEMA ANTES DEL CSS -->
+
+    <%- include("partials/tema") %>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+    <div class="panel-shell">
+
+
+        <!-- SIDEBAR -->
+
+        <%- include("partials/sidebar") %>
+
+
+        <div class="panel-content-wrapper">
+
+
+            <!-- HEADER -->
+
+            <%- include("partials/header") %>
+
+
+            <!-- CONTENIDO -->
+
+            <main class="panel-main">
+
+
+                <!-- HERO -->
+
+                <section class="panel-hero">
+
+                    <div class="panel-hero-content">
+
+                        <div class="panel-hero-badge">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                            <span>
+                                Agencia validada y operativa
+                            </span>
+
+                        </div>
+
+
+                        <h2>
+
+                            Bienvenido,
+                            <span>
+                                <%= usuario.nombre %>
+                            </span>
+
+                        </h2>
+
+
+                        <p>
+
+                            Desde este panel podrás administrar
+                            las operaciones de
+                            <strong>
+                                <%= agencia.nombre %>
+                            </strong>.
+
+                            Actualmente tienes acceso mediante
+                            el plan
+                            <strong>
+                                <%= plan.nombre %>
+                            </strong>.
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="panel-hero-visual">
+
+                        <div class="panel-hero-logo">
+
+                            <% if (agencia.logo) { %>
+
+                                <img
+                                    src="<%= agencia.logo %>"
+                                    alt="Logo de <%= agencia.nombre %>"
+                                >
+
+                            <% } else { %>
+
+                                <span>
+                                    <%= agencia.nombre
+                                        .charAt(0)
+                                        .toUpperCase() %>
+                                </span>
+
+                            <% } %>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- RESUMEN -->
+
+                <section class="panel-summary-grid">
+
+
+                    <!-- SUSCRIPCIÓN -->
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-file-circle-check"></i>
+
+                        </div>
+
+                        <small>
+                            Suscripción
+                        </small>
+
+                        <strong>
+                            <%= suscripcion.estado %>
+                        </strong>
+
+                        <span>
+                            Acceso operativo actual
+                        </span>
+
+                    </article>
+
+
+                    <!-- PLAN -->
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-layer-group"></i>
+
+                        </div>
+
+                        <small>
+                            Plan contratado
+                        </small>
+
+                        <strong>
+                            <%= plan.nombre %>
+                        </strong>
+
+                        <span>
+                            Configuración de la agencia
+                        </span>
+
+                    </article>
+
+
+                    <!-- VEHÍCULOS -->
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-car-side"></i>
+
+                        </div>
+
+                        <small>
+                            Límite de vehículos
+                        </small>
+
+                        <strong>
+                            <%= plan.limiteVehiculos ?? "Ilimitado" %>
+                        </strong>
+
+                        <span>
+                            Unidades activas permitidas
+                        </span>
+
+                    </article>
+
+
+                    <!-- SUCURSALES -->
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-location-dot"></i>
+
+                        </div>
+
+                        <small>
+                            Límite de sucursales
+                        </small>
+
+                        <strong>
+                            <%= plan.limiteSucursales ?? "Ilimitado" %>
+                        </strong>
+
+                        <span>
+                            Según el plan actual
+                        </span>
+
+                    </article>
+
+                </section>
+
+
+                <footer class="panel-footer">
+
+                    <span>
+                        <%= agencia.nombre %>
+                    </span>
+
+                    <span>
+                        AutoRentCar Platform ·
+                        © <%= new Date().getFullYear() %>
+                    </span>
+
+                </footer>
+
+            </main>
+
+        </div>
+
+    </div>
+
+
+    <script src="/js/panel.js"></script>
+
+</body>
+
+</html>

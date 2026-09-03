@@ -1,0 +1,529 @@
+<div
+    id="panel-theme-config"
+    hidden
+    data-slug="<%= agencia.slug || 'autorentcar' %>"
+    data-color-primario="<%= agencia.colorPrimario || '#0b1f3a' %>"
+    data-color-secundario="<%= agencia.colorSecundario || '#ff8a00' %>"
+></div>
+
+
+<script>
+    (() => {
+
+        const configuracionTema =
+            document.getElementById(
+                "panel-theme-config"
+            );
+
+
+        const slugAgencia =
+            configuracionTema?.dataset.slug ||
+            "autorentcar";
+
+
+        const colorPrimario =
+            configuracionTema?.dataset.colorPrimario ||
+            "#0b1f3a";
+
+
+        const colorSecundario =
+            configuracionTema?.dataset.colorSecundario ||
+            "#ff8a00";
+
+
+        const CLAVE_TEMA =
+            `autorentcar-panel-tema:${slugAgencia}`;
+
+
+        function normalizarHex(
+            valor,
+            respaldo
+        ) {
+
+            let color =
+                String(
+                    valor ||
+                    respaldo
+                )
+                    .trim()
+                    .toLowerCase();
+
+
+            if (
+                !color.startsWith("#")
+            ) {
+
+                color =
+                    `#${color}`;
+
+            }
+
+
+            if (
+                /^#[0-9a-f]{3}$/i.test(
+                    color
+                )
+            ) {
+
+                color =
+                    `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}`;
+
+            }
+
+
+            return /^#[0-9a-f]{6}$/i.test(
+                color
+            )
+                ? color
+                : respaldo;
+
+        }
+
+
+        function hexARgb(
+            color
+        ) {
+
+            return {
+
+                r:
+                    parseInt(
+                        color.slice(1, 3),
+                        16
+                    ),
+
+                g:
+                    parseInt(
+                        color.slice(3, 5),
+                        16
+                    ),
+
+                b:
+                    parseInt(
+                        color.slice(5, 7),
+                        16
+                    )
+
+            };
+
+        }
+
+
+        function rgbCss(
+            color
+        ) {
+
+            return `rgb(${color.r}, ${color.g}, ${color.b})`;
+
+        }
+
+
+        function rgbLista(
+            color
+        ) {
+
+            return `${color.r}, ${color.g}, ${color.b}`;
+
+        }
+
+
+        function mezclar(
+            colorA,
+            colorB,
+            porcentajeB
+        ) {
+
+            const porcentaje =
+                Math.max(
+                    0,
+                    Math.min(
+                        1,
+                        porcentajeB
+                    )
+                );
+
+
+            return {
+
+                r:
+                    Math.round(
+                        colorA.r +
+                        (
+                            colorB.r -
+                            colorA.r
+                        ) *
+                        porcentaje
+                    ),
+
+                g:
+                    Math.round(
+                        colorA.g +
+                        (
+                            colorB.g -
+                            colorA.g
+                        ) *
+                        porcentaje
+                    ),
+
+                b:
+                    Math.round(
+                        colorA.b +
+                        (
+                            colorB.b -
+                            colorA.b
+                        ) *
+                        porcentaje
+                    )
+
+            };
+
+        }
+
+
+        function luminancia(
+            color
+        ) {
+
+            const canal =
+                (valor) => {
+
+                    const normalizado =
+                        valor /
+                        255;
+
+
+                    return normalizado <=
+                        0.03928
+                        ? normalizado /
+                            12.92
+                        : Math.pow(
+                            (
+                                normalizado +
+                                0.055
+                            ) /
+                                1.055,
+                            2.4
+                        );
+
+                };
+
+
+            return (
+                0.2126 *
+                canal(color.r)
+            ) +
+            (
+                0.7152 *
+                canal(color.g)
+            ) +
+            (
+                0.0722 *
+                canal(color.b)
+            );
+
+        }
+
+
+        function contraste(
+            colorA,
+            colorB
+        ) {
+
+            const a =
+                luminancia(
+                    colorA
+                );
+
+
+            const b =
+                luminancia(
+                    colorB
+                );
+
+
+            return (
+                Math.max(a, b) +
+                0.05
+            ) /
+            (
+                Math.min(a, b) +
+                0.05
+            );
+
+        }
+
+
+        const blanco = {
+            r: 255,
+            g: 255,
+            b: 255
+        };
+
+
+        const negro = {
+            r: 0,
+            g: 0,
+            b: 0
+        };
+
+
+        const color1 =
+            hexARgb(
+                normalizarHex(
+                    colorPrimario,
+                    "#0b1f3a"
+                )
+            );
+
+
+        const color2 =
+            hexARgb(
+                normalizarHex(
+                    colorSecundario,
+                    "#ff8a00"
+                )
+            );
+
+
+        /*
+         * El color más oscuro se utiliza
+         * como base estructural.
+         *
+         * El más claro se utiliza
+         * como acento.
+         */
+
+        let base =
+            luminancia(color1) <=
+            luminancia(color2)
+                ? color1
+                : color2;
+
+
+        const acento =
+            luminancia(color1) <=
+            luminancia(color2)
+                ? color2
+                : color1;
+
+
+        /*
+         * Garantizamos contraste suficiente
+         * para sidebar y encabezados.
+         */
+
+        let intentos =
+            0;
+
+
+        while (
+            contraste(
+                base,
+                blanco
+            ) < 5 &&
+            intentos < 12
+        ) {
+
+            base =
+                mezclar(
+                    base,
+                    negro,
+                    0.10
+                );
+
+
+            intentos++;
+
+        }
+
+
+        const baseProfunda =
+            mezclar(
+                base,
+                negro,
+                0.25
+            );
+
+
+        const baseSuave =
+            mezclar(
+                base,
+                blanco,
+                0.14
+            );
+        
+
+        /*
+ * Superficies del modo oscuro.
+ *
+ * Se generan desde el color estructural
+ * de la propia agencia.
+ */
+
+const oscuroFondo =
+    mezclar(
+        base,
+        negro,
+        0.55
+    );
+
+
+const oscuroSuperficie =
+    mezclar(
+        oscuroFondo,
+        blanco,
+        0.07
+    );
+
+
+const oscuroSuperficieAlterna =
+    mezclar(
+        oscuroFondo,
+        blanco,
+        0.12
+    );
+
+
+const oscuroBorde =
+    mezclar(
+        oscuroFondo,
+        blanco,
+        0.22
+    );
+
+
+        const contrasteAcentoNegro =
+            contraste(
+                acento,
+                negro
+            );
+
+
+        const contrasteAcentoBlanco =
+            contraste(
+                acento,
+                blanco
+            );
+
+
+        const textoSobreAcento =
+            contrasteAcentoNegro >
+            contrasteAcentoBlanco
+                ? negro
+                : blanco;
+
+
+        const raiz =
+            document.documentElement;
+
+
+        raiz.style.setProperty(
+            "--panel-primary",
+            rgbCss(base)
+        );
+
+
+        raiz.style.setProperty(
+            "--panel-primary-rgb",
+            rgbLista(base)
+        );
+
+
+        raiz.style.setProperty(
+            "--panel-primary-deep",
+            rgbCss(baseProfunda)
+        );
+
+
+        raiz.style.setProperty(
+            "--panel-primary-soft",
+            rgbCss(baseSuave)
+        );
+
+
+        raiz.style.setProperty(
+            "--panel-accent",
+            rgbCss(acento)
+        );
+
+
+        raiz.style.setProperty(
+            "--panel-accent-rgb",
+            rgbLista(acento)
+        );
+
+
+        raiz.style.setProperty(
+            "--panel-text-on-accent",
+            rgbCss(
+                textoSobreAcento
+            )
+        );
+
+
+        raiz.style.setProperty(
+    "--panel-dark-bg",
+    rgbCss(
+        oscuroFondo
+    )
+);
+
+
+raiz.style.setProperty(
+    "--panel-dark-surface",
+    rgbCss(
+        oscuroSuperficie
+    )
+);
+
+
+raiz.style.setProperty(
+    "--panel-dark-surface-alt",
+    rgbCss(
+        oscuroSuperficieAlterna
+    )
+);
+
+
+raiz.style.setProperty(
+    "--panel-dark-border",
+    rgbCss(
+        oscuroBorde
+    )
+);
+
+
+        raiz.dataset.panelAgencia =
+            slugAgencia;
+
+
+        let tema =
+            "claro";
+
+
+        try {
+
+            if (
+                localStorage.getItem(
+                    CLAVE_TEMA
+                ) === "oscuro"
+            ) {
+
+                tema =
+                    "oscuro";
+
+            }
+
+        } catch (error) {
+
+            tema =
+                "claro";
+
+        }
+
+
+        raiz.dataset.panelTema =
+            tema;
+
+    })();
+</script>

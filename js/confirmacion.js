@@ -846,7 +846,7 @@ function copiarTextoAlternativo(texto) {
    DESCARGAR RESUMEN EN PDF
 ========================================================= */
 
-function descargarResumenReservacion() {
+async function descargarResumenReservacion() {
     if (!ultimaReservacion) {
         mostrarNotificacion(
             "Reservación no disponible",
@@ -890,6 +890,23 @@ function descargarResumenReservacion() {
         const cliente =
             reservacion.cliente || {};
 
+        const agenciaPdf =
+    await obtenerAgenciaParaPdf(
+        reservacion
+    );
+
+
+const identidadPdf =
+    construirIdentidadAgenciaPdf(
+        agenciaPdf
+    );
+
+
+const logoPdf =
+    await cargarLogoPdfComoPng(
+        identidadPdf.logo
+    );    
+
         const adicionales = Array.isArray(
             reservacion.adicionales
         )
@@ -907,18 +924,10 @@ function descargarResumenReservacion() {
                 cantidadVehiculos
             );
 
-        const colores = {
-            azul: [11, 31, 58],
-            azulMedio: [24, 68, 115],
-            naranja: [255, 138, 0],
-            fondo: [246, 248, 252],
-            borde: [226, 232, 240],
-            texto: [23, 32, 51],
-            suave: [100, 116, 139],
-            blanco: [255, 255, 255],
-            verde: [22, 163, 106]
-        };
-
+        const colores =
+    crearPaletaAgenciaPdf(
+        identidadPdf.colores
+    );
         const paginaAncho = 210;
         const margen = 12;
 
@@ -1109,63 +1118,64 @@ function descargarResumenReservacion() {
             "F"
         );
 
-        documento.setFillColor(
-            ...colores.naranja
-        );
+        dibujarMarcaAgenciaPdf(
+    documento,
+    logoPdf,
+    identidadPdf.nombre,
+    colores
+);
 
-        documento.circle(
-            22,
-            18.5,
-            9,
-            "F"
-        );
 
-        documento.setTextColor(
-            ...colores.blanco
-        );
+documento.setTextColor(
+    ...colores.blanco
+);
 
-        documento.setFont(
-            "helvetica",
-            "bold"
-        );
 
-        documento.setFontSize(12);
+documento.setFont(
+    "helvetica",
+    "bold"
+);
 
-        documento.text(
-            "AR",
-            22,
-            21,
-            {
-                align: "center"
-            }
-        );
 
-        documento.setFontSize(18);
+documento.setFontSize(18);
 
-        documento.text(
-            "AutoRentCar",
-            35,
-            16
-        );
 
-        documento.setFont(
-            "helvetica",
-            "normal"
-        );
+const nombreAgenciaCabecera =
+    documento
+        .splitTextToSize(
+            identidadPdf.nombre,
+            96
+        )[0];
 
-        documento.setFontSize(8.5);
 
-        documento.setTextColor(
-            203,
-            213,
-            225
-        );
+documento.text(
+    nombreAgenciaCabecera,
+    35,
+    16
+);
 
-        documento.text(
-            "Comprobante profesional de reservación",
-            35,
-            22
-        );
+
+documento.setFont(
+    "helvetica",
+    "normal"
+);
+
+
+documento.setFontSize(8.5);
+
+
+documento.setTextColor(
+    203,
+    213,
+    225
+);
+
+
+documento.text(
+    "Comprobante profesional de reservación",
+    35,
+    22
+);
 
         documento.setFillColor(
             ...colores.blanco
@@ -1199,8 +1209,8 @@ function descargarResumenReservacion() {
         );
 
         documento.setTextColor(
-            ...colores.naranja
-        );
+    ...colores.acentoTexto
+);
 
         documento.setFontSize(12);
 
@@ -1259,14 +1269,22 @@ function descargarResumenReservacion() {
             47
         );
 
-        documento.text(
-            "Santiago, República Dominicana",
-            paginaAncho - margen,
-            47,
-            {
-                align: "right"
-            }
-        );
+        const ubicacionPdf =
+    documento
+        .splitTextToSize(
+            identidadPdf.ubicacion,
+            85
+        )[0];
+
+
+documento.text(
+    ubicacionPdf,
+    paginaAncho - margen,
+    47,
+    {
+        align: "right"
+    }
+);
 
         /* =====================================================
            VEHÍCULO
@@ -1356,8 +1374,8 @@ function descargarResumenReservacion() {
         );
 
         documento.setTextColor(
-            ...colores.naranja
-        );
+    ...colores.acentoTexto
+);
 
         documento.setFontSize(8);
 
@@ -1426,8 +1444,8 @@ function descargarResumenReservacion() {
         );
 
         documento.setTextColor(
-            ...colores.naranja
-        );
+    ...colores.acentoTexto
+);
 
         documento.setFontSize(14);
 
@@ -1961,9 +1979,9 @@ function descargarResumenReservacion() {
             y + 39
         );
 
-        documento.setTextColor(
-            ...colores.naranja
-        );
+       documento.setTextColor(
+    ...colores.acentoTexto
+);
 
         documento.setFontSize(14);
 
@@ -1987,16 +2005,13 @@ function descargarResumenReservacion() {
         y += 48;
 
         documento.setFillColor(
-            255,
-            247,
-            237
-        );
+    ...colores.acentoFondo
+);
 
-        documento.setDrawColor(
-            253,
-            186,
-            116
-        );
+
+documento.setDrawColor(
+    ...colores.acentoBorde
+);
 
         documento.roundedRect(
             margen,
@@ -2020,8 +2035,8 @@ function descargarResumenReservacion() {
         );
 
         documento.setTextColor(
-            ...colores.blanco
-        );
+    ...colores.textoSobreAcento
+);
 
         documento.setFont(
             "helvetica",
@@ -2107,10 +2122,10 @@ function descargarResumenReservacion() {
         documento.setFontSize(7.2);
 
         documento.text(
-            "AutoRentCar",
-            margen,
-            286
-        );
+    identidadPdf.nombre,
+    margen,
+    286
+);
 
         documento.setFont(
             "helvetica",
@@ -2125,11 +2140,19 @@ function descargarResumenReservacion() {
 
         documento.setFontSize(6.7);
 
-        documento.text(
-            "+1 849-276-6030 | contacto@autorentcar.com",
-            margen,
-            291
-        );
+        const contactoPiePdf =
+    documento
+        .splitTextToSize(
+            identidadPdf.contactoLinea,
+            105
+        )[0];
+
+
+documento.text(
+    contactoPiePdf,
+    margen,
+    291
+);
 
         documento.text(
             "Documento generado electrónicamente",
@@ -2168,9 +2191,9 @@ function descargarResumenReservacion() {
         );
 
         mostrarNotificacion(
-            "PDF descargado",
-            "El comprobante fue descargado con la cantidad de vehículos reservados."
-        );
+    "PDF descargado",
+    `El comprobante de ${identidadPdf.nombre} fue generado correctamente.`
+);
     } catch (error) {
         console.error(
             "No fue posible generar el PDF.",
@@ -2182,6 +2205,1308 @@ function descargarResumenReservacion() {
             "No fue posible crear el comprobante. Revisa la consola del navegador."
         );
     }
+}
+
+/* =========================================================
+   IDENTIDAD DE AGENCIA PARA PDF
+========================================================= */
+
+async function obtenerAgenciaParaPdf(
+    reservacion
+) {
+
+    const slug =
+        obtenerSlugAgenciaConfirmacion();
+
+
+    /*
+     * app.js normalmente ya cargó la agencia.
+     */
+
+    if (
+        window.AutoRentCarAgencia &&
+        String(
+            window.AutoRentCarAgencia.slug ||
+            ""
+        )
+            .trim()
+            .toLowerCase() ===
+            slug
+    ) {
+
+        return window.AutoRentCarAgencia;
+
+    }
+
+
+    /*
+     * Si todavía no terminó de cargar app.js,
+     * consultamos directamente la API.
+     */
+
+    try {
+
+        const respuesta =
+            await fetch(
+                `/api/agencias/${encodeURIComponent(
+                    slug
+                )}/catalogo`,
+                {
+                    headers:
+                    {
+                        Accept:
+                            "application/json"
+                    },
+
+                    cache:
+                        "no-store"
+                }
+            );
+
+
+        const datos =
+            await respuesta.json();
+
+
+        if (
+            respuesta.ok &&
+            datos?.ok === true &&
+            datos?.agencia
+        ) {
+
+            return datos.agencia;
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "No fue posible obtener la agencia para el PDF.",
+            error
+        );
+
+    }
+
+
+    /*
+     * Respaldo final para no impedir que
+     * el cliente descargue su comprobante.
+     */
+
+    return {
+
+        id:
+            reservacion?.agencia?.id ||
+            0,
+
+        slug,
+
+        nombre:
+            reservacion?.agencia?.nombre ||
+            "AutoRentCar",
+
+        logo:
+            "",
+
+        colores:
+        {
+            primario:
+                "#0b1f3a",
+
+            secundario:
+                "#ff8a00"
+        },
+
+        contacto:
+        {}
+
+    };
+
+}
+
+
+/* =========================================================
+   CONSTRUIR IDENTIDAD DEL PDF
+========================================================= */
+
+function construirIdentidadAgenciaPdf(
+    agencia
+) {
+
+    const contacto =
+        agencia?.contacto ||
+        {};
+
+
+    const nombre =
+        String(
+            agencia?.nombre ||
+            "AutoRentCar"
+        ).trim();
+
+
+    const telefono =
+        String(
+            contacto.telefono ||
+            contacto.whatsapp ||
+            ""
+        ).trim();
+
+
+    const correo =
+        String(
+            contacto.correo ||
+            ""
+        ).trim();
+
+
+    const ciudad =
+        String(
+            contacto.ciudad ||
+            ""
+        ).trim();
+
+
+    const provincia =
+        String(
+            contacto.provincia ||
+            ""
+        ).trim();
+
+
+    const pais =
+        String(
+            contacto.pais ||
+            ""
+        ).trim();
+
+
+    const partesUbicacion =
+        [
+            ciudad,
+            provincia,
+            pais
+        ]
+            .filter(
+                Boolean
+            );
+
+
+    const partesUnicas =
+        [];
+
+
+    partesUbicacion.forEach(
+        (parte) => {
+
+            if (
+                !partesUnicas.some(
+                    (existente) =>
+                        existente
+                            .toLowerCase() ===
+                        parte.toLowerCase()
+                )
+            ) {
+
+                partesUnicas.push(
+                    parte
+                );
+
+            }
+
+        }
+    );
+
+
+    const ubicacion =
+        partesUnicas.join(
+            ", "
+        ) ||
+        "República Dominicana";
+
+
+    const datosContacto =
+        [
+            telefono,
+            correo
+        ]
+            .filter(
+                Boolean
+            );
+
+
+    return {
+
+        nombre,
+
+        logo:
+            String(
+                agencia?.logo ||
+                ""
+            ).trim(),
+
+        colores:
+        {
+            primario:
+                agencia?.colores?.primario ||
+                "#0b1f3a",
+
+            secundario:
+                agencia?.colores?.secundario ||
+                "#ff8a00"
+        },
+
+        telefono,
+
+        correo,
+
+        ubicacion,
+
+        contactoLinea:
+            datosContacto.join(
+                " | "
+            ) ||
+            ubicacion
+
+    };
+
+}
+
+
+/* =========================================================
+   PALETA DINÁMICA DEL PDF
+========================================================= */
+
+function crearPaletaAgenciaPdf(
+    coloresMarca
+) {
+
+    const primario =
+        convertirHexRgbPdf(
+            normalizarHexPdf(
+                coloresMarca?.primario
+            ) ||
+            "#0b1f3a"
+        );
+
+
+    const secundario =
+        convertirHexRgbPdf(
+            normalizarHexPdf(
+                coloresMarca?.secundario
+            ) ||
+            "#ff8a00"
+        );
+
+
+    const luminanciaPrimario =
+        calcularLuminanciaPdf(
+            primario
+        );
+
+
+    const luminanciaSecundario =
+        calcularLuminanciaPdf(
+            secundario
+        );
+
+
+    let base;
+
+    let acento;
+
+
+    if (
+        luminanciaPrimario <=
+        luminanciaSecundario
+    ) {
+
+        base =
+            primario;
+
+        acento =
+            secundario;
+
+    } else {
+
+        base =
+            secundario;
+
+        acento =
+            primario;
+
+    }
+
+
+    base =
+        asegurarBaseOscuraPdf(
+            base
+        );
+
+
+    const blanco =
+        {
+            r: 255,
+            g: 255,
+            b: 255
+        };
+
+
+    const negro =
+        {
+            r: 0,
+            g: 0,
+            b: 0
+        };
+
+
+    const textoOscuro =
+        {
+            r: 23,
+            g: 32,
+            b: 51
+        };
+
+
+    const baseMedio =
+        mezclarRgbPdf(
+            base,
+            blanco,
+            0.20
+        );
+
+
+    let acentoTexto =
+        {
+            ...acento
+        };
+
+
+    let intentos =
+        0;
+
+
+    while (
+        calcularContrastePdf(
+            acentoTexto,
+            blanco
+        ) <
+            4.5 &&
+        intentos <
+            12
+    ) {
+
+        acentoTexto =
+            mezclarRgbPdf(
+                acentoTexto,
+                negro,
+                0.10
+            );
+
+
+        intentos++;
+
+    }
+
+
+    const contrasteOscuro =
+        calcularContrastePdf(
+            acento,
+            textoOscuro
+        );
+
+
+    const contrasteBlanco =
+        calcularContrastePdf(
+            acento,
+            blanco
+        );
+
+
+    const textoSobreAcento =
+        contrasteOscuro >
+            contrasteBlanco
+
+            ? textoOscuro
+            : blanco;
+
+
+    return {
+
+        azul:
+            rgbObjetoAArrayPdf(
+                base
+            ),
+
+        azulMedio:
+            rgbObjetoAArrayPdf(
+                baseMedio
+            ),
+
+        naranja:
+            rgbObjetoAArrayPdf(
+                acento
+            ),
+
+        acentoTexto:
+            rgbObjetoAArrayPdf(
+                acentoTexto
+            ),
+
+        textoSobreAcento:
+            rgbObjetoAArrayPdf(
+                textoSobreAcento
+            ),
+
+        acentoFondo:
+            rgbObjetoAArrayPdf(
+                mezclarRgbPdf(
+                    acento,
+                    blanco,
+                    0.90
+                )
+            ),
+
+        acentoBorde:
+            rgbObjetoAArrayPdf(
+                mezclarRgbPdf(
+                    acento,
+                    blanco,
+                    0.48
+                )
+            ),
+
+        fondo:
+            [
+                246,
+                248,
+                252
+            ],
+
+        borde:
+            [
+                226,
+                232,
+                240
+            ],
+
+        texto:
+            [
+                23,
+                32,
+                51
+            ],
+
+        suave:
+            [
+                100,
+                116,
+                139
+            ],
+
+        blanco:
+            [
+                255,
+                255,
+                255
+            ],
+
+        verde:
+            [
+                22,
+                163,
+                106
+            ]
+
+    };
+
+}
+
+
+/* =========================================================
+   NORMALIZAR HEX DEL PDF
+========================================================= */
+
+function normalizarHexPdf(
+    color
+) {
+
+    let valor =
+        String(
+            color ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    if (!valor) {
+
+        return "";
+
+    }
+
+
+    if (
+        !valor.startsWith("#")
+    ) {
+
+        valor =
+            `#${valor}`;
+
+    }
+
+
+    if (
+        /^#[0-9a-f]{3}$/i.test(
+            valor
+        )
+    ) {
+
+        valor =
+            `#${valor[1]}${valor[1]}${valor[2]}${valor[2]}${valor[3]}${valor[3]}`;
+
+    }
+
+
+    return /^#[0-9a-f]{6}$/i.test(
+        valor
+    )
+        ? valor
+        : "";
+
+}
+
+
+/* =========================================================
+   HEX A RGB DEL PDF
+========================================================= */
+
+function convertirHexRgbPdf(
+    color
+) {
+
+    return {
+
+        r:
+            parseInt(
+                color.slice(
+                    1,
+                    3
+                ),
+                16
+            ),
+
+        g:
+            parseInt(
+                color.slice(
+                    3,
+                    5
+                ),
+                16
+            ),
+
+        b:
+            parseInt(
+                color.slice(
+                    5,
+                    7
+                ),
+                16
+            )
+
+    };
+
+}
+
+
+/* =========================================================
+   RGB A ARRAY PARA JSPDF
+========================================================= */
+
+function rgbObjetoAArrayPdf(
+    color
+) {
+
+    return [
+        color.r,
+        color.g,
+        color.b
+    ];
+
+}
+
+
+/* =========================================================
+   MEZCLAR COLORES DEL PDF
+========================================================= */
+
+function mezclarRgbPdf(
+    colorA,
+    colorB,
+    porcentajeColorB
+) {
+
+    const porcentaje =
+        Math.max(
+            0,
+            Math.min(
+                1,
+                porcentajeColorB
+            )
+        );
+
+
+    return {
+
+        r:
+            Math.round(
+                colorA.r +
+                (
+                    colorB.r -
+                    colorA.r
+                ) *
+                porcentaje
+            ),
+
+        g:
+            Math.round(
+                colorA.g +
+                (
+                    colorB.g -
+                    colorA.g
+                ) *
+                porcentaje
+            ),
+
+        b:
+            Math.round(
+                colorA.b +
+                (
+                    colorB.b -
+                    colorA.b
+                ) *
+                porcentaje
+            )
+
+    };
+
+}
+
+
+/* =========================================================
+   LUMINANCIA DEL PDF
+========================================================= */
+
+function calcularLuminanciaPdf(
+    color
+) {
+
+    const convertir =
+        (canal) => {
+
+            const valor =
+                canal /
+                255;
+
+
+            return valor <=
+                0.03928
+
+                ? valor /
+                    12.92
+
+                : Math.pow(
+                    (
+                        valor +
+                        0.055
+                    ) /
+                    1.055,
+                    2.4
+                );
+
+        };
+
+
+    const r =
+        convertir(
+            color.r
+        );
+
+
+    const g =
+        convertir(
+            color.g
+        );
+
+
+    const b =
+        convertir(
+            color.b
+        );
+
+
+    return (
+        0.2126 *
+        r
+    ) +
+    (
+        0.7152 *
+        g
+    ) +
+    (
+        0.0722 *
+        b
+    );
+
+}
+
+
+/* =========================================================
+   CONTRASTE DEL PDF
+========================================================= */
+
+function calcularContrastePdf(
+    colorA,
+    colorB
+) {
+
+    const luminanciaA =
+        calcularLuminanciaPdf(
+            colorA
+        );
+
+
+    const luminanciaB =
+        calcularLuminanciaPdf(
+            colorB
+        );
+
+
+    const mayor =
+        Math.max(
+            luminanciaA,
+            luminanciaB
+        );
+
+
+    const menor =
+        Math.min(
+            luminanciaA,
+            luminanciaB
+        );
+
+
+    return (
+        mayor +
+        0.05
+    ) /
+    (
+        menor +
+        0.05
+    );
+
+}
+
+
+/* =========================================================
+   ASEGURAR BASE OSCURA DEL PDF
+========================================================= */
+
+function asegurarBaseOscuraPdf(
+    color
+) {
+
+    const blanco =
+        {
+            r: 255,
+            g: 255,
+            b: 255
+        };
+
+
+    const negro =
+        {
+            r: 0,
+            g: 0,
+            b: 0
+        };
+
+
+    let resultado =
+        {
+            ...color
+        };
+
+
+    let intentos =
+        0;
+
+
+    while (
+        calcularContrastePdf(
+            resultado,
+            blanco
+        ) <
+            5 &&
+        intentos <
+            12
+    ) {
+
+        resultado =
+            mezclarRgbPdf(
+                resultado,
+                negro,
+                0.10
+            );
+
+
+        intentos++;
+
+    }
+
+
+    return resultado;
+
+}
+
+
+/* =========================================================
+   LOGO PARA PDF
+========================================================= */
+
+async function cargarLogoPdfComoPng(
+    ruta
+) {
+
+    if (!ruta) {
+
+        return "";
+
+    }
+
+
+    try {
+
+        const respuesta =
+            await fetch(
+                ruta,
+                {
+                    cache:
+                        "no-store"
+                }
+            );
+
+
+        if (!respuesta.ok) {
+
+            return "";
+
+        }
+
+
+        const blob =
+            await respuesta.blob();
+
+
+        const dataUrl =
+            await convertirBlobADataUrlPdf(
+                blob
+            );
+
+
+        const imagen =
+            await cargarImagenHtmlPdf(
+                dataUrl
+            );
+
+
+        const maximo =
+            600;
+
+
+        const escala =
+            Math.min(
+                1,
+                maximo /
+                Math.max(
+                    imagen.naturalWidth,
+                    imagen.naturalHeight
+                )
+            );
+
+
+        const canvas =
+            document.createElement(
+                "canvas"
+            );
+
+
+        canvas.width =
+            Math.max(
+                1,
+                Math.round(
+                    imagen.naturalWidth *
+                    escala
+                )
+            );
+
+
+        canvas.height =
+            Math.max(
+                1,
+                Math.round(
+                    imagen.naturalHeight *
+                    escala
+                )
+            );
+
+
+        const contexto =
+            canvas.getContext(
+                "2d"
+            );
+
+
+        if (!contexto) {
+
+            return "";
+
+        }
+
+
+        contexto.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        contexto.drawImage(
+            imagen,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        return canvas.toDataURL(
+            "image/png"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "No fue posible cargar el logo para el PDF.",
+            error
+        );
+
+
+        return "";
+
+    }
+
+}
+
+
+/* =========================================================
+   BLOB A DATA URL
+========================================================= */
+
+function convertirBlobADataUrlPdf(
+    blob
+) {
+
+    return new Promise(
+        (
+            resolver,
+            rechazar
+        ) => {
+
+            const lector =
+                new FileReader();
+
+
+            lector.onload =
+                () =>
+                    resolver(
+                        lector.result
+                    );
+
+
+            lector.onerror =
+                rechazar;
+
+
+            lector.readAsDataURL(
+                blob
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CARGAR IMAGEN HTML PARA PDF
+========================================================= */
+
+function cargarImagenHtmlPdf(
+    ruta
+) {
+
+    return new Promise(
+        (
+            resolver,
+            rechazar
+        ) => {
+
+            const imagen =
+                new Image();
+
+
+            imagen.onload =
+                () =>
+                    resolver(
+                        imagen
+                    );
+
+
+            imagen.onerror =
+                rechazar;
+
+
+            imagen.src =
+                ruta;
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   DIBUJAR MARCA EN PDF
+========================================================= */
+
+function dibujarMarcaAgenciaPdf(
+    documento,
+    logo,
+    nombre,
+    colores
+) {
+
+    const x =
+        13;
+
+
+    const y =
+        9;
+
+
+    const ancho =
+        18;
+
+
+    const alto =
+        18;
+
+
+    if (logo) {
+
+        try {
+
+            documento.setFillColor(
+                ...colores.blanco
+            );
+
+
+            documento.roundedRect(
+                x,
+                y,
+                ancho,
+                alto,
+                3,
+                3,
+                "F"
+            );
+
+
+            const propiedades =
+                documento.getImageProperties(
+                    logo
+                );
+
+
+            const proporcion =
+                propiedades.width /
+                propiedades.height;
+
+
+            let anchoImagen =
+                14;
+
+
+            let altoImagen =
+                14;
+
+
+            if (
+                proporcion >
+                1
+            ) {
+
+                altoImagen =
+                    anchoImagen /
+                    proporcion;
+
+            } else {
+
+                anchoImagen =
+                    altoImagen *
+                    proporcion;
+
+            }
+
+
+            documento.addImage(
+                logo,
+                "PNG",
+                x +
+                    (
+                        ancho -
+                        anchoImagen
+                    ) /
+                    2,
+                y +
+                    (
+                        alto -
+                        altoImagen
+                    ) /
+                    2,
+                anchoImagen,
+                altoImagen,
+                undefined,
+                "FAST"
+            );
+
+
+            return;
+
+        } catch (error) {
+
+            console.error(
+                "No fue posible dibujar el logo en el PDF.",
+                error
+            );
+
+        }
+
+    }
+
+
+    /*
+     * Si no existe logo, mostramos las iniciales.
+     */
+
+    const iniciales =
+        obtenerInicialesAgenciaPdf(
+            nombre
+        );
+
+
+    documento.setFillColor(
+        ...colores.naranja
+    );
+
+
+    documento.circle(
+        22,
+        18,
+        9,
+        "F"
+    );
+
+
+    documento.setTextColor(
+        ...colores.textoSobreAcento
+    );
+
+
+    documento.setFont(
+        "helvetica",
+        "bold"
+    );
+
+
+    documento.setFontSize(10);
+
+
+    documento.text(
+        iniciales,
+        22,
+        20.5,
+        {
+            align:
+                "center"
+        }
+    );
+
+}
+
+
+/* =========================================================
+   INICIALES DE AGENCIA
+========================================================= */
+
+function obtenerInicialesAgenciaPdf(
+    nombre
+) {
+
+    const palabras =
+        String(
+            nombre ||
+            "AutoRentCar"
+        )
+            .trim()
+            .split(
+                /\s+/
+            )
+            .filter(
+                Boolean
+            );
+
+
+    if (
+        palabras.length ===
+        1
+    ) {
+
+        return palabras[0]
+            .slice(
+                0,
+                2
+            )
+            .toUpperCase();
+
+    }
+
+
+    return palabras
+        .slice(
+            0,
+            2
+        )
+        .map(
+            (palabra) =>
+                palabra[0]
+        )
+        .join("")
+        .toUpperCase();
+
 }
 
 /* =========================================================

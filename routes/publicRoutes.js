@@ -17,6 +17,22 @@ const {
     "../controllers/publicCatalogController"
 );
 
+const {
+
+    consultarDisponibilidadAgencia
+
+} = require(
+    "../controllers/publicDisponibilidadController"
+);
+
+ const {
+
+    crearReservacionPublica
+
+} = require(
+    "../controllers/publicReservacionController"
+);
+
 
 const router =
     express.Router();
@@ -117,6 +133,15 @@ router.get(
     obtenerCatalogoAgencia
 );
 
+router.get(
+    "/api/agencias/:slug/disponibilidad",
+    consultarDisponibilidadAgencia
+);
+
+router.post(
+    "/api/agencias/:slug/reservaciones",
+    crearReservacionPublica
+);
 
 /* =========================================================
    EXPORTACIÓN

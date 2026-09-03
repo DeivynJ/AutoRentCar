@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <%- include("../partials/tema") %>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="panel-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="panel-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+        <main class="panel-main">
+
+
+            <div class="panel-form-back">
+
+                <a
+                    href="/panel/vehiculos/modelos/<%= modelo.id %>/unidades"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Volver a las unidades
+
+                </a>
+
+            </div>
+
+
+            <!-- HERO -->
+
+            <section class="panel-module-hero panel-form-hero">
+
+                <div>
+
+                    <span class="panel-module-badge">
+
+                        <i class="fa-solid fa-pen"></i>
+
+                        Editar unidad
+
+                    </span>
+
+
+                    <h2>
+
+                        <%= modelo.marca %>
+
+                        <span>
+                            <%= modelo.nombre %>
+                        </span>
+
+                    </h2>
+
+
+                    <p>
+
+                        Modifica los datos de la unidad física
+                        <strong>
+                            <%= unidadEditar.codigo_interno %>
+                        </strong>
+                        perteneciente a
+                        <strong>
+                            <%= agencia.nombre %>
+                        </strong>.
+
+                    </p>
+
+                </div>
+
+
+                <div class="panel-form-hero-icon">
+
+                    <i class="fa-solid fa-car"></i>
+
+                </div>
+
+            </section>
+
+
+            <!-- ERROR -->
+
+            <% if (error) { %>
+
+                <div class="panel-alert panel-alert-danger">
+
+                    <i class="fa-solid fa-circle-exclamation"></i>
+
+
+                    <div>
+
+                        <strong>
+                            No fue posible actualizar la unidad
+                        </strong>
+
+                        <span>
+                            <%= error %>
+                        </span>
+
+                    </div>
+
+                </div>
+
+            <% } %>
+
+
+            <!-- INFORMACIÓN ACTUAL -->
+
+            <section class="panel-model-status">
+
+
+                <div>
+
+                    <span class="panel-model-status-icon">
+
+                        <i class="fa-solid fa-barcode"></i>
+
+                    </span>
+
+
+                    <div>
+
+                        <small>
+                            Código
+                        </small>
+
+                        <strong>
+                            <%= unidadEditar.codigo_interno %>
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <span class="panel-model-status-icon">
+
+                        <i class="fa-solid fa-location-dot"></i>
+
+                    </span>
+
+
+                    <div>
+
+                        <small>
+                            Sucursal
+                        </small>
+
+                        <strong>
+
+                            <% const sucursalActual = sucursales.find(
+                                sucursal =>
+                                    String(sucursal.id) ===
+                                    String(unidadEditar.sucursal_id)
+                            ); %>
+
+                            <%= sucursalActual
+                                ? sucursalActual.nombre
+                                : "Sin sucursal"
+                            %>
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <span class="panel-model-status-icon">
+
+                        <i class="fa-solid fa-circle-info"></i>
+
+                    </span>
+
+
+                    <div>
+
+                        <small>
+                            Estado
+                        </small>
+
+                        <strong>
+                            <%= unidadEditar.estado %>
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+            </section>
+
+
+            <!-- PLAN -->
+
+            <section class="panel-fleet-plan">
+
+                <div>
+
+                    <i class="fa-solid fa-layer-group"></i>
+
+
+                    <div>
+
+                        <small>
+                            Vehículos activos
+                        </small>
+
+                        <strong>
+
+                            <%= vehiculosActivos %>
+
+                            /
+
+                            <%= plan.limiteVehiculos === null
+                                ? "Ilimitado"
+                                : plan.limiteVehiculos
+                            %>
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <small>
+                        Plan actual
+                    </small>
+
+                    <strong>
+                        <%= plan.nombre %>
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <!-- FORMULARIO -->
+
+            <form
+                method="POST"
+                action="/panel/vehiculos/modelos/<%= modelo.id %>/unidades/<%= unidadEditar.id %>/editar"
+                class="panel-model-form"
+            >
+
+
+                <section class="panel-form-card">
+
+
+                    <div class="panel-form-card-header">
+
+                        <span class="panel-form-card-icon">
+
+                            <i class="fa-solid fa-id-card"></i>
+
+                        </span>
+
+
+                        <div>
+
+                            <span>
+                                Identificación
+                            </span>
+
+                            <h3>
+                                Datos del vehículo
+                            </h3>
+
+                            <p>
+                                Información específica de esta
+                                unidad física.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="panel-form-grid">
+
+
+                        <div class="panel-form-field">
+
+                            <label for="codigo_interno">
+                                Código interno *
+                            </label>
+
+                            <input
+                                type="text"
+                                id="codigo_interno"
+                                name="codigo_interno"
+                                maxlength="50"
+                                value="<%= unidadEditar.codigo_interno || '' %>"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="panel-form-field">
+
+                            <label for="placa">
+                                Placa
+                            </label>
+
+                            <input
+                                type="text"
+                                id="placa"
+                                name="placa"
+                                maxlength="30"
+                                value="<%= unidadEditar.placa || '' %>"
+                            >
+
+                        </div>
+
+
+                        <div class="panel-form-field">
+
+                            <label for="vin">
+                                VIN
+                            </label>
+
+                            <input
+                                type="text"
+                                id="vin"
+                                name="vin"
+                                maxlength="50"
+                                value="<%= unidadEditar.vin || '' %>"
+                            >
+
+                        </div>
+
+
+                        <div class="panel-form-field">
+
+                            <label for="color">
+                                Color
+                            </label>
+
+                            <input
+                                type="text"
+                                id="color"
+                                name="color"
+                                maxlength="50"
+                                value="<%= unidadEditar.color || '' %>"
+                            >
+
+                        </div>
+
+
+                        <div class="panel-form-field">
+
+                            <label for="kilometraje">
+                                Kilometraje
+                            </label>
+
+                            <input
+                                type="number"
+                                id="kilometraje"
+                                name="kilometraje"
+                                min="0"
+                                step="1"
+                                value="<%= unidadEditar.kilometraje ?? 0 %>"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="panel-form-field">
+
+                            <label for="sucursal_id">
+                                Sucursal *
+                            </label>
+
+                            <select
+                                id="sucursal_id"
+                                name="sucursal_id"
+                                required
+                            >
+
+                                <% sucursales.forEach((sucursal) => { %>
+
+                                    <option
+                                        value="<%= sucursal.id %>"
+                                        <%= String(unidadEditar.sucursal_id) === String(sucursal.id)
+                                            ? "selected"
+                                            : ""
+                                        %>
+                                    >
+
+                                        <%= sucursal.nombre %>
+
+                                        <% if (Number(sucursal.es_principal) === 1) { %>
+                                            — Principal
+                                        <% } %>
+
+                                        <% if (sucursal.estado !== "activa") { %>
+                                            — Inactiva
+                                        <% } %>
+
+                                    </option>
+
+                                <% }); %>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="panel-form-field panel-form-full">
+
+                            <label for="estado">
+                                Estado *
+                            </label>
+
+                            <select
+                                id="estado"
+                                name="estado"
+                                required
+                            >
+
+                                <option
+                                    value="disponible"
+                                    <%= unidadEditar.estado === "disponible" ? "selected" : "" %>
+                                >
+                                    Disponible
+                                </option>
+
+
+                                <option
+                                    value="reservado"
+                                    <%= unidadEditar.estado === "reservado" ? "selected" : "" %>
+                                >
+                                    Reservado
+                                </option>
+
+
+                                <option
+                                    value="alquilado"
+                                    <%= unidadEditar.estado === "alquilado" ? "selected" : "" %>
+                                >
+                                    Alquilado
+                                </option>
+
+
+                                <option
+                                    value="mantenimiento"
+                                    <%= unidadEditar.estado === "mantenimiento" ? "selected" : "" %>
+                                >
+                                    Mantenimiento
+                                </option>
+
+
+                                <option
+                                    value="inactivo"
+                                    <%= unidadEditar.estado === "inactivo" ? "selected" : "" %>
+                                >
+                                    Inactivo
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                    </div>
+
+                </section>
+
+
+                <!-- INFORMACIÓN -->
+
+                <div class="panel-form-note">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+
+                    <div>
+
+                        <strong>
+                            Estado y límite del plan
+                        </strong>
+
+                        <p>
+
+                            Disponible, Reservado, Alquilado
+                            y Mantenimiento cuentan como
+                            vehículos activos dentro del plan.
+
+                            Una unidad Inactiva no consume cupo.
+
+                            Si intentas reactivar una unidad
+                            cuando la agencia ya alcanzó su
+                            límite, el sistema impedirá la
+                            operación automáticamente.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel-form-actions">
+
+
+                    <a
+                        href="/panel/vehiculos/modelos/<%= modelo.id %>/unidades"
+                        class="panel-form-cancel"
+                    >
+                        Cancelar
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="panel-form-submit"
+                    >
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Guardar cambios
+
+                    </button>
+
+                </div>
+
+
+            </form>
+
+
+            <footer class="panel-footer">
+
+                <span>
+                    <%= agencia.nombre %>
+                </span>
+
+                <span>
+                    AutoRentCar Platform ·
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+            </footer>
+
+
+        </main>
+
+
+    </div>
+
+</div>
+
+
+<script src="/js/panel.js"></script>
+
+
+</body>
+
+</html>

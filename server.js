@@ -64,6 +64,13 @@ const {
     "./config/database"
 );
 
+const {
+    formatoFechaHora
+} = require(
+    "./utils/formatters"
+);
+
+
 
 /* =========================================================
    RUTAS
@@ -75,6 +82,10 @@ const authRoutes = require(
 
 const adminRoutes = require(
     "./routes/adminRoutes"
+);
+
+const panelRoutes = require(
+    "./routes/panelRoutes"
 );
 
 const sucursalRoutes = require(
@@ -117,6 +128,13 @@ app.set(
         "views"
     )
 );
+
+/* =========================================================
+   FUNCIONES DISPONIBLES EN LAS VISTAS
+========================================================= */
+
+app.locals.formatoFechaHora =
+    formatoFechaHora;
 
 
 /* =========================================================
@@ -219,6 +237,10 @@ app.use(
 
 app.use(
     adminRoutes
+);
+
+app.use(
+    panelRoutes
 );
 
 app.use(

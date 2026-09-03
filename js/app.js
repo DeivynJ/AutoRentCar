@@ -1,6 +1,11 @@
 /* =========================================================
    AUTORENTCAR - FUNCIONES GENERALES DEL SITIO
 ========================================================= */
+document.documentElement.classList.add(
+    "cargando-branding"
+);
+
+aplicarTemaAgenciaGuardado();
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -288,6 +293,26 @@ async function cargarIdentidadAgenciaPublica() {
             agenciaPublicaActual
         
         );
+
+        aplicarColoresAgenciaPublica(
+            agenciaPublicaActual
+        );
+
+        requestAnimationFrame(
+    () => {
+
+        requestAnimationFrame(
+            () => {
+
+                document.documentElement.classList.remove(
+                    "cargando-branding"
+                );
+
+            }
+        );
+
+    }
+);
 
 
     } catch (error) {
@@ -1203,6 +1228,994 @@ function normalizarTelefonoEnlaceAgencia(
 
 }
 
+/* =========================================================
+   CACHÉ VISUAL DEL TEMA DE LA AGENCIA
+========================================================= */
+
+function obtenerClaveTemaAgencia(
+    slug
+) {
+
+    return `autorentcarTemaAgencia:${slug}`;
+
+}
+
+
+function guardarTemaAgencia(
+    agencia
+) {
+
+    const slug =
+        String(
+            agencia?.slug ||
+            obtenerSlugAgenciaPublica()
+        )
+            .trim()
+            .toLowerCase();
+
+
+    const primario =
+        normalizarColorHexAgencia(
+            agencia?.colores?.primario
+        );
+
+
+    const secundario =
+        normalizarColorHexAgencia(
+            agencia?.colores?.secundario
+        );
+
+
+    if (
+        !slug ||
+        !primario ||
+        !secundario
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        localStorage.setItem(
+            obtenerClaveTemaAgencia(
+                slug
+            ),
+            JSON.stringify(
+                {
+                    slug,
+                    colores:
+                    {
+                        primario,
+                        secundario
+                    }
+                }
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "No fue posible guardar el tema de la agencia.",
+            error
+        );
+
+    }
+
+}
+
+
+function aplicarTemaAgenciaGuardado() {
+
+    const slug =
+        obtenerSlugAgenciaPublica();
+
+
+    try {
+
+        const guardado =
+            localStorage.getItem(
+                obtenerClaveTemaAgencia(
+                    slug
+                )
+            );
+
+
+        if (!guardado) {
+
+            return;
+
+        }
+
+
+        const tema =
+            JSON.parse(
+                guardado
+            );
+
+
+        if (
+            tema?.slug !== slug ||
+            !tema?.colores
+        ) {
+
+            return;
+
+        }
+
+
+        aplicarColoresAgenciaPublica(
+            tema
+        );
+
+    } catch (error) {
+
+        console.error(
+            "No fue posible aplicar el tema guardado.",
+            error
+        );
+
+    }
+
+}
+
+/* =========================================================
+   COLORES PÚBLICOS DE LA AGENCIA
+========================================================= */
+
+function aplicarColoresAgenciaPublica(
+    agencia
+) {
+
+    const colores =
+        agencia?.colores ||
+        {};
+
+
+    const primarioMarca =
+        normalizarColorHexAgencia(
+            colores.primario
+        );
+
+
+    const secundarioMarca =
+        normalizarColorHexAgencia(
+            colores.secundario
+        );
+
+
+    /*
+     * Si la agencia todavía no tiene sus dos colores
+     * configurados, conservamos la identidad original.
+     */
+
+    if (
+        !primarioMarca ||
+        !secundarioMarca
+    ) {
+
+        return;
+
+    }
+
+
+    const rgbPrimarioMarca =
+        convertirHexARgbAgencia(
+            primarioMarca
+        );
+
+
+    const rgbSecundarioMarca =
+        convertirHexARgbAgencia(
+            secundarioMarca
+        );
+
+
+    if (
+        !rgbPrimarioMarca ||
+        !rgbSecundarioMarca
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * Nuestro diseño utiliza:
+     *
+     * color-principal   = base estructural oscura
+     * color-secundario = acento de la marca
+     *
+     * Por eso seleccionamos automáticamente cuál de los
+     * dos colores configurados funciona mejor para cada rol.
+     */
+
+    const luminanciaPrimario =
+        calcularLuminanciaAgencia(
+            rgbPrimarioMarca
+        );
+
+
+    const luminanciaSecundario =
+        calcularLuminanciaAgencia(
+            rgbSecundarioMarca
+        );
+
+
+    let colorBaseOriginal;
+
+    let colorAcento;
+
+
+    if (
+        luminanciaPrimario <=
+        luminanciaSecundario
+    ) {
+
+        colorBaseOriginal =
+            rgbPrimarioMarca;
+
+        colorAcento =
+            rgbSecundarioMarca;
+
+    } else {
+
+        colorBaseOriginal =
+            rgbSecundarioMarca;
+
+        colorAcento =
+            rgbPrimarioMarca;
+
+    }
+
+
+    /*
+     * Garantizamos una base suficientemente oscura
+     * para hero, banners y otras superficies que
+     * utilizan textos claros.
+     */
+
+    const colorBase =
+        asegurarColorBaseAgencia(
+            colorBaseOriginal
+        );
+
+
+    const negro =
+        {
+            r: 0,
+            g: 0,
+            b: 0
+        };
+
+
+    const blanco =
+        {
+            r: 255,
+            g: 255,
+            b: 255
+        };
+
+
+    const colorPrincipalOscuro =
+        mezclarColoresAgencia(
+            colorBase,
+            negro,
+            0.32
+        );
+
+
+    const colorPrincipalTono1 =
+        mezclarColoresAgencia(
+            colorBase,
+            blanco,
+            0.12
+        );
+
+
+    const colorPrincipalTono2 =
+        mezclarColoresAgencia(
+            colorBase,
+            blanco,
+            0.24
+        );
+
+
+    const colorPrincipalTono3 =
+        mezclarColoresAgencia(
+            colorBase,
+            blanco,
+            0.18
+        );
+
+
+    const colorPrincipalTono4 =
+        mezclarColoresAgencia(
+            colorBase,
+            blanco,
+            0.15
+        );
+
+
+    const colorPrincipalTono5 =
+        mezclarColoresAgencia(
+            colorBase,
+            blanco,
+            0.21
+        );
+
+
+    const colorSecundarioOscuro =
+        mezclarColoresAgencia(
+            colorAcento,
+            negro,
+            0.14
+        );
+
+
+    const colorSecundarioClaro =
+        mezclarColoresAgencia(
+            colorAcento,
+            blanco,
+            0.26
+        );
+
+
+    const colorSecundarioClaro2 =
+        mezclarColoresAgencia(
+            colorAcento,
+            blanco,
+            0.20
+        );
+
+
+    const colorSecundarioSuave =
+        mezclarColoresAgencia(
+            colorAcento,
+            blanco,
+            0.56
+        );
+
+
+    const colorSecundarioSuave2 =
+        mezclarColoresAgencia(
+            colorAcento,
+            blanco,
+            0.45
+        );
+
+
+    const fondoAcentoSuave =
+        mezclarColoresAgencia(
+            colorAcento,
+            blanco,
+            0.92
+        );
+
+
+    const textoSobrePrincipal =
+        obtenerColorContrasteAgencia(
+            colorBase
+        );
+
+
+    const textoSobreSecundario =
+        obtenerColorContrasteAgencia(
+            colorAcento
+        );
+
+
+    const raiz =
+        document.documentElement;
+
+
+    raiz.style.setProperty(
+        "--marca-color-primario",
+        primarioMarca
+    );
+
+
+    raiz.style.setProperty(
+        "--marca-color-secundario",
+        secundarioMarca
+    );
+
+
+    raiz.style.setProperty(
+        "--color-principal",
+        convertirRgbACssAgencia(
+            colorBase
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-principal-rgb",
+        convertirRgbAListaAgencia(
+            colorBase
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-principal-oscuro",
+        convertirRgbACssAgencia(
+            colorPrincipalOscuro
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-principal-oscuro-rgb",
+        convertirRgbAListaAgencia(
+            colorPrincipalOscuro
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-principal-tono-1",
+        convertirRgbACssAgencia(
+            colorPrincipalTono1
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-principal-tono-2",
+        convertirRgbACssAgencia(
+            colorPrincipalTono2
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-principal-tono-3",
+        convertirRgbACssAgencia(
+            colorPrincipalTono3
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-principal-tono-4",
+        convertirRgbACssAgencia(
+            colorPrincipalTono4
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-principal-tono-5",
+        convertirRgbACssAgencia(
+            colorPrincipalTono5
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-secundario",
+        convertirRgbACssAgencia(
+            colorAcento
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-secundario-rgb",
+        convertirRgbAListaAgencia(
+            colorAcento
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-secundario-oscuro",
+        convertirRgbACssAgencia(
+            colorSecundarioOscuro
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-secundario-claro",
+        convertirRgbACssAgencia(
+            colorSecundarioClaro
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-secundario-claro-2",
+        convertirRgbACssAgencia(
+            colorSecundarioClaro2
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-secundario-suave",
+        convertirRgbACssAgencia(
+            colorSecundarioSuave
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-secundario-suave-2",
+        convertirRgbACssAgencia(
+            colorSecundarioSuave2
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-azul-claro",
+        convertirRgbACssAgencia(
+            fondoAcentoSuave
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-oscuro",
+        convertirRgbACssAgencia(
+            colorPrincipalOscuro
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-texto-sobre-principal",
+        convertirRgbACssAgencia(
+            textoSobrePrincipal
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-texto-sobre-secundario",
+        convertirRgbACssAgencia(
+            textoSobreSecundario
+        )
+    );
+
+
+    raiz.style.setProperty(
+        "--color-texto-sobre-secundario-rgb",
+        convertirRgbAListaAgencia(
+            textoSobreSecundario
+        )
+    );
+
+    guardarTemaAgencia(
+    agencia
+);
+
+}
+
+
+/* =========================================================
+   NORMALIZAR COLOR HEXADECIMAL
+========================================================= */
+
+function normalizarColorHexAgencia(
+    color
+) {
+
+    let valor =
+        String(
+            color ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    if (!valor) {
+
+        return "";
+
+    }
+
+
+    if (
+        !valor.startsWith("#")
+    ) {
+
+        valor =
+            `#${valor}`;
+
+    }
+
+
+    if (
+        /^#[0-9a-f]{3}$/i.test(
+            valor
+        )
+    ) {
+
+        valor =
+            `#${valor[1]}${valor[1]}${valor[2]}${valor[2]}${valor[3]}${valor[3]}`;
+
+    }
+
+
+    if (
+        !/^#[0-9a-f]{6}$/i.test(
+            valor
+        )
+    ) {
+
+        return "";
+
+    }
+
+
+    return valor;
+
+}
+
+
+/* =========================================================
+   HEX A RGB
+========================================================= */
+
+function convertirHexARgbAgencia(
+    color
+) {
+
+    const normalizado =
+        normalizarColorHexAgencia(
+            color
+        );
+
+
+    if (!normalizado) {
+
+        return null;
+
+    }
+
+
+    return {
+
+        r:
+            parseInt(
+                normalizado.slice(
+                    1,
+                    3
+                ),
+                16
+            ),
+
+        g:
+            parseInt(
+                normalizado.slice(
+                    3,
+                    5
+                ),
+                16
+            ),
+
+        b:
+            parseInt(
+                normalizado.slice(
+                    5,
+                    7
+                ),
+                16
+            )
+
+    };
+
+}
+
+
+/* =========================================================
+   RGB A CSS
+========================================================= */
+
+function convertirRgbACssAgencia(
+    rgb
+) {
+
+    return `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+
+}
+
+
+function convertirRgbAListaAgencia(
+    rgb
+) {
+
+    return `${rgb.r}, ${rgb.g}, ${rgb.b}`;
+
+}
+
+
+/* =========================================================
+   MEZCLAR DOS COLORES
+========================================================= */
+
+function mezclarColoresAgencia(
+    colorA,
+    colorB,
+    porcentajeColorB
+) {
+
+    const porcentaje =
+        Math.max(
+            0,
+            Math.min(
+                1,
+                porcentajeColorB
+            )
+        );
+
+
+    return {
+
+        r:
+            Math.round(
+                colorA.r +
+                (
+                    colorB.r -
+                    colorA.r
+                ) *
+                porcentaje
+            ),
+
+        g:
+            Math.round(
+                colorA.g +
+                (
+                    colorB.g -
+                    colorA.g
+                ) *
+                porcentaje
+            ),
+
+        b:
+            Math.round(
+                colorA.b +
+                (
+                    colorB.b -
+                    colorA.b
+                ) *
+                porcentaje
+            )
+
+    };
+
+}
+
+
+/* =========================================================
+   LUMINANCIA DEL COLOR
+========================================================= */
+
+function calcularLuminanciaAgencia(
+    rgb
+) {
+
+    const convertirCanal =
+        (canal) => {
+
+            const valor =
+                canal /
+                255;
+
+
+            return valor <=
+                0.03928
+
+                ? valor /
+                    12.92
+
+                : Math.pow(
+                    (
+                        valor +
+                        0.055
+                    ) /
+                    1.055,
+                    2.4
+                );
+
+        };
+
+
+    const r =
+        convertirCanal(
+            rgb.r
+        );
+
+
+    const g =
+        convertirCanal(
+            rgb.g
+        );
+
+
+    const b =
+        convertirCanal(
+            rgb.b
+        );
+
+
+    return (
+        0.2126 *
+        r
+    ) +
+    (
+        0.7152 *
+        g
+    ) +
+    (
+        0.0722 *
+        b
+    );
+
+}
+
+
+/* =========================================================
+   RELACIÓN DE CONTRASTE
+========================================================= */
+
+function calcularContrasteAgencia(
+    colorA,
+    colorB
+) {
+
+    const luminanciaA =
+        calcularLuminanciaAgencia(
+            colorA
+        );
+
+
+    const luminanciaB =
+        calcularLuminanciaAgencia(
+            colorB
+        );
+
+
+    const mayor =
+        Math.max(
+            luminanciaA,
+            luminanciaB
+        );
+
+
+    const menor =
+        Math.min(
+            luminanciaA,
+            luminanciaB
+        );
+
+
+    return (
+        mayor +
+        0.05
+    ) /
+    (
+        menor +
+        0.05
+    );
+
+}
+
+
+/* =========================================================
+   COLOR DE TEXTO CON MEJOR CONTRASTE
+========================================================= */
+
+function obtenerColorContrasteAgencia(
+    fondo
+) {
+
+    const blanco =
+        {
+            r: 255,
+            g: 255,
+            b: 255
+        };
+
+
+    const oscuro =
+        {
+            r: 17,
+            g: 24,
+            b: 39
+        };
+
+
+    const contrasteBlanco =
+        calcularContrasteAgencia(
+            fondo,
+            blanco
+        );
+
+
+    const contrasteOscuro =
+        calcularContrasteAgencia(
+            fondo,
+            oscuro
+        );
+
+
+    return contrasteOscuro >
+        contrasteBlanco
+
+        ? oscuro
+        : blanco;
+
+}
+
+
+/* =========================================================
+   ASEGURAR BASE ESTRUCTURAL OSCURA
+========================================================= */
+
+function asegurarColorBaseAgencia(
+    color
+) {
+
+    const blanco =
+        {
+            r: 255,
+            g: 255,
+            b: 255
+        };
+
+
+    const negro =
+        {
+            r: 0,
+            g: 0,
+            b: 0
+        };
+
+
+    let resultado =
+        {
+            ...color
+        };
+
+
+    let intentos =
+        0;
+
+
+    while (
+        calcularContrasteAgencia(
+            resultado,
+            blanco
+        ) <
+            5 &&
+        intentos <
+            10
+    ) {
+
+        resultado =
+            mezclarColoresAgencia(
+                resultado,
+                negro,
+                0.10
+            );
+
+
+        intentos++;
+
+    }
+
+
+    return resultado;
+
+}
 
 /* =========================================================
    MENÚ RESPONSIVE PARA CELULARES
