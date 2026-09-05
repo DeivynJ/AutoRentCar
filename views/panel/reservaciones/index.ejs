@@ -160,6 +160,28 @@
 
                     </article>
 
+                    <article class="panel-summary-card">
+
+    <div class="panel-summary-icon">
+
+        <i class="fa-solid fa-credit-card"></i>
+
+    </div>
+
+    <small>
+        Pendientes de pago
+    </small>
+
+    <strong>
+        <%= resumen.pendientesPago %>
+    </strong>
+
+    <span>
+        Esperando anticipo
+    </span>
+
+</article>
+
 
                     <article class="panel-summary-card">
 
@@ -214,7 +236,10 @@
                      LISTADO
                 ====================================== -->
 
-                <section class="panel-units-card">
+                <section
+    class="panel-units-card"
+    style="margin-top: 28px;"
+>
 
 
                     <div class="panel-units-header">
@@ -305,45 +330,113 @@
                                         <%
 
                                             let claseEstado =
-                                                "unit-status-reservado";
+    "unit-status-reservado";
 
 
-                                            if (
-                                                reservacion.estado ===
-                                                "confirmada"
-                                            ) {
-
-                                                claseEstado =
-                                                    "unit-status-disponible";
-
-                                            }
+let nombreEstado =
+    reservacion.estado;
 
 
-                                            if (
-                                                reservacion.estado ===
-                                                "en_curso"
-                                            ) {
+if (
+    reservacion.estado ===
+    "pendiente"
+) {
 
-                                                claseEstado =
-                                                    "unit-status-alquilado";
+    nombreEstado =
+        "Pendiente";
 
-                                            }
+}
 
 
-                                            if (
-                                                [
-                                                    "finalizada",
-                                                    "rechazada",
-                                                    "cancelada"
-                                                ].includes(
-                                                    reservacion.estado
-                                                )
-                                            ) {
+if (
+    reservacion.estado ===
+    "pendiente_pago"
+) {
 
-                                                claseEstado =
-                                                    "unit-status-inactivo";
+    claseEstado =
+        "unit-status-reservado";
 
-                                            }
+    nombreEstado =
+        "Pendiente de pago";
+
+}
+
+
+if (
+    reservacion.estado ===
+    "confirmada"
+) {
+
+    claseEstado =
+        "unit-status-disponible";
+
+    nombreEstado =
+        "Confirmada";
+
+}
+
+
+if (
+    reservacion.estado ===
+    "en_curso"
+) {
+
+    claseEstado =
+        "unit-status-alquilado";
+
+    nombreEstado =
+        "En curso";
+
+}
+
+
+if (
+    [
+        "finalizada",
+        "rechazada",
+        "cancelada"
+    ].includes(
+        reservacion.estado
+    )
+) {
+
+    claseEstado =
+        "unit-status-inactivo";
+
+}
+
+
+if (
+    reservacion.estado ===
+    "finalizada"
+) {
+
+    nombreEstado =
+        "Finalizada";
+
+}
+
+
+if (
+    reservacion.estado ===
+    "rechazada"
+) {
+
+    nombreEstado =
+        "Rechazada";
+
+}
+
+
+if (
+    reservacion.estado ===
+    "cancelada"
+) {
+
+    nombreEstado =
+        "Cancelada";
+
+}
 
 
                                             const fechaRecogida =
@@ -460,15 +553,16 @@
 
                                             <td>
 
-                                                <span
-                                                    class="unit-status <%= claseEstado %>"
-                                                >
+    <span
 
-                                                    <%= reservacion.estado %>
+    class="unit-status reservation-status-text <%= claseEstado %>"
+    >
 
-                                                </span>
+        <%= nombreEstado %>
 
-                                            </td>
+    </span>  
+
+</td>
 
 
                                             <td>

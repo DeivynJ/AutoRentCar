@@ -325,16 +325,6 @@ function crearTarjetaReservacion(reserva) {
         reserva.estado
     );
 
-    const estaCancelada =
-        estado === "cancelada";
-
-    const puedeCancelarse =
-        ![
-            "cancelada",
-            "finalizada",
-            "rechazada"
-        ].includes(estado);
-
     const codigoSeguro = escaparReservaHTML(
         reserva.codigo || ""
     );
@@ -463,35 +453,8 @@ function crearTarjetaReservacion(reserva) {
                     )"
                 >
                     Ver detalles
+                    
                 </button>
-
-                ${
-                    estaCancelada
-                        ? `
-                            <button
-                                type="button"
-                                class="boton-restaurar-reserva"
-                                onclick="restaurarReservacion(
-                                    '${codigoSeguro}'
-                                )"
-                            >
-                                Restaurar solicitud
-                            </button>
-                        `
-                        : puedeCancelarse
-                            ? `
-                                <button
-                                    type="button"
-                                    class="boton-cancelar-reserva"
-                                    onclick="solicitarCancelarReservacion(
-                                        '${codigoSeguro}'
-                                    )"
-                                >
-                                    Cancelar
-                                </button>
-                            `
-                            : ""
-                }
 
             </div>
 

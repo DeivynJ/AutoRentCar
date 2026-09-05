@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Métodos de pago de <%= agencia.nombre %>."
+    >
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <%- include("../partials/tema") %>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <div class="panel-shell">
+
+
+        <%- include("../partials/sidebar") %>
+
+
+        <div class="panel-content-wrapper">
+
+
+            <%- include("../partials/header") %>
+
+
+            <main class="panel-main">
+
+
+                <!-- =====================================
+                     ENCABEZADO
+                ====================================== -->
+
+                <section class="panel-module-hero">
+
+                    <div>
+
+                        <span class="panel-module-badge">
+
+                            <i class="fa-solid fa-credit-card"></i>
+
+                            Configuración
+
+                        </span>
+
+
+                        <h2>
+
+                            Métodos de pago de
+
+                            <span>
+                                <%= agencia.nombre %>
+                            </span>
+
+                        </h2>
+
+
+                        <p>
+
+                            Consulta los métodos que esta
+                            agencia podrá ofrecer a sus
+                            clientes para realizar pagos
+                            relacionados con sus reservaciones.
+
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =====================================
+                     RESUMEN
+                ====================================== -->
+
+                <%
+
+                    const totalMetodos =
+                        metodosPago.length;
+
+
+                    const metodosActivos =
+                        metodosPago.filter(
+                            (metodo) =>
+                                Number(
+                                    metodo.activo
+                                ) === 1
+                        ).length;
+
+
+                    const metodosInactivos =
+                        totalMetodos -
+                        metodosActivos;
+
+                %>
+
+
+                <section class="panel-summary-grid">
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-wallet"></i>
+
+                        </div>
+
+                        <small>
+                            Total
+                        </small>
+
+                        <strong>
+                            <%= totalMetodos %>
+                        </strong>
+
+                        <span>
+                            Métodos registrados
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        </div>
+
+                        <small>
+                            Activos
+                        </small>
+
+                        <strong>
+                            <%= metodosActivos %>
+                        </strong>
+
+                        <span>
+                            Disponibles para utilizar
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-circle-xmark"></i>
+
+                        </div>
+
+                        <small>
+                            Inactivos
+                        </small>
+
+                        <strong>
+                            <%= metodosInactivos %>
+                        </strong>
+
+                        <span>
+                            Temporalmente deshabilitados
+                        </span>
+
+                    </article>
+
+
+                </section>
+
+                <!-- =====================================
+     NUEVO MÉTODO DE PAGO
+====================================== -->
+
+<form
+    action="<%= metodoEditar
+        ? `/panel/metodos-pago/${metodoEditar.id}/actualizar`
+        : '/panel/metodos-pago' %>"
+    method="POST"
+    style="margin: 28px 0;"
+>
+
+
+    <section class="panel-form-card">
+
+
+        <div class="panel-form-card-header">
+
+            <span class="panel-form-card-icon">
+
+                <i class="fa-solid fa-plus"></i>
+
+            </span>
+
+
+            <div>
+
+                <span>
+    <%= metodoEditar
+        ? "Editar método"
+        : "Nuevo método" %>
+</span>
+
+<h3>
+    <%= metodoEditar
+        ? "Actualizar método de pago"
+        : "Registrar método de pago" %>
+</h3>
+
+<p>
+
+    <%= metodoEditar
+        ? "Modifica la información del método seleccionado."
+        : "Agrega una forma de pago que podrá utilizar esta agencia con sus clientes." %>
+
+</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="panel-form-grid">
+
+
+            <div class="panel-form-field">
+
+                <label for="nombre">
+                    Nombre *
+                </label>
+
+                <input
+    type="text"
+    id="nombre"
+    name="nombre"
+    maxlength="150"
+    placeholder="Ej.: Transferencia Banco Popular"
+    value="<%= metodoEditar?.nombre || '' %>"
+    required
+>
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label for="tipo">
+                    Tipo *
+                </label>
+
+                <select
+    id="tipo"
+    name="tipo"
+    required
+>
+
+    <option
+        value=""
+        <%= !metodoEditar ? "selected" : "" %>
+    >
+        Selecciona un tipo
+    </option>
+
+    <option
+        value="transferencia"
+        <%= metodoEditar?.tipo === "transferencia"
+            ? "selected"
+            : "" %>
+    >
+        Transferencia bancaria
+    </option>
+
+    <option
+        value="deposito"
+        <%= metodoEditar?.tipo === "deposito"
+            ? "selected"
+            : "" %>
+    >
+        Depósito bancario
+    </option>
+
+    <option
+        value="efectivo"
+        <%= metodoEditar?.tipo === "efectivo"
+            ? "selected"
+            : "" %>
+    >
+        Efectivo
+    </option>
+
+    <option
+        value="otro"
+        <%= metodoEditar?.tipo === "otro"
+            ? "selected"
+            : "" %>
+    >
+        Otro
+    </option>
+
+</select>
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label for="banco">
+                    Banco
+                </label>
+
+                <input
+                    type="text"
+                    id="banco"
+                    name="banco"
+                    maxlength="150"
+                    placeholder="Ej.: Banco Popular"
+                    value="<%= metodoEditar?.banco || '' %>"
+                >
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label for="titular">
+                    Titular
+                </label>
+
+                <input
+                    type="text"
+                    id="titular"
+                    name="titular"
+                    maxlength="180"
+                    placeholder="Nombre del titular"
+                    value="<%= metodoEditar?.titular || '' %>"
+                >
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label for="tipoCuenta">
+                    Tipo de cuenta
+                </label>
+
+                <input
+                    type="text"
+                    id="tipoCuenta"
+                    name="tipoCuenta"
+                    maxlength="80"
+                    placeholder="Ej.: Cuenta corriente"
+                     value="<%= metodoEditar?.tipo_cuenta || '' %>"
+                >
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label for="numeroCuenta">
+                    Número de cuenta
+                </label>
+
+                <input
+                    type="text"
+                    id="numeroCuenta"
+                    name="numeroCuenta"
+                    maxlength="120"
+                    placeholder="Número de cuenta"
+                    value="<%= metodoEditar?.numero_cuenta || '' %>"
+                >
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label for="requiereComprobante">
+                    Comprobante
+                </label>
+
+                <select
+    id="requiereComprobante"
+    name="requiereComprobante"
+>
+
+    <option
+        value="1"
+        <%= !metodoEditar ||
+            Number(
+                metodoEditar.requiere_comprobante
+            ) === 1
+                ? "selected"
+                : "" %>
+    >
+        Sí, requiere comprobante
+    </option>
+
+    <option
+        value="0"
+        <%= metodoEditar &&
+            Number(
+                metodoEditar.requiere_comprobante
+            ) === 0
+                ? "selected"
+                : "" %>
+    >
+        No requiere comprobante
+    </option>
+
+</select>
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label for="activo">
+                    Estado
+                </label>
+
+                <select
+    id="activo"
+    name="activo"
+>
+
+    <option
+        value="1"
+        <%= !metodoEditar ||
+            Number(
+                metodoEditar.activo
+            ) === 1
+                ? "selected"
+                : "" %>
+    >
+        Activo
+    </option>
+
+    <option
+        value="0"
+        <%= metodoEditar &&
+            Number(
+                metodoEditar.activo
+            ) === 0
+                ? "selected"
+                : "" %>
+    >
+        Inactivo
+    </option>
+
+</select>
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label for="orden">
+                    Orden
+                </label>
+
+                <input
+    type="number"
+    id="orden"
+    name="orden"
+    min="0"
+    max="999"
+    value="<%= metodoEditar
+        ? metodoEditar.orden
+        : 0 %>"
+>
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label>
+                    Moneda
+                </label>
+
+                <input
+                    type="text"
+                    value="USD"
+                    disabled
+                >
+
+            </div>
+
+
+            <div class="panel-form-field panel-form-full">
+
+                <label for="instrucciones">
+                    Instrucciones para el cliente
+                </label>
+
+                <textarea
+    id="instrucciones"
+    name="instrucciones"
+    rows="4"
+    placeholder="Ej.: Realiza la transferencia y luego adjunta el comprobante."
+><%= metodoEditar?.instrucciones || "" %>
+</textarea>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="panel-form-note">
+
+            <i class="fa-solid fa-circle-info"></i>
+
+            <p>
+
+                Para transferencias y depósitos,
+                el banco, titular y número de cuenta
+                serán obligatorios al guardar.
+
+                El comprobante también será obligatorio
+                para esos dos tipos.
+
+            </p>
+
+        </div>
+
+
+        <div class="panel-form-actions">
+
+
+    <% if (metodoEditar) { %>
+
+        <a
+            href="/panel/metodos-pago"
+            class="panel-form-cancel"
+        >
+            Cancelar edición
+        </a>
+
+    <% } else { %>
+
+        <button
+            type="reset"
+            class="panel-form-cancel"
+        >
+            Limpiar
+        </button>
+
+    <% } %>
+
+
+    <button
+        type="submit"
+        class="panel-form-submit"
+    >
+
+        <i class="fa-solid fa-floppy-disk"></i>
+
+        <%= metodoEditar
+            ? "Guardar cambios"
+            : "Registrar método" %>
+
+    </button>
+
+
+</div>
+
+
+    </section>
+
+
+</form>
+
+
+                <!-- =====================================
+                     LISTADO
+                ====================================== -->
+
+                <section class="panel-units-card">
+
+
+                    <div class="panel-units-header">
+
+                        <div>
+
+                            <span>
+                                Configuración de pagos
+                            </span>
+
+
+                            <h3>
+                                Métodos registrados
+                            </h3>
+
+
+                            <p>
+
+                                Cada método mostrado pertenece
+                                exclusivamente a esta agencia.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <% if (metodosPago.length) { %>
+
+
+                        <div class="panel-units-table-wrapper">
+
+
+                            <table class="panel-units-table">
+
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Método
+                                        </th>
+
+                                        <th>
+                                            Tipo
+                                        </th>
+
+                                        <th>
+                                            Banco
+                                        </th>
+
+                                        <th>
+                                            Cuenta
+                                        </th>
+
+                                        <th>
+                                            Moneda
+                                        </th>
+
+                                        <th>
+                                            Comprobante
+                                        </th>
+
+                                        <th>
+                                            Estado
+                                        </th>
+
+                                        <th>
+                                           Acción
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+
+                                    <% metodosPago.forEach((metodo) => { %>
+
+
+                                        <%
+
+                                            let nombreTipo =
+                                                metodo.tipo;
+
+
+                                            if (
+                                                metodo.tipo ===
+                                                "transferencia"
+                                            ) {
+
+                                                nombreTipo =
+                                                    "Transferencia";
+
+                                            }
+
+
+                                            if (
+                                                metodo.tipo ===
+                                                "deposito"
+                                            ) {
+
+                                                nombreTipo =
+                                                    "Depósito";
+
+                                            }
+
+
+                                            if (
+                                                metodo.tipo ===
+                                                "efectivo"
+                                            ) {
+
+                                                nombreTipo =
+                                                    "Efectivo";
+
+                                            }
+
+
+                                            if (
+                                                metodo.tipo ===
+                                                "otro"
+                                            ) {
+
+                                                nombreTipo =
+                                                    "Otro";
+
+                                            }
+
+
+                                            const estaActivo =
+                                                Number(
+                                                    metodo.activo
+                                                ) === 1;
+
+
+                                            const claseEstado =
+                                                estaActivo
+                                                    ? "unit-status-disponible"
+                                                    : "unit-status-inactivo";
+
+
+                                            const nombreEstado =
+    estaActivo
+        ? "Activo"
+        : "Inactivo";
+
+
+const mensajeCambioEstado =
+    estaActivo
+        ? "¿Deseas desactivar este método de pago?"
+        : "¿Deseas activar este método de pago?";
+
+%>
+
+                                        
+
+
+                                        <tr>
+
+
+                                            <td>
+
+                                                <strong>
+                                                    <%= metodo.nombre %>
+                                                </strong>
+
+                                                <br>
+
+                                                <small>
+                                                    <%= metodo.codigo %>
+                                                </small>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <%= nombreTipo %>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <%= metodo.banco || "—" %>
+
+                                                <% if (metodo.titular) { %>
+
+                                                    <br>
+
+                                                    <small>
+                                                        <%= metodo.titular %>
+                                                    </small>
+
+                                                <% } %>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <% if (metodo.numero_cuenta) { %>
+
+                                                    <strong>
+                                                        <%= metodo.numero_cuenta %>
+                                                    </strong>
+
+                                                    <% if (metodo.tipo_cuenta) { %>
+
+                                                        <br>
+
+                                                        <small>
+                                                            <%= metodo.tipo_cuenta %>
+                                                        </small>
+
+                                                    <% } %>
+
+                                                <% } else { %>
+
+                                                    —
+
+                                                <% } %>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <%= metodo.moneda %>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <%= Number(
+                                                    metodo.requiere_comprobante
+                                                ) === 1
+                                                    ? "Sí"
+                                                    : "No" %>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <span
+                                                    class="unit-status <%= claseEstado %>"
+                                                >
+
+                                                    <%= nombreEstado %>
+
+                                                </span>
+
+                                            </td>
+
+                                            <td>
+
+    <div class="panel-action-group">
+
+        <a
+            href="/panel/metodos-pago?editar=<%= metodo.id %>"
+            class="panel-secondary-button"
+        >
+
+            <i class="fa-solid fa-pen-to-square"></i>
+
+            Editar
+
+        </a>
+
+
+        <form
+            action="/panel/metodos-pago/<%= metodo.id %>/estado"
+            method="POST"
+            onsubmit="return confirm('<%= mensajeCambioEstado %>');"
+        >
+
+            <input
+                type="hidden"
+                name="activo"
+                value="<%= estaActivo ? '0' : '1' %>"
+            >
+
+
+            <button
+                type="submit"
+                class="panel-secondary-button"
+            >
+
+                <i
+                    class="fa-solid <%= estaActivo
+                        ? 'fa-ban'
+                        : 'fa-circle-check' %>"
+                ></i>
+
+                <%= estaActivo
+                    ? "Desactivar"
+                    : "Activar" %>
+
+            </button>
+
+        </form>
+
+    </div>
+
+</td>
+
+
+                                        </tr>
+
+
+                                    <% }); %>
+
+
+                                </tbody>
+
+
+                            </table>
+
+
+                        </div>
+
+
+                    <% } else { %>
+
+
+                        <div class="catalog-empty">
+
+
+                            <div>
+
+                                <i class="fa-solid fa-credit-card"></i>
+
+                            </div>
+
+
+                            <h3>
+                                No hay métodos de pago
+                            </h3>
+
+
+                            <p>
+
+                                Esta agencia todavía no tiene
+                                métodos de pago configurados.
+
+                            </p>
+
+
+                        </div>
+
+
+                    <% } %>
+
+
+                </section>
+
+
+            </main>
+
+
+        </div>
+
+
+    </div>
+
+
+    <script src="/js/panel.js"></script>
+
+
+</body>
+
+</html>

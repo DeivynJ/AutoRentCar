@@ -82,21 +82,28 @@ async function mostrarReservacionesPanel(
                     COUNT(*) AS total,
 
                     SUM(
-                        CASE
-                            WHEN estado = 'pendiente'
-                                THEN 1
-                            ELSE 0
-                        END
-                    ) AS pendientes,
+    CASE
+        WHEN estado = 'pendiente'
+            THEN 1
+        ELSE 0
+    END
+) AS pendientes,
 
-                    SUM(
-                        CASE
-                            WHEN estado = 'confirmada'
-                                THEN 1
-                            ELSE 0
-                        END
-                    ) AS confirmadas,
+SUM(
+    CASE
+        WHEN estado = 'pendiente_pago'
+            THEN 1
+        ELSE 0
+    END
+) AS pendientes_pago,
 
+SUM(
+    CASE
+        WHEN estado = 'confirmada'
+            THEN 1
+        ELSE 0
+    END
+) AS confirmadas,
                     SUM(
                         CASE
                             WHEN estado = 'en_curso'
@@ -154,16 +161,22 @@ async function mostrarReservacionesPanel(
                 ),
 
             pendientes:
-                Number(
-                    resumenFila.pendientes ||
-                    0
-                ),
+    Number(
+        resumenFila.pendientes ||
+        0
+    ),
 
-            confirmadas:
-                Number(
-                    resumenFila.confirmadas ||
-                    0
-                ),
+pendientesPago:
+    Number(
+        resumenFila.pendientes_pago ||
+        0
+    ),
+
+confirmadas:
+    Number(
+        resumenFila.confirmadas ||
+        0
+    ),
 
             enCurso:
                 Number(
@@ -263,25 +276,28 @@ async function mostrarReservacionesPanel(
 
                     CASE r.estado
 
-                        WHEN 'pendiente'
-                            THEN 1
+    WHEN 'pendiente'
+        THEN 1
 
-                        WHEN 'confirmada'
-                            THEN 2
+    WHEN 'pendiente_pago'
+        THEN 2
 
-                        WHEN 'en_curso'
-                            THEN 3
+    WHEN 'confirmada'
+        THEN 3
 
-                        WHEN 'finalizada'
-                            THEN 4
+    WHEN 'en_curso'
+        THEN 4
 
-                        WHEN 'cancelada'
-                            THEN 5
+    WHEN 'finalizada'
+        THEN 5
 
-                        WHEN 'rechazada'
-                            THEN 6
+    WHEN 'cancelada'
+        THEN 6
 
-                        ELSE 7
+    WHEN 'rechazada'
+        THEN 7
+
+    ELSE 8
 
                     END ASC,
 

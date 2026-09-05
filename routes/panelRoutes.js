@@ -52,6 +52,17 @@ const {
 
 const {
 
+    listarMetodosPagoPanel,
+    crearMetodoPagoPanel,
+    actualizarMetodoPagoPanel,
+    cambiarEstadoMetodoPagoPanel
+
+} = require(
+    "../controllers/panelMetodoPagoController"
+);
+
+const {
+
     mostrarCatalogoPanel,
 
     mostrarNuevoModeloPanel,
@@ -159,6 +170,30 @@ router.post(
 router.post(
     "/panel/notificaciones/:notificacionId/abrir",
     abrirNotificacionPanel
+);
+
+/* =========================================================
+   MÉTODOS DE PAGO
+========================================================= */
+
+router.get(
+    "/panel/metodos-pago",
+    listarMetodosPagoPanel
+);
+
+router.post(
+    "/panel/metodos-pago",
+    crearMetodoPagoPanel
+);
+
+router.post(
+    "/panel/metodos-pago/:metodoId/actualizar",
+    actualizarMetodoPagoPanel
+);
+
+router.post(
+    "/panel/metodos-pago/:metodoId/estado",
+    cambiarEstadoMetodoPagoPanel
 );
 
 /* =========================================================

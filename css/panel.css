@@ -5700,6 +5700,12 @@ html[data-panel-tema="oscuro"]
         capitalize;
 }
 
+.reservation-status-text {
+
+    text-transform:
+        none;
+
+}
 
 .unit-status-disponible {
 
