@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Información segura para realizar el pago de una reservación."
+    >
+
+    <meta
+        name="robots"
+        content="noindex, nofollow, noarchive"
+    >
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/estilos.css"
+    >
+
+    <%- include("./tema") %>
+
+</head>
+
+
+<body>
+
+
+    <main class="confirmacion-reserva">
+
+
+        <div class="contenedor">
+
+            <% if (
+    String(queryResultado || "") ===
+    "comprobante_enviado"
+) { %>
+
+    <div class="confirmacion-exito">
+
+        <div class="confirmacion-icono-exito">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+        </div>
+
+        <h1>
+            Comprobante enviado
+        </h1>
+
+        <p>
+
+            Tu comprobante fue recibido correctamente.
+            Ahora debe ser revisado y validado por
+            <%= agencia.nombre %>.
+
+        </p>
+
+    </div>
+
+<% } %>
+
+
+            <div class="comprobante-reservacion">
+
+
+                <!-- =====================================
+                     ENCABEZADO
+                ====================================== -->
+
+                <div class="comprobante-encabezado">
+
+
+                    <div class="comprobante-marca">
+
+
+                        <% if (agencia.logo) { %>
+
+    <span class="logo-icono logo-icono-imagen">
+
+        <img
+            src="<%= agencia.logo %>"
+            alt="Logo de <%= agencia.nombre %>"
+        >
+
+    </span>
+
+<% } else { %>
+
+    <span class="logo-icono">
+
+        <span>
+            <%= agencia.nombre
+                .charAt(0)
+                .toUpperCase() %>
+        </span>
+
+    </span>
+
+<% } %>
+
+
+                        <div>
+
+                            <strong>
+                                <%= agencia.nombre %>
+                            </strong>
+
+                            <small>
+                                Portal seguro de pago
+                            </small>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="comprobante-estado">
+
+                        <span>
+                            Estado
+                        </span>
+
+                        <strong>
+                            Pendiente de pago
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- =====================================
+                     RESUMEN
+                ====================================== -->
+
+                <section class="seccion-comprobante">
+
+
+                    <div class="titulo-seccion-comprobante">
+
+
+                        <div>
+
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+
+                        </div>
+
+
+                        <section>
+
+                            <span>
+                                Reservación
+                            </span>
+
+                            <h2>
+                                Resumen del pago
+                            </h2>
+
+                        </section>
+
+
+                    </div>
+
+
+                    <div class="rejilla-datos-confirmacion">
+
+
+                        <article class="dato-confirmacion">
+
+                            <i class="fa-solid fa-hashtag"></i>
+
+                            <span>
+                                Código de reservación
+                            </span>
+
+                            <strong>
+                                <%= reservacion.codigo %>
+                            </strong>
+
+                        </article>
+
+
+                        <article class="dato-confirmacion">
+
+                            <i class="fa-solid fa-user"></i>
+
+                            <span>
+                                Cliente
+                            </span>
+
+                            <strong>
+                                <%= reservacion.clienteNombre %>
+                            </strong>
+
+                        </article>
+
+
+                        <article class="dato-confirmacion">
+
+                            <i class="fa-solid fa-money-bill-wave"></i>
+
+                            <span>
+                                Total de la reservación
+                            </span>
+
+                            <strong>
+
+                                US$<%= Number(
+                                    reservacion.total ||
+                                    0
+                                ).toFixed(2) %>
+
+                            </strong>
+
+                        </article>
+
+
+                        <article class="dato-confirmacion">
+
+                            <i class="fa-solid fa-hand-holding-dollar"></i>
+
+                            <span>
+                                Anticipo requerido
+                            </span>
+
+                            <strong>
+
+                                US$<%= Number(
+                                    reservacion
+                                        .montoAnticipoRequerido ||
+                                    0
+                                ).toFixed(2) %>
+
+                            </strong>
+
+                        </article>
+
+
+                        <article class="dato-confirmacion">
+
+                            <i class="fa-solid fa-clock"></i>
+
+                            <span>
+                                Fecha límite de pago
+                            </span>
+
+                            <strong>
+
+                                <%= formatoFechaHora(
+                                    reservacion.fechaLimitePago,
+                                    "No disponible"
+                                ) %>
+
+                            </strong>
+
+                        </article>
+
+
+                        <article class="dato-confirmacion">
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                            <span>
+                                Seguridad
+                            </span>
+
+                            <strong>
+                                Enlace privado y temporal
+                            </strong>
+
+                        </article>
+
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     MÉTODOS DE PAGO
+                ====================================== -->
+
+                <section class="seccion-comprobante">
+
+
+                    <div class="titulo-seccion-comprobante">
+
+
+                        <div>
+
+                            <i class="fa-solid fa-building-columns"></i>
+
+                        </div>
+
+
+                        <section>
+
+                            <span>
+                                Formas disponibles
+                            </span>
+
+                            <h2>
+                                Métodos de pago
+                            </h2>
+
+                        </section>
+
+
+                    </div>
+
+
+                    <% if (
+                        Array.isArray(metodosPago) &&
+                        metodosPago.length
+                    ) { %>
+
+
+                        <div class="rejilla-datos-confirmacion">
+
+
+                            <% metodosPago.forEach((metodo) => { %>
+
+
+                                <article class="dato-confirmacion">
+
+
+                                    <i class="fa-solid fa-credit-card"></i>
+
+
+                                    <span>
+                                        Método
+                                    </span>
+
+
+                                    <strong>
+                                        <%= metodo.nombre %>
+                                    </strong>
+
+
+                                    <% if (metodo.banco) { %>
+
+                                        <span>
+                                            Banco
+                                        </span>
+
+                                        <strong>
+                                            <%= metodo.banco %>
+                                        </strong>
+
+                                    <% } %>
+
+
+                                    <% if (metodo.titular) { %>
+
+                                        <span>
+                                            Titular
+                                        </span>
+
+                                        <strong>
+                                            <%= metodo.titular %>
+                                        </strong>
+
+                                    <% } %>
+
+
+                                    <% if (metodo.tipoCuenta) { %>
+
+                                        <span>
+                                            Tipo de cuenta
+                                        </span>
+
+                                        <strong>
+                                            <%= metodo.tipoCuenta %>
+                                        </strong>
+
+                                    <% } %>
+
+
+                                    <% if (metodo.numeroCuenta) { %>
+
+                                        <span>
+                                            Número de cuenta
+                                        </span>
+
+                                        <strong>
+                                            <%= metodo.numeroCuenta %>
+                                        </strong>
+
+                                    <% } %>
+
+
+                                    <span>
+                                        Moneda
+                                    </span>
+
+                                    <strong>
+                                        <%= metodo.moneda %>
+                                    </strong>
+
+
+                                    <% if (metodo.instrucciones) { %>
+
+                                        <span>
+                                            Instrucciones
+                                        </span>
+
+                                        <strong>
+                                            <%= metodo.instrucciones %>
+                                        </strong>
+
+                                    <% } %>
+
+
+                                </article>
+
+
+                            <% }); %>
+
+
+                        </div>
+
+
+                    <% } else { %>
+
+
+                        <div class="confirmacion-sin-datos visible">
+
+
+                            <div class="confirmacion-sin-datos-icono">
+
+                                <i class="fa-solid fa-circle-info"></i>
+
+                            </div>
+
+
+                            <h1>
+                                Sin métodos disponibles
+                            </h1>
+
+
+                            <p>
+
+                                La agencia no tiene métodos de pago
+                                activos disponibles en este momento.
+
+                            </p>
+
+
+                        </div>
+
+
+                    <% } %>
+
+
+                </section>
+
+                <!-- =====================================
+     ENVIAR COMPROBANTE
+====================================== -->
+
+<section class="seccion-comprobante">
+
+
+    <div class="titulo-seccion-comprobante">
+
+
+        <div>
+
+            <i class="fa-solid fa-receipt"></i>
+
+        </div>
+
+
+        <section>
+
+            <span>
+                Validación del pago
+            </span>
+
+            <h2>
+                Enviar comprobante
+            </h2>
+
+        </section>
+
+
+    </div>
+
+
+    <% if (
+        Array.isArray(metodosPago) &&
+        metodosPago.length
+    ) { %>
+
+
+        <form
+            action="/pago/<%= encodeURIComponent(token) %>/comprobante"
+            method="POST"
+            enctype="multipart/form-data"
+            class="formulario-reservacion"
+        >
+
+
+            <div class="rejilla-formulario-reserva">
+
+
+                <!-- =============================
+                     MÉTODO
+                ============================== -->
+
+                <div class="campo-reserva">
+
+                    <label for="metodoPagoId">
+
+                        <i class="fa-solid fa-building-columns"></i>
+
+                        Método de pago
+
+                    </label>
+
+
+                    <select
+                        id="metodoPagoId"
+                        name="metodoPagoId"
+                        required
+                    >
+
+                        <option value="">
+                            Selecciona un método
+                        </option>
+
+
+                        <% metodosPago.forEach((metodo) => { %>
+
+                            <option
+                                value="<%= metodo.id %>"
+                                data-requiere-comprobante="<%= metodo.requiereComprobante ? '1' : '0' %>"
+                            >
+
+                                <%= metodo.nombre %>
+
+                                <% if (metodo.banco) { %>
+                                    — <%= metodo.banco %>
+                                <% } %>
+
+                            </option>
+
+                        <% }); %>
+
+
+                    </select>
+
+                </div>
+
+
+                <!-- =============================
+                     MONTO
+                ============================== -->
+
+                <div class="campo-reserva">
+
+                    <label for="monto">
+
+                        <i class="fa-solid fa-dollar-sign"></i>
+
+                        Monto pagado
+
+                    </label>
+
+
+                    <input
+                        type="number"
+                        id="monto"
+                        name="monto"
+                        min="0.01"
+                        step="0.01"
+                        max="<%= Number(reservacion.total || 0).toFixed(2) %>"
+                        value="<%= Number(reservacion.montoAnticipoRequerido || 0).toFixed(2) %>"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- =============================
+                     REFERENCIA
+                ============================== -->
+
+                <div class="campo-reserva">
+
+                    <label for="referencia">
+
+                        <i class="fa-solid fa-hashtag"></i>
+
+                        Referencia o número de operación
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="referencia"
+                        name="referencia"
+                        maxlength="150"
+                        placeholder="Ej.: TRX-123456"
+                    >
+
+                </div>
+
+
+                <!-- =============================
+                     FECHA DEL PAGO
+                ============================== -->
+
+                <div class="campo-reserva">
+
+                    <label for="fechaPago">
+
+                        <i class="fa-solid fa-calendar-days"></i>
+
+                        Fecha y hora del pago
+
+                    </label>
+
+
+                    <input
+                        type="datetime-local"
+                        id="fechaPago"
+                        name="fechaPago"
+                        required
+                    >
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =============================
+                 COMPROBANTE
+            ============================== -->
+
+            <div class="campo-reserva campo-completo">
+
+                <label for="comprobante">
+
+                    <i class="fa-solid fa-file-arrow-up"></i>
+
+                    Comprobante
+
+                </label>
+
+
+                <input
+                    type="file"
+                    id="comprobante"
+                    name="comprobante"
+                    accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+                >
+
+
+                <small id="texto-comprobante-pago">
+
+                    Formatos permitidos:
+                    JPG, JPEG, PNG o PDF.
+                    Tamaño máximo: 5 MB.
+
+                </small>
+
+            </div>
+
+
+            <!-- =============================
+                 AVISO
+            ============================== -->
+
+            <div class="estado-disponibilidad-reserva">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <div>
+
+                    <strong>
+                        Importante
+                    </strong>
+
+                    <span>
+
+                        El envío del comprobante no confirma
+                        automáticamente la reservación.
+                        El pago debe ser validado por la agencia.
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================
+                 ENVIAR
+            ============================== -->
+
+            <button
+                type="submit"
+                class="boton boton-principal boton-confirmar-reserva"
+            >
+
+                <i class="fa-solid fa-paper-plane"></i>
+
+                Enviar comprobante
+
+            </button>
+
+
+        </form>
+
+
+    <% } else { %>
+
+
+        <div class="confirmacion-sin-datos visible">
+
+            <div class="confirmacion-sin-datos-icono">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+            </div>
+
+
+            <h1>
+                No es posible enviar el pago
+            </h1>
+
+
+            <p>
+
+                La agencia no tiene métodos de pago
+                activos disponibles en este momento.
+
+            </p>
+
+        </div>
+
+
+    <% } %>
+
+
+</section>
+
+
+                <!-- =====================================
+                     INFORMACIÓN IMPORTANTE
+                ====================================== -->
+
+                <section class="seccion-comprobante">
+
+
+                    <div class="titulo-seccion-comprobante">
+
+
+                        <div>
+
+                            <i class="fa-solid fa-circle-exclamation"></i>
+
+                        </div>
+
+
+                        <section>
+
+                            <span>
+                                Importante
+                            </span>
+
+                            <h2>
+                                Antes de realizar el pago
+                            </h2>
+
+                        </section>
+
+
+                    </div>
+
+
+                    <div class="rejilla-datos-confirmacion">
+
+
+                        <article class="dato-confirmacion">
+
+                            <i class="fa-solid fa-receipt"></i>
+
+                            <span>
+                                Comprobante
+                            </span>
+
+                            <strong>
+
+                                Conserva el comprobante del pago.
+                                En el siguiente paso podrás enviarlo
+                                para validación.
+
+                            </strong>
+
+                        </article>
+
+
+                        <article class="dato-confirmacion">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                            <span>
+                                Validación
+                            </span>
+
+                            <strong>
+
+                                Enviar un comprobante no confirma
+                                automáticamente la reservación.
+
+                            </strong>
+
+                        </article>
+
+
+                        <article class="dato-confirmacion">
+
+                            <i class="fa-solid fa-hourglass-half"></i>
+
+                            <span>
+                                Plazo
+                            </span>
+
+                            <strong>
+
+                                El pago debe enviarse antes de la
+                                fecha límite indicada.
+
+                            </strong>
+
+                        </article>
+
+
+                    </div>
+
+
+                </section>
+
+
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+
+    <script>
+
+    const metodoPago =
+        document.getElementById(
+            "metodoPagoId"
+        );
+
+
+    const comprobante =
+        document.getElementById(
+            "comprobante"
+        );
+
+
+    const textoComprobante =
+        document.getElementById(
+            "texto-comprobante-pago"
+        );
+
+
+    function actualizarRequisitoComprobante() {
+
+        if (
+            !metodoPago ||
+            !comprobante
+        ) {
+
+            return;
+
+        }
+
+
+        const opcion =
+            metodoPago.options[
+                metodoPago.selectedIndex
+            ];
+
+
+        const requiere =
+            opcion
+                ?.dataset
+                ?.requiereComprobante ===
+            "1";
+
+
+        comprobante.required =
+            requiere;
+
+
+        if (
+            textoComprobante
+        ) {
+
+            textoComprobante.textContent =
+                requiere
+                    ? "Este método requiere comprobante. Formatos permitidos: JPG, JPEG, PNG o PDF. Tamaño máximo: 5 MB."
+                    : "El comprobante es opcional para este método. Formatos permitidos: JPG, JPEG, PNG o PDF. Tamaño máximo: 5 MB.";
+
+        }
+
+    }
+
+
+    if (
+        metodoPago
+    ) {
+
+        metodoPago.addEventListener(
+            "change",
+            actualizarRequisitoComprobante
+        );
+
+
+        actualizarRequisitoComprobante();
+
+    }
+
+</script>
+
+
+</body>
+
+</html>

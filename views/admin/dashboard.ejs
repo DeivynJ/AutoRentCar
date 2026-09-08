@@ -121,19 +121,18 @@
 
                             </a>
 
-                            <button
-                                type="button"
-                                class="btn btn-secondary"
-                                disabled
-                            >
+                            <a
+    href="/admin/exportar-resumen"
+    class="btn btn-secondary"
+>
 
-                                <i class="fa-solid fa-file-arrow-down"></i>
+    <i class="fa-solid fa-file-arrow-down"></i>
 
-                                <span>
-                                    Exportar resumen
-                                </span>
+    <span>
+        Exportar resumen
+    </span>
 
-                            </button>
+</a>
 
                         </div>
 
@@ -597,16 +596,86 @@
 
                                                 <td>
 
-                                                    <button
-                                                        type="button"
-                                                        class="table-action"
-                                                        title="Opciones"
-                                                        disabled
-                                                    >
+                                                    <div class="table-action-menu">
 
-                                                        <i class="fa-solid fa-ellipsis"></i>
+    <button
+        type="button"
+        class="table-action"
+        title="Opciones"
+        aria-label="Opciones de <%= agencia.nombre %>"
+        aria-expanded="false"
+        data-agency-action-button
+    >
 
-                                                    </button>
+        <i class="fa-solid fa-ellipsis"></i>
+
+    </button>
+
+
+    <div
+        class="table-action-dropdown"
+        data-agency-action-menu
+        aria-hidden="true"
+    >
+
+        <a
+            href="/admin/agencias/<%= agencia.id %>"
+            class="table-action-option"
+        >
+
+            <i class="fa-regular fa-eye"></i>
+
+            <span>
+                Ver agencia
+            </span>
+
+        </a>
+
+
+        <a
+            href="/admin/agencias/<%= agencia.id %>/editar"
+            class="table-action-option"
+        >
+
+            <i class="fa-regular fa-pen-to-square"></i>
+
+            <span>
+                Editar
+            </span>
+
+        </a>
+
+
+        <a
+            href="/admin/agencias/<%= agencia.id %>/usuarios"
+            class="table-action-option"
+        >
+
+            <i class="fa-solid fa-users"></i>
+
+            <span>
+                Usuarios
+            </span>
+
+        </a>
+
+
+        <a
+            href="/admin/agencias/<%= agencia.id %>/suscripcion"
+            class="table-action-option"
+        >
+
+            <i class="fa-regular fa-credit-card"></i>
+
+            <span>
+                Suscripción
+            </span>
+
+        </a>
+
+    </div>
+
+</div>
 
                                                 </td>
 
@@ -780,7 +849,7 @@
 
                         </div>
 
-                    </aside>
+                    </aside> 
 
                 </section>
 

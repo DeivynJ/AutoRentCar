@@ -599,6 +599,71 @@ r.codigo_promocional,
                 ]
             );
 
+        /* =================================================
+   PAGOS DE LA RESERVACIÓN
+
+   Se limita por:
+
+   reservacion_id
+   +
+   agencia_id
+
+   Aunque la reservación ya fue validada, mantenemos
+   también el filtro de agencia en la consulta de pagos.
+================================================= */
+
+const pagos =
+    await conexion.query(
+        `
+        SELECT
+
+            id,
+            agencia_id,
+            reservacion_id,
+
+            metodo_pago_id,
+            metodo_codigo,
+            metodo_nombre,
+            metodo_tipo,
+
+            monto,
+            moneda,
+
+            referencia,
+            fecha_pago,
+
+            comprobante_ruta,
+            comprobante_nombre_original,
+            comprobante_mime,
+            comprobante_tamano,
+
+            origen,
+            estado,
+
+            validado_por_usuario_id,
+            fecha_validacion,
+            motivo_rechazo,
+
+            fecha_creacion,
+            fecha_actualizacion
+
+        FROM pagos_reservacion
+
+        WHERE
+            reservacion_id = ?
+
+            AND agencia_id = ?
+
+        ORDER BY
+            fecha_creacion DESC,
+            id DESC
+        `,
+        [
+            reservacion.id,
+            agenciaId
+        ]
+    );
+
 
         /* =================================================
            DATOS ECONÓMICOS NORMALIZADOS
@@ -666,46 +731,48 @@ r.codigo_promocional,
         ================================================= */
 
         return res.render(
-            "panel/reservaciones/detalle",
-            {
+    "panel/reservaciones/detalle",
+    {
 
-                titulo:
-                    `Reservación ${reservacion.codigo}`,
+        titulo:
+            `Reservación ${reservacion.codigo}`,
 
-                subtituloPagina:
-                    "Detalle de reservación",
+        subtituloPagina:
+            "Detalle de reservación",
 
-                paginaActual:
-                    "reservaciones",
+        paginaActual:
+            "reservaciones",
 
-                usuario:
-                    req.usuarioAgencia,
+        usuario:
+            req.usuarioAgencia,
 
-                agencia:
-                    req.agencia,
+        agencia:
+            req.agencia,
 
-                suscripcion:
-                    req.suscripcion,
+        suscripcion:
+            req.suscripcion,
 
-                plan:
-                    req.plan,
+        plan:
+            req.plan,
 
-                reservacion,
+        reservacion,
 
-adicionales,
+        adicionales,
 
-resumenPago,
+        pagos,
 
-queryResultado:
-    req.query?.resultado ||
-    null,
+        resumenPago,
 
-queryError:
-    req.query?.error ||
-    null
+        queryResultado:
+            req.query?.resultado ||
+            null,
 
-            }
-        );
+        queryError:
+            req.query?.error ||
+            null
+
+    }
+);
 
 
     } catch (error) {

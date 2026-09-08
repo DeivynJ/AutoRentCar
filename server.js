@@ -70,6 +70,12 @@ const {
     "./utils/formatters"
 );
 
+const {
+    iniciarProgramadorAlertasSuscripcion
+} = require(
+    "./services/programadorAlertasSuscripcionService"
+);
+
 
 
 /* =========================================================
@@ -98,6 +104,10 @@ const vehiculoRoutes = require(
 
 const publicRoutes = require(
     "./routes/publicRoutes"
+);
+
+const pagoPublicoRoutes = require(
+    "./routes/pagoPublicoRoutes"
 );
 
 /* =========================================================
@@ -255,6 +265,10 @@ app.use(
     publicRoutes
 );
 
+app.use(
+    pagoPublicoRoutes
+);
+
 /* =========================================================
    RUTA PRINCIPAL TEMPORAL
 ========================================================= */
@@ -289,15 +303,25 @@ async function iniciarServidor() {
          * la base de datos respondió.
          */
         app.listen(
-            PORT,
-            () => {
+    PORT,
+    () => {
 
-                console.log(
-                    `🚗 AutoRentCar ejecutándose en http://localhost:${PORT}`
-                );
-
-            }
+        console.log(
+            `🚗 AutoRentCar ejecutándose en http://localhost:${PORT}`
         );
+
+
+        /*
+         * Express ya está iniciado y MariaDB
+         * respondió correctamente.
+         *
+         * Ahora activamos la revisión automática
+         * de suscripciones.
+         */
+        iniciarProgramadorAlertasSuscripcion();
+
+    }
+);
 
     } catch (error) {
 

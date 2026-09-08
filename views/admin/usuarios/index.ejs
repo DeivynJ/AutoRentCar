@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Gestión global de usuarios de AutoRentCar."
+    >
+
+    <title>
+        <%= titulo %> | AutoRentCar
+    </title>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="/css/admin.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="admin-shell">
+
+
+    <!-- =============================================
+         SIDEBAR
+    ============================================== -->
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="admin-content-wrapper">
+
+
+        <!-- =============================================
+             HEADER
+        ============================================== -->
+
+        <%- include("../partials/header") %>
+
+
+        <main class="admin-main-content">
+
+
+            <!-- =============================================
+                 ENCABEZADO
+            ============================================== -->
+
+            <section
+                class="module-hero"
+                data-animate="fade-up"
+            >
+
+
+                <div>
+
+
+                    <div class="module-hero-badge">
+
+                        <i class="fa-solid fa-users"></i>
+
+                        <span>
+                            Gestión de accesos
+                        </span>
+
+                    </div>
+
+
+                    <h2>
+                        Usuarios de la plataforma
+                    </h2>
+
+
+                    <p>
+
+                        Consulta todos los usuarios asociados
+                        a las agencias registradas en AutoRentCar,
+                        su rol, estado y último acceso.
+
+                    </p>
+
+
+                </div>
+
+
+            </section>
+
+
+            <!-- =============================================
+                 ESTADÍSTICAS
+            ============================================== -->
+
+            <section class="dashboard-stats agency-stats">
+
+
+                <!-- TOTAL -->
+
+                <article
+                    class="stat-card"
+                    data-animate="fade-up"
+                >
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-blue">
+
+                            <i class="fa-solid fa-users"></i>
+
+                        </div>
+
+                        <span class="stat-label">
+                            Registrados
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            Total de usuarios
+                        </span>
+
+                        <strong class="stat-value">
+
+                            <%= estadisticasUsuarios.total %>
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="stat-footer">
+
+                        <span class="stat-status neutral">
+
+                            <i class="fa-solid fa-database"></i>
+
+                            Usuarios de agencias
+
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ACTIVOS -->
+
+                <article
+                    class="stat-card"
+                    data-animate="fade-up"
+                >
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-green">
+
+                            <i class="fa-solid fa-user-check"></i>
+
+                        </div>
+
+                        <span class="stat-label">
+                            Disponibles
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            Usuarios activos
+                        </span>
+
+                        <strong class="stat-value">
+
+                            <%= estadisticasUsuarios.activos %>
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="stat-footer">
+
+                        <span class="stat-status positive">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                            Con acceso
+
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+                <!-- INACTIVOS -->
+
+                <article
+                    class="stat-card"
+                    data-animate="fade-up"
+                >
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-orange">
+
+                            <i class="fa-solid fa-user-slash"></i>
+
+                        </div>
+
+                        <span class="stat-label">
+                            Restringidos
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            Usuarios inactivos
+                        </span>
+
+                        <strong class="stat-value">
+
+                            <%= estadisticasUsuarios.inactivos %>
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="stat-footer">
+
+                        <span class="stat-status neutral">
+
+                            <i class="fa-solid fa-lock"></i>
+
+                            Sin acceso
+
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ADMINISTRADORES -->
+
+                <article
+                    class="stat-card"
+                    data-animate="fade-up"
+                >
+
+                    <div class="stat-card-top">
+
+                        <div class="stat-icon stat-icon-purple">
+
+                            <i class="fa-solid fa-user-shield"></i>
+
+                        </div>
+
+                        <span class="stat-label">
+                            Administración
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card-body">
+
+                        <span class="stat-title">
+                            Administradores
+                        </span>
+
+                        <strong class="stat-value">
+
+                            <%= estadisticasUsuarios.administradores %>
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="stat-footer">
+
+                        <span class="stat-status neutral">
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                            Administradores de agencia
+
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+            </section>
+
+
+            <!-- =============================================
+                 LISTADO GLOBAL
+            ============================================== -->
+
+            <section
+                class="dashboard-panel"
+                data-animate="fade-up"
+            >
+
+
+                <div class="panel-header">
+
+
+                    <div>
+
+                        <span class="panel-eyebrow">
+                            Directorio
+                        </span>
+
+                        <h3>
+                            Todos los usuarios
+                        </h3>
+
+                        <p>
+
+                            Cada usuario se muestra junto
+                            a la agencia a la que pertenece.
+
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="admin-table-wrapper">
+
+
+                    <table class="admin-table">
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Usuario
+                                </th>
+
+                                <th>
+                                    Agencia
+                                </th>
+
+                                <th>
+                                    Contacto
+                                </th>
+
+                                <th>
+                                    Rol
+                                </th>
+
+                                <th>
+                                    Estado
+                                </th>
+
+                                <th>
+                                    Último acceso
+                                </th>
+
+                                <th>
+                                    Acción
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                        <% if (
+                            Array.isArray(usuarios) &&
+                            usuarios.length
+                        ) { %>
+
+
+                            <% usuarios.forEach((item) => { %>
+
+
+                                <tr>
+
+
+                                    <!-- =====================
+                                         USUARIO
+                                    ====================== -->
+
+                                    <td>
+
+                                        <div class="table-user">
+
+
+                                            <div class="user-avatar">
+
+                                                <%= String(
+                                                    item.nombre ||
+                                                    "U"
+                                                )
+                                                    .charAt(0)
+                                                    .toUpperCase()
+                                                %>
+
+                                            </div>
+
+
+                                            <div>
+
+                                                <strong>
+
+                                                    <%= item.nombre %>
+
+                                                    <%= item.apellido || "" %>
+
+                                                </strong>
+
+
+                                                <span
+                                                    class="table-muted"
+                                                    style="display:block; margin-top:4px;"
+                                                >
+
+                                                    ID #<%= item.id %>
+
+                                                </span>
+
+                                            </div>
+
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- =====================
+                                         AGENCIA
+                                    ====================== -->
+
+                                    <td>
+
+
+                                        <% if (item.agencia_id) { %>
+
+                                            <a
+                                                href="/admin/agencias/<%= item.agencia_id %>"
+                                                title="Ver agencia"
+                                            >
+
+                                                <strong>
+
+                                                    <%= item.agencia_nombre || "Agencia" %>
+
+                                                </strong>
+
+                                            </a>
+
+
+                                            <span
+                                                class="table-muted"
+                                                style="display:block; margin-top:4px;"
+                                            >
+
+                                                <%= item.agencia_estado || "—" %>
+
+                                            </span>
+
+                                        <% } else { %>
+
+                                            —
+
+                                        <% } %>
+
+
+                                    </td>
+
+
+                                    <!-- =====================
+                                         CONTACTO
+                                    ====================== -->
+
+                                    <td>
+
+                                        <strong>
+                                            <%= item.correo %>
+                                        </strong>
+
+
+                                        <% if (item.telefono) { %>
+
+                                            <span
+                                                class="table-muted"
+                                                style="display:block; margin-top:4px;"
+                                            >
+
+                                                <%= item.telefono %>
+
+                                            </span>
+
+                                        <% } %>
+
+                                    </td>
+
+
+                                    <!-- =====================
+                                         ROL
+                                    ====================== -->
+
+                                    <td>
+
+                                        <span class="role-badge">
+
+                                            <%= item.rol_nombre %>
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- =====================
+                                         ESTADO
+                                    ====================== -->
+
+                                    <td>
+
+                                        <span
+                                            class="status-badge status-<%= item.estado %>"
+                                        >
+
+                                            <span class="status-dot"></span>
+
+                                            <%= item.estado %>
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- =====================
+                                         ÚLTIMO ACCESO
+                                    ====================== -->
+
+                                    <td>
+
+                                        <%= formatoFechaHora(
+                                            item.ultimo_acceso
+                                        ) %>
+
+                                    </td>
+
+
+                                    <!-- =====================
+                                         ACCIONES
+                                    ====================== -->
+
+                                    <td>
+
+
+                                        <a
+                                            href="/admin/agencias/<%= item.agencia_id %>/usuarios/<%= item.id %>/editar"
+                                            class="table-action"
+                                            title="Editar usuario"
+                                            aria-label="Editar usuario"
+                                        >
+
+                                            <i class="fa-solid fa-pen-to-square"></i>
+
+                                        </a>
+
+
+                                    </td>
+
+
+                                </tr>
+
+
+                            <% }); %>
+
+
+                        <% } else { %>
+
+
+                            <tr>
+
+                                <td
+                                    colspan="7"
+                                    class="empty-state"
+                                >
+
+                                    <i class="fa-solid fa-users-slash"></i>
+
+                                    <p>
+                                        No hay usuarios de agencias registrados.
+                                    </p>
+
+                                </td>
+
+                            </tr>
+
+
+                        <% } %>
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+            </section>
+
+
+            <!-- =============================================
+                 PIE
+            ============================================== -->
+
+            <footer class="admin-footer">
+
+                <span>
+                    AutoRentCar Platform
+                </span>
+
+                <span>
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+            </footer>
+
+
+        </main>
+
+
+    </div>
+
+
+</div>
+
+
+<script src="/js/admin.js"></script>
+
+
+</body>
+
+</html>

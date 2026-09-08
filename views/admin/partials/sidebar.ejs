@@ -87,13 +87,33 @@
 
     <div class="sidebar-profile">
 
-        <div class="sidebar-profile-avatar">
+        <div
+    class="sidebar-profile-avatar"
+    style="overflow:hidden;"
+>
 
-            <%= usuario.nombre
-                .charAt(0)
-                .toUpperCase() %>
+    <% if (usuario.foto_perfil) { %>
 
-        </div>
+        <img
+            src="<%= usuario.foto_perfil %>"
+            alt="Foto de perfil"
+            style="
+                width:100%;
+                height:100%;
+                display:block;
+                object-fit:cover;
+            "
+        >
+
+    <% } else { %>
+
+        <%= usuario.nombre
+            .charAt(0)
+            .toUpperCase() %>
+
+    <% } %>
+
+</div>
 
         <div class="sidebar-profile-info">
 

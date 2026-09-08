@@ -95,6 +95,35 @@
 
     </div>
 
+    <%
+
+    const codigoRolSidebar =
+        String(
+            usuario?.rolCodigo ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    const nombreRolSidebar =
+        String(
+            usuario?.rolNombre ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    const esAdministradorAgenciaSidebar =
+        nombreRolSidebar ===
+            "administrador de agencia" ||
+        codigoRolSidebar ===
+            "administrador_agencia" ||
+        codigoRolSidebar ===
+            "admin_agencia";
+
+%>
 
     <!-- NAVEGACIÓN -->
 
@@ -226,22 +255,28 @@
 
             </span>
 
-            <a
-    href="/panel/metodos-pago"
-    class="panel-nav-link <%= paginaActual === 'metodos-pago' ? 'activo' : '' %>"
->
+            <% if (esAdministradorAgenciaSidebar) { %>
 
-    <span class="panel-nav-icon">
+    <a
+        href="/panel/metodos-pago"
+        class="panel-nav-link <%= paginaActual === 'metodos-pago' ? 'activo' : '' %>"
+    >
 
-        <i class="fa-solid fa-credit-card"></i>
+        <span class="panel-nav-icon">
 
-    </span>
+            <i class="fa-solid fa-credit-card"></i>
 
-    <span class="panel-nav-text">
-        Métodos de pago
-    </span>
+        </span>
 
-</a>
+        <span class="panel-nav-text">
+
+            Métodos de pago
+
+        </span>
+
+    </a>
+
+<% } %>
             <span class="panel-nav-link panel-nav-disabled">
 
                 <span class="panel-nav-icon">

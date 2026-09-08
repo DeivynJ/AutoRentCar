@@ -36,21 +36,169 @@
 
     <div class="topbar-right">
 
-        <!-- BOTÓN ACCIÓN RÁPIDA -->
+       <!-- =============================================
+     ACCIONES RÁPIDAS
+============================================== -->
 
-        <button
-            type="button"
-            class="topbar-action-button"
-            title="Acciones rápidas"
-        >
+<div
+    class="topbar-quick-action"
+    id="topbar-quick-action"
+>
 
-            <i class="fa-solid fa-plus"></i>
+    <button
+        type="button"
+        class="topbar-action-button"
+        id="topbar-quick-action-button"
+        title="Acciones rápidas"
+        aria-label="Abrir acciones rápidas"
+        aria-expanded="false"
+        aria-controls="topbar-quick-action-menu"
+    >
+
+        <i class="fa-solid fa-plus"></i>
+
+        <span>
+            Acción rápida
+        </span>
+
+    </button>
+
+
+    <div
+        class="topbar-quick-action-menu"
+        id="topbar-quick-action-menu"
+        aria-hidden="true"
+    >
+
+        <div class="topbar-quick-action-header">
 
             <span>
-                Acción rápida
+                Acciones rápidas
             </span>
 
-        </button>
+            <small>
+                SuperAdministrador
+            </small>
+
+        </div>
+
+
+        <div class="topbar-quick-action-divider"></div>
+
+
+        <a
+            href="/admin/agencias/nueva"
+            class="topbar-quick-action-link"
+        >
+
+            <span class="topbar-quick-action-icon">
+
+                <i class="fa-solid fa-building-circle-check"></i>
+
+            </span>
+
+
+            <span>
+
+                <strong>
+                    Nueva agencia
+                </strong>
+
+                <small>
+                    Registrar un nuevo Rent Car
+                </small>
+
+            </span>
+
+        </a>
+
+
+        <a
+            href="/admin/planes/nuevo"
+            class="topbar-quick-action-link"
+        >
+
+            <span class="topbar-quick-action-icon">
+
+                <i class="fa-solid fa-layer-group"></i>
+
+            </span>
+
+
+            <span>
+
+                <strong>
+                    Nuevo plan
+                </strong>
+
+                <small>
+                    Crear un plan comercial
+                </small>
+
+            </span>
+
+        </a>
+
+
+        <div class="topbar-quick-action-divider"></div>
+
+
+        <a
+            href="/admin/agencias"
+            class="topbar-quick-action-link"
+        >
+
+            <span class="topbar-quick-action-icon">
+
+                <i class="fa-solid fa-building"></i>
+
+            </span>
+
+
+            <span>
+
+                <strong>
+                    Gestionar agencias
+                </strong>
+
+                <small>
+                    Ver agencias registradas
+                </small>
+
+            </span>
+
+        </a>
+
+
+        <a
+            href="/admin/suscripciones"
+            class="topbar-quick-action-link"
+        >
+
+            <span class="topbar-quick-action-icon">
+
+                <i class="fa-solid fa-calendar-check"></i>
+
+            </span>
+
+
+            <span>
+
+                <strong>
+                    Suscripciones
+                </strong>
+
+                <small>
+                    Administrar planes contratados
+                </small>
+
+            </span>
+
+        </a>
+
+    </div>
+
+</div>
 
         <!-- MODO CLARO / OSCURO -->
          
@@ -68,20 +216,239 @@
 </button>
 
 
-        <!-- NOTIFICACIONES -->
+        <!-- =============================================
+     NOTIFICACIONES
+============================================== -->
 
-        <button
-            type="button"
-            class="topbar-icon-button"
-            aria-label="Notificaciones"
-            title="Notificaciones"
-        >
+<%
+    const listaNotificacionesAdmin =
+        Array.isArray(notificacionesAdmin)
+            ? notificacionesAdmin
+            : [];
 
-            <i class="fa-regular fa-bell"></i>
+    const totalNotificacionesAdminNoLeidas =
+        Number(notificacionesAdminNoLeidas || 0);
+%>
 
-            <span class="topbar-notification-dot"></span>
 
-        </button>
+<div
+    class="topbar-notifications"
+    id="topbar-notifications"
+>
+
+    <button
+        type="button"
+        class="topbar-icon-button"
+        id="topbar-notifications-button"
+        aria-label="Notificaciones"
+        title="Notificaciones"
+        aria-expanded="false"
+        aria-controls="topbar-notifications-menu"
+    >
+
+        <i class="fa-regular fa-bell"></i>
+
+
+        <% if (totalNotificacionesAdminNoLeidas > 0) { %>
+
+            <span
+                class="topbar-notification-count"
+                aria-label="<%= totalNotificacionesAdminNoLeidas %> notificaciones no leídas"
+            >
+
+                <%= totalNotificacionesAdminNoLeidas > 99
+                    ? "99+"
+                    : totalNotificacionesAdminNoLeidas
+                %>
+
+            </span>
+
+        <% } %>
+
+    </button>
+
+
+    <div
+        class="topbar-notifications-menu"
+        id="topbar-notifications-menu"
+        aria-hidden="true"
+    >
+
+        <!-- CABECERA -->
+
+        <div class="topbar-notifications-header">
+
+            <div>
+
+                <strong>
+                    Notificaciones
+                </strong>
+
+                <span>
+
+                    <% if (totalNotificacionesAdminNoLeidas > 0) { %>
+
+                        <%= totalNotificacionesAdminNoLeidas %>
+                        sin leer
+
+                    <% } else { %>
+
+                        Todo al día
+
+                    <% } %>
+
+                </span>
+
+            </div>
+
+
+            <span class="topbar-notifications-header-icon">
+
+                <i class="fa-regular fa-bell"></i>
+
+            </span>
+
+        </div>
+
+
+        <div class="topbar-notifications-divider"></div>
+
+
+        <!-- LISTADO -->
+
+        <% if (listaNotificacionesAdmin.length) { %>
+
+            <div class="topbar-notifications-list">
+
+
+                <% listaNotificacionesAdmin.forEach((notificacion) => { %>
+
+                    <form
+                        method="POST"
+                        action="/admin/notificaciones/<%= notificacion.id %>/abrir"
+                        class="topbar-notification-form"
+                    >
+
+                        <button
+                            type="submit"
+                            class="topbar-notification-item <%= notificacion.leida ? '' : 'is-unread' %>"
+                        >
+
+
+                            <!-- ICONO -->
+
+                            <span
+                                class="topbar-notification-icon nivel-<%= notificacion.nivel || 'info' %>"
+                            >
+
+                                <% if (notificacion.nivel === "exito") { %>
+
+                                    <i class="fa-solid fa-circle-check"></i>
+
+                                <% } else if (notificacion.nivel === "advertencia") { %>
+
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                <% } else if (notificacion.nivel === "critica") { %>
+
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+
+                                <% } else { %>
+
+                                    <i class="fa-solid fa-circle-info"></i>
+
+                                <% } %>
+
+                            </span>
+
+
+                            <!-- CONTENIDO -->
+
+                            <span class="topbar-notification-content">
+
+                                <span class="topbar-notification-title-row">
+
+                                    <strong>
+                                        <%= notificacion.titulo %>
+                                    </strong>
+
+
+                                    <% if (!notificacion.leida) { %>
+
+                                        <span
+                                            class="topbar-notification-unread-dot"
+                                            title="No leída"
+                                        ></span>
+
+                                    <% } %>
+
+                                </span>
+
+
+                                <span class="topbar-notification-message">
+
+                                    <%= notificacion.mensaje %>
+
+                                </span>
+
+
+                                <span class="topbar-notification-meta">
+
+                                    <i class="fa-regular fa-clock"></i>
+
+                                    <%= formatoFechaHora(
+                                        notificacion.fecha_creacion
+                                    ) %>
+
+                                </span>
+
+                            </span>
+
+
+                            <span class="topbar-notification-arrow">
+
+                                <i class="fa-solid fa-chevron-right"></i>
+
+                            </span>
+
+
+                        </button>
+
+                    </form>
+
+                <% }); %>
+
+
+            </div>
+
+        <% } else { %>
+
+
+            <div class="topbar-notifications-empty">
+
+                <span>
+
+                    <i class="fa-regular fa-bell-slash"></i>
+
+                </span>
+
+                <strong>
+                    No hay notificaciones
+                </strong>
+
+                <p>
+                    Cuando ocurra algo importante en la plataforma aparecerá aquí.
+                </p>
+
+            </div>
+
+
+        <% } %>
+
+
+    </div>
+
+</div>
 
 
         <!-- USUARIO -->
@@ -95,13 +462,33 @@
                 aria-expanded="false"
             >
 
-                <span class="topbar-user-avatar">
+               <span
+    class="topbar-user-avatar"
+    style="overflow:hidden;"
+>
 
-                    <%= usuario.nombre
-                        .charAt(0)
-                        .toUpperCase() %>
+    <% if (usuario.foto_perfil) { %>
 
-                </span>
+        <img
+            src="<%= usuario.foto_perfil %>"
+            alt="Foto de perfil"
+            style="
+                width:100%;
+                height:100%;
+                display:block;
+                object-fit:cover;
+            "
+        >
+
+    <% } else { %>
+
+        <%= usuario.nombre
+            .charAt(0)
+            .toUpperCase() %>
+
+    <% } %>
+
+</span>
 
                 <span class="topbar-user-info">
 
@@ -130,13 +517,33 @@
 
                 <div class="topbar-user-menu-header">
 
-                    <span class="topbar-user-avatar grande">
+                    <span
+    class="topbar-user-avatar grande"
+    style="overflow:hidden;"
+>
 
-                        <%= usuario.nombre
-                            .charAt(0)
-                            .toUpperCase() %>
+    <% if (usuario.foto_perfil) { %>
 
-                    </span>
+        <img
+            src="<%= usuario.foto_perfil %>"
+            alt="Foto de perfil"
+            style="
+                width:100%;
+                height:100%;
+                display:block;
+                object-fit:cover;
+            "
+        >
+
+    <% } else { %>
+
+        <%= usuario.nombre
+            .charAt(0)
+            .toUpperCase() %>
+
+    <% } %>
+
+</span>
 
                     <div>
 

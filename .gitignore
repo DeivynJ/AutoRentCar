@@ -16,3 +16,6 @@ Thumbs.db
 # Archivos temporales
 *.tmp
 *.temp
+
+# Comprobantes privados de pagos
+storage/comprobantes/

@@ -94,7 +94,9 @@ const {
 );
 
 const {
-    requerirGestionCatalogo
+    requerirGestionCatalogo,
+    requerirValidacionPagos,
+    requerirAdministradorAgencia
 } = require(
     "../middleware/permisosPanelMiddleware"
 );
@@ -103,6 +105,19 @@ const {
     subirImagenModelo
 } = require(
     "../middleware/uploadVehiculoMiddleware"
+);
+
+const {
+    confirmarPagoPanel,
+    rechazarPagoPanel
+} = require(
+    "../controllers/panelPagoController"
+);
+
+const {
+    verComprobantePago
+} = require(
+    "../controllers/panelComprobantePagoController"
 );
 
 
@@ -154,13 +169,46 @@ router.get(
 
 router.post(
     "/panel/reservaciones/:reservacionId/confirmar",
+    requerirAdministradorAgencia,
     confirmarReservacionPanel
 );
 
 
 router.post(
     "/panel/reservaciones/:reservacionId/rechazar",
+    requerirAdministradorAgencia,
     rechazarReservacionPanel
+);
+
+/* =========================================================
+   VALIDACIÓN DE PAGOS
+========================================================= */
+
+/*
+ * El comprobante permanece en almacenamiento privado.
+ *
+ * Solo un administrador autenticado de la agencia
+ * puede solicitar su visualización.
+ */
+
+router.get(
+    "/panel/pagos/:pagoId/comprobante",
+    requerirAdministradorAgencia,
+    verComprobantePago
+);
+
+
+router.post(
+    "/panel/pagos/:pagoId/confirmar",
+    requerirValidacionPagos,
+    confirmarPagoPanel
+);
+
+
+router.post(
+    "/panel/pagos/:pagoId/rechazar",
+    requerirValidacionPagos,
+    rechazarPagoPanel
 );
 
 /* =========================================================
@@ -178,21 +226,28 @@ router.post(
 
 router.get(
     "/panel/metodos-pago",
+    requerirAdministradorAgencia,
     listarMetodosPagoPanel
 );
 
+
 router.post(
     "/panel/metodos-pago",
+    requerirAdministradorAgencia,
     crearMetodoPagoPanel
 );
 
+
 router.post(
     "/panel/metodos-pago/:metodoId/actualizar",
+    requerirAdministradorAgencia,
     actualizarMetodoPagoPanel
 );
 
+
 router.post(
     "/panel/metodos-pago/:metodoId/estado",
+    requerirAdministradorAgencia,
     cambiarEstadoMetodoPagoPanel
 );
 

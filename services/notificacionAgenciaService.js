@@ -121,6 +121,127 @@ function normalizarTexto(
 
 
 /* =========================================================
+   AUDIENCIAS PERMITIDAS
+========================================================= */
+
+const AUDIENCIAS_PERMITIDAS =
+    new Set([
+        "todos",
+        "administradores"
+    ]);
+
+
+/* =========================================================
+   NORMALIZAR AUDIENCIA
+========================================================= */
+
+function normalizarAudiencia(
+    valor
+) {
+
+    const audiencia =
+        String(
+            valor ||
+            "todos"
+        )
+            .trim()
+            .toLowerCase();
+
+
+    if (
+        !AUDIENCIAS_PERMITIDAS.has(
+            audiencia
+        )
+    ) {
+
+        throw crearError(
+            "AUDIENCIA_NOTIFICACION_INVALIDA",
+            "La audiencia de la notificación no es válida."
+        );
+
+    }
+
+
+    return audiencia;
+
+}
+
+
+/* =========================================================
+   VALIDAR USUARIO DE LA AGENCIA Y OBTENER ROL
+========================================================= */
+
+async function obtenerUsuarioAgencia(
+    conexion,
+    agenciaId,
+    usuarioId
+) {
+
+    const usuarios =
+        await conexion.query(
+            `
+            SELECT
+
+                u.id,
+
+                u.agencia_id,
+
+                r.codigo
+                    AS rol_codigo
+
+            FROM usuarios u
+
+            INNER JOIN roles r
+                ON r.id = u.rol_id
+
+            WHERE
+                u.id = ?
+                AND u.agencia_id = ?
+                AND u.estado = 'activo'
+                AND r.activo = 1
+
+            LIMIT 1
+            `,
+            [
+                usuarioId,
+                agenciaId
+            ]
+        );
+
+
+    if (
+        !usuarios.length
+    ) {
+
+        throw crearError(
+            "USUARIO_NO_AUTORIZADO",
+            "El usuario no pertenece a la agencia o no tiene acceso.",
+            403
+        );
+
+    }
+
+
+    return {
+
+        id:
+            Number(
+                usuarios[0].id
+            ),
+
+        agenciaId:
+            Number(
+                usuarios[0].agencia_id
+            ),
+
+        rolCodigo:
+            usuarios[0].rol_codigo
+
+    };
+
+}
+
+/* =========================================================
    CREAR NOTIFICACIÓN PARA UNA AGENCIA
 ========================================================= */
 
@@ -131,6 +252,8 @@ async function crearNotificacionAgencia({
     categoria,
 
     tipo,
+
+    claveEvento = null,
 
     titulo,
 
@@ -143,6 +266,8 @@ async function crearNotificacionAgencia({
     entidadId = null,
 
     nivel = "info",
+
+    audiencia = "todos",
 
     conexion = null
 
@@ -167,6 +292,13 @@ async function crearNotificacionAgencia({
             tipo,
             80
         );
+
+    const claveEventoSegura =
+    normalizarTexto(
+        claveEvento,
+        190,
+        false
+    );
 
 
     const tituloSeguro =
@@ -249,6 +381,11 @@ async function crearNotificacionAgencia({
 
     }
 
+    const audienciaSegura =
+    normalizarAudiencia(
+        audiencia
+    );
+
 
     const conexionPropia =
         !conexion;
@@ -301,59 +438,138 @@ async function crearNotificacionAgencia({
            INSERTAR NOTIFICACIÓN
         ------------------------------------------------- */
 
-        const resultado =
-            await db.query(
-                `
-                INSERT INTO notificaciones_agencia (
+               let resultado;
 
-                    agencia_id,
 
-                    categoria,
-                    tipo,
+        try {
 
-                    titulo,
-                    mensaje,
+            resultado =
+                await db.query(
+                    `
+                    INSERT INTO notificaciones_agencia (
 
-                    destino_url,
+                        agencia_id,
 
-                    entidad_tipo,
-                    entidad_id,
+                        categoria,
+                        tipo,
+                        clave_evento,
 
-                    nivel
+                        titulo,
+                        mensaje,
 
-                )
+                        destino_url,
 
-                VALUES (
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?
-                )
-                `,
-                [
+                        entidad_tipo,
+                        entidad_id,
 
-                    agenciaIdSeguro,
+                        nivel,
+                        audiencia
 
-                    categoriaSegura,
-                    tipoSeguro,
+                    )
 
-                    tituloSeguro,
-                    mensajeSeguro,
+                    VALUES (
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?
+                    )
+                    `,
+                    [
 
-                    destinoSeguro,
+                        agenciaIdSeguro,
 
-                    entidadTipoSeguro,
-                    entidadIdSeguro,
+                        categoriaSegura,
+                        tipoSeguro,
+                        claveEventoSegura,
 
-                    nivelSeguro
+                        tituloSeguro,
+                        mensajeSeguro,
 
-                ]
-            );
+                        destinoSeguro,
+
+                        entidadTipoSeguro,
+                        entidadIdSeguro,
+
+                        nivelSeguro,
+                        audienciaSegura
+
+                    ]
+                );
+
+
+        } catch (error) {
+
+            /*
+             * Si la misma clave de evento ya existe
+             * para esta agencia, significa que esa
+             * notificación ya fue generada.
+             */
+
+            if (
+                error?.code ===
+                    "ER_DUP_ENTRY" &&
+                claveEventoSegura
+            ) {
+
+                return {
+
+                    id:
+                        null,
+
+                    creada:
+                        false,
+
+                    duplicada:
+                        true,
+
+                    agenciaId:
+                        agenciaIdSeguro,
+
+                    categoria:
+                        categoriaSegura,
+
+                    tipo:
+                        tipoSeguro,
+
+                    claveEvento:
+                        claveEventoSegura,
+
+                    titulo:
+                        tituloSeguro,
+
+                    mensaje:
+                        mensajeSeguro,
+
+                    destinoUrl:
+                        destinoSeguro,
+
+                    entidadTipo:
+                        entidadTipoSeguro,
+
+                    entidadId:
+                        entidadIdSeguro,
+
+                    nivel:
+                        nivelSeguro,
+
+                    audiencia:
+                        audienciaSegura
+
+                };
+
+            }
+
+
+            throw error;
+
+        }
 
 
         return {
@@ -363,6 +579,12 @@ async function crearNotificacionAgencia({
                     resultado.insertId
                 ),
 
+            creada:
+                true,
+
+            duplicada:
+                false,
+
             agenciaId:
                 agenciaIdSeguro,
 
@@ -371,6 +593,9 @@ async function crearNotificacionAgencia({
 
             tipo:
                 tipoSeguro,
+
+            claveEvento:
+                claveEventoSegura,
 
             titulo:
                 tituloSeguro,
@@ -388,7 +613,10 @@ async function crearNotificacionAgencia({
                 entidadIdSeguro,
 
             nivel:
-                nivelSeguro
+                nivelSeguro,
+
+            audiencia:
+                audienciaSegura
 
         };
 
@@ -481,10 +709,24 @@ async function listarNotificacionesAgenciaUsuario({
             await pool.getConnection();
 
 
+        /*
+         * Además de validar que el usuario pertenezca
+         * a la agencia, obtenemos su rol.
+         */
+
+        const usuario =
+            await obtenerUsuarioAgencia(
+                conexion,
+                agenciaIdSeguro,
+                usuarioIdSeguro
+            );
+
+
         const parametros =
             [
                 usuarioIdSeguro,
-                agenciaIdSeguro
+                agenciaIdSeguro,
+                usuario.rolCodigo
             ];
 
 
@@ -522,26 +764,35 @@ async function listarNotificacionesAgenciaUsuario({
                     n.id,
 
                     n.categoria,
+
                     n.tipo,
 
+                    n.clave_evento,
+
                     n.titulo,
+
                     n.mensaje,
 
                     n.destino_url,
 
                     n.entidad_tipo,
+
                     n.entidad_id,
 
                     n.nivel,
 
+                    n.audiencia,
+
                     n.fecha_creacion,
 
                     CASE
+
                         WHEN l.id IS NULL
                             THEN 0
+
                         ELSE 1
-                    END
-                        AS leida,
+
+                    END AS leida,
 
                     l.fecha_lectura
 
@@ -557,6 +808,20 @@ async function listarNotificacionesAgenciaUsuario({
                 WHERE
                     n.agencia_id = ?
 
+                    AND
+                    (
+                        n.audiencia = 'todos'
+
+                        OR
+                        (
+                            n.audiencia =
+                                'administradores'
+
+                            AND ? =
+                                'admin_agencia'
+                        )
+                    )
+
                     ${filtroCategoria}
 
                 ORDER BY
@@ -570,9 +835,7 @@ async function listarNotificacionesAgenciaUsuario({
 
 
         return filas.map(
-            (
-                fila
-            ) => ({
+            fila => ({
 
                 id:
                     Number(
@@ -584,6 +847,9 @@ async function listarNotificacionesAgenciaUsuario({
 
                 tipo:
                     fila.tipo,
+
+                claveEvento:
+                    fila.clave_evento,
 
                 titulo:
                     fila.titulo,
@@ -606,6 +872,9 @@ async function listarNotificacionesAgenciaUsuario({
 
                 nivel:
                     fila.nivel,
+
+                audiencia:
+                    fila.audiencia,
 
                 leida:
                     Boolean(
@@ -674,6 +943,19 @@ async function contarNotificacionesNoLeidas({
             await pool.getConnection();
 
 
+        /*
+         * Validamos que el usuario pertenezca
+         * a la agencia y obtenemos su rol.
+         */
+
+        const usuario =
+            await obtenerUsuarioAgencia(
+                conexion,
+                agenciaIdSeguro,
+                usuarioIdSeguro
+            );
+
+
         const filas =
             await conexion.query(
                 `
@@ -693,11 +975,26 @@ async function contarNotificacionesNoLeidas({
                 WHERE
                     n.agencia_id = ?
 
+                    AND
+                    (
+                        n.audiencia = 'todos'
+
+                        OR
+                        (
+                            n.audiencia =
+                                'administradores'
+
+                            AND ? =
+                                'admin_agencia'
+                        )
+                    )
+
                     AND l.id IS NULL
                 `,
                 [
                     usuarioIdSeguro,
-                    agenciaIdSeguro
+                    agenciaIdSeguro,
+                    usuario.rolCodigo
                 ]
             );
 
@@ -767,16 +1064,31 @@ async function marcarNotificacionComoLeida({
             await pool.getConnection();
 
 
+        /*
+         * Validamos que el usuario pertenezca
+         * realmente a la agencia y obtenemos su rol.
+         */
+
+        const usuario =
+            await obtenerUsuarioAgencia(
+                conexion,
+                agenciaIdSeguro,
+                usuarioIdSeguro
+            );
+
+
         /* -------------------------------------------------
-           PRIMERO CONFIRMAMOS QUE LA NOTIFICACIÓN
-           PERTENEZCA A LA AGENCIA AUTENTICADA
+           CONFIRMAR QUE LA NOTIFICACIÓN SEA ACCESIBLE
+           PARA ESTE USUARIO
         ------------------------------------------------- */
 
         const notificaciones =
             await conexion.query(
                 `
                 SELECT
-                    id
+
+                    id,
+                    audiencia
 
                 FROM notificaciones_agencia
 
@@ -785,11 +1097,26 @@ async function marcarNotificacionComoLeida({
 
                     AND agencia_id = ?
 
+                    AND
+                    (
+                        audiencia = 'todos'
+
+                        OR
+                        (
+                            audiencia =
+                                'administradores'
+
+                            AND ? =
+                                'admin_agencia'
+                        )
+                    )
+
                 LIMIT 1
                 `,
                 [
                     notificacionIdSeguro,
-                    agenciaIdSeguro
+                    agenciaIdSeguro,
+                    usuario.rolCodigo
                 ]
             );
 
@@ -800,7 +1127,7 @@ async function marcarNotificacionComoLeida({
 
             throw crearError(
                 "NOTIFICACION_NO_ENCONTRADA",
-                "La notificación no existe.",
+                "La notificación no existe o no está disponible para este usuario.",
                 404
             );
 
@@ -834,7 +1161,10 @@ async function marcarNotificacionComoLeida({
 
 
         return {
-            ok: true
+
+            ok:
+                true
+
         };
 
 
@@ -954,51 +1284,24 @@ async function abrirNotificacionAgencia({
 
 
         /* =================================================
-           VALIDAR USUARIO DENTRO DE LA MISMA AGENCIA
+           VALIDAR USUARIO Y OBTENER SU ROL
         ================================================= */
 
-        const usuarios =
-            await conexion.query(
-                `
-                SELECT
-                    id
-
-                FROM usuarios
-
-                WHERE
-                    id = ?
-
-                    AND agencia_id = ?
-
-                    AND estado = 'activo'
-
-                LIMIT 1
-                `,
-                [
-                    usuarioIdSeguro,
-                    agenciaIdSeguro
-                ]
+        const usuario =
+            await obtenerUsuarioAgencia(
+                conexion,
+                agenciaIdSeguro,
+                usuarioIdSeguro
             );
-
-
-        if (
-            !usuarios.length
-        ) {
-
-            throw crearError(
-                "USUARIO_NO_AUTORIZADO",
-                "El usuario no pertenece a la agencia.",
-                403
-            );
-
-        }
 
 
         /* =================================================
-           BUSCAR LA NOTIFICACIÓN
+           BUSCAR NOTIFICACIÓN ACCESIBLE PARA ESTE USUARIO
 
-           Importante:
-           id + agencia_id
+           Seguridad:
+           - misma agencia
+           - audiencia todos
+           - o audiencia administradores si es admin_agencia
         ================================================= */
 
         const notificaciones =
@@ -1007,7 +1310,8 @@ async function abrirNotificacionAgencia({
                 SELECT
 
                     id,
-                    destino_url
+                    destino_url,
+                    audiencia
 
                 FROM notificaciones_agencia
 
@@ -1016,11 +1320,26 @@ async function abrirNotificacionAgencia({
 
                     AND agencia_id = ?
 
+                    AND
+                    (
+                        audiencia = 'todos'
+
+                        OR
+                        (
+                            audiencia =
+                                'administradores'
+
+                            AND ? =
+                                'admin_agencia'
+                        )
+                    )
+
                 LIMIT 1
                 `,
                 [
                     notificacionIdSeguro,
-                    agenciaIdSeguro
+                    agenciaIdSeguro,
+                    usuario.rolCodigo
                 ]
             );
 
@@ -1031,7 +1350,7 @@ async function abrirNotificacionAgencia({
 
             throw crearError(
                 "NOTIFICACION_NO_ENCONTRADA",
-                "La notificación no existe.",
+                "La notificación no existe o no está disponible para este usuario.",
                 404
             );
 

@@ -97,6 +97,7 @@ async function procesarLogin(req, res) {
                     u.nombre,
                     u.apellido,
                     u.correo,
+                    u.foto_perfil,
                     u.password_hash,
                     u.estado,
                     r.id AS rol_id,
@@ -181,24 +182,39 @@ if (
         }
 
         req.session.usuario = {
-            id: usuario.id,
-            agenciaId:
-                usuario.agencia_id,
-            nombre:
-                usuario.nombre,
-            apellido:
-                usuario.apellido,
-            correo:
-                usuario.correo,
-            rolId:
-                usuario.rol_id,
-            rolNombre:
-                usuario.rol_nombre,
-            rolCodigo:
-                usuario.rol_codigo,
-            rolNivel:
-                usuario.rol_nivel
-        };
+
+    id:
+        usuario.id,
+
+    agenciaId:
+        usuario.agencia_id,
+
+    nombre:
+        usuario.nombre,
+
+    apellido:
+        usuario.apellido,
+
+    correo:
+        usuario.correo,
+
+    foto_perfil:
+        usuario.foto_perfil ||
+        null,
+
+    rolId:
+        usuario.rol_id,
+
+    rolNombre:
+        usuario.rol_nombre,
+
+    rolCodigo:
+        usuario.rol_codigo,
+
+    rolNivel:
+        usuario.rol_nivel
+
+};
 
         await conexion.query(
             `

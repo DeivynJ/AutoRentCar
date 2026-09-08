@@ -5,6 +5,16 @@ const {
 
     mostrarDashboard,
 
+    exportarResumenDashboard,
+
+    mostrarUsuariosGlobales,
+
+    mostrarConfiguracionAdmin,
+
+    actualizarPerfilAdmin,
+
+     actualizarPasswordAdmin,
+
     mostrarAgencias,
 
     mostrarNuevaAgencia,
@@ -57,6 +67,21 @@ const {
     "../middleware/authMiddleware"
 );
 
+const {
+
+    cargarNotificacionesAdmin
+
+} = require(
+    "../middleware/notificacionesAdminMiddleware"
+);
+
+const {
+
+    abrirNotificacionAdmin
+
+} = require(
+    "../controllers/adminNotificacionController"
+);
 
 const {
 
@@ -64,6 +89,14 @@ const {
 
 } = require(
     "../middleware/uploadMiddleware"
+);
+
+const {
+
+    subirFotoPerfil
+
+} = require(
+    "../middleware/uploadFotoPerfilMiddleware"
 );
 
 
@@ -79,6 +112,11 @@ router.use(
     requerirSuperadmin
 );
 
+router.use(
+    "/admin",
+    cargarNotificacionesAdmin
+);
+
 
 /* =========================================================
    DASHBOARD
@@ -88,6 +126,51 @@ router.use(
 router.get(
     "/admin",
     mostrarDashboard
+);
+
+router.get(
+    "/admin/exportar-resumen",
+    exportarResumenDashboard
+);
+
+/* =========================================================
+   USUARIOS GLOBALES
+========================================================= */
+
+router.get(
+    "/admin/usuarios",
+    mostrarUsuariosGlobales
+);
+
+/* =========================================================
+   CONFIGURACIÓN DEL SUPERADMIN
+========================================================= */
+
+router.get(
+    "/admin/configuracion",
+    mostrarConfiguracionAdmin
+);
+
+
+router.post(
+    "/admin/configuracion/perfil",
+    subirFotoPerfil,
+    actualizarPerfilAdmin
+);
+
+
+router.post(
+    "/admin/configuracion/password",
+    actualizarPasswordAdmin
+);
+
+/* =========================================================
+   NOTIFICACIONES DEL SUPERADMIN
+========================================================= */
+
+router.post(
+    "/admin/notificaciones/:notificacionId/abrir",
+    abrirNotificacionAdmin
 );
 
 

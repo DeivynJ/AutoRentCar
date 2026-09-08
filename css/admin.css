@@ -1214,6 +1214,233 @@ body.sidebar-collapsed
         );
 }
 
+/* =========================================================
+   ACCIONES RÁPIDAS TOPBAR
+========================================================= */
+
+.topbar-quick-action {
+
+    position: relative;
+
+}
+
+.topbar-quick-action-menu {
+
+    width: 290px;
+
+    position: absolute;
+
+    top:
+        calc(100% + 10px);
+
+    right: 0;
+
+    z-index: 700;
+
+    padding: 10px;
+
+    border:
+        1px solid
+        var(--admin-border);
+
+    border-radius:
+        14px;
+
+    background:
+        #ffffff;
+
+    box-shadow:
+        0 20px 50px
+        rgba(
+            11,
+            31,
+            58,
+            0.13
+        );
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transform:
+        translateY(-7px);
+
+    transition:
+        var(--admin-transition);
+
+}
+
+
+.topbar-quick-action.open
+.topbar-quick-action-menu {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+
+    transform:
+        translateY(0);
+
+}
+
+
+.topbar-quick-action-header {
+
+    padding:
+        8px 9px;
+
+}
+
+
+.topbar-quick-action-header
+span {
+
+    display: block;
+
+    color:
+        var(--admin-primary);
+
+    font-size:
+        0.76rem;
+
+    font-weight: 800;
+
+}
+
+
+.topbar-quick-action-header
+small {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color:
+        var(--admin-text-soft);
+
+    font-size:
+        0.61rem;
+
+}
+
+
+.topbar-quick-action-divider {
+
+    height: 1px;
+
+    margin:
+        7px 0;
+
+    background:
+        var(--admin-border);
+
+}
+
+
+.topbar-quick-action-link {
+
+    width: 100%;
+
+    min-height: 55px;
+
+    padding:
+        8px 9px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    border-radius:
+        9px;
+
+    color:
+        var(--admin-primary);
+
+    text-decoration: none;
+
+    transition:
+        var(--admin-transition);
+
+}
+
+
+.topbar-quick-action-link:hover {
+
+    background:
+        #f6f8fb;
+
+    transform:
+        translateX(2px);
+
+}
+
+
+.topbar-quick-action-icon {
+
+    flex:
+        0 0 35px;
+
+    width: 35px;
+
+    height: 35px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius:
+        9px;
+
+    color:
+        var(--admin-secondary);
+
+    background:
+        rgba(
+            255,
+            138,
+            0,
+            0.11
+        );
+
+}
+
+
+.topbar-quick-action-link
+strong {
+
+    display: block;
+
+    font-size:
+        0.69rem;
+
+    font-weight: 700;
+
+}
+
+
+.topbar-quick-action-link
+small {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color:
+        var(--admin-text-soft);
+
+    font-size:
+        0.58rem;
+
+    font-weight: 500;
+
+}
+
 .topbar-icon-button {
 
     width: 43px;
@@ -1271,6 +1498,590 @@ body.sidebar-collapsed
 
     background:
         var(--admin-secondary);
+}
+
+/* =========================================================
+   NOTIFICACIONES SUPERADMIN
+========================================================= */
+
+.topbar-notifications {
+
+    position: relative;
+
+}
+
+
+.topbar-notification-count {
+
+    min-width: 18px;
+    height: 18px;
+
+    padding:
+        0 4px;
+
+    position: absolute;
+
+    top: -5px;
+    right: -5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border:
+        2px solid
+        var(--admin-surface);
+
+    border-radius:
+        999px;
+
+    color:
+        #ffffff;
+
+    background:
+        var(--admin-danger);
+
+    font-size:
+        0.52rem;
+
+    font-weight:
+        800;
+
+    line-height:
+        1;
+
+}
+
+
+.topbar-notifications-menu {
+
+    width: 390px;
+
+    max-height:
+        520px;
+
+    position: absolute;
+
+    right: 0;
+    top:
+        calc(100% + 10px);
+
+    z-index: 800;
+
+    padding:
+        10px;
+
+    border:
+        1px solid
+        var(--admin-border);
+
+    border-radius:
+        14px;
+
+    background:
+        var(--admin-surface);
+
+    box-shadow:
+        0 20px 50px
+        rgba(
+            11,
+            31,
+            58,
+            0.13
+        );
+
+    opacity: 0;
+
+    visibility:
+        hidden;
+
+    pointer-events:
+        none;
+
+    transform:
+        translateY(-7px);
+
+    transition:
+        var(--admin-transition);
+
+}
+
+
+.topbar-notifications.open
+.topbar-notifications-menu {
+
+    opacity: 1;
+
+    visibility:
+        visible;
+
+    pointer-events:
+        auto;
+
+    transform:
+        translateY(0);
+
+}
+
+
+.topbar-notifications-header {
+
+    padding:
+        8px 9px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+}
+
+
+.topbar-notifications-header
+strong {
+
+    display: block;
+
+    color:
+        var(--admin-text);
+
+    font-size:
+        0.82rem;
+
+    font-weight:
+        800;
+
+}
+
+
+.topbar-notifications-header
+span:not(.topbar-notifications-header-icon) {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color:
+        var(--admin-text-soft);
+
+    font-size:
+        0.62rem;
+
+}
+
+
+.topbar-notifications-header-icon {
+
+    width: 35px;
+    height: 35px;
+
+    display: grid;
+    place-items: center;
+
+    flex-shrink: 0;
+
+    border-radius:
+        9px;
+
+    color:
+        var(--admin-secondary);
+
+    background:
+        rgba(
+            255,
+            138,
+            0,
+            0.10
+        );
+
+}
+
+
+.topbar-notifications-divider {
+
+    height: 1px;
+
+    margin:
+        7px 0;
+
+    background:
+        var(--admin-border);
+
+}
+
+
+.topbar-notifications-list {
+
+    max-height:
+        405px;
+
+    overflow-y:
+        auto;
+
+    overscroll-behavior:
+        contain;
+
+}
+
+
+.topbar-notification-form {
+
+    margin: 0;
+
+}
+
+
+.topbar-notification-item {
+
+    width: 100%;
+
+    padding:
+        11px 9px;
+
+    display: grid;
+
+    grid-template-columns:
+        38px
+        minmax(0, 1fr)
+        16px;
+
+    align-items: start;
+
+    gap: 10px;
+
+    border: 0;
+
+    border-radius:
+        10px;
+
+    color:
+        var(--admin-text);
+
+    background:
+        transparent;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        var(--admin-transition);
+
+}
+
+
+.topbar-notification-item:hover {
+
+    background:
+        var(--admin-surface-alt);
+
+}
+
+
+.topbar-notification-item.is-unread {
+
+    background:
+        rgba(
+            40,
+            120,
+            212,
+            0.07
+        );
+
+}
+
+
+.topbar-notification-item.is-unread:hover {
+
+    background:
+        rgba(
+            40,
+            120,
+            212,
+            0.11
+        );
+
+}
+
+
+.topbar-notification-icon {
+
+    width: 36px;
+    height: 36px;
+
+    display: grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        10px;
+
+    font-size:
+        0.78rem;
+
+}
+
+
+.topbar-notification-icon.nivel-info {
+
+    color:
+        var(--admin-info);
+
+    background:
+        rgba(
+            40,
+            120,
+            212,
+            0.10
+        );
+
+}
+
+
+.topbar-notification-icon.nivel-exito {
+
+    color:
+        var(--admin-success);
+
+    background:
+        rgba(
+            22,
+            163,
+            106,
+            0.10
+        );
+
+}
+
+
+.topbar-notification-icon.nivel-advertencia {
+
+    color:
+        var(--admin-warning);
+
+    background:
+        rgba(
+            229,
+            138,
+            0,
+            0.11
+        );
+
+}
+
+
+.topbar-notification-icon.nivel-critica {
+
+    color:
+        var(--admin-danger);
+
+    background:
+        rgba(
+            220,
+            38,
+            38,
+            0.10
+        );
+
+}
+
+
+.topbar-notification-content {
+
+    min-width: 0;
+
+    display: block;
+
+}
+
+
+.topbar-notification-title-row {
+
+    display: flex;
+
+    align-items:
+        flex-start;
+
+    justify-content:
+        space-between;
+
+    gap: 8px;
+
+}
+
+
+.topbar-notification-title-row
+strong {
+
+    color:
+        var(--admin-text);
+
+    font-size:
+        0.69rem;
+
+    font-weight:
+        750;
+
+    line-height:
+        1.35;
+
+}
+
+
+.topbar-notification-unread-dot {
+
+    width: 7px;
+    height: 7px;
+
+    margin-top: 4px;
+
+    flex-shrink: 0;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--admin-info);
+
+}
+
+
+.topbar-notification-message {
+
+    margin-top: 4px;
+
+    display: -webkit-box;
+
+    overflow: hidden;
+
+    color:
+        var(--admin-text-soft);
+
+    font-size:
+        0.61rem;
+
+    line-height:
+        1.45;
+
+    -webkit-box-orient:
+        vertical;
+
+    -webkit-line-clamp:
+        2;
+
+}
+
+
+.topbar-notification-meta {
+
+    margin-top: 6px;
+
+    display: flex;
+
+    align-items:
+        center;
+
+    gap: 5px;
+
+    color:
+        var(--admin-text-soft);
+
+    font-size:
+        0.55rem;
+
+}
+
+
+.topbar-notification-arrow {
+
+    align-self: center;
+
+    color:
+        var(--admin-text-soft);
+
+    font-size:
+        0.58rem;
+
+}
+
+
+.topbar-notifications-empty {
+
+    padding:
+        30px 20px;
+
+    text-align:
+        center;
+
+}
+
+
+.topbar-notifications-empty
+> span {
+
+    width: 48px;
+    height: 48px;
+
+    margin:
+        0 auto
+        12px;
+
+    display: grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        13px;
+
+    color:
+        var(--admin-secondary);
+
+    background:
+        rgba(
+            255,
+            138,
+            0,
+            0.09
+        );
+
+}
+
+
+.topbar-notifications-empty
+strong {
+
+    display: block;
+
+    color:
+        var(--admin-text);
+
+    font-size:
+        0.75rem;
+
+}
+
+
+.topbar-notifications-empty
+p {
+
+    max-width:
+        270px;
+
+    margin:
+        7px auto 0;
+
+    color:
+        var(--admin-text-soft);
+
+    font-size:
+        0.61rem;
+
+    line-height:
+        1.55;
+
 }
 
 
@@ -7105,8 +7916,11 @@ html[data-admin-tema="oscuro"]
 
     /*
      * El CSS original oculta los botones de icono
-     * en móvil. Conservamos visible el selector
-     * claro / oscuro.
+     * en móvil.
+     *
+     * Conservamos visibles:
+     * - selector claro / oscuro
+     * - campana de notificaciones
      */
 
     .topbar-icon-button.admin-theme-button {
@@ -7114,6 +7928,425 @@ html[data-admin-tema="oscuro"]
         display:
             grid;
 
+    }
+
+
+    .topbar-notifications
+    .topbar-icon-button {
+
+        display:
+            grid;
+
+    }
+
+
+    /* =============================================
+       ACCIONES RÁPIDAS EN MÓVIL
+    ============================================== */
+
+    .topbar-quick-action-menu {
+
+        width:
+            min(
+                290px,
+                calc(
+                    100vw - 28px
+                )
+            );
+
+        right:
+            -90px;
+
+    }
+
+
+    /* =============================================
+       NOTIFICACIONES EN MÓVIL
+    ============================================== */
+
+    .topbar-notifications-menu {
+
+        width:
+            auto;
+
+        max-height:
+            calc(
+                100vh - 100px
+            );
+
+        position:
+            fixed;
+
+        top:
+            78px;
+
+        left:
+            13px;
+
+        right:
+            13px;
+
+    }
+
+
+    .topbar-notifications-list {
+
+        max-height:
+            calc(
+                100vh - 210px
+            );
+
+    }
+
+}
+
+/* =========================================================
+   ACCIONES DE AGENCIAS RECIENTES - DASHBOARD
+========================================================= */
+
+.table-action-menu {
+
+    position: relative;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        flex-end;
+}
+
+
+/* =========================================================
+   BOTÓN DE TRES PUNTOS
+========================================================= */
+
+.table-action-menu
+.table-action {
+
+    cursor: pointer;
+
+    transition:
+        var(--admin-transition);
+}
+
+
+.table-action-menu
+.table-action:hover {
+
+    color:
+        var(--admin-primary);
+
+    background:
+        rgba(
+            255,
+            138,
+            0,
+            0.1
+        );
+}
+
+
+.table-action-menu.open
+.table-action {
+
+    color:
+        var(--admin-secondary);
+
+    background:
+        rgba(
+            255,
+            138,
+            0,
+            0.12
+        );
+}
+
+
+/* =========================================================
+   DESPLEGABLE
+========================================================= */
+
+.table-action-dropdown {
+
+    width:
+        205px;
+
+    position:
+        absolute;
+
+    right: 0;
+
+    top:
+        calc(
+            100% + 8px
+        );
+
+    z-index:
+        950;
+
+    padding:
+        7px;
+
+    border:
+        1px solid
+        var(--admin-border);
+
+    border-radius:
+        12px;
+
+    background:
+        var(--admin-surface);
+
+    box-shadow:
+        0 18px 42px
+        rgba(
+            11,
+            31,
+            58,
+            0.16
+        );
+
+    opacity: 0;
+
+    visibility:
+        hidden;
+
+    pointer-events:
+        none;
+
+    transform:
+        translateY(
+            -6px
+        );
+
+    transition:
+        var(--admin-transition);
+}
+
+
+/* =========================================================
+   MENÚ ABIERTO
+========================================================= */
+
+.table-action-menu.open
+.table-action-dropdown {
+
+    opacity: 1;
+
+    visibility:
+        visible;
+
+    pointer-events:
+        auto;
+
+    transform:
+        translateY(
+            0
+        );
+}
+
+
+/* =========================================================
+   OPCIONES
+========================================================= */
+
+.table-action-option {
+
+    width: 100%;
+
+    min-height:
+        40px;
+
+    padding:
+        0 11px;
+
+    display: flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    border-radius:
+        8px;
+
+    color:
+        var(--admin-text-soft);
+
+    font-size:
+        0.7rem;
+
+    font-weight:
+        700;
+
+    transition:
+        var(--admin-transition);
+}
+
+
+.table-action-option i {
+
+    width:
+        18px;
+
+    color:
+        var(--admin-secondary);
+
+    text-align:
+        center;
+}
+
+
+.table-action-option:hover {
+
+    color:
+        var(--admin-text);
+
+    background:
+        var(--admin-surface-alt);
+}
+
+
+/* =========================================================
+   EVITAR QUE LAS ÚLTIMAS FILAS QUEDEN CORTADAS
+========================================================= */
+
+.dashboard-panel-large {
+
+    overflow:
+        visible;
+}
+
+
+.dashboard-panel-large
+.admin-table-wrapper {
+
+    overflow:
+        visible;
+}
+
+
+/*
+ * Las dos últimas filas abren hacia arriba.
+ */
+
+.dashboard-panel-large
+.admin-table tbody
+tr:nth-last-child(-n + 2)
+.table-action-dropdown {
+
+    top:
+        auto;
+
+    bottom:
+        calc(
+            100% + 8px
+        );
+
+    transform:
+        translateY(
+            6px
+        );
+}
+
+
+.dashboard-panel-large
+.admin-table tbody
+tr:nth-last-child(-n + 2)
+.table-action-menu.open
+.table-action-dropdown {
+
+    transform:
+        translateY(
+            0
+        );
+}
+
+
+/* =========================================================
+   MÓVIL / TABLA HORIZONTAL
+========================================================= */
+
+@media (
+    max-width: 720px
+) {
+
+    .dashboard-panel-large {
+
+        overflow:
+            hidden;
+    }
+
+
+    .dashboard-panel-large
+    .admin-table-wrapper {
+
+        overflow-x:
+            auto;
+
+        overflow-y:
+            visible;
+    }
+
+
+    .table-action-dropdown {
+
+        width:
+            185px;
+
+        position:
+            static;
+
+        margin-top:
+            8px;
+
+        display:
+            none;
+
+        opacity: 1;
+
+        visibility:
+            visible;
+
+        pointer-events:
+            auto;
+
+        transform:
+            none;
+
+        box-shadow:
+            none;
+    }
+
+
+    .table-action-menu.open
+    .table-action-dropdown {
+
+        display:
+            block;
+
+        transform:
+            none;
+    }
+
+
+    .dashboard-panel-large
+    .admin-table tbody
+    tr:nth-last-child(-n + 2)
+    .table-action-dropdown {
+
+        top:
+            auto;
+
+        bottom:
+            auto;
+
+        transform:
+            none;
     }
 
 }

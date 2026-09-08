@@ -115,6 +115,51 @@
 
                     }
 
+                    const nombresEstadoReservacion = {
+
+    pendiente:
+        "Pendiente",
+
+    pendiente_pago:
+        "Pendiente de pago",
+
+    confirmada:
+        "Confirmada",
+
+    en_curso:
+        "En curso",
+
+    finalizada:
+        "Finalizada",
+
+    rechazada:
+        "Rechazada",
+
+    cancelada:
+        "Cancelada"
+
+};
+
+
+const nombreEstadoReservacion =
+    nombresEstadoReservacion[
+        reservacion.estado
+    ] ||
+    reservacion.estado;
+
+    const nombreRolUsuario =
+    String(
+        usuario?.rolNombre ||
+        ""
+    )
+        .trim()
+        .toLowerCase();
+
+
+const puedeValidarPagos =
+    nombreRolUsuario ===
+    "administrador de agencia";
+
 
                     let claseEstado =
                         "unit-status-reservado";
@@ -159,7 +204,7 @@
 
                 %>
 
-                <!-- =====================================
+<!-- =====================================
      MENSAJES DE RESULTADO
 ====================================== -->
 
@@ -296,11 +341,14 @@
 
                         <strong>
 
-                            <span class="unit-status <%= claseEstado %>">
+                            <span
+    class="unit-status <%= claseEstado %>"
+    style="text-transform: none;"
+>
 
-                                <%= reservacion.estado %>
+    <%= nombreEstadoReservacion %>
 
-                            </span>
+</span>
 
                         </strong>
 
@@ -427,7 +475,10 @@
     </div>
 
 
-    <% if (reservacion.estado === "pendiente") { %>
+    <% if (
+    reservacion.estado === "pendiente" &&
+    puedeValidarPagos
+) { %>
 
         <div class="panel-reservation-actions">
 
@@ -521,9 +572,42 @@
         </div>
 
 
-    <% } else { %>
+    <% } else if (
+    reservacion.estado === "pendiente" &&
+    !puedeValidarPagos
+) { %>
 
-        <div class="panel-reservation-decision-complete">
+    <div class="panel-reservation-decision-complete">
+
+        <div class="panel-reservation-decision-icon">
+
+            <i class="fa-solid fa-clock"></i>
+
+        </div>
+
+
+        <div>
+
+            <strong>
+                Pendiente de decisión administrativa
+            </strong>
+
+            <p>
+
+                Esta reservación todavía debe ser
+                aprobada o rechazada por un
+                administrador de la agencia.
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+<% } else { %>
+
+    <div class="panel-reservation-decision-complete">
 
             <div class="panel-reservation-decision-icon">
 
@@ -574,9 +658,9 @@
 
         Estado actual:
 
-        <strong>
-            <%= reservacion.estado %>
-        </strong>
+<strong>
+    <%= nombreEstadoReservacion %>
+</strong>
 
     </p>
 
@@ -1008,6 +1092,518 @@
                             <p>
                                 Esta reservación no incluye
                                 servicios adicionales.
+                            </p>
+
+                        </div>
+
+
+                    <% } %>
+
+
+                </section>
+
+                                <!-- =====================================
+                     PAGOS
+                ====================================== -->
+
+                <section class="panel-units-card">
+
+
+                    <div class="panel-units-header">
+
+                        <div>
+
+                            <span>
+                                Pagos
+                            </span>
+
+                            <h3>
+                                Pagos de la reservación
+                            </h3>
+
+                            <p>
+
+                                Consulta los pagos enviados
+                                o registrados para esta
+                                reservación.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <% if (Array.isArray(pagos) && pagos.length) { %>
+
+
+                        <div class="panel-units-table-wrapper">
+
+
+                            <table class="panel-units-table">
+
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Método
+                                        </th>
+
+                                        <th>
+                                            Monto
+                                        </th>
+
+                                        <th>
+                                            Referencia
+                                        </th>
+
+                                        <th>
+                                            Fecha de pago
+                                        </th>
+
+                                        <th>
+                                            Comprobante
+                                        </th>
+
+                                        <th>
+                                            Origen
+                                        </th>
+
+                                        <th>
+                                            Estado
+                                        </th>
+
+                                        <th>
+                                            Acciones
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+
+                                    <% pagos.forEach((pago) => { %>
+
+
+                                        <%
+
+                                            let nombreEstadoPago =
+                                                pago.estado;
+
+
+                                            let claseEstadoPago =
+                                                "unit-status-reservado";
+
+
+                                            if (
+                                                pago.estado ===
+                                                "pendiente_validacion"
+                                            ) {
+
+                                                nombreEstadoPago =
+                                                    "Pendiente de validación";
+
+                                                claseEstadoPago =
+                                                    "unit-status-reservado";
+
+                                            }
+
+
+                                            if (
+                                                pago.estado ===
+                                                "confirmado"
+                                            ) {
+
+                                                nombreEstadoPago =
+                                                    "Confirmado";
+
+                                                claseEstadoPago =
+                                                    "unit-status-disponible";
+
+                                            }
+
+
+                                            if (
+                                                pago.estado ===
+                                                "rechazado"
+                                            ) {
+
+                                                nombreEstadoPago =
+                                                    "Rechazado";
+
+                                                claseEstadoPago =
+                                                    "unit-status-inactivo";
+
+                                            }
+
+
+                                            if (
+                                                pago.estado ===
+                                                "anulado"
+                                            ) {
+
+                                                nombreEstadoPago =
+                                                    "Anulado";
+
+                                                claseEstadoPago =
+                                                    "unit-status-inactivo";
+
+                                            }
+
+
+                                            let nombreOrigenPago =
+                                                pago.origen;
+
+
+                                            if (
+                                                pago.origen ===
+                                                "cliente"
+                                            ) {
+
+                                                nombreOrigenPago =
+                                                    "Cliente";
+
+                                            }
+
+
+                                            if (
+                                                pago.origen ===
+                                                "panel"
+                                            ) {
+
+                                                nombreOrigenPago =
+                                                    "Panel";
+
+                                            }
+
+
+                                            if (
+                                                pago.origen ===
+                                                "pasarela"
+                                            ) {
+
+                                                nombreOrigenPago =
+                                                    "Pasarela";
+
+                                            }
+
+                                        %>
+
+
+                                        <tr>
+
+
+                                            <td>
+
+                                                <strong>
+                                                    <%= pago.metodo_nombre %>
+                                                </strong>
+
+                                                <br>
+
+                                                <small>
+                                                    <%= pago.metodo_tipo %>
+                                                </small>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <strong>
+
+                                                    <%= pago.moneda %>$<%= moneda(
+                                                        pago.monto
+                                                    ) %>
+
+                                                </strong>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <%= pago.referencia || "—" %>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <%= fechaSegura(
+                                                    pago.fecha_pago
+                                                ) %>
+
+                                            </td>
+
+
+                                            <td>
+
+    <% if (pago.comprobante_ruta) { %>
+
+        <strong>
+            Comprobante registrado
+        </strong>
+
+
+        <% if (pago.comprobante_nombre_original) { %>
+
+            <br>
+
+            <small>
+                <%= pago.comprobante_nombre_original %>
+            </small>
+
+        <% } %>
+
+
+        <% if (puedeValidarPagos) { %>
+
+            <br>
+            <br>
+
+            <a
+                href="/panel/pagos/<%= pago.id %>/comprobante"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="panel-secondary-button"
+            >
+
+                <i class="fa-solid fa-eye"></i>
+
+                Ver comprobante
+
+            </a>
+
+        <% } %>
+
+    <% } else { %>
+
+        —
+
+    <% } %>
+
+</td>
+
+
+                                            <td>
+
+                                                <%= nombreOrigenPago %>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <span
+                                                    class="unit-status <%= claseEstadoPago %>"
+                                                >
+
+                                                    <%= nombreEstadoPago %>
+
+                                                </span>
+
+                                            </td>
+
+                                           <td>
+
+
+    <% if (
+    pago.estado === "pendiente_validacion" &&
+    puedeValidarPagos
+) { %>
+
+
+        <div class="panel-action-group">
+
+
+            <!-- =================================
+                 CONFIRMAR PAGO
+            ================================== -->
+
+            <form
+                action="/panel/pagos/<%= pago.id %>/confirmar"
+                method="POST"
+                onsubmit="return confirm('¿Confirmar este pago de <%= pago.moneda %>$<%= moneda(pago.monto) %>? Esta acción registrará el pago como validado.');"
+            >
+
+                <button
+                    type="submit"
+                    class="panel-secondary-button"
+                >
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    Confirmar
+
+                </button>
+
+            </form>
+
+
+            <!-- =================================
+                 RECHAZAR PAGO
+            ================================== -->
+
+            <form
+                action="/panel/pagos/<%= pago.id %>/rechazar"
+                method="POST"
+            >
+
+                <textarea
+                    name="motivo"
+                    required
+                    minlength="3"
+                    maxlength="500"
+                    rows="2"
+                    placeholder="Motivo del rechazo"
+                ></textarea>
+
+
+                <button
+                    type="submit"
+                    class="panel-secondary-button"
+                    onclick="return confirm('¿Seguro que deseas rechazar este comprobante de pago?');"
+                >
+
+                    <i class="fa-solid fa-circle-xmark"></i>
+
+                    Rechazar
+
+                </button>
+
+            </form>
+
+
+        </div>
+
+
+    <% } else if (
+    pago.estado === "pendiente_validacion" &&
+    !puedeValidarPagos
+) { %>
+
+
+    <div>
+
+        <strong>
+            Pendiente de revisión
+        </strong>
+
+        <br>
+
+        <small>
+            La validación debe ser realizada
+            por un administrador de la agencia.
+        </small>
+
+    </div>
+
+
+<% } else if (pago.estado === "confirmado") { %>
+
+
+        <div>
+
+            <strong>
+                Pago validado
+            </strong>
+
+
+            <% if (pago.fecha_validacion) { %>
+
+                <br>
+
+                <small>
+
+                    Validado:
+                    <%= fechaSegura(
+                        pago.fecha_validacion
+                    ) %>
+
+                </small>
+
+            <% } %>
+
+        </div>
+
+
+    <% } else if (pago.estado === "rechazado") { %>
+
+
+        <div>
+
+            <strong>
+                Pago rechazado
+            </strong>
+
+
+            <% if (pago.motivo_rechazo) { %>
+
+                <br>
+
+                <small>
+                    <%= pago.motivo_rechazo %>
+                </small>
+
+            <% } %>
+
+        </div>
+
+
+    <% } else { %>
+
+
+        —
+
+    <% } %>
+
+
+</td> 
+
+
+                                        </tr>
+
+
+                                    <% }); %>
+
+
+                                </tbody>
+
+
+                            </table>
+
+
+                        </div>
+
+
+                    <% } else { %>
+
+
+                        <div class="catalog-empty">
+
+                            <div>
+
+                                <i class="fa-solid fa-money-check-dollar"></i>
+
+                            </div>
+
+
+                            <h3>
+                                No hay pagos registrados
+                            </h3>
+
+
+                            <p>
+
+                                Esta reservación todavía
+                                no tiene pagos asociados.
+
                             </p>
 
                         </div>

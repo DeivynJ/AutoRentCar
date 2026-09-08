@@ -2505,6 +2505,9 @@ body.panel-sidebar-collapsed
 
 .panel-summary-grid {
 
+    margin-bottom:
+        20px;
+
     display:
         grid;
 
@@ -2608,23 +2611,29 @@ body.panel-sidebar-collapsed
 .panel-summary-card strong {
 
     margin-top:
-        7px;
+        9px;
 
     font-size:
         1.42rem;
+
+    line-height:
+        1.25;
 }
 
 
 .panel-summary-card span {
 
     margin-top:
-        7px;
+        10px;
 
     color:
         var(--panel-text-soft);
 
     font-size:
         0.65rem;
+
+    line-height:
+        1.45;
 }
 
 
@@ -5483,6 +5492,9 @@ html[data-panel-tema="oscuro"]
 ========================================================= */
 
 .panel-units-card {
+
+    margin-bottom:
+        20px;
 
     overflow:
         hidden;

@@ -11,6 +11,13 @@ const {
     pool
 } = require("../config/database");
 
+const {
+    guardarNuevaFotoPerfil,
+    eliminarFotoPerfil
+} = require(
+    "../services/fotoPerfilStorageService"
+);
+
 
 /* =========================================================
    UTILIDADES
@@ -135,6 +142,58 @@ async function obtenerTotalAgencias(
         resultado[0].total ||
         0
     );
+
+}
+
+/* =========================================================
+   ESCAPAR VALOR PARA CSV
+========================================================= */
+
+function escaparCampoCsv(
+    valor
+) {
+
+    if (
+        valor === null ||
+        valor === undefined
+    ) {
+
+        return '""';
+
+    }
+
+
+    let texto =
+        String(
+            valor
+        );
+
+
+    /*
+     * Evita que Excel interprete datos procedentes
+     * de MariaDB como fórmulas.
+     */
+
+    if (
+        /^[=+\-@\t\r]/.test(
+            texto
+        )
+    ) {
+
+        texto =
+            `'${texto}`;
+
+    }
+
+
+    texto =
+        texto.replace(
+            /"/g,
+            '""'
+        );
+
+
+    return `"${texto}"`;
 
 }
 
@@ -671,6 +730,374 @@ async function mostrarDashboard(
     } finally {
 
         if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+   EXPORTAR RESUMEN DEL DASHBOARD
+========================================================= */
+
+async function exportarResumenDashboard(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        /* -------------------------------------------------
+           ESTADÍSTICAS
+        ------------------------------------------------- */
+
+        const resumenResultado =
+            await conexion.query(
+                `
+                SELECT
+
+                    (
+                        SELECT
+                            COUNT(*)
+                        FROM agencias
+                    )
+                        AS agencias,
+
+                    (
+                        SELECT
+                            COUNT(*)
+                        FROM agencias
+                        WHERE estado = 'activa'
+                    )
+                        AS agencias_activas,
+
+                    (
+                        SELECT
+                            COUNT(*)
+                        FROM suscripciones
+                        WHERE estado = 'activa'
+                    )
+                        AS suscripciones_activas,
+
+                    (
+                        SELECT
+                            COUNT(*)
+                        FROM usuarios
+                        WHERE estado = 'activo'
+                    )
+                        AS usuarios_activos,
+
+                    DATE_FORMAT(
+                        NOW(),
+                        '%Y-%m-%d %H:%i:%s'
+                    )
+                        AS fecha_generacion
+                `
+            );
+
+
+        const resumen =
+            resumenResultado[0];
+
+
+        /* -------------------------------------------------
+           AGENCIAS
+        ------------------------------------------------- */
+
+        const agencias =
+            await conexion.query(
+                `
+                SELECT
+
+                    id,
+
+                    nombre,
+
+                    ciudad,
+
+                    provincia,
+
+                    estado,
+
+                    DATE_FORMAT(
+                        fecha_creacion,
+                        '%Y-%m-%d %H:%i:%s'
+                    )
+                        AS fecha_registro
+
+                FROM agencias
+
+                ORDER BY
+                    fecha_creacion DESC,
+                    id DESC
+                `
+            );
+
+
+        /* -------------------------------------------------
+           CONSTRUIR CSV
+        ------------------------------------------------- */
+
+        const filas =
+            [];
+
+
+        filas.push(
+            [
+                escaparCampoCsv(
+                    "AUTORENTCAR - RESUMEN ADMINISTRATIVO"
+                )
+            ].join(",")
+        );
+
+
+        filas.push(
+            ""
+        );
+
+
+        filas.push(
+            [
+                escaparCampoCsv(
+                    "Fecha de generación"
+                ),
+
+                escaparCampoCsv(
+                    resumen.fecha_generacion
+                )
+            ].join(",")
+        );
+
+
+        filas.push(
+            [
+                escaparCampoCsv(
+                    "Total de agencias"
+                ),
+
+                escaparCampoCsv(
+                    Number(
+                        resumen.agencias ||
+                        0
+                    )
+                )
+            ].join(",")
+        );
+
+
+        filas.push(
+            [
+                escaparCampoCsv(
+                    "Agencias activas"
+                ),
+
+                escaparCampoCsv(
+                    Number(
+                        resumen.agencias_activas ||
+                        0
+                    )
+                )
+            ].join(",")
+        );
+
+
+        filas.push(
+            [
+                escaparCampoCsv(
+                    "Suscripciones activas"
+                ),
+
+                escaparCampoCsv(
+                    Number(
+                        resumen.suscripciones_activas ||
+                        0
+                    )
+                )
+            ].join(",")
+        );
+
+
+        filas.push(
+            [
+                escaparCampoCsv(
+                    "Usuarios activos"
+                ),
+
+                escaparCampoCsv(
+                    Number(
+                        resumen.usuarios_activos ||
+                        0
+                    )
+                )
+            ].join(",")
+        );
+
+
+        filas.push(
+            ""
+        );
+
+
+        filas.push(
+            [
+                escaparCampoCsv(
+                    "AGENCIAS REGISTRADAS"
+                )
+            ].join(",")
+        );
+
+
+        filas.push(
+            [
+                escaparCampoCsv(
+                    "ID"
+                ),
+
+                escaparCampoCsv(
+                    "Agencia"
+                ),
+
+                escaparCampoCsv(
+                    "Ciudad"
+                ),
+
+                escaparCampoCsv(
+                    "Provincia"
+                ),
+
+                escaparCampoCsv(
+                    "Estado"
+                ),
+
+                escaparCampoCsv(
+                    "Fecha de registro"
+                )
+            ].join(",")
+        );
+
+
+        for (
+            const agencia
+            of agencias
+        ) {
+
+            filas.push(
+                [
+                    escaparCampoCsv(
+                        agencia.id
+                    ),
+
+                    escaparCampoCsv(
+                        agencia.nombre
+                    ),
+
+                    escaparCampoCsv(
+                        agencia.ciudad ||
+                        "No especificada"
+                    ),
+
+                    escaparCampoCsv(
+                        agencia.provincia ||
+                        "No especificada"
+                    ),
+
+                    escaparCampoCsv(
+                        agencia.estado
+                    ),
+
+                    escaparCampoCsv(
+                        agencia.fecha_registro
+                    )
+                ].join(",")
+            );
+
+        }
+
+
+        /*
+         * BOM UTF-8:
+         * permite que Excel reconozca correctamente
+         * tildes, ñ y demás caracteres en español.
+         */
+
+        const contenidoCsv =
+            "\uFEFF" +
+            filas.join(
+                "\r\n"
+            );
+
+
+        const fechaArchivoResultado =
+            await conexion.query(
+                `
+                SELECT
+                    DATE_FORMAT(
+                        CURDATE(),
+                        '%Y-%m-%d'
+                    )
+                        AS fecha
+                `
+            );
+
+
+        const fechaArchivo =
+            fechaArchivoResultado[0]
+                .fecha;
+
+
+        res.setHeader(
+            "Content-Type",
+            "text/csv; charset=utf-8"
+        );
+
+
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="autorentcar-resumen-${fechaArchivo}.csv"`
+        );
+
+
+        res.setHeader(
+            "Cache-Control",
+            "no-store"
+        );
+
+
+        return res.send(
+            contenidoCsv
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error exportando resumen administrativo:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible exportar el resumen administrativo."
+            );
+
+
+    } finally {
+
+        if (
+            conexion
+        ) {
 
             conexion.release();
 
@@ -1707,21 +2134,115 @@ async function mostrarDetalleAgencia(
             agenciaResultado[0];
 
 
-        const usuarios =
-            await conexion.query(
-                `
+        const resumenResultado =
+    await conexion.query(
+        `
+        SELECT
+
+            (
                 SELECT
-                    COUNT(*) AS total
+                    COUNT(*)
 
                 FROM usuarios
 
                 WHERE
                     agencia_id = ?
-                `,
-                [
-                    agenciaId
-                ]
-            );
+            ) AS usuarios,
+
+
+            (
+                SELECT
+                    COUNT(*)
+
+                FROM vehiculos
+
+                WHERE
+                    agencia_id = ?
+            ) AS vehiculos,
+
+
+            (
+                SELECT
+                    COUNT(*)
+
+                FROM reservaciones
+
+                WHERE
+                    agencia_id = ?
+            ) AS reservas,
+
+
+            (
+                SELECT
+
+                    COUNT(
+                        DISTINCT
+
+                        CASE
+
+                            WHEN
+                                NULLIF(
+                                    TRIM(
+                                        cliente_documento
+                                    ),
+                                    ''
+                                ) IS NOT NULL
+
+                            THEN CONCAT(
+                                'documento:',
+                                LOWER(
+                                    TRIM(
+                                        cliente_documento
+                                    )
+                                )
+                            )
+
+
+                            WHEN
+                                NULLIF(
+                                    TRIM(
+                                        cliente_correo
+                                    ),
+                                    ''
+                                ) IS NOT NULL
+
+                            THEN CONCAT(
+                                'correo:',
+                                LOWER(
+                                    TRIM(
+                                        cliente_correo
+                                    )
+                                )
+                            )
+
+
+                            ELSE CONCAT(
+                                'telefono:',
+                                TRIM(
+                                    cliente_telefono
+                                )
+                            )
+
+                        END
+                    )
+
+                FROM reservaciones
+
+                WHERE
+                    agencia_id = ?
+            ) AS clientes
+        `,
+        [
+            agenciaId,
+            agenciaId,
+            agenciaId,
+            agenciaId
+        ]
+    );
+
+
+const resumenFila =
+    resumenResultado[0];
 
 
         return res.render(
@@ -1743,24 +2264,37 @@ async function mostrarDetalleAgencia(
                 agencia,
 
                 resumen:
-                {
+{
 
-                    usuarios:
-                        Number(
-                            usuarios[0].total ||
-                            0
-                        ),
+    usuarios:
+        Number(
+            resumenFila
+                ?.usuarios ||
+            0
+        ),
 
-                    vehiculos:
-                        0,
+    vehiculos:
+        Number(
+            resumenFila
+                ?.vehiculos ||
+            0
+        ),
 
-                    reservas:
-                        0,
+    reservas:
+        Number(
+            resumenFila
+                ?.reservas ||
+            0
+        ),
 
-                    clientes:
-                        0
+    clientes:
+        Number(
+            resumenFila
+                ?.clientes ||
+            0
+        )
 
-                }
+}
 
             }
         );
@@ -3876,6 +4410,178 @@ async function actualizarUsuario(
 }
 
 /* =========================================================
+   MOSTRAR USUARIOS GLOBALES
+========================================================= */
+
+async function mostrarUsuariosGlobales(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        const usuarios =
+            await conexion.query(
+                `
+                SELECT
+
+                    u.id,
+
+                    u.agencia_id,
+
+                    u.nombre,
+
+                    u.apellido,
+
+                    u.correo,
+
+                    u.telefono,
+
+                    u.estado,
+
+                    u.ultimo_acceso,
+
+                    u.fecha_creacion,
+
+                    r.nombre
+                        AS rol_nombre,
+
+                    r.codigo
+                        AS rol_codigo,
+
+                    a.nombre
+                        AS agencia_nombre,
+
+                    a.logo
+                        AS agencia_logo,
+
+                    a.estado
+                        AS agencia_estado
+
+                FROM usuarios u
+
+                INNER JOIN roles r
+                    ON r.id = u.rol_id
+
+                LEFT JOIN agencias a
+                    ON a.id = u.agencia_id
+
+                WHERE
+                    u.agencia_id IS NOT NULL
+
+                ORDER BY
+                    a.nombre ASC,
+                    u.nombre ASC,
+                    u.apellido ASC,
+                    u.id ASC
+                `
+            );
+
+
+        const estadisticasUsuarios =
+        {
+
+            total:
+                usuarios.length,
+
+            activos:
+                usuarios.filter(
+                    item =>
+                        item.estado ===
+                        "activo"
+                ).length,
+
+            inactivos:
+                usuarios.filter(
+                    item =>
+                        item.estado ===
+                        "inactivo"
+                ).length,
+
+            administradores:
+                usuarios.filter(
+                    item =>
+                        item.rol_codigo ===
+                        "admin_agencia"
+                ).length,
+
+            empleados:
+                usuarios.filter(
+                    item =>
+                        item.rol_codigo ===
+                        "empleado"
+                ).length
+
+        };
+
+
+        const totalAgencias =
+            await obtenerTotalAgencias(
+                conexion
+            );
+
+
+        return res.render(
+            "admin/usuarios/index",
+            {
+
+                titulo:
+                    "Usuarios",
+
+                subtituloPagina:
+                    "Gestión global de usuarios",
+
+                paginaActual:
+                    "usuarios",
+
+                usuario:
+                    req.session.usuario,
+
+                usuarios,
+
+                estadisticasUsuarios,
+
+                totalAgencias
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error cargando usuarios globales:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible cargar los usuarios."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
+/* =========================================================
    MOSTRAR SUSCRIPCIONES
 ========================================================= */
 
@@ -4765,6 +5471,980 @@ return res.redirect(
             .status(500)
             .send(
                 "No fue posible actualizar la suscripción."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+   MOSTRAR CONFIGURACIÓN DEL SUPERADMIN
+========================================================= */
+
+async function mostrarConfiguracionAdmin(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        const usuarioId =
+            Number(
+                req.session
+                    ?.usuario
+                    ?.id
+            );
+
+
+        if (
+            !Number.isInteger(
+                usuarioId
+            ) ||
+            usuarioId <= 0
+        ) {
+
+            return res
+                .status(401)
+                .send(
+                    "La sesión administrativa no es válida."
+                );
+
+        }
+
+
+        const usuarios =
+            await conexion.query(
+                `
+                SELECT
+
+                    u.id,
+
+                    u.nombre,
+
+                    u.apellido,
+
+                    u.correo,
+
+                    u.telefono,
+
+                    u.foto_perfil,
+
+                    u.estado,
+
+                    u.ultimo_acceso,
+
+                    u.fecha_creacion,
+
+                    r.nombre
+                        AS rol_nombre,
+
+                    r.codigo
+                        AS rol_codigo
+
+                FROM usuarios u
+
+                INNER JOIN roles r
+                    ON r.id = u.rol_id
+
+                WHERE
+                    u.id = ?
+                    AND r.codigo = 'superadmin'
+
+                LIMIT 1
+                `,
+                [
+                    usuarioId
+                ]
+            );
+
+
+        if (
+            !usuarios.length
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "No fue posible localizar la cuenta del SuperAdministrador."
+                );
+
+        }
+
+
+        const totalAgencias =
+            await obtenerTotalAgencias(
+                conexion
+            );
+
+
+        return res.render(
+            "admin/configuracion/index",
+            {
+
+                titulo:
+                    "Configuración",
+
+                subtituloPagina:
+                    "Cuenta y seguridad",
+
+                paginaActual:
+                    "configuracion",
+
+                usuario:
+                    req.session.usuario,
+
+                perfil:
+                    usuarios[0],
+
+                totalAgencias,
+
+                mensajeExito:
+                    req.query.perfil === "1"
+                        ? "Los datos del perfil fueron actualizados correctamente."
+                        : req.query.password === "1"
+                            ? "La contraseña fue actualizada correctamente."
+                            : null,
+
+                errorPerfil:
+                    null,
+
+                errorPassword:
+                    null
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error cargando configuración del SuperAdministrador:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible cargar la configuración."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   ACTUALIZAR PERFIL DEL SUPERADMIN
+========================================================= */
+
+async function actualizarPerfilAdmin(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    let usuarioId =
+        null;
+
+
+    let nuevaFotoGuardada =
+        null;
+
+
+    let fotoAnterior =
+        null;
+
+
+    let perfilActualizado =
+        false;
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        usuarioId =
+    Number(
+        req.session
+            ?.usuario
+            ?.id
+    );
+
+
+        const datos =
+        {
+
+            nombre:
+                String(
+                    req.body.nombre ||
+                    ""
+                ).trim(),
+
+            apellido:
+                String(
+                    req.body.apellido ||
+                    ""
+                ).trim(),
+
+            correo:
+                String(
+                    req.body.correo ||
+                    ""
+                )
+                    .trim()
+                    .toLowerCase(),
+
+            telefono:
+                String(
+                    req.body.telefono ||
+                    ""
+                ).trim()
+
+        };
+
+
+        function renderizarErrorPerfil(
+            mensaje,
+            estadoHttp = 400
+        ) {
+
+            return res
+                .status(
+                    estadoHttp
+                )
+                .render(
+                    "admin/configuracion/index",
+                    {
+
+                        titulo:
+                            "Configuración",
+
+                        subtituloPagina:
+                            "Cuenta y seguridad",
+
+                        paginaActual:
+                            "configuracion",
+
+                        usuario:
+                            req.session.usuario,
+
+                        perfil:
+                        {
+
+                            id:
+                                usuarioId,
+
+                            nombre:
+                                datos.nombre,
+
+                            apellido:
+                                datos.apellido,
+
+                            correo:
+                                datos.correo,
+
+                            telefono:
+                                datos.telefono,
+
+                            rol_nombre:
+                                req.session.usuario
+                                    ?.rolNombre ||
+                                "SuperAdministrador",
+
+                            estado:
+                                "activo"
+
+                        },
+
+                        totalAgencias:
+                            0,
+
+                        mensajeExito:
+                            null,
+
+                        errorPerfil:
+                            mensaje,
+
+                        errorPassword:
+                            null
+
+                    }
+                );
+
+        }
+
+
+        if (
+            !Number.isInteger(
+                usuarioId
+            ) ||
+            usuarioId <= 0
+        ) {
+
+            return res
+                .status(401)
+                .send(
+                    "La sesión administrativa no es válida."
+                );
+
+        }
+
+
+        if (
+            !datos.nombre ||
+            !datos.correo
+        ) {
+
+            return renderizarErrorPerfil(
+                "El nombre y el correo electrónico son obligatorios."
+            );
+
+        }
+
+
+        if (
+            datos.nombre.length > 120 ||
+            datos.apellido.length > 120
+        ) {
+
+            return renderizarErrorPerfil(
+                "El nombre y el apellido no pueden superar los 120 caracteres."
+            );
+
+        }
+
+
+        if (
+            datos.correo.length > 150
+        ) {
+
+            return renderizarErrorPerfil(
+                "El correo electrónico no puede superar los 150 caracteres."
+            );
+
+        }
+
+
+        if (
+            datos.telefono.length > 30
+        ) {
+
+            return renderizarErrorPerfil(
+                "El teléfono no puede superar los 30 caracteres."
+            );
+
+        }
+
+
+        const expresionCorreo =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+        if (
+            !expresionCorreo.test(
+                datos.correo
+            )
+        ) {
+
+            return renderizarErrorPerfil(
+                "Introduce un correo electrónico válido."
+            );
+
+        }
+
+
+        const usuarioActual =
+    await conexion.query(
+        `
+        SELECT
+
+            u.id,
+
+            u.foto_perfil
+
+        FROM usuarios u
+
+        INNER JOIN roles r
+            ON r.id = u.rol_id
+
+        WHERE
+            u.id = ?
+            AND r.codigo = 'superadmin'
+
+        LIMIT 1
+        `,
+        [
+            usuarioId
+        ]
+    );
+
+
+        if (
+            !usuarioActual.length
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "No fue posible localizar la cuenta del SuperAdministrador."
+                );
+
+        }
+
+        fotoAnterior =
+    usuarioActual[0]
+        .foto_perfil ||
+    null;
+
+
+        const correoExistente =
+            await conexion.query(
+                `
+                SELECT
+                    id
+
+                FROM usuarios
+
+                WHERE
+                    correo = ?
+                    AND id <> ?
+
+                LIMIT 1
+                `,
+                [
+                    datos.correo,
+                    usuarioId
+                ]
+            );
+
+
+        if (
+            correoExistente.length
+        ) {
+
+            return renderizarErrorPerfil(
+                "El correo electrónico ya está utilizado por otra cuenta.",
+                409
+            );
+
+        }
+
+/* -------------------------------------------------
+   GUARDAR NUEVA FOTO DE PERFIL
+
+   req.file solamente existirá cuando el formulario
+   haya recibido una nueva imagen válida.
+------------------------------------------------- */
+
+if (
+    req.file &&
+    req.fotoPerfilSegura
+) {
+
+    nuevaFotoGuardada =
+        await guardarNuevaFotoPerfil(
+            usuarioId,
+            req.file.buffer,
+            req.fotoPerfilSegura.extension
+        );
+
+}
+
+        await conexion.query(
+    `
+    UPDATE usuarios
+
+    SET
+        nombre = ?,
+        apellido = ?,
+        correo = ?,
+        telefono = ?,
+        foto_perfil = ?
+
+    WHERE id = ?
+    `,
+    [
+
+        datos.nombre,
+
+        datos.apellido ||
+            null,
+
+        datos.correo,
+
+        datos.telefono ||
+            null,
+
+        nuevaFotoGuardada
+            ?.rutaPublica ||
+        fotoAnterior,
+
+        usuarioId
+
+    ]
+);
+
+
+perfilActualizado =
+    true;
+
+
+        /*
+         * Actualizamos también los datos almacenados
+         * en la sesión para que header y sidebar cambien
+         * inmediatamente.
+         */
+
+        req.session.usuario.nombre =
+            datos.nombre;
+
+
+        req.session.usuario.apellido =
+            datos.apellido ||
+            null;
+
+
+        req.session.usuario.correo =
+            datos.correo;
+
+        
+        req.session.usuario.foto_perfil =
+    nuevaFotoGuardada
+        ?.rutaPublica ||
+    fotoAnterior;
+
+
+    /*
+ * Solo eliminamos la imagen anterior después de que
+ * la nueva ruta haya quedado registrada en MariaDB.
+ */
+
+if (
+    nuevaFotoGuardada &&
+    fotoAnterior &&
+    fotoAnterior !==
+        nuevaFotoGuardada.rutaPublica
+) {
+
+    try {
+
+        await eliminarFotoPerfil(
+            usuarioId,
+            fotoAnterior
+        );
+
+    } catch (
+        errorEliminandoFotoAnterior
+    ) {
+
+        console.error(
+            "Perfil actualizado, pero no fue posible eliminar la foto anterior:",
+            errorEliminandoFotoAnterior
+        );
+
+    }
+
+}
+
+
+        return res.redirect(
+            "/admin/configuracion?perfil=1"
+        );
+
+
+    } catch (error) {
+
+        if (
+    nuevaFotoGuardada &&
+    !perfilActualizado
+) {
+
+    try {
+
+        await eliminarFotoPerfil(
+            usuarioId,
+            nuevaFotoGuardada.rutaPublica
+        );
+
+    } catch (
+        errorLimpiandoFotoNueva
+    ) {
+
+        console.error(
+            "No fue posible eliminar la foto nueva después del error:",
+            errorLimpiandoFotoNueva
+        );
+
+    }
+
+}
+
+        console.error(
+            "Error actualizando perfil del SuperAdministrador:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible actualizar el perfil."
+            );
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   CAMBIAR CONTRASEÑA DEL SUPERADMIN
+========================================================= */
+
+async function actualizarPasswordAdmin(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        const usuarioId =
+            Number(
+                req.session
+                    ?.usuario
+                    ?.id
+            );
+
+
+        const passwordActual =
+            String(
+                req.body.password_actual ||
+                ""
+            );
+
+
+        const passwordNueva =
+            String(
+                req.body.password_nueva ||
+                ""
+            );
+
+
+        const passwordConfirmacion =
+            String(
+                req.body.password_confirmacion ||
+                ""
+            );
+
+
+        async function renderizarErrorPassword(
+            mensaje,
+            estadoHttp = 400
+        ) {
+
+            const usuarios =
+                await conexion.query(
+                    `
+                    SELECT
+
+                        u.id,
+
+                        u.nombre,
+
+                        u.apellido,
+
+                        u.correo,
+
+                        u.telefono,
+
+                        u.estado,
+
+                        u.ultimo_acceso,
+
+                        u.fecha_creacion,
+
+                        r.nombre
+                            AS rol_nombre
+
+                    FROM usuarios u
+
+                    INNER JOIN roles r
+                        ON r.id = u.rol_id
+
+                    WHERE
+                        u.id = ?
+                        AND r.codigo = 'superadmin'
+
+                    LIMIT 1
+                    `,
+                    [
+                        usuarioId
+                    ]
+                );
+
+
+            const totalAgencias =
+                await obtenerTotalAgencias(
+                    conexion
+                );
+
+
+            return res
+                .status(
+                    estadoHttp
+                )
+                .render(
+                    "admin/configuracion/index",
+                    {
+
+                        titulo:
+                            "Configuración",
+
+                        subtituloPagina:
+                            "Cuenta y seguridad",
+
+                        paginaActual:
+                            "configuracion",
+
+                        usuario:
+                            req.session.usuario,
+
+                        perfil:
+                            usuarios[0] ||
+                            req.session.usuario,
+
+                        totalAgencias,
+
+                        mensajeExito:
+                            null,
+
+                        errorPerfil:
+                            null,
+
+                        errorPassword:
+                            mensaje
+
+                    }
+                );
+
+        }
+
+
+        if (
+            !Number.isInteger(
+                usuarioId
+            ) ||
+            usuarioId <= 0
+        ) {
+
+            return res
+                .status(401)
+                .send(
+                    "La sesión administrativa no es válida."
+                );
+
+        }
+
+
+        if (
+            !passwordActual ||
+            !passwordNueva ||
+            !passwordConfirmacion
+        ) {
+
+            return await renderizarErrorPassword(
+                "Completa los tres campos de contraseña."
+            );
+
+        }
+
+
+        if (
+            passwordNueva.length < 8
+        ) {
+
+            return await renderizarErrorPassword(
+                "La nueva contraseña debe tener al menos 8 caracteres."
+            );
+
+        }
+
+
+        if (
+            passwordNueva !==
+            passwordConfirmacion
+        ) {
+
+            return await renderizarErrorPassword(
+                "La confirmación no coincide con la nueva contraseña."
+            );
+
+        }
+
+
+        const usuarios =
+            await conexion.query(
+                `
+                SELECT
+
+                    u.id,
+
+                    u.password_hash
+
+                FROM usuarios u
+
+                INNER JOIN roles r
+                    ON r.id = u.rol_id
+
+                WHERE
+                    u.id = ?
+                    AND r.codigo = 'superadmin'
+                    AND u.estado = 'activo'
+
+                LIMIT 1
+                `,
+                [
+                    usuarioId
+                ]
+            );
+
+
+        if (
+            !usuarios.length
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "No fue posible localizar la cuenta administrativa."
+                );
+
+        }
+
+
+        const coincidePasswordActual =
+            await bcrypt.compare(
+                passwordActual,
+                usuarios[0].password_hash
+            );
+
+
+        if (
+            !coincidePasswordActual
+        ) {
+
+            return await renderizarErrorPassword(
+                "La contraseña actual no es correcta.",
+                401
+            );
+
+        }
+
+
+        const esMismaPassword =
+            await bcrypt.compare(
+                passwordNueva,
+                usuarios[0].password_hash
+            );
+
+
+        if (
+            esMismaPassword
+        ) {
+
+            return await renderizarErrorPassword(
+                "La nueva contraseña debe ser diferente de la contraseña actual."
+            );
+
+        }
+
+
+        const nuevoHash =
+            await bcrypt.hash(
+                passwordNueva,
+                12
+            );
+
+
+        await conexion.query(
+            `
+            UPDATE usuarios
+
+            SET
+                password_hash = ?,
+                intentos_fallidos = 0
+
+            WHERE id = ?
+            `,
+            [
+                nuevoHash,
+                usuarioId
+            ]
+        );
+
+
+        return res.redirect(
+            "/admin/configuracion?password=1"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error cambiando contraseña del SuperAdministrador:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible actualizar la contraseña."
             );
 
 
@@ -5938,6 +7618,14 @@ module.exports = {
 
     mostrarDashboard,
 
+     exportarResumenDashboard,
+
+    mostrarConfiguracionAdmin,
+
+    actualizarPerfilAdmin,
+
+    actualizarPasswordAdmin,
+
     mostrarAgencias,
 
     mostrarNuevaAgencia,
@@ -5949,6 +7637,8 @@ module.exports = {
     mostrarEditarAgencia,
 
    actualizarAgencia,
+
+   mostrarUsuariosGlobales,
 
     mostrarUsuariosAgencia,
 

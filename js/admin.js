@@ -486,3 +486,768 @@ botonTema?.addEventListener(
     );
 
 });
+
+/* =========================================================
+   ACCIONES RÁPIDAS SUPERADMIN
+========================================================= */
+
+const topbarQuickAction =
+    document.getElementById(
+        "topbar-quick-action"
+    );
+
+
+const topbarQuickActionButton =
+    document.getElementById(
+        "topbar-quick-action-button"
+    );
+
+
+const topbarQuickActionMenu =
+    document.getElementById(
+        "topbar-quick-action-menu"
+    );
+
+
+function cerrarAccionesRapidas() {
+
+    if (
+        !topbarQuickAction ||
+        !topbarQuickActionButton ||
+        !topbarQuickActionMenu
+    ) {
+
+        return;
+
+    }
+
+
+    topbarQuickAction.classList.remove(
+        "open"
+    );
+
+
+    topbarQuickActionButton.setAttribute(
+        "aria-expanded",
+        "false"
+    );
+
+
+    topbarQuickActionMenu.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+}
+
+
+function abrirAccionesRapidas() {
+
+    if (
+        !topbarQuickAction ||
+        !topbarQuickActionButton ||
+        !topbarQuickActionMenu
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * Si el menú del usuario está abierto,
+     * lo cerramos para evitar dos desplegables
+     * simultáneos.
+     */
+
+    const topbarUsuario =
+        document.querySelector(
+            ".topbar-user"
+        );
+
+
+    const topbarUsuarioBoton =
+        document.getElementById(
+            "topbar-user-button"
+        );
+
+
+    if (topbarUsuario) {
+
+        topbarUsuario.classList.remove(
+            "open"
+        );
+
+    }
+
+
+    if (topbarUsuarioBoton) {
+
+        topbarUsuarioBoton.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+    }
+
+
+    topbarQuickAction.classList.add(
+        "open"
+    );
+
+
+    topbarQuickActionButton.setAttribute(
+        "aria-expanded",
+        "true"
+    );
+
+
+    topbarQuickActionMenu.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+}
+
+
+topbarQuickActionButton
+    ?.addEventListener(
+        "click",
+        event =>
+        {
+
+            event.stopPropagation();
+
+
+            const estaAbierto =
+                topbarQuickAction
+                    ?.classList
+                    .contains(
+                        "open"
+                    );
+
+
+            if (estaAbierto) {
+
+                cerrarAccionesRapidas();
+
+            } else {
+
+                abrirAccionesRapidas();
+
+            }
+
+        }
+    );
+
+
+topbarQuickActionMenu
+    ?.addEventListener(
+        "click",
+        event =>
+        {
+
+            event.stopPropagation();
+
+        }
+    );
+
+
+document.addEventListener(
+    "click",
+    event =>
+    {
+
+        if (
+            topbarQuickAction &&
+            !topbarQuickAction.contains(
+                event.target
+            )
+        ) {
+
+            cerrarAccionesRapidas();
+
+        }
+
+    }
+);
+
+document.addEventListener(
+    "keydown",
+    event =>
+    {
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            cerrarAccionesRapidas();
+
+        }
+
+    }
+);
+
+/* =========================================================
+   NOTIFICACIONES SUPERADMIN
+========================================================= */
+
+const topbarNotifications =
+    document.getElementById(
+        "topbar-notifications"
+    );
+
+
+const topbarNotificationsButton =
+    document.getElementById(
+        "topbar-notifications-button"
+    );
+
+
+const topbarNotificationsMenu =
+    document.getElementById(
+        "topbar-notifications-menu"
+    );
+
+
+/* =========================================================
+   CERRAR NOTIFICACIONES
+========================================================= */
+
+function cerrarNotificacionesAdmin() {
+
+    if (
+        !topbarNotifications ||
+        !topbarNotificationsButton ||
+        !topbarNotificationsMenu
+    ) {
+
+        return;
+
+    }
+
+
+    topbarNotifications.classList.remove(
+        "open"
+    );
+
+
+    topbarNotificationsButton.setAttribute(
+        "aria-expanded",
+        "false"
+    );
+
+
+    topbarNotificationsMenu.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+}
+
+
+/* =========================================================
+   ABRIR NOTIFICACIONES
+========================================================= */
+
+function abrirNotificacionesAdmin() {
+
+    if (
+        !topbarNotifications ||
+        !topbarNotificationsButton ||
+        !topbarNotificationsMenu
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * Cerrar menú del usuario.
+     */
+
+    const topbarUsuario =
+        document.querySelector(
+            ".topbar-user"
+        );
+
+
+    const topbarUsuarioBoton =
+        document.getElementById(
+            "topbar-user-button"
+        );
+
+
+    if (topbarUsuario) {
+
+        topbarUsuario.classList.remove(
+            "open"
+        );
+
+    }
+
+
+    if (topbarUsuarioBoton) {
+
+        topbarUsuarioBoton.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+    }
+
+
+    /*
+     * Cerrar Acciones rápidas.
+     *
+     * Esta función ya existe en tu archivo.
+     */
+
+    cerrarAccionesRapidas();
+
+
+    topbarNotifications.classList.add(
+        "open"
+    );
+
+
+    topbarNotificationsButton.setAttribute(
+        "aria-expanded",
+        "true"
+    );
+
+
+    topbarNotificationsMenu.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+}
+
+
+/* =========================================================
+   BOTÓN CAMPANA
+========================================================= */
+
+topbarNotificationsButton
+    ?.addEventListener(
+        "click",
+        event =>
+        {
+
+            event.stopPropagation();
+
+
+            const estaAbierto =
+                topbarNotifications
+                    ?.classList
+                    .contains(
+                        "open"
+                    );
+
+
+            if (estaAbierto) {
+
+                cerrarNotificacionesAdmin();
+
+            } else {
+
+                abrirNotificacionesAdmin();
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   CLIC DENTRO DEL MENÚ
+========================================================= */
+
+topbarNotificationsMenu
+    ?.addEventListener(
+        "click",
+        event =>
+        {
+
+            /*
+             * Impide que el clic se propague al documento.
+             *
+             * Los formularios de notificación podrán
+             * enviarse normalmente.
+             */
+
+            event.stopPropagation();
+
+        }
+    );
+
+
+/* =========================================================
+   SI ABRIMOS ACCIÓN RÁPIDA,
+   CERRAR NOTIFICACIONES
+========================================================= */
+
+topbarQuickActionButton
+    ?.addEventListener(
+        "click",
+        () =>
+        {
+
+            cerrarNotificacionesAdmin();
+
+        }
+    );
+
+
+/* =========================================================
+   SI ABRIMOS MENÚ DE USUARIO,
+   CERRAR NOTIFICACIONES
+========================================================= */
+
+document
+    .getElementById(
+        "topbar-user-button"
+    )
+    ?.addEventListener(
+        "click",
+        () =>
+        {
+
+            cerrarNotificacionesAdmin();
+
+        }
+    );
+
+
+/* =========================================================
+   CLIC FUERA
+========================================================= */
+
+document.addEventListener(
+    "click",
+    event =>
+    {
+
+        if (
+            topbarNotifications &&
+            !topbarNotifications.contains(
+                event.target
+            )
+        ) {
+
+            cerrarNotificacionesAdmin();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   ESCAPE
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event =>
+    {
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            cerrarNotificacionesAdmin();
+
+        }
+
+    }
+);
+
+/* =========================================================
+   ACCIONES DE AGENCIAS RECIENTES - DASHBOARD
+========================================================= */
+
+const menusAccionAgencia =
+    document.querySelectorAll(
+        ".table-action-menu"
+    );
+
+
+/* =========================================================
+   CERRAR MENÚS
+========================================================= */
+
+function cerrarMenusAccionAgencia(
+    excepcion = null
+) {
+
+    menusAccionAgencia.forEach(
+        contenedor =>
+        {
+
+            if (
+                excepcion &&
+                contenedor ===
+                    excepcion
+            ) {
+
+                return;
+
+            }
+
+
+            contenedor.classList.remove(
+                "open"
+            );
+
+
+            const boton =
+                contenedor.querySelector(
+                    "[data-agency-action-button]"
+                );
+
+
+            const menu =
+                contenedor.querySelector(
+                    "[data-agency-action-menu]"
+                );
+
+
+            boton?.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+
+            menu?.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CONFIGURAR CADA MENÚ
+========================================================= */
+
+menusAccionAgencia.forEach(
+    contenedor =>
+    {
+
+        const boton =
+            contenedor.querySelector(
+                "[data-agency-action-button]"
+            );
+
+
+        const menu =
+            contenedor.querySelector(
+                "[data-agency-action-menu]"
+            );
+
+
+        if (
+            !boton ||
+            !menu
+        ) {
+
+            return;
+
+        }
+
+
+        boton.addEventListener(
+            "click",
+            event =>
+            {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+
+                const estabaAbierto =
+                    contenedor
+                        .classList
+                        .contains(
+                            "open"
+                        );
+
+
+                /*
+                 * Cerramos primero cualquier otro menú
+                 * de otra agencia.
+                 */
+
+                cerrarMenusAccionAgencia(
+                    contenedor
+                );
+
+
+                /*
+                 * Cerramos desplegables superiores
+                 * para evitar tener varios menús
+                 * abiertos al mismo tiempo.
+                 */
+
+                if (
+                    typeof cerrarAccionesRapidas ===
+                        "function"
+                ) {
+
+                    cerrarAccionesRapidas();
+
+                }
+
+
+                if (
+                    typeof cerrarNotificacionesAdmin ===
+                        "function"
+                ) {
+
+                    cerrarNotificacionesAdmin();
+
+                }
+
+
+                const topbarUsuario =
+                    document.querySelector(
+                        ".topbar-user"
+                    );
+
+
+                const topbarUsuarioBoton =
+                    document.getElementById(
+                        "topbar-user-button"
+                    );
+
+
+                topbarUsuario
+                    ?.classList
+                    .remove(
+                        "open"
+                    );
+
+
+                topbarUsuarioBoton
+                    ?.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
+
+
+                if (
+                    estabaAbierto
+                ) {
+
+                    contenedor.classList.remove(
+                        "open"
+                    );
+
+
+                    boton.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
+
+
+                    menu.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+
+                    return;
+
+                }
+
+
+                contenedor.classList.add(
+                    "open"
+                );
+
+
+                boton.setAttribute(
+                    "aria-expanded",
+                    "true"
+                );
+
+
+                menu.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+            }
+        );
+
+
+        menu.addEventListener(
+            "click",
+            event =>
+            {
+
+                event.stopPropagation();
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   CERRAR AL HACER CLIC FUERA
+========================================================= */
+
+document.addEventListener(
+    "click",
+    event =>
+    {
+
+        const dentroDeMenu =
+            event.target.closest(
+                ".table-action-menu"
+            );
+
+
+        if (
+            !dentroDeMenu
+        ) {
+
+            cerrarMenusAccionAgencia();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CERRAR CON ESCAPE
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event =>
+    {
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            cerrarMenusAccionAgencia();
+
+        }
+
+    }
+);

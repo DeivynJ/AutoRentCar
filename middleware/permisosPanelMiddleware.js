@@ -48,6 +48,61 @@ function requerirGestionCatalogo(
             .trim()
             .toLowerCase();
 
+    next();
+
+}
+
+/* =========================================================
+   VALIDACIÓN DE PAGOS
+========================================================= */
+
+/*
+ * Los empleados pueden consultar la información
+ * de las reservaciones y sus pagos,
+ * pero no confirmar ni rechazar pagos.
+ *
+ * La validación definitiva del rol también
+ * se realiza nuevamente en el servicio.
+ */
+
+function requerirValidacionPagos(
+    req,
+    res,
+    next
+) {
+
+    const usuario =
+        req.usuarioAgencia;
+
+
+    if (!usuario) {
+
+        return res
+            .status(403)
+            .send(
+                "No fue posible validar los permisos del usuario."
+            );
+
+    }
+
+
+    const codigoRol =
+        String(
+            usuario.rolCodigo ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    const nombreRol =
+        String(
+            usuario.rolNombre ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
 
     const esEmpleado =
         codigoRol ===
@@ -61,7 +116,85 @@ function requerirGestionCatalogo(
         return res
             .status(403)
             .send(
-                "Tu usuario no tiene permiso para modificar el catálogo."
+                "Tu usuario no tiene permiso para validar pagos."
+            );
+
+    }
+
+
+    next();
+
+}
+
+/* =========================================================
+   ACCESO EXCLUSIVO DE ADMINISTRADOR DE AGENCIA
+========================================================= */
+
+/*
+ * Se utiliza para módulos administrativos
+ * que un empleado no debe consultar ni modificar.
+ *
+ * Ejemplos:
+ * - métodos de pago;
+ * - configuración de anticipos;
+ * - configuraciones generales;
+ * - futuras funciones administrativas.
+ */
+
+function requerirAdministradorAgencia(
+    req,
+    res,
+    next
+) {
+
+    const usuario =
+        req.usuarioAgencia;
+
+
+    if (!usuario) {
+
+        return res
+            .status(403)
+            .send(
+                "No fue posible validar los permisos del usuario."
+            );
+
+    }
+
+
+    const codigoRol =
+        String(
+            usuario.rolCodigo ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    const nombreRol =
+        String(
+            usuario.rolNombre ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    const esAdministradorAgencia =
+        nombreRol ===
+            "administrador de agencia" ||
+        codigoRol ===
+            "administrador_agencia" ||
+        codigoRol ===
+            "admin_agencia";
+
+
+    if (!esAdministradorAgencia) {
+
+        return res
+            .status(403)
+            .send(
+                "Tu usuario no tiene permiso para acceder a esta función administrativa."
             );
 
     }
@@ -73,5 +206,7 @@ function requerirGestionCatalogo(
 
 
 module.exports = {
-    requerirGestionCatalogo
+    requerirGestionCatalogo,
+    requerirValidacionPagos,
+    requerirAdministradorAgencia
 };
