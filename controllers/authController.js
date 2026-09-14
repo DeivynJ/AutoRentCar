@@ -170,16 +170,46 @@ if (
             );
 
         if (!passwordCorrecta) {
-            return res.status(401).render(
-                "auth/login",
-                {
-                    titulo:
-                        "Iniciar sesión",
-                    error:
-                        "Correo o contraseña incorrectos."
-                }
-            );
+
+    await conexion.query(
+        `
+        UPDATE usuarios
+        SET
+            intentos_fallidos = LEAST(
+                intentos_fallidos + 1,
+                65535
+            )
+        WHERE id = ?
+        `,
+        [usuario.id]
+    );
+
+    return res.status(401).render(
+        "auth/login",
+        {
+            titulo:
+                "Iniciar sesión",
+            error:
+                "Correo o contraseña incorrectos."
         }
+    );
+}
+
+                await new Promise((resolve, reject) => {
+
+            req.session.regenerate((error) => {
+
+                if (error) {
+                    return reject(error);
+                }
+
+                resolve();
+
+            });
+
+        });
+
+
 
         req.session.usuario = {
 

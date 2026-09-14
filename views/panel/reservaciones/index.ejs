@@ -329,8 +329,34 @@
 
                                         <%
 
-                                            let claseEstado =
+                                           let claseEstado =
     "unit-status-reservado";
+
+
+const requierePagoReservacion =
+    Number(
+        reservacion.monto_anticipo_requerido ||
+        0
+    ) > 0;
+
+
+const cantidadSolicitada =
+    Number(
+        reservacion.cantidad_vehiculos ||
+        0
+    );
+
+
+const cantidadAsignada =
+    Number(
+        reservacion.unidades_asignadas ||
+        0
+    );
+
+
+const asignacionCompleta =
+    cantidadSolicitada > 0 &&
+    cantidadAsignada >= cantidadSolicitada;
 
 
 let nombreEstado =
@@ -343,7 +369,7 @@ if (
 ) {
 
     nombreEstado =
-        "Pendiente";
+        "Pendiente de confirmación";
 
 }
 
@@ -357,7 +383,7 @@ if (
         "unit-status-reservado";
 
     nombreEstado =
-        "Pendiente de pago";
+        "Reservación confirmada · Pendiente de pago";
 
 }
 
@@ -370,8 +396,24 @@ if (
     claseEstado =
         "unit-status-disponible";
 
-    nombreEstado =
-        "Confirmada";
+
+    if (
+        requierePagoReservacion
+    ) {
+
+        nombreEstado =
+            asignacionCompleta
+                ? "Pago confirmado · Pendiente de entrega"
+                : "Pago confirmado · Pendiente de asignar unidad";
+
+    } else {
+
+        nombreEstado =
+            asignacionCompleta
+                ? "Reservación confirmada · Pendiente de entrega"
+                : "Reservación confirmada · Pendiente de asignar unidad";
+
+    }
 
 }
 
@@ -385,7 +427,7 @@ if (
         "unit-status-alquilado";
 
     nombreEstado =
-        "En curso";
+        "Alquiler en curso";
 
 }
 
@@ -412,7 +454,7 @@ if (
 ) {
 
     nombreEstado =
-        "Finalizada";
+        "Reservación finalizada";
 
 }
 
@@ -423,7 +465,7 @@ if (
 ) {
 
     nombreEstado =
-        "Rechazada";
+        "Reservación rechazada";
 
 }
 
@@ -434,7 +476,7 @@ if (
 ) {
 
     nombreEstado =
-        "Cancelada";
+        "Reservación cancelada";
 
 }
 

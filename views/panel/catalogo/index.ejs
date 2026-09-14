@@ -71,6 +71,27 @@
 
             <main class="panel-main">
 
+                <% if (mensajeError) { %>
+
+    <div class="panel-alert panel-alert-danger">
+
+        <i class="fa-solid fa-circle-exclamation"></i>
+
+        <div>
+
+            <strong>
+                Acceso restringido
+            </strong>
+
+            <span>
+                <%= mensajeError %>
+            </span>
+
+        </div>
+
+    </div>
+
+<% } %>
 
             <% if (mensajeExito) { %>
 

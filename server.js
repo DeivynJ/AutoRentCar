@@ -76,6 +76,11 @@ const {
     "./services/programadorAlertasSuscripcionService"
 );
 
+const {
+    iniciarProgramadorAlertasReservacion
+} = require(
+    "./services/programadorAlertasReservacionService"
+);
 
 
 /* =========================================================
@@ -319,6 +324,7 @@ async function iniciarServidor() {
          * de suscripciones.
          */
         iniciarProgramadorAlertasSuscripcion();
+        iniciarProgramadorAlertasReservacion();
 
     }
 );

@@ -267,9 +267,18 @@ async function mostrarCatalogoPanel(
                 plan:
                     req.plan,
 
-                modelos,
-                
-            resumen,
+               modelos,
+
+resumen,
+
+mensajeError:
+
+    req.query.resultado ===
+        "sin_permiso"
+
+        ? "Tu usuario no tiene permiso para modificar el catálogo."
+
+        : null,
 
 mensajeExito:
 

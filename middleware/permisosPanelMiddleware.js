@@ -41,14 +41,31 @@ function requerirGestionCatalogo(
 
 
     const nombreRol =
-        String(
-            usuario.rolNombre ||
-            ""
-        )
-            .trim()
-            .toLowerCase();
+    String(
+        usuario.rolNombre ||
+        ""
+    )
+        .trim()
+        .toLowerCase();
 
-    next();
+
+const esEmpleado =
+    codigoRol ===
+        "empleado" ||
+    nombreRol ===
+        "empleado";
+
+
+if (esEmpleado) {
+
+    return res.redirect(
+        "/panel/catalogo?resultado=sin_permiso"
+    );
+
+}
+
+
+next();
 
 }
 
@@ -204,9 +221,68 @@ function requerirAdministradorAgencia(
 
 }
 
+function requerirOperacionReservacion(req, res, next) {
+
+    const usuario =
+        req.usuarioAgencia;
+
+
+    if (!usuario) {
+
+        return res.status(403).send(
+            "No fue posible validar los permisos del usuario."
+        );
+    }
+
+
+    const codigoRol =
+        String(
+            usuario.rolCodigo || ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    const nombreRol =
+        String(
+            usuario.rolNombre || ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    const esAdministrador =
+        nombreRol ===
+            "administrador de agencia" ||
+        codigoRol ===
+            "administrador_agencia" ||
+        codigoRol ===
+            "admin_agencia";
+
+
+    const esEmpleado =
+        codigoRol === "empleado" ||
+        nombreRol === "empleado";
+
+
+    if (
+        !esAdministrador &&
+        !esEmpleado
+    ) {
+
+        return res.status(403).send(
+            "Tu usuario no tiene permiso para realizar operaciones de entrega."
+        );
+    }
+
+
+    next();
+}
+
 
 module.exports = {
     requerirGestionCatalogo,
     requerirValidacionPagos,
-    requerirAdministradorAgencia
+    requerirAdministradorAgencia,
+    requerirOperacionReservacion
 };

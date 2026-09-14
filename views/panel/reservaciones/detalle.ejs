@@ -115,28 +115,88 @@
 
                     }
 
-                    const nombresEstadoReservacion = {
+                    const requierePagoReservacion =
+    Number(
+        resumenPago?.montoAnticipoRequerido ||
+        0
+    ) > 0;
+
+
+const tieneUnidadAsignada =
+    Number(
+        unidadesReservacion?.cantidadAsignada ||
+        0
+    ) > 0;
+
+
+const nombresEstadoReservacion = {
 
     pendiente:
-        "Pendiente",
+        "Pendiente de confirmación",
 
     pendiente_pago:
-        "Pendiente de pago",
+        "Reservación confirmada · Pendiente de pago",
 
     confirmada:
-        "Confirmada",
+        requierePagoReservacion
+            ? (
+                tieneUnidadAsignada
+                    ? "Pago confirmado · Pendiente de entrega"
+                    : "Pago confirmado · Pendiente de asignar unidad"
+            )
+            : (
+                tieneUnidadAsignada
+                    ? "Reservación confirmada · Pendiente de entrega"
+                    : "Reservación confirmada · Pendiente de asignar unidad"
+            ),
 
     en_curso:
-        "En curso",
+        "Alquiler en curso",
 
     finalizada:
-        "Finalizada",
+        "Reservación finalizada",
 
     rechazada:
-        "Rechazada",
+        "Reservación rechazada",
 
     cancelada:
-        "Cancelada"
+        "Reservación cancelada"
+
+};
+
+
+const descripcionesEstadoReservacion = {
+
+    pendiente:
+        "Esperando la decisión del administrador.",
+
+    pendiente_pago:
+        "La agencia aceptó la reservación y está pendiente de completar el pago.",
+
+    confirmada:
+        requierePagoReservacion
+            ? (
+                tieneUnidadAsignada
+                    ? "El pago fue validado y el vehículo está pendiente de entrega."
+                    : "El pago fue validado y falta asignar la unidad física."
+            )
+            : (
+                tieneUnidadAsignada
+                    ? "La reservación está confirmada y el vehículo está pendiente de entrega."
+                    : "La reservación está confirmada y falta asignar la unidad física."
+            ),
+
+    en_curso:
+        "El vehículo fue entregado y el alquiler está en curso.",
+
+    finalizada:
+        "El alquiler fue completado.",
+
+    rechazada:
+        "La solicitud fue rechazada por la agencia.",
+
+    cancelada:
+        "La reservación fue cancelada."
 
 };
 
@@ -146,6 +206,13 @@ const nombreEstadoReservacion =
         reservacion.estado
     ] ||
     reservacion.estado;
+
+
+const descripcionEstadoReservacion =
+    descripcionesEstadoReservacion[
+        reservacion.estado
+    ] ||
+    "Estado actual de la reservación.";
 
     const nombreRolUsuario =
     String(
@@ -160,6 +227,51 @@ const puedeValidarPagos =
     nombreRolUsuario ===
     "administrador de agencia";
 
+const puedeGestionarUnidades =
+    nombreRolUsuario ===
+    "administrador de agencia";
+
+
+    const esEmpleadoPanel =
+    nombreRolUsuario === "empleado";
+
+
+const cantidadUnidadesSolicitadas =
+    Number(
+        unidadesReservacion?.cantidadSolicitada ||
+        0
+    );
+
+
+const cantidadUnidadesAsignadas =
+    Number(
+        unidadesReservacion?.cantidadAsignada ||
+        0
+    );
+
+
+const unidadesCompletamenteAsignadas =
+    cantidadUnidadesSolicitadas > 0 &&
+    cantidadUnidadesAsignadas ===
+        cantidadUnidadesSolicitadas;
+
+
+const puedeEntregarVehiculo =
+    (
+        puedeGestionarUnidades ||
+        esEmpleadoPanel
+    ) &&
+    reservacion.estado === "confirmada" &&
+    unidadesCompletamenteAsignadas;
+
+    const puedeRegistrarDevolucion =
+    (
+        puedeGestionarUnidades ||
+        esEmpleadoPanel
+    ) &&
+    reservacion.estado === "en_curso" &&
+    unidadesCompletamenteAsignadas;
+    
 
                     let claseEstado =
                         "unit-status-reservado";
@@ -268,6 +380,271 @@ const puedeValidarPagos =
 
 <% } %>
 
+<% if (String(queryResultado || "") === "unidad_asignada") { %>
+
+    <div class="panel-reservation-message success">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <span>
+            La unidad física fue asignada correctamente.
+        </span>
+
+    </div>
+
+<% } %>
+
+<% if (String(queryResultado || "") === "vehiculo_entregado") { %>
+
+    <div class="panel-reservation-message success">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <span>
+            El vehículo fue entregado correctamente. El alquiler está en curso.
+        </span>
+
+    </div>
+
+<% } %>
+
+<% if (String(queryResultado || "") === "vehiculo_devuelto") { %>
+
+    <div class="panel-reservation-message success">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <span>
+            La devolución fue registrada correctamente. La reservación ha finalizado.
+        </span>
+
+    </div>
+
+<% } %>
+
+<% if (String(queryError || "") === "unidad_estado") { %>
+
+    <div class="panel-reservation-message warning">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <span>
+            Solo se pueden asignar unidades a una reservación confirmada.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+<% if (String(queryError || "") === "unidades_completas") { %>
+
+    <div class="panel-reservation-message warning">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <span>
+            La reservación ya tiene asignada la cantidad de vehículos solicitada.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+<% if (String(queryError || "") === "unidad_invalida") { %>
+
+    <div class="panel-reservation-message danger">
+
+        <i class="fa-solid fa-circle-xmark"></i>
+
+        <span>
+            La unidad seleccionada no es válida para esta reservación.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+<% if (String(queryError || "") === "unidad_ocupada") { %>
+
+    <div class="panel-reservation-message warning">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <span>
+            La unidad seleccionada ya está ocupada durante ese período.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+<% if (String(queryError || "") === "asignar_unidad") { %>
+
+    <div class="panel-reservation-message danger">
+
+        <i class="fa-solid fa-circle-xmark"></i>
+
+        <span>
+            No fue posible asignar la unidad física.
+        </span>
+
+    </div>
+
+<% } %>
+
+<% if (String(queryError || "") === "entrega_estado") { %>
+
+    <div class="panel-reservation-message warning">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <span>
+            Esta reservación no está disponible para realizar la entrega.
+        </span>
+
+    </div>
+
+<% } %>
+
+<% if (String(queryError || "") === "entrega_anticipada") { %>
+
+    <div class="panel-reservation-message warning">
+
+        <i class="fa-solid fa-clock"></i>
+
+        <span>
+            La entrega del vehículo todavía no está disponible.
+            Debe llegar la fecha y hora programada de recogida
+            para poder realizar la entrega.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+<% if (String(queryError || "") === "entrega_unidades") { %>
+
+    <div class="panel-reservation-message warning">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <span>
+            Debes asignar todas las unidades solicitadas antes de entregar el vehículo.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+<% if (String(queryError || "") === "entrega_unidad_invalida") { %>
+
+    <div class="panel-reservation-message danger">
+
+        <i class="fa-solid fa-circle-xmark"></i>
+
+        <span>
+            Una de las unidades asignadas no está disponible para realizar la entrega.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+<% if (String(queryError || "") === "entregar_vehiculo") { %>
+
+    <div class="panel-reservation-message danger">
+
+        <i class="fa-solid fa-circle-xmark"></i>
+
+        <span>
+            No fue posible registrar la entrega del vehículo.
+        </span>
+
+    </div>
+
+<% } %>
+
+<% if (String(queryError || "") === "devolucion_estado") { %>
+
+    <div class="panel-reservation-message warning">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <span>
+            Solo se puede registrar la devolución de una reservación que esté en curso.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+<% if (String(queryError || "") === "devolucion_unidades") { %>
+
+    <div class="panel-reservation-message warning">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <span>
+            No fue posible identificar correctamente todas las unidades de esta reservación.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+<% if (String(queryError || "") === "devolucion_unidad_invalida") { %>
+
+    <div class="panel-reservation-message danger">
+
+        <i class="fa-solid fa-circle-xmark"></i>
+
+        <span>
+            Una de las unidades asociadas no puede registrarse como devuelta.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+<% if (String(queryError || "") === "devolucion_fallida") { %>
+
+    <div class="panel-reservation-message danger">
+
+        <i class="fa-solid fa-circle-xmark"></i>
+
+        <span>
+            No fue posible finalizar correctamente la reservación.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+<% if (String(queryError || "") === "registrar_devolucion") { %>
+
+    <div class="panel-reservation-message danger">
+
+        <i class="fa-solid fa-circle-xmark"></i>
+
+        <span>
+            Ocurrió un error al registrar la devolución del vehículo.
+        </span>
+
+    </div>
+
+<% } %>
+
 
                 <!-- =====================================
                      NAVEGACIÓN
@@ -353,8 +730,8 @@ const puedeValidarPagos =
                         </strong>
 
                         <span>
-                            Estado actual de la solicitud
-                        </span>
+    <%= descripcionEstadoReservacion %>
+</span>
 
                     </article>
 
@@ -445,126 +822,145 @@ const puedeValidarPagos =
 
                 </section>
 
-                <!-- =====================================
-     ACCIONES DE RESERVACIÓN
+                <%
+
+    const pagosSeguros =
+        Array.isArray(pagos)
+            ? pagos
+            : [];
+
+
+    const pagosPendientesValidacion =
+        pagosSeguros.filter(
+            (pago) =>
+                pago.estado ===
+                "pendiente_validacion"
+        );
+
+
+    const pagosConfirmados =
+        pagosSeguros.filter(
+            (pago) =>
+                pago.estado ===
+                "confirmado"
+        );
+
+
+    const totalPagadoConfirmado =
+        pagosConfirmados.reduce(
+            (total, pago) =>
+                total +
+                Number(
+                    pago.monto ||
+                    0
+                ),
+            0
+        );
+
+%>
+
+
+
+<!-- =====================================
+     DECISIÓN DE LA RESERVACIÓN
 ====================================== -->
 
-<section class="panel-units-card">
+<section class="panel-units-card reservation-compact-decision">
 
-    <div class="panel-units-header">
+
+    <div class="reservation-compact-section-header">
+
 
         <div>
+
 
             <span>
                 Gestión
             </span>
 
+
             <h3>
                 Decisión de la reservación
             </h3>
 
+
             <p>
 
-                Revisa cuidadosamente los datos antes
-                de confirmar o rechazar esta solicitud.
+                Reservación
+
+                <strong>
+                    <%= reservacion.codigo %>
+                </strong>
 
             </p>
 
+
         </div>
+
+
+        <span
+            class="unit-status <%= claseEstado %>"
+        >
+
+            <%= nombreEstadoReservacion %>
+
+        </span>
+
 
     </div>
 
 
+
     <% if (
-    reservacion.estado === "pendiente" &&
-    puedeValidarPagos
-) { %>
-
-        <div class="panel-reservation-actions">
+        reservacion.estado === "pendiente" &&
+        puedeValidarPagos
+    ) { %>
 
 
-            <!-- =================================
-                 CONFIRMAR
-            ================================== -->
+        <div class="reservation-compact-decision-actions">
+
 
             <form
                 action="/panel/reservaciones/<%= reservacion.id %>/confirmar"
                 method="POST"
-                class="panel-reservation-action-form"
                 onsubmit="return confirm('¿Aprobar la reservación <%= reservacion.codigo %>? Se aplicará la política de pago configurada para la agencia.');"
             >
 
+
                 <button
                     type="submit"
-                    class="panel-reservation-action panel-reservation-confirm"
+                    class="reservation-compact-button reservation-compact-approve"
                 >
 
-                    <span class="panel-reservation-action-icon">
+                    <i class="fa-solid fa-circle-check"></i>
 
-                        <i class="fa-solid fa-circle-check"></i>
-
-                    </span>
-
-
-                    <span>
-
-                        <strong>
-    Aprobar reservación
-</strong>
-
-<small>
-
-    Se aplicará automáticamente la política
-    de anticipo configurada para la agencia.
-
-</small>
-
-                    </span>
+                    Aprobar reservación
 
                 </button>
+
 
             </form>
 
 
-            <!-- =================================
-                 RECHAZAR
-            ================================== -->
 
             <form
                 action="/panel/reservaciones/<%= reservacion.id %>/rechazar"
                 method="POST"
-                class="panel-reservation-action-form"
                 onsubmit="return confirm('¿Seguro que deseas rechazar la reservación <%= reservacion.codigo %>? Esta acción no podrá revertirse desde esta pantalla.');"
             >
 
+
                 <button
                     type="submit"
-                    class="panel-reservation-action panel-reservation-reject"
+                    class="reservation-compact-button reservation-compact-reject"
                 >
 
-                    <span class="panel-reservation-action-icon">
+                    <i class="fa-solid fa-circle-xmark"></i>
 
-                        <i class="fa-solid fa-circle-xmark"></i>
-
-                    </span>
-
-
-                    <span>
-
-                        <strong>
-                            Rechazar reservación
-                        </strong>
-
-                        <small>
-
-                            La solicitud dejará de consumir
-                            disponibilidad.
-
-                        </small>
-
-                    </span>
+                    Rechazar reservación
 
                 </button>
+
 
             </form>
 
@@ -572,1219 +968,1905 @@ const puedeValidarPagos =
         </div>
 
 
+
     <% } else if (
-    reservacion.estado === "pendiente" &&
-    !puedeValidarPagos
-) { %>
+        reservacion.estado === "pendiente" &&
+        !puedeValidarPagos
+    ) { %>
 
-    <div class="panel-reservation-decision-complete">
 
-        <div class="panel-reservation-decision-icon">
+        <div class="reservation-compact-message">
+
 
             <i class="fa-solid fa-clock"></i>
 
+
+            <div>
+
+                <strong>
+                    Pendiente de decisión administrativa
+                </strong>
+
+                <span>
+
+                    Un administrador de la agencia
+                    debe aprobar o rechazar esta solicitud.
+
+                </span>
+
+            </div>
+
+
         </div>
 
 
-        <div>
 
-            <strong>
-                Pendiente de decisión administrativa
-            </strong>
+    <% } else if (
+        reservacion.estado === "pendiente_pago"
+    ) { %>
 
-            <p>
 
-                Esta reservación todavía debe ser
-                aprobada o rechazada por un
-                administrador de la agencia.
+        <div class="reservation-compact-message">
 
-            </p>
+
+            <i class="fa-solid fa-credit-card"></i>
+
+
+            <div>
+
+                <strong>
+                    Reservación aprobada
+                </strong>
+
+                <span>
+
+                    Pendiente del anticipo de
+                    US$<%= moneda(
+                        resumenPago.montoAnticipoRequerido
+                    ) %>.
+
+                </span>
+
+            </div>
+
 
         </div>
 
-    </div>
 
 
-<% } else { %>
+    <% } else { %>
 
-    <div class="panel-reservation-decision-complete">
 
-            <div class="panel-reservation-decision-icon">
+        <div class="reservation-compact-message">
 
-                <% if (reservacion.estado === "confirmada") { %>
 
-                    <i class="fa-solid fa-circle-check"></i>
+            <i class="fa-solid fa-circle-info"></i>
 
-                <% } else if (reservacion.estado === "rechazada") { %>
 
-                    <i class="fa-solid fa-circle-xmark"></i>
+            <div>
 
-                <% } else { %>
+                <strong>
+                    Reservación procesada
+                </strong>
 
-                    <i class="fa-solid fa-circle-info"></i>
+                <span>
 
-                <% } %>
+                    Estado actual:
+                    <%= nombreEstadoReservacion %>.
+
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+    <% } %>
+
+
+</section>
+
+
+
+
+
+<!-- =====================================
+     RESUMEN OPERATIVO
+====================================== -->
+
+<section class="reservation-overview-grid">
+
+
+    <!-- =================================
+         CLIENTE
+    ================================== -->
+
+    <article class="panel-units-card reservation-overview-card">
+
+
+        <div class="reservation-overview-card-header">
+
+
+            <div class="reservation-overview-icon">
+
+                <i class="fa-solid fa-user"></i>
 
             </div>
 
 
             <div>
 
-                <% if (reservacion.estado === "pendiente_pago") { %>
+                <span>
+                    Cliente
+                </span>
 
-    <strong>
-        Reservación aprobada
-    </strong>
 
-    <p>
-
-        Pendiente del anticipo de
-
-        <strong>
-            US$<%= moneda(
-                resumenPago.montoAnticipoRequerido
-            ) %>
-        </strong>
-
-    </p>
-
-<% } else { %>
-
-    <strong>
-        Esta reservación ya fue procesada
-    </strong>
-
-    <p>
-
-        Estado actual:
-
-<strong>
-    <%= nombreEstadoReservacion %>
-</strong>
-
-    </p>
-
-<% } %>
+                <h3>
+                    <%= reservacion.cliente_nombre %>
+                </h3>
 
             </div>
 
+
         </div>
 
-    <% } %>
+
+
+        <div class="reservation-overview-list">
+
+
+            <div>
+
+                <strong>
+                    Teléfono
+                </strong>
+
+                <span>
+                    <%= reservacion.cliente_telefono || "No registrado" %>
+                </span>
+
+            </div>
+
+
+
+            <div>
+
+                <strong>
+                    Documento
+                </strong>
+
+                <span>
+                    <%= reservacion.cliente_documento || "No registrado" %>
+                </span>
+
+            </div>
+
+
+
+            <div>
+
+                <strong>
+                    Correo
+                </strong>
+
+                <span>
+                    <%= reservacion.cliente_correo || "No registrado" %>
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+    </article>
+
+
+
+
+
+    <!-- =================================
+         VEHÍCULO
+    ================================== -->
+
+    <article class="panel-units-card reservation-overview-card">
+
+
+        <div class="reservation-overview-card-header">
+
+
+            <div class="reservation-overview-icon">
+
+                <i class="fa-solid fa-car-side"></i>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Vehículo
+                </span>
+
+
+                <h3>
+
+                    <%= reservacion.modelo_marca %>
+                    <%= reservacion.modelo_nombre %>
+
+                </h3>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="reservation-overview-list">
+
+
+            <div>
+
+                <strong>
+                    Cantidad
+                </strong>
+
+                <span>
+
+                    <%= reservacion.cantidad_vehiculos %>
+
+                    <%= Number(
+                        reservacion.cantidad_vehiculos
+                    ) === 1
+                        ? "vehículo"
+                        : "vehículos"
+                    %>
+
+                </span>
+
+            </div>
+
+
+
+            <div>
+
+                <strong>
+                    Recogida
+                </strong>
+
+                <span>
+
+                    <%= fechaSegura(
+                        reservacion.fecha_recogida
+                    ) %>
+
+                    ·
+
+                    <%= reservacion.hora_recogida || "—" %>
+
+                </span>
+
+            </div>
+
+
+
+            <div>
+
+                <strong>
+                    Entrega
+                </strong>
+
+                <span>
+
+                    <%= fechaSegura(
+                        reservacion.fecha_entrega
+                    ) %>
+
+                    ·
+
+                    <%= reservacion.hora_entrega || "—" %>
+
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+    </article>
+
+
+
+
+
+    <!-- =================================
+         PAGO
+    ================================== -->
+
+    <article
+        class="
+            panel-units-card
+            reservation-overview-card
+            reservation-overview-payment
+        "
+    >
+
+
+        <div class="reservation-overview-card-header">
+
+
+            <div class="reservation-overview-icon">
+
+                <i class="fa-solid fa-credit-card"></i>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Pago
+                </span>
+
+
+                <h3>
+
+                    US$<%= moneda(
+                        resumenPago.total
+                    ) %>
+
+                </h3>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="reservation-payment-summary">
+
+
+            <div>
+
+                <strong>
+                    Total
+                </strong>
+
+                <span>
+
+                    US$<%= moneda(
+                        resumenPago.total
+                    ) %>
+
+                </span>
+
+            </div>
+
+
+
+            <div>
+
+                <strong>
+                    Anticipo requerido
+                </strong>
+
+                <span>
+
+                    US$<%= moneda(
+                        resumenPago.montoAnticipoRequerido
+                    ) %>
+
+                </span>
+
+            </div>
+
+
+
+            <div>
+
+                <strong>
+                    Pagado confirmado
+                </strong>
+
+                <span>
+
+                    US$<%= moneda(
+                        totalPagadoConfirmado
+                    ) %>
+
+                </span>
+
+            </div>
+
+
+
+            <div>
+
+                <strong>
+                    Por validar
+                </strong>
+
+                <span>
+                    <%= pagosPendientesValidacion.length %>
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+
+        <% if (
+            pagosPendientesValidacion.length > 0
+        ) { %>
+
+
+            <div class="reservation-payment-attention">
+
+
+                <i class="fa-solid fa-triangle-exclamation"></i>
+
+
+                <span>
+
+                    Hay
+
+                    <strong>
+                        <%= pagosPendientesValidacion.length %>
+                    </strong>
+
+                    pago(s) esperando validación.
+
+                </span>
+
+
+            </div>
+
+
+        <% } %>
+
+
+    </article>
+
 
 </section>
 
 
-                <!-- =====================================
-                     CLIENTE
-                ====================================== -->
 
-                <section class="panel-units-card">
 
 
-                    <div class="panel-units-header">
+<!-- =====================================
+     INFORMACIÓN DESPLEGABLE
+====================================== -->
 
-                        <div>
+<section class="reservation-details-stack">
 
-                            <span>
-                                Cliente
-                            </span>
 
-                            <h3>
-                                Información del conductor
-                            </h3>
+    <!-- =================================
+         CLIENTE COMPLETO
+    ================================== -->
 
-                            <p>
-                                Datos suministrados al realizar
-                                la reservación.
-                            </p>
+    <details class="reservation-compact-details">
 
-                        </div>
 
-                    </div>
+        <summary>
 
 
-                    <div class="panel-units-table-wrapper">
+            <span>
 
-                        <table class="panel-units-table">
+                <i class="fa-solid fa-user"></i>
 
-                            <tbody>
+                Información completa del cliente
 
-                                <tr>
+            </span>
 
-                                    <th>
-                                        Nombre
-                                    </th>
 
-                                    <td>
-                                        <strong>
-                                            <%= reservacion.cliente_nombre %>
-                                        </strong>
-                                    </td>
+            <i class="fa-solid fa-chevron-down"></i>
 
-                                </tr>
 
+        </summary>
 
-                                <tr>
 
-                                    <th>
-                                        Documento
-                                    </th>
 
-                                    <td>
-                                        <%= reservacion.cliente_documento %>
-                                    </td>
+        <div class="reservation-compact-details-body">
 
-                                </tr>
 
+            <div class="reservation-compact-data-grid">
 
-                                <tr>
 
-                                    <th>
-                                        Correo electrónico
-                                    </th>
+                <div>
 
-                                    <td>
-                                        <%= reservacion.cliente_correo %>
-                                    </td>
+                    <strong>
+                        Nombre
+                    </strong>
 
-                                </tr>
+                    <span>
+                        <%= reservacion.cliente_nombre || "No registrado" %>
+                    </span>
 
+                </div>
 
-                                <tr>
 
-                                    <th>
-                                        Teléfono
-                                    </th>
 
-                                    <td>
-                                        <%= reservacion.cliente_telefono %>
-                                    </td>
+                <div>
 
-                                </tr>
+                    <strong>
+                        Documento
+                    </strong>
 
+                    <span>
+                        <%= reservacion.cliente_documento || "No registrado" %>
+                    </span>
 
-                                <tr>
+                </div>
 
-                                    <th>
-                                        Edad
-                                    </th>
 
-                                    <td>
 
-                                        <%= reservacion.cliente_edad %>
-                                        años
+                <div>
 
-                                    </td>
+                    <strong>
+                        Correo electrónico
+                    </strong>
 
-                                </tr>
+                    <span>
+                        <%= reservacion.cliente_correo || "No registrado" %>
+                    </span>
 
+                </div>
 
-                                <tr>
 
-                                    <th>
-                                        Licencia
-                                    </th>
 
-                                    <td>
-                                        <%= reservacion.cliente_licencia %>
-                                    </td>
+                <div>
 
-                                </tr>
+                    <strong>
+                        Teléfono
+                    </strong>
 
-                            </tbody>
+                    <span>
+                        <%= reservacion.cliente_telefono || "No registrado" %>
+                    </span>
 
-                        </table>
+                </div>
 
-                    </div>
 
-                </section>
 
+                <div>
 
-                <!-- =====================================
-                     VEHÍCULO Y PERÍODO
-                ====================================== -->
+                    <strong>
+                        Edad
+                    </strong>
 
-                <section class="panel-units-card">
+                    <span>
 
+                        <%= reservacion.cliente_edad
+                            ? `${reservacion.cliente_edad} años`
+                            : "No registrada"
+                        %>
 
-                    <div class="panel-units-header">
+                    </span>
 
-                        <div>
+                </div>
 
-                            <span>
-                                Alquiler
-                            </span>
 
-                            <h3>
-                                Vehículo y período
-                            </h3>
 
-                        </div>
+                <div>
 
-                    </div>
+                    <strong>
+                        Licencia
+                    </strong>
 
+                    <span>
+                        <%= reservacion.cliente_licencia || "No registrada" %>
+                    </span>
 
-                    <div class="panel-units-table-wrapper">
+                </div>
 
-                        <table class="panel-units-table">
 
-                            <tbody>
-
-
-                                <tr>
-
-                                    <th>
-                                        Modelo
-                                    </th>
-
-                                    <td>
-
-                                        <strong>
-
-                                            <%= reservacion.modelo_marca %>
-                                            <%= reservacion.modelo_nombre %>
-
-                                        </strong>
-
-                                    </td>
-
-                                </tr>
-
-
-                                <tr>
-
-                                    <th>
-                                        Cantidad
-                                    </th>
-
-                                    <td>
-                                        <%= reservacion.cantidad_vehiculos %>
-                                    </td>
-
-                                </tr>
-
-
-                                <tr>
-
-                                    <th>
-                                        Precio diario
-                                    </th>
-
-                                    <td>
-
-                                        US$<%= moneda(
-                                            resumenPago.precioDiario
-                                        ) %>
-
-                                    </td>
-
-                                </tr>
-
-
-                                <tr>
-
-                                    <th>
-                                        Fecha de recogida
-                                    </th>
-
-                                    <td>
-
-                                        <%= fechaSegura(
-                                            reservacion.fecha_recogida
-                                        ) %>
-
-                                        —
-
-                                        <%= reservacion.hora_recogida || "—" %>
-
-                                    </td>
-
-                                </tr>
-
-
-                                <tr>
-
-                                    <th>
-                                        Lugar de recogida
-                                    </th>
-
-                                    <td>
-                                        <%= reservacion.lugar_recogida %>
-                                    </td>
-
-                                </tr>
-
-
-                                <tr>
-
-                                    <th>
-                                        Fecha de entrega
-                                    </th>
-
-                                    <td>
-
-                                        <%= fechaSegura(
-                                            reservacion.fecha_entrega
-                                        ) %>
-
-                                        —
-
-                                        <%= reservacion.hora_entrega || "—" %>
-
-                                    </td>
-
-                                </tr>
-
-
-                                <tr>
-
-                                    <th>
-                                        Lugar de entrega
-                                    </th>
-
-                                    <td>
-                                        <%= reservacion.lugar_entrega %>
-                                    </td>
-
-                                </tr>
-
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                </section>
-
-
-                <!-- =====================================
-                     ADICIONALES
-                ====================================== -->
-
-                <section class="panel-units-card">
-
-
-                    <div class="panel-units-header">
-
-                        <div>
-
-                            <span>
-                                Servicios
-                            </span>
-
-                            <h3>
-                                Adicionales
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-
-                    <% if (adicionales.length) { %>
-
-
-                        <div class="panel-units-table-wrapper">
-
-                            <table class="panel-units-table">
-
-                                <thead>
-
-                                    <tr>
-
-                                        <th>
-                                            Servicio
-                                        </th>
-
-                                        <th>
-                                            Precio diario
-                                        </th>
-
-                                        <th>
-                                            Vehículos
-                                        </th>
-
-                                        <th>
-                                            Días
-                                        </th>
-
-                                        <th>
-                                            Total
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-
-                                <tbody>
-
-
-                                    <% adicionales.forEach((adicional) => { %>
-
-                                        <tr>
-
-                                            <td>
-
-                                                <strong>
-                                                    <%= adicional.nombre %>
-                                                </strong>
-
-                                            </td>
-
-                                            <td>
-
-                                                US$<%= moneda(
-                                                    adicional.precio_diario
-                                                ) %>
-
-                                            </td>
-
-                                            <td>
-                                                <%= adicional.cantidad_vehiculos %>
-                                            </td>
-
-                                            <td>
-                                                <%= adicional.dias %>
-                                            </td>
-
-                                            <td>
-
-                                                <strong>
-
-                                                    US$<%= moneda(
-                                                        adicional.costo_total
-                                                    ) %>
-
-                                                </strong>
-
-                                            </td>
-
-                                        </tr>
-
-                                    <% }); %>
-
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-
-                    <% } else { %>
-
-
-                        <div class="catalog-empty">
-
-                            <div>
-
-                                <i class="fa-solid fa-circle-check"></i>
-
-                            </div>
-
-                            <h3>
-                                Sin servicios adicionales
-                            </h3>
-
-                            <p>
-                                Esta reservación no incluye
-                                servicios adicionales.
-                            </p>
-
-                        </div>
-
-
-                    <% } %>
-
-
-                </section>
-
-                                <!-- =====================================
-                     PAGOS
-                ====================================== -->
-
-                <section class="panel-units-card">
-
-
-                    <div class="panel-units-header">
-
-                        <div>
-
-                            <span>
-                                Pagos
-                            </span>
-
-                            <h3>
-                                Pagos de la reservación
-                            </h3>
-
-                            <p>
-
-                                Consulta los pagos enviados
-                                o registrados para esta
-                                reservación.
-
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <% if (Array.isArray(pagos) && pagos.length) { %>
-
-
-                        <div class="panel-units-table-wrapper">
-
-
-                            <table class="panel-units-table">
-
-
-                                <thead>
-
-                                    <tr>
-
-                                        <th>
-                                            Método
-                                        </th>
-
-                                        <th>
-                                            Monto
-                                        </th>
-
-                                        <th>
-                                            Referencia
-                                        </th>
-
-                                        <th>
-                                            Fecha de pago
-                                        </th>
-
-                                        <th>
-                                            Comprobante
-                                        </th>
-
-                                        <th>
-                                            Origen
-                                        </th>
-
-                                        <th>
-                                            Estado
-                                        </th>
-
-                                        <th>
-                                            Acciones
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-
-                                <tbody>
-
-
-                                    <% pagos.forEach((pago) => { %>
-
-
-                                        <%
-
-                                            let nombreEstadoPago =
-                                                pago.estado;
-
-
-                                            let claseEstadoPago =
-                                                "unit-status-reservado";
-
-
-                                            if (
-                                                pago.estado ===
-                                                "pendiente_validacion"
-                                            ) {
-
-                                                nombreEstadoPago =
-                                                    "Pendiente de validación";
-
-                                                claseEstadoPago =
-                                                    "unit-status-reservado";
-
-                                            }
-
-
-                                            if (
-                                                pago.estado ===
-                                                "confirmado"
-                                            ) {
-
-                                                nombreEstadoPago =
-                                                    "Confirmado";
-
-                                                claseEstadoPago =
-                                                    "unit-status-disponible";
-
-                                            }
-
-
-                                            if (
-                                                pago.estado ===
-                                                "rechazado"
-                                            ) {
-
-                                                nombreEstadoPago =
-                                                    "Rechazado";
-
-                                                claseEstadoPago =
-                                                    "unit-status-inactivo";
-
-                                            }
-
-
-                                            if (
-                                                pago.estado ===
-                                                "anulado"
-                                            ) {
-
-                                                nombreEstadoPago =
-                                                    "Anulado";
-
-                                                claseEstadoPago =
-                                                    "unit-status-inactivo";
-
-                                            }
-
-
-                                            let nombreOrigenPago =
-                                                pago.origen;
-
-
-                                            if (
-                                                pago.origen ===
-                                                "cliente"
-                                            ) {
-
-                                                nombreOrigenPago =
-                                                    "Cliente";
-
-                                            }
-
-
-                                            if (
-                                                pago.origen ===
-                                                "panel"
-                                            ) {
-
-                                                nombreOrigenPago =
-                                                    "Panel";
-
-                                            }
-
-
-                                            if (
-                                                pago.origen ===
-                                                "pasarela"
-                                            ) {
-
-                                                nombreOrigenPago =
-                                                    "Pasarela";
-
-                                            }
-
-                                        %>
-
-
-                                        <tr>
-
-
-                                            <td>
-
-                                                <strong>
-                                                    <%= pago.metodo_nombre %>
-                                                </strong>
-
-                                                <br>
-
-                                                <small>
-                                                    <%= pago.metodo_tipo %>
-                                                </small>
-
-                                            </td>
-
-
-                                            <td>
-
-                                                <strong>
-
-                                                    <%= pago.moneda %>$<%= moneda(
-                                                        pago.monto
-                                                    ) %>
-
-                                                </strong>
-
-                                            </td>
-
-
-                                            <td>
-
-                                                <%= pago.referencia || "—" %>
-
-                                            </td>
-
-
-                                            <td>
-
-                                                <%= fechaSegura(
-                                                    pago.fecha_pago
-                                                ) %>
-
-                                            </td>
-
-
-                                            <td>
-
-    <% if (pago.comprobante_ruta) { %>
-
-        <strong>
-            Comprobante registrado
-        </strong>
-
-
-        <% if (pago.comprobante_nombre_original) { %>
-
-            <br>
-
-            <small>
-                <%= pago.comprobante_nombre_original %>
-            </small>
-
-        <% } %>
-
-
-        <% if (puedeValidarPagos) { %>
-
-            <br>
-            <br>
-
-            <a
-                href="/panel/pagos/<%= pago.id %>/comprobante"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="panel-secondary-button"
-            >
-
-                <i class="fa-solid fa-eye"></i>
-
-                Ver comprobante
-
-            </a>
-
-        <% } %>
-
-    <% } else { %>
-
-        —
-
-    <% } %>
-
-</td>
-
-
-                                            <td>
-
-                                                <%= nombreOrigenPago %>
-
-                                            </td>
-
-
-                                            <td>
-
-                                                <span
-                                                    class="unit-status <%= claseEstadoPago %>"
-                                                >
-
-                                                    <%= nombreEstadoPago %>
-
-                                                </span>
-
-                                            </td>
-
-                                           <td>
-
-
-    <% if (
-    pago.estado === "pendiente_validacion" &&
-    puedeValidarPagos
-) { %>
-
-
-        <div class="panel-action-group">
-
-
-            <!-- =================================
-                 CONFIRMAR PAGO
-            ================================== -->
-
-            <form
-                action="/panel/pagos/<%= pago.id %>/confirmar"
-                method="POST"
-                onsubmit="return confirm('¿Confirmar este pago de <%= pago.moneda %>$<%= moneda(pago.monto) %>? Esta acción registrará el pago como validado.');"
-            >
-
-                <button
-                    type="submit"
-                    class="panel-secondary-button"
-                >
-
-                    <i class="fa-solid fa-circle-check"></i>
-
-                    Confirmar
-
-                </button>
-
-            </form>
-
-
-            <!-- =================================
-                 RECHAZAR PAGO
-            ================================== -->
-
-            <form
-                action="/panel/pagos/<%= pago.id %>/rechazar"
-                method="POST"
-            >
-
-                <textarea
-                    name="motivo"
-                    required
-                    minlength="3"
-                    maxlength="500"
-                    rows="2"
-                    placeholder="Motivo del rechazo"
-                ></textarea>
-
-
-                <button
-                    type="submit"
-                    class="panel-secondary-button"
-                    onclick="return confirm('¿Seguro que deseas rechazar este comprobante de pago?');"
-                >
-
-                    <i class="fa-solid fa-circle-xmark"></i>
-
-                    Rechazar
-
-                </button>
-
-            </form>
+            </div>
 
 
         </div>
 
 
-    <% } else if (
-    pago.estado === "pendiente_validacion" &&
-    !puedeValidarPagos
+    </details>
+
+
+
+
+
+    <!-- =================================
+         ALQUILER
+    ================================== -->
+
+    <details class="reservation-compact-details">
+
+
+        <summary>
+
+
+            <span>
+
+                <i class="fa-solid fa-car-side"></i>
+
+                Detalles del alquiler
+
+            </span>
+
+
+            <i class="fa-solid fa-chevron-down"></i>
+
+
+        </summary>
+
+
+
+        <div class="reservation-compact-details-body">
+
+
+            <div class="reservation-compact-data-grid">
+
+
+                <div>
+
+                    <strong>
+                        Modelo
+                    </strong>
+
+                    <span>
+
+                        <%= reservacion.modelo_marca %>
+                        <%= reservacion.modelo_nombre %>
+
+                    </span>
+
+                </div>
+
+
+
+                <div>
+
+                    <strong>
+                        Cantidad
+                    </strong>
+
+                    <span>
+                        <%= reservacion.cantidad_vehiculos %>
+                    </span>
+
+                </div>
+
+
+
+                <div>
+
+                    <strong>
+                        Precio diario
+                    </strong>
+
+                    <span>
+
+                        US$<%= moneda(
+                            resumenPago.precioDiario
+                        ) %>
+
+                    </span>
+
+                </div>
+
+
+
+                <div>
+
+                    <strong>
+                        Fecha de recogida
+                    </strong>
+
+                    <span>
+
+                        <%= fechaSegura(
+                            reservacion.fecha_recogida
+                        ) %>
+
+                        ·
+
+                        <%= reservacion.hora_recogida || "—" %>
+
+                    </span>
+
+                </div>
+
+
+
+                <div>
+
+                    <strong>
+                        Lugar de recogida
+                    </strong>
+
+                    <span>
+                        <%= reservacion.lugar_recogida || "No registrado" %>
+                    </span>
+
+                </div>
+
+
+
+                <div>
+
+                    <strong>
+                        Fecha de entrega
+                    </strong>
+
+                    <span>
+
+                        <%= fechaSegura(
+                            reservacion.fecha_entrega
+                        ) %>
+
+                        ·
+
+                        <%= reservacion.hora_entrega || "—" %>
+
+                    </span>
+
+                </div>
+
+
+
+                <div>
+
+                    <strong>
+                        Lugar de entrega
+                    </strong>
+
+                    <span>
+                        <%= reservacion.lugar_entrega || "No registrado" %>
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </details>
+
+
+    <!-- =================================
+         UNIDADES FÍSICAS
+    ================================== -->
+
+    <details class="reservation-compact-details">
+
+
+        <summary>
+
+
+            <span>
+
+                <i class="fa-solid fa-car-rear"></i>
+
+                Unidades físicas
+
+            </span>
+
+
+            <small>
+
+                <%= unidadesReservacion.cantidadAsignada %>/<%= unidadesReservacion.cantidadSolicitada %>
+                asignadas
+
+            </small>
+
+
+            <i class="fa-solid fa-chevron-down"></i>
+
+
+        </summary>
+
+
+
+        <div class="reservation-compact-details-body">
+
+
+            <div class="reservation-compact-data-grid">
+
+
+                <div>
+
+                    <strong>
+                        Solicitadas
+                    </strong>
+
+                    <span>
+                        <%= unidadesReservacion.cantidadSolicitada %>
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Asignadas
+                    </strong>
+
+                    <span>
+                        <%= unidadesReservacion.cantidadAsignada %>
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Pendientes
+                    </strong>
+
+                    <span>
+                        <%= unidadesReservacion.cantidadPendiente %>
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+
+            <% if (
+                unidadesReservacion.unidadesAsignadas.length
+            ) { %>
+
+
+                <div class="reservation-compact-services">
+
+
+                    <% unidadesReservacion.unidadesAsignadas.forEach(
+                        (unidad) => {
+                    %>
+
+
+                        <div class="reservation-compact-service-row">
+
+
+                            <div>
+
+                                <strong>
+                                    <%= unidad.codigo_interno %>
+                                </strong>
+
+                                <span>
+
+                                    <%= unidad.placa || "Sin placa" %>
+
+                                    ·
+
+                                    <%= unidad.sucursal_nombre || "Sin sucursal" %>
+
+                                </span>
+
+                            </div>
+
+
+                            <strong>
+                                Asignada
+                            </strong>
+
+
+                        </div>
+
+
+                    <% }); %>
+
+
+                </div>
+
+
+            <% } else { %>
+
+
+                <p class="reservation-compact-empty">
+
+                    Esta reservación todavía no tiene
+                    unidades físicas asignadas.
+
+                </p>
+
+
+            <% } %>
+
+
+
+            <% if (
+                unidadesReservacion.puedeAsignar
+            ) { %>
+
+
+                <p class="reservation-compact-comment">
+
+                    Unidades disponibles para asignar
+                    en este período:
+
+                </p>
+
+
+
+                <% if (
+    unidadesReservacion.unidadesCandidatas.length
 ) { %>
 
 
-    <div>
+    <div class="reservation-compact-services">
 
-        <strong>
-            Pendiente de revisión
-        </strong>
 
-        <br>
+        <% unidadesReservacion.unidadesCandidatas.forEach(
+            (unidad) => {
+        %>
 
-        <small>
-            La validación debe ser realizada
-            por un administrador de la agencia.
-        </small>
+
+            <div class="reservation-compact-service-row">
+
+
+                <div>
+
+                    <strong>
+                        <%= unidad.codigo_interno %>
+                    </strong>
+
+                    <span>
+
+                        <%= unidad.placa || "Sin placa" %>
+
+                        ·
+
+                        <%= unidad.sucursal_nombre || "Sin sucursal" %>
+
+                    </span>
+
+                </div>
+
+
+                <% if (puedeGestionarUnidades) { %>
+
+
+                    <form
+                        method="POST"
+                        action="/panel/reservaciones/<%= reservacion.id %>/unidades/asignar"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="vehiculoId"
+                            value="<%= unidad.id %>"
+                        >
+
+
+                        <button
+                            type="submit"
+                            class="reservation-compact-button reservation-compact-approve"
+                        >
+
+                            <i class="fa-solid fa-car-side"></i>
+
+                            Asignar
+
+                        </button>
+
+                    </form>
+
+
+                <% } else { %>
+
+
+                    <strong>
+                        Disponible
+                    </strong>
+
+
+                <% } %>
+
+
+            </div>
+
+
+        <% }); %>
+
 
     </div>
 
 
-<% } else if (pago.estado === "confirmado") { %>
+                <% } else { %>
 
 
-        <div>
+                    <p class="reservation-compact-empty">
 
-            <strong>
-                Pago validado
-            </strong>
+                        No hay unidades compatibles
+                        disponibles para este período.
+
+                    </p>
 
 
-            <% if (pago.fecha_validacion) { %>
+                <% } %>
 
-                <br>
 
-                <small>
+            <% } else if (
+                reservacion.estado === "confirmada"
+            ) { %>
 
-                    Validado:
-                    <%= fechaSegura(
-                        pago.fecha_validacion
-                    ) %>
 
-                </small>
+                <p class="reservation-compact-empty">
+
+                    La cantidad solicitada ya está
+                    completamente asignada.
+
+                </p>
+
+
+            <% } else { %>
+
+
+                <p class="reservation-compact-empty">
+
+                    Las unidades físicas podrán asignarse
+                    cuando la reservación esté confirmada.
+
+                </p>
+
 
             <% } %>
 
+
+                </div>
+
+
+    </details>
+
+
+    <% if (puedeEntregarVehiculo) { %>
+
+
+        <div class="reservation-compact-action">
+
+
+            <form
+                method="POST"
+                action="/panel/reservaciones/<%= reservacion.id %>/entregar"
+                onsubmit="return confirm('¿Confirmas que el vehículo fue entregado al cliente? La reservación pasará a alquiler en curso.');"
+            >
+
+
+                <button
+                    type="submit"
+                    class="reservation-compact-button reservation-compact-approve"
+                >
+
+                    <i class="fa-solid fa-car-side"></i>
+
+                    Entregar vehículo
+
+                </button>
+
+
+            </form>
+
+
         </div>
 
-
-    <% } else if (pago.estado === "rechazado") { %>
-
-
-        <div>
-
-            <strong>
-                Pago rechazado
-            </strong>
-
-
-            <% if (pago.motivo_rechazo) { %>
-
-                <br>
-
-                <small>
-                    <%= pago.motivo_rechazo %>
-                </small>
-
-            <% } %>
-
-        </div>
-
-
-    <% } else { %>
-
-
-        —
 
     <% } %>
 
-
-</td> 
-
-
-                                        </tr>
+    <% if (puedeRegistrarDevolucion) { %>
 
 
-                                    <% }); %>
+    <div class="reservation-compact-action">
 
 
-                                </tbody>
+        <form
+            method="POST"
+            action="/panel/reservaciones/<%= reservacion.id %>/devolver"
+            onsubmit="return confirm('¿Confirmas que el cliente devolvió el vehículo? La reservación será finalizada y la unidad volverá a estar disponible.');"
+        >
 
 
-                            </table>
+            <button
+                type="submit"
+                class="reservation-compact-button reservation-compact-approve"
+            >
+
+                <i class="fa-solid fa-arrow-rotate-left"></i>
+
+                Registrar devolución
+
+            </button>
 
 
-                        </div>
+        </form>
 
 
-                    <% } else { %>
+    </div>
 
 
-                        <div class="catalog-empty">
+<% } %>
+
+
+    <!-- =================================
+         SERVICIOS ADICIONALES
+    ================================== -->
+
+    <details class="reservation-compact-details">
+
+
+        <summary>
+
+
+            <span>
+
+                <i class="fa-solid fa-puzzle-piece"></i>
+
+                Servicios adicionales
+
+            </span>
+
+
+            <small>
+                <%= adicionales.length %>
+            </small>
+
+
+            <i class="fa-solid fa-chevron-down"></i>
+
+
+        </summary>
+
+
+
+        <div class="reservation-compact-details-body">
+
+
+            <% if (adicionales.length) { %>
+
+
+                <div class="reservation-compact-services">
+
+
+                    <% adicionales.forEach((adicional) => { %>
+
+
+                        <div class="reservation-compact-service-row">
+
 
                             <div>
 
-                                <i class="fa-solid fa-money-check-dollar"></i>
+                                <strong>
+                                    <%= adicional.nombre %>
+                                </strong>
+
+
+                                <span>
+
+                                    US$<%= moneda(
+                                        adicional.precio_diario
+                                    ) %>
+                                    / día
+
+                                    ·
+
+                                    <%= adicional.cantidad_vehiculos %>
+                                    vehículo(s)
+
+                                    ·
+
+                                    <%= adicional.dias %>
+                                    día(s)
+
+                                </span>
 
                             </div>
 
 
-                            <h3>
-                                No hay pagos registrados
-                            </h3>
+                            <strong>
 
+                                US$<%= moneda(
+                                    adicional.costo_total
+                                ) %>
 
-                            <p>
+                            </strong>
 
-                                Esta reservación todavía
-                                no tiene pagos asociados.
-
-                            </p>
 
                         </div>
 
 
-                    <% } %>
+                    <% }); %>
 
 
-                </section>
+                </div>
 
 
-                <!-- =====================================
-                     RESUMEN ECONÓMICO
-                ====================================== -->
-
-                <section class="panel-units-card">
+            <% } else { %>
 
 
-                    <div class="panel-units-header">
+                <p class="reservation-compact-empty">
 
-                        <div>
+                    Esta reservación no incluye
+                    servicios adicionales.
 
-                            <span>
-                                Facturación
-                            </span>
-
-                            <h3>
-                                Resumen económico
-                            </h3>
-
-                            <p>
-                                Importes calculados y almacenados
-                                por el servidor al crear la reserva.
-                            </p>
-
-                        </div>
-
-                    </div>
+                </p>
 
 
-                    <div class="panel-units-table-wrapper">
-
-                        <table class="panel-units-table">
-
-                            <tbody>
+            <% } %>
 
 
-                                <tr>
+        </div>
 
-                                    <th>
-                                        Subtotal
-                                    </th>
 
-                                    <td>
+    </details>
 
-                                        US$<%= moneda(
-                                            resumenPago.subtotal
+
+
+
+
+    <!-- =================================
+         PAGOS
+    ================================== -->
+
+    <details
+        class="reservation-compact-details"
+        <%= pagosPendientesValidacion.length > 0
+            ? "open"
+            : ""
+        %>
+    >
+
+
+        <summary>
+
+
+            <span>
+
+                <i class="fa-solid fa-money-check-dollar"></i>
+
+                Pagos de la reservación
+
+            </span>
+
+
+            <small>
+                <%= pagosSeguros.length %>
+            </small>
+
+
+            <i class="fa-solid fa-chevron-down"></i>
+
+
+        </summary>
+
+
+
+        <div class="reservation-compact-details-body">
+
+
+            <% if (pagosSeguros.length) { %>
+
+
+                <div class="reservation-compact-payments">
+
+
+                    <% pagosSeguros.forEach((pago) => { %>
+
+
+                        <%
+
+                            let nombreEstadoPago =
+                                pago.estado;
+
+
+                            let claseEstadoPago =
+                                "unit-status-reservado";
+
+
+                            let nombreOrigenPago =
+                                pago.origen;
+
+
+                            if (
+                                pago.estado ===
+                                "pendiente_validacion"
+                            ) {
+
+                                nombreEstadoPago =
+                                    "Pendiente de validación";
+
+                            }
+
+
+                            if (
+                                pago.estado ===
+                                "confirmado"
+                            ) {
+
+                                nombreEstadoPago =
+                                    "Confirmado";
+
+                                claseEstadoPago =
+                                    "unit-status-disponible";
+
+                            }
+
+
+                            if (
+                                pago.estado ===
+                                "rechazado"
+                            ) {
+
+                                nombreEstadoPago =
+                                    "Rechazado";
+
+                                claseEstadoPago =
+                                    "unit-status-inactivo";
+
+                            }
+
+
+                            if (
+                                pago.estado ===
+                                "anulado"
+                            ) {
+
+                                nombreEstadoPago =
+                                    "Anulado";
+
+                                claseEstadoPago =
+                                    "unit-status-inactivo";
+
+                            }
+
+
+                            if (
+                                pago.origen ===
+                                "cliente"
+                            ) {
+
+                                nombreOrigenPago =
+                                    "Cliente";
+
+                            }
+
+
+                            if (
+                                pago.origen ===
+                                "panel"
+                            ) {
+
+                                nombreOrigenPago =
+                                    "Panel";
+
+                            }
+
+
+                            if (
+                                pago.origen ===
+                                "pasarela"
+                            ) {
+
+                                nombreOrigenPago =
+                                    "Pasarela";
+
+                            }
+
+                        %>
+
+
+
+                        <article class="reservation-compact-payment-row">
+
+
+                            <div class="reservation-compact-payment-main">
+
+
+                                <div>
+
+
+                                    <strong>
+                                        <%= pago.metodo_nombre %>
+                                    </strong>
+
+
+                                    <span>
+
+                                        <%= pago.moneda %>$<%= moneda(
+                                            pago.monto
                                         ) %>
 
-                                    </td>
+                                        ·
 
-                                </tr>
-
-
-                                <tr>
-
-                                    <th>
-                                        Servicios adicionales
-                                    </th>
-
-                                    <td>
-
-                                        US$<%= moneda(
-                                            resumenPago.adicionales
+                                        <%= fechaSegura(
+                                            pago.fecha_pago
                                         ) %>
 
-                                    </td>
-
-                                </tr>
+                                    </span>
 
 
-                                <tr>
-
-                                    <th>
-                                        Descuento
-                                    </th>
-
-                                    <td>
-
-                                        - US$<%= moneda(
-                                            resumenPago.descuento
-                                        ) %>
-
-                                    </td>
-
-                                </tr>
+                                </div>
 
 
-                                <tr>
+                                <span
+                                    class="unit-status <%= claseEstadoPago %>"
+                                >
 
-                                    <th>
-                                        Código promocional
-                                    </th>
+                                    <%= nombreEstadoPago %>
 
-                                    <td>
-
-                                        <%= reservacion.codigo_promocional || "No aplicado" %>
-
-                                    </td>
-
-                                </tr>
+                                </span>
 
 
-                                <tr>
-
-                                    <th>
-                                        Total
-                                    </th>
-
-                                    <td>
-
-                                        <strong>
-
-                                            US$<%= moneda(
-                                                resumenPago.total
-                                            ) %>
-
-                                        </strong>
-
-                                    </td>
-
-                                </tr>
+                            </div>
 
 
-                            </tbody>
 
-                        </table>
-
-                    </div>
-
-                </section>
+                            <div class="reservation-compact-payment-meta">
 
 
-                <!-- =====================================
-                     OBSERVACIONES
-                ====================================== -->
+                                <div>
 
-                <section class="panel-units-card">
+                                    <strong>
+                                        Referencia
+                                    </strong>
 
+                                    <span>
+                                        <%= pago.referencia || "No registrada" %>
+                                    </span>
 
-                    <div class="panel-units-header">
-
-                        <div>
-
-                            <span>
-                                Información adicional
-                            </span>
-
-                            <h3>
-                                Comentarios
-                            </h3>
-
-                        </div>
-
-                    </div>
+                                </div>
 
 
-                    <div class="catalog-empty">
+                                <div>
 
-                        <p>
+                                    <strong>
+                                        Origen
+                                    </strong>
 
-                            <%= reservacion.comentarios
-                                || "El cliente no agregó comentarios a esta reservación." %>
+                                    <span>
+                                        <%= nombreOrigenPago %>
+                                    </span>
 
-                        </p>
-
-                    </div>
+                                </div>
 
 
-                </section>
+                                <div>
 
+                                    <strong>
+                                        Tipo
+                                    </strong>
+
+                                    <span>
+                                        <%= pago.metodo_tipo || "No especificado" %>
+                                    </span>
+
+                                </div>
+
+
+                            </div>
+
+
+
+                            <% if (
+                                pago.comprobante_ruta
+                            ) { %>
+
+
+                                <div class="reservation-compact-proof">
+
+
+                                    <div>
+
+                                        <i class="fa-solid fa-file-invoice"></i>
+
+
+                                        <span>
+
+                                            <%= pago.comprobante_nombre_original
+                                                || "Comprobante registrado"
+                                            %>
+
+                                        </span>
+
+                                    </div>
+
+
+
+                                    <% if (
+                                        puedeValidarPagos
+                                    ) { %>
+
+
+                                        <a
+                                            href="/panel/pagos/<%= pago.id %>/comprobante"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="panel-secondary-button"
+                                        >
+
+                                            <i class="fa-solid fa-eye"></i>
+
+                                            Ver comprobante
+
+                                        </a>
+
+
+                                    <% } %>
+
+
+                                </div>
+
+
+                            <% } %>
+
+
+
+                            <% if (
+                                pago.estado === "pendiente_validacion" &&
+                                puedeValidarPagos
+                            ) { %>
+
+
+                                <div class="reservation-compact-payment-actions">
+
+
+                                    <form
+                                        action="/panel/pagos/<%= pago.id %>/confirmar"
+                                        method="POST"
+                                    >
+
+
+                                        <button
+                                            type="submit"
+                                            class="reservation-compact-button reservation-compact-approve"
+                                            onclick="return confirm('¿Confirmar este pago de <%= pago.moneda %>$<%= moneda(pago.monto) %>? Esta acción registrará el pago como validado.');"
+                                        >
+
+                                            <i class="fa-solid fa-circle-check"></i>
+
+                                            Confirmar pago
+
+                                        </button>
+
+
+                                    </form>
+
+
+
+                                    <details class="reservation-payment-reject-details">
+
+
+                                        <summary>
+
+                                            <i class="fa-solid fa-circle-xmark"></i>
+
+                                            Rechazar pago
+
+                                        </summary>
+
+
+
+                                        <form
+                                            action="/panel/pagos/<%= pago.id %>/rechazar"
+                                            method="POST"
+                                        >
+
+
+                                            <label>
+
+                                                Motivo del rechazo
+
+                                                <textarea
+                                                    name="motivo"
+                                                    required
+                                                    minlength="3"
+                                                    maxlength="500"
+                                                    rows="2"
+                                                    placeholder="Escribe el motivo del rechazo"
+                                                ></textarea>
+
+                                            </label>
+
+
+                                            <button
+                                                type="submit"
+                                                class="reservation-compact-button reservation-compact-reject"
+                                                onclick="return confirm('¿Seguro que deseas rechazar este comprobante de pago?');"
+                                            >
+
+                                                Confirmar rechazo
+
+                                            </button>
+
+
+                                        </form>
+
+
+                                    </details>
+
+
+                                </div>
+
+
+                            <% } else if (
+                                pago.estado === "pendiente_validacion" &&
+                                !puedeValidarPagos
+                            ) { %>
+
+
+                                <div class="reservation-compact-payment-note">
+
+
+                                    <i class="fa-solid fa-clock"></i>
+
+
+                                    <span>
+
+                                        Pendiente de revisión por
+                                        un administrador de la agencia.
+
+                                    </span>
+
+
+                                </div>
+
+
+                            <% } else if (
+                                pago.estado === "rechazado" &&
+                                pago.motivo_rechazo
+                            ) { %>
+
+
+                                <div class="reservation-compact-payment-note rejected">
+
+
+                                    <i class="fa-solid fa-circle-xmark"></i>
+
+
+                                    <span>
+                                        <%= pago.motivo_rechazo %>
+                                    </span>
+
+
+                                </div>
+
+
+                            <% } %>
+
+
+                        </article>
+
+
+                    <% }); %>
+
+
+                </div>
+
+
+            <% } else { %>
+
+
+                <p class="reservation-compact-empty">
+
+                    Esta reservación todavía
+                    no tiene pagos registrados.
+
+                </p>
+
+
+            <% } %>
+
+
+        </div>
+
+
+    </details>
+
+
+
+
+
+    <!-- =================================
+         FACTURACIÓN
+    ================================== -->
+
+    <details class="reservation-compact-details">
+
+
+        <summary>
+
+
+            <span>
+
+                <i class="fa-solid fa-receipt"></i>
+
+                Desglose de facturación
+
+            </span>
+
+
+            <strong>
+
+                US$<%= moneda(
+                    resumenPago.total
+                ) %>
+
+            </strong>
+
+
+            <i class="fa-solid fa-chevron-down"></i>
+
+
+        </summary>
+
+
+
+        <div class="reservation-compact-details-body">
+
+
+            <div class="reservation-compact-billing">
+
+
+                <div>
+
+                    <span>
+                        Subtotal
+                    </span>
+
+                    <strong>
+
+                        US$<%= moneda(
+                            resumenPago.subtotal
+                        ) %>
+
+                    </strong>
+
+                </div>
+
+
+
+                <div>
+
+                    <span>
+                        Servicios adicionales
+                    </span>
+
+                    <strong>
+
+                        US$<%= moneda(
+                            resumenPago.adicionales
+                        ) %>
+
+                    </strong>
+
+                </div>
+
+
+
+                <div>
+
+                    <span>
+                        Descuento
+                    </span>
+
+                    <strong>
+
+                        - US$<%= moneda(
+                            resumenPago.descuento
+                        ) %>
+
+                    </strong>
+
+                </div>
+
+
+
+                <div>
+
+                    <span>
+                        Código promocional
+                    </span>
+
+                    <strong>
+
+                        <%= reservacion.codigo_promocional
+                            || "No aplicado"
+                        %>
+
+                    </strong>
+
+                </div>
+
+
+
+                <div class="reservation-compact-billing-total">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong>
+
+                        US$<%= moneda(
+                            resumenPago.total
+                        ) %>
+
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </details>
+
+
+
+
+
+    <!-- =================================
+         COMENTARIOS
+    ================================== -->
+
+    <details class="reservation-compact-details">
+
+
+        <summary>
+
+
+            <span>
+
+                <i class="fa-regular fa-comment-dots"></i>
+
+                Comentarios del cliente
+
+            </span>
+
+
+            <i class="fa-solid fa-chevron-down"></i>
+
+
+        </summary>
+
+
+
+        <div class="reservation-compact-details-body">
+
+
+            <p class="reservation-compact-comment">
+
+                <%= reservacion.comentarios
+                    || "El cliente no agregó comentarios a esta reservación."
+                %>
+
+            </p>
+
+
+        </div>
+
+
+    </details>
+
+
+</section>
+
+
+        
 
             </main>
 

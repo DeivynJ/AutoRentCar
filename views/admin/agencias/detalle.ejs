@@ -391,331 +391,541 @@
 
 
 
-            <div class="agency-detail-grid">
+           <!-- =====================================
+     INFORMACIÓN DETALLADA DE LA AGENCIA
+====================================== -->
+
+<div class="agency-detail-modern">
+
+
+    <!-- =================================
+         DATOS GENERALES
+    ================================== -->
+
+    <section
+        class="dashboard-panel agency-main-info-panel"
+        data-animate="fade-up"
+    >
+
+
+        <div class="agency-detail-section-header">
+
+
+            <div class="agency-detail-section-title">
+
+
+                <div class="agency-detail-section-icon">
+
+                    <i class="fa-solid fa-building"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h3>
+                        Datos generales
+                    </h3>
+
+                    <p>
+                        Información registrada de la agencia
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
 
 
 
+        <div class="agency-info-columns">
 
 
-                <!-- INFORMACIÓN GENERAL -->
+            <!-- =========================
+                 EMPRESA
+            ========================== -->
+
+            <div class="agency-info-block">
 
 
-                <section class="dashboard-panel">
+                <div class="agency-info-block-header">
+
+                    <i class="fa-regular fa-building"></i>
+
+                    <span>
+                        Empresa
+                    </span>
+
+                </div>
 
 
-                    <div class="panel-header">
+                <div class="agency-info-list">
 
-                        <h3>
-                            Datos generales
-                        </h3>
+
+                    <div class="agency-info-field">
+
+                        <span>
+                            Nombre legal
+                        </span>
+
+                        <strong>
+                            <%= agencia.nombre_legal || "No registrado" %>
+                        </strong>
 
                     </div>
 
 
+                    <div class="agency-info-field">
 
-                    <div class="detail-list">
+                        <span>
+                            Identificación fiscal
+                        </span>
 
+                        <strong>
+                            <%= agencia.identificacion_fiscal || "No registrada" %>
+                        </strong>
 
-    <div>
-
-        <span>
-            Nombre legal
-        </span>
-
-        <strong>
-            <%= agencia.nombre_legal || "No registrado" %>
-        </strong>
-
-    </div>
+                    </div>
 
 
-    <div>
-
-        <span>
-            Identificación fiscal
-        </span>
-
-        <strong>
-            <%= agencia.identificacion_fiscal || "No registrada" %>
-        </strong>
-
-    </div>
+                </div>
 
 
-    <div>
+            </div>
 
-        <span>
-            Correo
-        </span>
+            <!-- =========================
+                 CONTACTO
+            ========================== -->
 
-        <strong>
-            <%= agencia.correo || "No registrado" %>
-        </strong>
-
-    </div>
+            <div class="agency-info-block">
 
 
-    <div>
+                <div class="agency-info-block-header">
 
-        <span>
-            Teléfono
-        </span>
+                    <i class="fa-regular fa-address-card"></i>
 
-        <strong>
-            <%= agencia.telefono || "No registrado" %>
-        </strong>
+                    <span>
+                        Contacto
+                    </span>
 
-    </div>
+                </div>
 
 
-    <div>
-
-        <span>
-            WhatsApp
-        </span>
-
-        <strong>
-            <%= agencia.whatsapp || "No registrado" %>
-        </strong>
-
-    </div>
+                <div class="agency-info-list">
 
 
-    <div>
+                    <div class="agency-info-field">
 
-        <span>
-            Dirección
-        </span>
+                        <span>
+                            Correo electrónico
+                        </span>
 
-        <strong>
-            <%= agencia.direccion || "No registrada" %>
-        </strong>
+                        <strong>
+                            <%= agencia.correo || "No registrado" %>
+                        </strong>
 
-    </div>
-
-
-    <div>
-
-        <span>
-            Ciudad
-        </span>
-
-        <strong>
-            <%= agencia.ciudad || "No registrada" %>
-        </strong>
-
-    </div>
+                    </div>
 
 
-    <div>
+                    <div class="agency-info-field">
 
-        <span>
-            Provincia
-        </span>
+                        <span>
+                            Teléfono
+                        </span>
 
-        <strong>
-            <%= agencia.provincia || "No registrada" %>
-        </strong>
+                        <strong>
+                            <%= agencia.telefono || "No registrado" %>
+                        </strong>
 
-    </div>
+                    </div>
 
 
-    <div>
+                    <div class="agency-info-field">
 
-        <span>
-            País
-        </span>
+                        <span>
+                            WhatsApp
+                        </span>
 
-        <strong>
-            <%= agencia.pais || "No registrado" %>
-        </strong>
+                        <strong>
+                            <%= agencia.whatsapp || "No registrado" %>
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+
+            <!-- =========================
+                 UBICACIÓN
+            ========================== -->
+
+            <div class="agency-info-block">
+
+
+                <div class="agency-info-block-header">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                    <span>
+                        Ubicación
+                    </span>
+
+                </div>
+
+
+                <div class="agency-info-list">
+
+
+                    <div class="agency-info-field">
+
+                        <span>
+                            Dirección
+                        </span>
+
+                        <strong>
+                            <%= agencia.direccion || "No registrada" %>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="agency-info-field agency-info-field-pair">
+
+
+                        <div>
+
+                            <span>
+                                Ciudad
+                            </span>
+
+                            <strong>
+                                <%= agencia.ciudad || "No registrada" %>
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Provincia
+                            </span>
+
+                            <strong>
+                                <%= agencia.provincia || "No registrada" %>
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="agency-info-field">
+
+                        <span>
+                            País
+                        </span>
+
+                        <strong>
+                            <%= agencia.pais || "No registrado" %>
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+
+
+    <!-- =================================
+         FILA INFERIOR
+    ================================== -->
+
+    <div class="agency-detail-bottom-grid">
+
+
+        <!-- =================================
+             IDENTIDAD VISUAL
+        ================================== -->
+
+        <section
+            class="dashboard-panel agency-detail-card"
+            data-animate="fade-up"
+        >
+
+
+            <div class="agency-detail-section-header">
+
+
+                <div class="agency-detail-section-title">
+
+
+                    <div class="agency-detail-section-icon">
+
+                        <i class="fa-solid fa-palette"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h3>
+                            Identidad visual
+                        </h3>
+
+                        <p>
+                            Colores configurados para la agencia
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="agency-colors-modern">
+
+
+                <div class="agency-color-modern">
+
+
+                    <span class="agency-color-modern-label">
+                        Color principal
+                    </span>
+
+
+                    <div class="agency-color-modern-value">
+
+
+                        <span
+                            class="color-box"
+                            data-color="<%= agencia.color_primario || '#0b1f3a' %>"
+                        ></span>
+
+
+                        <div>
+
+                            <small>
+                                HEX
+                            </small>
+
+                            <strong>
+                                <%= agencia.color_primario || "#0b1f3a" %>
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+
+                <div class="agency-color-modern">
+
+
+                    <span class="agency-color-modern-label">
+                        Color secundario
+                    </span>
+
+
+                    <div class="agency-color-modern-value">
+
+
+                        <span
+                            class="color-box"
+                            data-color="<%= agencia.color_secundario || '#ff8a00' %>"
+                        ></span>
+
+
+                        <div>
+
+                            <small>
+                                HEX
+                            </small>
+
+                            <strong>
+                                <%= agencia.color_secundario || "#ff8a00" %>
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+
+
+        <!-- =================================
+             SUSCRIPCIÓN
+        ================================== -->
+
+        <section
+            class="dashboard-panel agency-detail-card"
+            data-animate="fade-up"
+        >
+
+
+            <div class="agency-detail-section-header">
+
+
+                <div class="agency-detail-section-title">
+
+
+                    <div class="agency-detail-section-icon">
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h3>
+                            Suscripción actual
+                        </h3>
+
+                        <p>
+                            Plan asociado a esta agencia
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+                <a
+                    href="/admin/agencias/<%= agencia.id %>/suscripcion"
+                    class="agency-detail-manage-link"
+                >
+
+                    Gestionar
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+
+            </div>
+
+
+
+            <div class="agency-subscription-modern">
+
+
+                <div class="agency-subscription-field">
+
+                    <span>
+                        Plan
+                    </span>
+
+                    <strong>
+                        <%= agencia.plan_nombre || "Sin plan" %>
+                    </strong>
+
+                </div>
+
+
+
+                <div class="agency-subscription-field">
+
+                    <span>
+                        Estado
+                    </span>
+
+                    <strong>
+                        <%= agencia.suscripcion_estado || "Sin suscripción" %>
+                    </strong>
+
+                </div>
+
+
+
+                <div class="agency-subscription-field">
+
+                    <span>
+                        Fecha de inicio
+                    </span>
+
+                    <strong>
+
+                        <%= agencia.fecha_inicio
+                            ? new Date(
+                                agencia.fecha_inicio
+                            ).toLocaleDateString(
+                                "es-DO"
+                            )
+                            : "No disponible"
+                        %>
+
+                    </strong>
+
+                </div>
+
+
+
+                <div class="agency-subscription-field">
+
+                    <span>
+                        Precio acordado
+                    </span>
+
+                    <strong>
+                        USD $<%= agencia.precio_acordado || "0.00" %>
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
 
     </div>
 
 
 </div>
-
-
-                </section>
-
-
-
-
-
-
-<!-- IDENTIDAD VISUAL -->
-
-
-<section class="dashboard-panel">
-
-
-    <div class="panel-header">
-
-        <h3>
-            Identidad visual
-        </h3>
-
-    </div>
-
-
-
-    <div class="visual-identity-card">
-
-
-
-        <!-- COLOR PRINCIPAL -->
-
-        <div class="visual-color-item">
-
-
-            <span>
-                Color principal
-            </span>
-
-
-
-            <div class="color-preview">
-
-
-                <span
-                    class="color-box"
-                    data-color="<%= agencia.color_primario || '#0b1f3a' %>"
-                ></span>
-
-
-
-                <strong>
-                    <%= agencia.color_primario || "#0b1f3a" %>
-                </strong>
-
-
-            </div>
-
-
-        </div>
-
-        <!-- COLOR SECUNDARIO -->
-
-        <div class="visual-color-item">
-
-
-            <span>
-                Color secundario
-            </span>
-
-
-
-            <div class="color-preview">
-
-
-                <span
-                    class="color-box"
-                    data-color="<%= agencia.color_secundario || '#ff8a00' %>"
-                ></span>
-
-
-
-                <strong>
-                    <%= agencia.color_secundario || "#ff8a00" %>
-                </strong>
-
-
-            </div>
-
-
-        </div>
-
-
-
-    </div>
-
-
-</section>
-
-
-            <!-- SUSCRIPCIÓN -->
-
-
-            <section class="dashboard-panel">
-
-
-                <div class="panel-header">
-
-                    <h3>
-                        Suscripción actual
-                    </h3>
-
-                </div>
-
-
-
-
-                <div class="detail-list">
-
-
-                    <div>
-
-                        <span>
-                            Plan
-                        </span>
-
-                        <strong>
-                            <%= agencia.plan_nombre || "Sin plan" %>
-                        </strong>
-
-                    </div>
-
-
-
-                    <div>
-
-                        <span>
-                            Estado
-                        </span>
-
-                        <strong>
-                            <%= agencia.suscripcion_estado || "Sin suscripción" %>
-                        </strong>
-
-                    </div>
-
-
-
-                    <div>
-
-                        <span>
-                            Fecha inicio
-                        </span>
-
-                        <strong>
-                            <%= agencia.fecha_inicio 
-    ? new Date(agencia.fecha_inicio).toLocaleDateString("es-DO")
-    : "No disponible"
-%>
-                        </strong>
-
-                    </div>
-
-
-
-                    <div>
-
-                        <span>
-                            Precio acordado
-                        </span>
-
-                        <strong>
-                            USD $<%= agencia.precio_acordado || "0.00" %>
-                        </strong>
-
-                    </div>
-
-
-
-                </div>
-
-
-            </section>
 
 
 

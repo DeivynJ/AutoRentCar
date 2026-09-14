@@ -36,7 +36,13 @@ const {
 
     confirmarReservacionPanel,
 
-    rechazarReservacionPanel
+    rechazarReservacionPanel,
+
+    asignarUnidadReservacionPanel,
+
+    entregarVehiculoReservacionPanel,
+
+    registrarDevolucionReservacionPanel
 
 } = require(
     "../controllers/panelReservacionController"
@@ -96,7 +102,8 @@ const {
 const {
     requerirGestionCatalogo,
     requerirValidacionPagos,
-    requerirAdministradorAgencia
+    requerirAdministradorAgencia,
+    requerirOperacionReservacion
 } = require(
     "../middleware/permisosPanelMiddleware"
 );
@@ -161,6 +168,36 @@ router.get(
 router.get(
     "/panel/reservaciones/:reservacionId",
     mostrarDetalleReservacionPanel
+);
+
+/* =========================================================
+   ASIGNACIÓN DE UNIDADES FÍSICAS
+========================================================= */
+
+router.post(
+    "/panel/reservaciones/:reservacionId/unidades/asignar",
+    requerirAdministradorAgencia,
+    asignarUnidadReservacionPanel
+);
+
+/* =========================================================
+   ENTREGA DE VEHÍCULO
+========================================================= */
+
+router.post(
+    "/panel/reservaciones/:reservacionId/entregar",
+    requerirOperacionReservacion,
+    entregarVehiculoReservacionPanel
+);
+
+/* =========================================================
+   DEVOLUCIÓN DE VEHÍCULO
+========================================================= */
+
+router.post(
+    "/panel/reservaciones/:reservacionId/devolver",
+    requerirOperacionReservacion,
+    registrarDevolucionReservacionPanel
 );
 
 /* =========================================================

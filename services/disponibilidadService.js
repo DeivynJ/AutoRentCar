@@ -798,16 +798,30 @@ async function obtenerDisponibilidadModelo({
 
                     AND estado IN (
                     
-                    ?,
-                    ?,
-                    ?,
-                    ?
+    ?,
+    ?,
+    ?,
+    ?
                     
-                )
+)
 
-                    AND (
+AND (
 
-                        fecha_recogida < ?
+    estado <> 'pendiente_pago'
+
+    OR (
+
+        fecha_limite_pago IS NOT NULL
+
+        AND fecha_limite_pago > NOW()
+
+    )
+
+)
+
+AND (
+
+    fecha_recogida < ?
 
                         OR (
 

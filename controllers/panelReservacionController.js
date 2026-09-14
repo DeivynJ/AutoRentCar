@@ -16,6 +16,21 @@ const {
     "../services/panelReservacionService"
 );
 
+const {
+
+    asignarUnidadFisicaReservacion,
+
+    obtenerUnidadesFisicasReservacion
+
+} = require(
+    "../services/panelReservacionVehiculoService"
+);
+
+const {
+    entregarVehiculoReservacion,
+    registrarDevolucionReservacion
+} = require("../services/pane10peracionReservacionService");
+
 
 /* =========================================================
    MOSTRAR RESERVACIONES DE LA AGENCIA AUTENTICADA
@@ -243,6 +258,21 @@ confirmadas:
                     r.cliente_telefono,
 
                     r.total,
+
+                    r.monto_anticipo_requerido,
+
+                    (
+                        SELECT
+                            COUNT(*)
+
+                        FROM reservacion_vehiculos rv
+
+                        WHERE
+                            rv.reservacion_id = r.id
+
+                            AND rv.estado = 'asignado'
+
+                    ) AS unidades_asignadas,
 
                     r.estado,
                     r.origen,
@@ -725,6 +755,21 @@ const pagos =
 
 
         /* =================================================
+           UNIDADES FÍSICAS DE LA RESERVACIÓN
+        ================================================= */
+
+        const unidadesReservacion =
+            await obtenerUnidadesFisicasReservacion({
+
+                agenciaId,
+
+                reservacionId:
+                    reservacion.id
+
+            });
+
+
+        /* =================================================
            RENDER
 
            La vista se creará en el siguiente bloque.
@@ -762,6 +807,8 @@ const pagos =
         pagos,
 
         resumenPago,
+
+        unidadesReservacion,
 
         queryResultado:
             req.query?.resultado ||
@@ -999,6 +1046,466 @@ async function rechazarReservacionPanel(
 }
 
 /* =========================================================
+   ASIGNAR UNIDAD FÍSICA A RESERVACIÓN
+========================================================= */
+
+async function asignarUnidadReservacionPanel(
+    req,
+    res
+) {
+
+    try {
+
+        const agenciaId =
+            Number(
+                req.agencia?.id
+            );
+
+
+        const reservacionId =
+            Number(
+                req.params?.reservacionId
+            );
+
+
+        const vehiculoId =
+            Number(
+                req.body?.vehiculoId
+            );
+
+
+        /* =================================================
+           VALIDACIONES BÁSICAS
+        ================================================= */
+
+        if (
+            !Number.isInteger(
+                agenciaId
+            ) ||
+            agenciaId <= 0
+        ) {
+
+            return res
+                .status(403)
+                .send(
+                    "No fue posible identificar la agencia del usuario."
+                );
+
+        }
+
+
+        if (
+            !Number.isInteger(
+                reservacionId
+            ) ||
+            reservacionId <= 0
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "Reservación no encontrada."
+                );
+
+        }
+
+
+        if (
+            !Number.isInteger(
+                vehiculoId
+            ) ||
+            vehiculoId <= 0
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${reservacionId}?error=unidad_invalida`
+            );
+
+        }
+
+
+        /* =================================================
+           ASIGNACIÓN SEGURA
+
+           El service vuelve a comprobar:
+           - agencia;
+           - reservación;
+           - modelo;
+           - estado;
+           - cantidad;
+           - disponibilidad temporal.
+        ================================================= */
+
+        const resultado =
+            await asignarUnidadFisicaReservacion({
+
+                agenciaId,
+
+                reservacionId,
+
+                vehiculoId
+
+            });
+
+
+        return res.redirect(
+            `/panel/reservaciones/${resultado.reservacionId}?resultado=unidad_asignada`
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error asignando unidad física a reservación:",
+            error
+        );
+
+
+        const reservacionId =
+            Number(
+                req.params?.reservacionId
+            );
+
+
+        if (
+            !Number.isInteger(
+                reservacionId
+            ) ||
+            reservacionId <= 0
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "Reservación no encontrada."
+                );
+
+        }
+
+
+        if (
+            error.codigo ===
+            "RESERVACION_NO_ENCONTRADA"
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "Reservación no encontrada."
+                );
+
+        }
+
+
+        if (
+            error.codigo ===
+            "RESERVACION_NO_CONFIRMADA"
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${reservacionId}?error=unidad_estado`
+            );
+
+        }
+
+
+        if (
+            error.codigo ===
+            "CANTIDAD_COMPLETA"
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${reservacionId}?error=unidades_completas`
+            );
+
+        }
+
+
+        if (
+            error.codigo ===
+                "VEHICULO_NO_ENCONTRADO" ||
+            error.codigo ===
+                "MODELO_NO_COINCIDE" ||
+            error.codigo ===
+                "VEHICULO_NO_OPERATIVO" ||
+            error.codigo ===
+                "VEHICULO_YA_ASIGNADO"
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${reservacionId}?error=unidad_invalida`
+            );
+
+        }
+
+
+        if (
+            error.codigo ===
+            "VEHICULO_OCUPADO"
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${reservacionId}?error=unidad_ocupada`
+            );
+
+        }
+
+
+        if (
+            error.codigo ===
+            "ID_INVALIDO"
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${reservacionId}?error=unidad_invalida`
+            );
+
+        }
+
+
+        return res.redirect(
+            `/panel/reservaciones/${reservacionId}?error=asignar_unidad`
+        );
+
+    }
+
+}
+
+
+async function entregarVehiculoReservacionPanel(req, res) {
+
+    const agenciaId =
+        Number(req.agencia?.id);
+
+    const reservacionId =
+        Number(req.params?.reservacionId);
+
+
+    if (
+        !Number.isInteger(agenciaId) ||
+        agenciaId <= 0 ||
+        !Number.isInteger(reservacionId) ||
+        reservacionId <= 0
+    ) {
+
+        return res.redirect(
+            "/panel/reservaciones?error=entrega_invalida"
+        );
+    }
+
+
+    try {
+
+        const resultado =
+            await entregarVehiculoReservacion({
+                agenciaId,
+                reservacionId
+            });
+
+
+        return res.redirect(
+            `/panel/reservaciones/${resultado.reservacionId}?resultado=vehiculo_entregado`
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error al entregar vehículo:",
+            error
+        );
+
+
+        if (
+            error.codigo ===
+            "RESERVACION_NO_ENCONTRADA"
+        ) {
+
+            return res.status(404).redirect(
+                "/panel/reservaciones?error=reservacion_no_encontrada"
+            );
+        }
+
+
+        if (
+            error.codigo ===
+            "RESERVACION_NO_CONFIRMADA"
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${reservacionId}?error=entrega_estado`
+            );
+        }
+
+        if (
+    error.codigo ===
+    "ENTREGA_ANTICIPADA"
+) {
+
+    return res.redirect(
+        `/panel/reservaciones/${reservacionId}?error=entrega_anticipada`
+    );
+}
+
+
+        if (
+            error.codigo ===
+            "UNIDADES_INCOMPLETAS" ||
+            error.codigo ===
+            "SIN_UNIDADES"
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${reservacionId}?error=entrega_unidades`
+            );
+        }
+
+
+        if (
+            error.codigo ===
+            "UNIDAD_OTRA_AGENCIA" ||
+            error.codigo ===
+            "MODELO_NO_COINCIDE" ||
+            error.codigo ===
+            "UNIDAD_NO_DISPONIBLE"
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${reservacionId}?error=entrega_unidad_invalida`
+            );
+        }
+
+
+        if (
+            error.codigo ===
+            "CAMBIO_ESTADO_FALLIDO"
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${reservacionId}?error=entrega_estado`
+            );
+        }
+
+
+        return res.redirect(
+            `/panel/reservaciones/${reservacionId}?error=entregar_vehiculo`
+        );
+    }
+}
+
+
+async function registrarDevolucionReservacionPanel(req, res) {
+
+    const agenciaId =
+        Number(req.agencia?.id);
+
+    const reservacionId =
+        Number(req.params?.reservacionId);
+
+
+    if (
+        !Number.isInteger(agenciaId) ||
+        agenciaId <= 0 ||
+        !Number.isInteger(reservacionId) ||
+        reservacionId <= 0
+    ) {
+
+        return res.redirect(
+            "/panel/reservaciones?error=devolucion_invalida"
+        );
+    }
+
+
+    try {
+
+        const resultado =
+            await registrarDevolucionReservacion({
+                agenciaId,
+                reservacionId
+            });
+
+
+        return res.redirect(
+            `/panel/reservaciones/${resultado.reservacionId}?resultado=vehiculo_devuelto`
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error al registrar devolución:",
+            error
+        );
+
+
+        if (
+            error.codigo ===
+            "RESERVACION_NO_ENCONTRADA"
+        ) {
+
+            return res.status(404).redirect(
+                "/panel/reservaciones?error=reservacion_no_encontrada"
+            );
+        }
+
+
+        if (
+            error.codigo ===
+            "RESERVACION_NO_EN_CURSO"
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${reservacionId}?error=devolucion_estado`
+            );
+        }
+
+
+        if (
+            error.codigo ===
+            "UNIDADES_INCOMPLETAS"
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${reservacionId}?error=devolucion_unidades`
+            );
+        }
+
+
+        if (
+            error.codigo ===
+            "UNIDAD_OTRA_AGENCIA" ||
+            error.codigo ===
+            "MODELO_NO_COINCIDE" ||
+            error.codigo ===
+            "UNIDAD_NO_ALQUILADA"
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${reservacionId}?error=devolucion_unidad_invalida`
+            );
+        }
+
+
+        if (
+            error.codigo ===
+            "CAMBIO_ESTADO_FALLIDO" ||
+            error.codigo ===
+            "DEVOLUCION_UNIDADES_FALLIDA"
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${reservacionId}?error=devolucion_fallida`
+            );
+        }
+
+
+        return res.redirect(
+            `/panel/reservaciones/${reservacionId}?error=registrar_devolucion`
+        );
+    }
+}
+
+/* =========================================================
    EXPORTACIONES
 ========================================================= */
 
@@ -1010,6 +1517,12 @@ module.exports = {
 
     confirmarReservacionPanel,
 
-    rechazarReservacionPanel
+    rechazarReservacionPanel,
+
+    asignarUnidadReservacionPanel,
+
+    entregarVehiculoReservacionPanel,
+
+    registrarDevolucionReservacionPanel
 
 };

@@ -2796,45 +2796,57 @@ function configurarFormularioContacto() {
             return;
         }
 
-        const solicitud = {
-            nombre: nombre.value.trim(),
-            telefono: telefono.value.trim(),
-            correo: correo.value.trim(),
-            asunto: asunto.value,
-            mensaje: mensaje.value.trim(),
-            fecha: new Date().toISOString()
-        };
+        const agencia =
+    agenciaPublicaActual;
 
-        let solicitudesGuardadas = [];
+const contacto =
+    agencia?.contacto ||
+    {};
 
-        try {
-            solicitudesGuardadas = JSON.parse(
-                localStorage.getItem(
-                    "autorentcarContactos"
-                )
-            ) || [];
-        } catch (error) {
-            solicitudesGuardadas = [];
+const whatsapp =
+    String(
+        contacto.whatsapp ||
+        ""
+    ).trim();
 
-            console.error(
-                "No fue posible leer los mensajes guardados.",
-                error
-            );
-        }
+const pais =
+    String(
+        contacto.pais ||
+        ""
+    ).trim();
 
-        solicitudesGuardadas.push(solicitud);
+const numeroWhatsApp =
+    normalizarTelefonoEnlaceAgencia(
+        whatsapp,
+        pais
+    );
 
-        localStorage.setItem(
-            "autorentcarContactos",
-            JSON.stringify(solicitudesGuardadas)
-        );
+if (!numeroWhatsApp) {
+    mostrarNotificacion(
+        "WhatsApp no disponible",
+        "Esta agencia no tiene un número de WhatsApp configurado."
+    );
 
-        mostrarNotificacion(
-            "Mensaje enviado",
-            "Recibimos tu solicitud. Nuestro equipo se comunicará contigo."
-        );
+    return;
+}
 
-        formulario.reset();
+const textoMensaje =
+    [
+        `Hola, soy ${nombre.value.trim()}.`,
+        `Teléfono: ${telefono.value.trim()}`,
+        `Correo: ${correo.value.trim()}`,
+        `Motivo: ${asunto.value}`,
+        "",
+        mensaje.value.trim()
+    ].join("\n");
+
+const enlaceWhatsApp =
+    `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(
+        textoMensaje
+    )}`;
+
+window.location.href =
+    enlaceWhatsApp;
 
         campos.forEach((campo) => {
             const contenedor = campo.closest(
