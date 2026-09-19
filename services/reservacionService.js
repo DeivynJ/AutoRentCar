@@ -17,6 +17,12 @@ const {
     "./disponibilidadService"
 );
 
+const {
+    enviarCorreoSolicitudReservacionRecibida
+} = require(
+    "./correoReservacionService"
+);
+
 
 /* =========================================================
    CONFIGURACIÓN COMERCIAL TEMPORAL
@@ -1411,10 +1417,47 @@ async function crearReservacionWeb({
         ------------------------------------------------- */
 
         await conexion
-            .commit();
+    .commit();
 
 
-        return {
+/* -------------------------------------------------
+   CORREO DE SOLICITUD RECIBIDA
+
+   La reservación ya fue confirmada en MariaDB.
+   Un fallo de correo NO debe cancelar ni revertir
+   una reservación válida.
+------------------------------------------------- */
+
+try {
+
+    await enviarCorreoSolicitudReservacionRecibida({
+
+        agenciaId:
+            agencia.id,
+
+        reservacionId
+
+    });
+
+
+} catch (
+    errorCorreo
+) {
+
+    console.error(
+        "No fue posible enviar el correo de solicitud de reservación recibida:",
+        {
+            reservacionId,
+            codigo,
+            mensaje:
+                errorCorreo.message
+        }
+    );
+
+}
+
+
+return {
 
             id:
                 reservacionId,

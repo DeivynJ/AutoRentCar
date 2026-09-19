@@ -104,6 +104,68 @@
                     }
 
 
+                    function horaSegura(valor) {
+
+    if (!valor) {
+
+        return "—";
+
+    }
+
+
+    const texto =
+        String(valor)
+            .trim()
+            .slice(0, 5);
+
+
+    const partes =
+        texto.split(":");
+
+
+    if (
+        partes.length !== 2
+    ) {
+
+        return texto;
+
+    }
+
+
+    let hora =
+        Number(
+            partes[0]
+        );
+
+
+    const minutos =
+        partes[1];
+
+
+    const periodo =
+        hora >= 12
+            ? "p.m."
+            : "a.m.";
+
+
+    hora =
+        hora % 12;
+
+
+    if (
+        hora === 0
+    ) {
+
+        hora = 12;
+
+    }
+
+
+    return `${hora}:${minutos} ${periodo}`;
+
+}
+
+
                     function moneda(valor) {
 
                         return Number(
@@ -1244,7 +1306,10 @@ const puedeEntregarVehiculo =
 
                     ·
 
-                    <%= reservacion.hora_recogida || "—" %>
+                    <%= horaSegura(
+                        reservacion.hora_recogida
+                        
+                        ) %>
 
                 </span>
 
@@ -1266,7 +1331,10 @@ const puedeEntregarVehiculo =
 
                     ·
 
-                    <%= reservacion.hora_entrega || "—" %>
+                    <%= horaSegura(
+                        reservacion.hora_entrega
+                        
+                        ) %>
 
                 </span>
 
@@ -1674,7 +1742,10 @@ const puedeEntregarVehiculo =
 
                         ·
 
-                        <%= reservacion.hora_recogida || "—" %>
+                        <%= horaSegura(
+                            reservacion.hora_recogida
+                            
+                            ) %>
 
                     </span>
 
@@ -1710,7 +1781,10 @@ const puedeEntregarVehiculo =
 
                         ·
 
-                        <%= reservacion.hora_entrega || "—" %>
+                        <%= horaSegura(
+                            reservacion.hora_entrega
+                            
+                            ) %>
 
                     </span>
 

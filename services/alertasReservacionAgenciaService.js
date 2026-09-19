@@ -8,6 +8,11 @@ const {
 } =
     require("./notificacionAgenciaService");
 
+const {
+    enviarCorreoDevolucionPendiente
+} =
+    require("./correoReservacionService");
+
 
 
 async function generarAlertasEntregaPendiente() {
@@ -289,12 +294,43 @@ async function generarAlertasDevolucionPendiente() {
 
 
             if (
-                resultado.creada
-            ) {
+    resultado.creada
+) {
 
-                creadas++;
+    creadas++;
 
+
+    try {
+
+        await enviarCorreoDevolucionPendiente({
+
+            agenciaId:
+                reservacion.agencia_id,
+
+            reservacionId:
+                reservacion.id
+
+        });
+
+
+    } catch (
+        errorCorreo
+    ) {
+
+        console.error(
+            "No fue posible enviar correo de devolución pendiente:",
+            {
+                reservacionId:
+                    reservacion.id,
+
+                mensaje:
+                    errorCorreo.message
             }
+        );
+
+    }
+
+}
 
 
             if (

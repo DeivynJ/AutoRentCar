@@ -5,6 +5,12 @@ const {
     "../services/validacionPagoService"
 );
 
+const {
+    enviarCorreoPagoConfirmado
+} = require(
+    "../services/correoReservacionService"
+);
+
 
 /* =========================================================
    CONFIRMAR PAGO DESDE EL PANEL
@@ -35,6 +41,44 @@ async function confirmarPagoPanel(
                 pagoId,
                 usuarioId
             );
+
+         /* -------------------------------------------------
+   CORREO DE PAGO CONFIRMADO
+
+   El pago ya fue confirmado en BD.
+   Un fallo de correo no afecta la operación.
+------------------------------------------------- */
+
+try {
+
+    await enviarCorreoPagoConfirmado({
+
+        agenciaId,
+
+        reservacionId:
+            resultado.reservacion.id,
+
+        pagoId
+
+    });
+
+
+} catch (
+    errorCorreo
+) {
+
+    console.error(
+        "No fue posible enviar correo de pago confirmado:",
+        {
+            pagoId,
+            reservacionId:
+                resultado.reservacion.id,
+            mensaje:
+                errorCorreo.message
+        }
+    );
+
+}   
 
 
         return res.redirect(

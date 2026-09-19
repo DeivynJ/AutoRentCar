@@ -18,6 +18,18 @@ const {
 
 const {
 
+    enviarCorreoReservacionConfirmada,
+
+    enviarCorreoVehiculoEntregado,
+
+    enviarCorreoDevolucionConfirmada
+
+} = require(
+    "../services/correoReservacionService"
+);
+
+const {
+
     asignarUnidadFisicaReservacion,
 
     obtenerUnidadesFisicasReservacion
@@ -886,6 +898,40 @@ async function confirmarReservacionPanel(
 
             });
 
+            /* -------------------------------------------------
+   CORREO DE RESERVACIÓN CONFIRMADA
+
+   El estado ya fue actualizado.
+   Un error del correo no debe afectar
+   la confirmación.
+------------------------------------------------- */
+
+try {
+
+    await enviarCorreoReservacionConfirmada({
+
+        agenciaId,
+
+        reservacionId
+
+    });
+
+
+} catch (
+    errorCorreo
+) {
+
+    console.error(
+        "No fue posible enviar correo de reservación confirmada:",
+        {
+            reservacionId,
+            mensaje:
+                errorCorreo.message
+        }
+    );
+
+}
+
 
         return res.redirect(
     `/panel/reservaciones/${resultado.id}?resultado=${resultado.estado}`
@@ -1297,15 +1343,51 @@ async function entregarVehiculoReservacionPanel(req, res) {
     try {
 
         const resultado =
-            await entregarVehiculoReservacion({
-                agenciaId,
-                reservacionId
-            });
+    await entregarVehiculoReservacion({
+        agenciaId,
+        reservacionId
+    });
 
 
-        return res.redirect(
-            `/panel/reservaciones/${resultado.reservacionId}?resultado=vehiculo_entregado`
-        );
+/* -------------------------------------------------
+   CORREO DE VEHÍCULO ENTREGADO
+
+   La entrega ya fue confirmada.
+   Un error del correo no debe afectar
+   el inicio del alquiler.
+------------------------------------------------- */
+
+try {
+
+    await enviarCorreoVehiculoEntregado({
+
+        agenciaId,
+
+        reservacionId
+
+    });
+
+
+} catch (
+    errorCorreo
+) {
+
+    console.error(
+        "No fue posible enviar correo de vehículo entregado:",
+        {
+            reservacionId,
+
+            mensaje:
+                errorCorreo.message
+        }
+    );
+
+}
+
+
+return res.redirect(
+    `/panel/reservaciones/${resultado.reservacionId}?resultado=vehiculo_entregado`
+);
 
 
     } catch (error) {
@@ -1423,6 +1505,40 @@ async function registrarDevolucionReservacionPanel(req, res) {
                 agenciaId,
                 reservacionId
             });
+
+        /* -------------------------------------------------
+   CORREO DE DEVOLUCIÓN CONFIRMADA
+
+   La devolución ya fue registrada.
+   Un error del correo no debe afectar
+   la finalización de la reservación.
+------------------------------------------------- */
+
+try {
+
+    await enviarCorreoDevolucionConfirmada({
+
+        agenciaId,
+
+        reservacionId
+
+    });
+
+
+} catch (
+    errorCorreo
+) {
+
+    console.error(
+        "No fue posible enviar correo de devolución confirmada:",
+        {
+            reservacionId,
+            mensaje:
+                errorCorreo.message
+        }
+    );
+
+}
 
 
         return res.redirect(

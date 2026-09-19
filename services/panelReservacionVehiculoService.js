@@ -309,6 +309,20 @@ async function asignarUnidadFisicaReservacion({
 
 
         if (
+    vehiculo.estado ===
+    "alquilado"
+) {
+
+    throw crearErrorAsignacionVehiculo(
+        "VEHICULO_OCUPADO",
+        "La unidad seleccionada se encuentra actualmente alquilada y todavía no ha sido devuelta.",
+        409
+    );
+
+}
+
+
+        if (
             [
                 "mantenimiento",
                 "inactivo"
@@ -399,38 +413,45 @@ async function asignarUnidadFisicaReservacion({
 
                     AND r.id <> ?
 
-                    AND r.estado IN (
-                        'confirmada',
-                        'en_curso'
-                    )
-
                     AND (
 
-                        r.fecha_recogida < ?
+    r.estado = 'en_curso'
 
-                        OR (
+    OR (
 
-                            r.fecha_recogida = ?
+        r.estado = 'confirmada'
 
-                            AND r.hora_recogida < ?
+        AND (
 
-                        )
+            r.fecha_recogida < ?
 
-                    )
+            OR (
 
-                    AND (
+                r.fecha_recogida = ?
 
-                        r.fecha_entrega > ?
+                AND r.hora_recogida < ?
 
-                        OR (
+            )
 
-                            r.fecha_entrega = ?
+        )
 
-                            AND r.hora_entrega > ?
+        AND (
 
-                        )
+            r.fecha_entrega > ?
 
-                    )
+            OR (
+
+                r.fecha_entrega = ?
+
+                AND r.hora_entrega > ?
+
+            )
+
+        )
+
+    )
+
+)
 
                 LIMIT 1
 
@@ -780,8 +801,10 @@ async function obtenerUnidadesFisicasReservacion({
                         AND v.modelo_id = ?
 
                         AND v.estado NOT IN (
-                            'mantenimiento',
-                            'inactivo'
+                        'mantenimiento',
+                        'inactivo',
+                        'alquilado'
+                        
                         )
 
                         AND NOT EXISTS (
@@ -828,42 +851,49 @@ async function obtenerUnidadesFisicasReservacion({
 
                                 AND r_conflicto.id <> ?
 
-                                AND r_conflicto.estado IN (
-                                    'confirmada',
-                                    'en_curso'
-                                )
-
                                 AND (
 
-                                    r_conflicto.fecha_recogida < ?
+    r_conflicto.estado = 'en_curso'
 
-                                    OR (
+    OR (
 
-                                        r_conflicto.fecha_recogida = ?
+        r_conflicto.estado = 'confirmada'
 
-                                        AND
-                                        r_conflicto.hora_recogida < ?
+        AND (
 
-                                    )
+            r_conflicto.fecha_recogida < ?
 
-                                )
+            OR (
 
-                                AND (
+                r_conflicto.fecha_recogida = ?
 
-                                    r_conflicto.fecha_entrega > ?
+                AND
+                r_conflicto.hora_recogida < ?
 
-                                    OR (
+            )
 
-                                        r_conflicto.fecha_entrega = ?
+        )
 
-                                        AND
-                                        r_conflicto.hora_entrega > ?
+        AND (
 
-                                    )
+            r_conflicto.fecha_entrega > ?
 
-                                )
+            OR (
 
-                        )
+                r_conflicto.fecha_entrega = ?
+
+                AND
+                r_conflicto.hora_entrega > ?
+
+            )
+
+        )
+
+    )
+
+)
+
+)
 
                     ORDER BY
                         v.codigo_interno ASC,

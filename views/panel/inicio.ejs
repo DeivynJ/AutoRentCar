@@ -174,7 +174,10 @@
                         </small>
 
                         <strong>
-                            <%= suscripcion.estado %>
+    <%= suscripcion.estado
+        ? suscripcion.estado.charAt(0).toUpperCase() + suscripcion.estado.slice(1)
+        : "—"
+    %>
                         </strong>
 
                         <span>
