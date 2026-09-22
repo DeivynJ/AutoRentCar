@@ -1,21 +1,20 @@
 /* =========================================================
    AUTORENTCAR - AUTENTICACIÓN
 ========================================================= */
+    :root {
+    --auth-primario: #18181b;
+    --auth-primario-claro: #27272a;
 
-:root {
-    --auth-primario: #0b1f3a;
-    --auth-primario-claro: #14345e;
+     --auth-secundario: #16a34a;
+     --auth-secundario-claro: #4ade80;
 
-    --auth-secundario: #ff8a00;
-    --auth-secundario-claro: #ffad4d;
-
-    --auth-fondo: #f4f7fb;
+    --auth-fondo: #f5f5f5;
     --auth-superficie: #ffffff;
 
-    --auth-texto: #182236;
-    --auth-texto-suave: #718096;
+    --auth-texto: #27272a;
+    --auth-texto-suave: #71717a;
 
-    --auth-borde: #dfe6ef;
+    --auth-borde: #e4e4e7;
 
     --auth-exito: #16a36a;
     --auth-error: #dc2626;
@@ -46,6 +45,7 @@
 
 html {
     scroll-behavior: smooth;
+    font-size: 18px;
 }
 
 body {
@@ -55,9 +55,9 @@ body {
     background:
         linear-gradient(
             135deg,
-            #eef3f9 0%,
-            #f8fafc 45%,
-            #eef4fb 100%
+            #f4f4f5 0%,
+            #fafafa 45%,
+            #f5f5f5 100%
         );
 }
 
@@ -108,8 +108,8 @@ a {
     background:
         radial-gradient(
             circle,
-            rgba(255, 138, 0, 0.18),
-            rgba(255, 138, 0, 0)
+            rgba(22, 163, 74, 0.18),
+            rgba(22, 163, 74, 0)
         );
 
     animation:
@@ -127,8 +127,8 @@ a {
     background:
         radial-gradient(
             circle,
-            rgba(11, 31, 58, 0.13),
-            rgba(11, 31, 58, 0)
+            rgba(24, 24, 27, 0.13),
+            rgba(24, 24, 27, 0)
         );
 
     animation:
@@ -187,14 +187,52 @@ a {
     color: #ffffff;
 
     background:
-        linear-gradient(
-            145deg,
-            #081a32 0%,
-            #0b1f3a 45%,
-            #11365f 100%
-        );
+    linear-gradient(
+        145deg,
+        #18181b 0%,
+        #27272a 50%,
+        #3f3f46 100%
+    );
 
     overflow: hidden;
+}
+
+.auth-logo-fondo {
+    position: absolute;
+
+    width: min(82%, 560px);
+    height: auto;
+    max-height: 82%;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    object-fit: contain;
+
+    border-radius: 36px;
+
+    clip-path:
+        inset(
+            0
+            round 36px
+        );
+
+    opacity: 0.07;
+
+    filter:
+        drop-shadow(
+            0 18px 35px
+            rgba(0, 0, 0, 0.12)
+        );
+
+    image-rendering: auto;
+
+    pointer-events: none;
+    user-select: none;
+
+    z-index: 1;
 }
 
 .auth-panel-marca::before {
@@ -211,12 +249,12 @@ a {
     border-radius: 50%;
 
     background:
-        rgba(
-            255,
-            138,
-            0,
-            0.12
-        );
+       rgba(
+    22,
+    163,
+    74,
+    0.14
+);
 }
 
 .auth-panel-marca::after {
@@ -263,20 +301,28 @@ a {
 }
 
 .auth-logo-icono {
-    width: 46px;
-    height: 46px;
+    width: 48px;
+    height: 48px;
 
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    border-radius: 13px;
+    flex-shrink: 0;
 
-    background:
-        var(--auth-secundario);
+    border-radius: 12px;
+    overflow: hidden;
+}
 
-    box-shadow:
-        0 10px 25px
-        rgba(255, 138, 0, 0.25);
+.auth-logo-icono img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    border-radius: 12px;
 }
 
 .auth-logo-texto {
@@ -427,12 +473,12 @@ a {
         var(--auth-secundario);
 
     background:
-        rgba(
-            255,
-            138,
-            0,
-            0.12
-        );
+    rgba(
+        22,
+        163,
+        74,
+        0.14
+    );
 }
 
 .auth-beneficios strong,
@@ -517,12 +563,12 @@ a {
         var(--auth-secundario);
 
     background:
-        rgba(
-            255,
-            138,
-            0,
-            0.1
-        );
+    rgba(
+        22,
+        163,
+        74,
+        0.10
+    );
 
     font-size: 1.2rem;
 }
@@ -679,13 +725,13 @@ a {
         #ffffff;
 
     box-shadow:
-        0 0 0 4px
-        rgba(
-            255,
-            138,
-            0,
-            0.08
-        );
+    0 0 0 4px
+    rgba(
+        22,
+        163,
+        74,
+        0.10
+    );
 
     transform:
         translateY(-1px);
@@ -760,12 +806,12 @@ a {
         var(--auth-secundario);
 
     background:
-        rgba(
-            255,
-            138,
-            0,
-            0.07
-        );
+    rgba(
+        22,
+        163,
+        74,
+        0.08
+    );
 }
 
 /* =========================================================
@@ -789,11 +835,11 @@ a {
     color: #ffffff;
 
     background:
-        linear-gradient(
-            135deg,
-            #ff8a00,
-            #ff9f28
-        );
+    linear-gradient(
+        135deg,
+        var(--auth-secundario),
+        var(--auth-secundario-claro)
+    );
 
     font-size: 0.79rem;
     font-weight: 800;
@@ -801,13 +847,13 @@ a {
     cursor: pointer;
 
     box-shadow:
-        0 12px 25px
-        rgba(
-            255,
-            138,
-            0,
-            0.21
-        );
+    0 12px 25px
+    rgba(
+        22,
+        163,
+        74,
+        0.22
+    );
 
     transition:
         var(--auth-transicion);
@@ -818,13 +864,13 @@ a {
         translateY(-2px);
 
     box-shadow:
-        0 16px 32px
-        rgba(
-            255,
-            138,
-            0,
-            0.28
-        );
+    0 16px 32px
+    rgba(
+        22,
+        163,
+        74,
+        0.30
+    );
 }
 
 .auth-boton:active {
@@ -1126,4 +1172,23 @@ a {
 .auth-input-contenedor input[type="password"] {
     appearance: none;
     -webkit-appearance: none;
+}
+
+@media (max-width: 768px) {
+
+    .auth-logo-fondo {
+        width: 72%;
+        max-width: 420px;
+
+        opacity: 0.045;
+
+        border-radius: 28px;
+
+        clip-path:
+            inset(
+                0
+                round 28px
+            );
+    }
+
 }

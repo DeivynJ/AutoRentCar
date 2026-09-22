@@ -155,6 +155,10 @@ html[data-panel-tema="oscuro"] {
     box-sizing: border-box;
 }
 
+html {
+    font-size: 18px;
+}
+
 
 body {
 
@@ -8818,4 +8822,43 @@ html[data-panel-tema="oscuro"]
 
     }
 
+}
+
+/* =========================================================
+   AJUSTE DE LEGIBILIDAD
+========================================================= */
+
+.panel-form-field label {
+    font-size: 0.78rem;
+}
+
+.panel-form-field input,
+.panel-form-field select,
+.panel-form-field textarea {
+    font-size: 0.80rem;
+}
+
+.panel-form-cancel,
+.panel-form-submit {
+    font-size: 0.78rem;
+}
+
+.panel-units-table th {
+    font-size: 0.68rem;
+}
+
+.panel-units-table td {
+    font-size: 0.76rem;
+}
+
+.unit-status {
+    font-size: 0.67rem;
+}
+
+.reservation-compact-button {
+    font-size: 0.74rem;
+}
+
+.reservation-compact-proof .panel-secondary-button {
+    font-size: 0.70rem;
 }
