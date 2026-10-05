@@ -1594,7 +1594,7 @@ documento.text(
         dibujarEtiquetaValor(
             xIzquierda,
             y,
-            "Entrega",
+            "Devolución",
             reservacion.lugarEntrega,
             anchoColumna
         );
@@ -1622,7 +1622,7 @@ documento.text(
         dibujarEtiquetaValor(
             xIzquierda,
             y,
-            "Fecha y hora de entrega",
+             "Fecha y hora de devolución",
             `${formatearFechaConfirmacion(
                 reservacion.fechaEntrega
             )} - ${formatearHoraConfirmacion(

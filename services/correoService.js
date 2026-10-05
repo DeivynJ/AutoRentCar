@@ -280,7 +280,11 @@ async function enviarCorreo({
 ========================================================= */
 
 async function crearTransportadorCorreoAgencia(
-    agenciaId
+    agenciaId,
+    {
+        permitirNoVerificado =
+            false
+    } = {}
 ) {
 
     const configuracion =
@@ -313,6 +317,17 @@ async function crearTransportadorCorreoAgencia(
         );
 
     }
+
+    if (
+    !configuracion.verificado &&
+    !permitirNoVerificado
+) {
+
+    throw new Error(
+        "CORREO_AGENCIA_NO_VERIFICADO"
+    );
+
+}
 
 
     const transportador =
@@ -350,7 +365,6 @@ async function crearTransportadorCorreoAgencia(
 
 }
 
-
 /* =========================================================
    VERIFICAR CORREO DE UNA AGENCIA
 ========================================================= */
@@ -364,9 +378,13 @@ async function verificarConexionCorreoAgencia(
         const {
             transportador
         } =
-            await crearTransportadorCorreoAgencia(
-                agenciaId
-            );
+           await crearTransportadorCorreoAgencia(
+    agenciaId,
+    {
+        permitirNoVerificado:
+            true
+    }
+);
 
 
         await transportador.verify();

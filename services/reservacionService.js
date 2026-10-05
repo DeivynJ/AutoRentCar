@@ -1015,6 +1015,49 @@ async function crearReservacionWeb({
 
             });
 
+            /* -------------------------------------------------
+   FECHA MÍNIMA DE RECOGIDA
+
+   Una reservación web no puede tener como fecha de
+   recogida el día actual ni una fecha anterior.
+
+   La comparación se realiza en MariaDB para usar
+   la misma fecha del servidor.
+------------------------------------------------- */
+
+const validacionFechaRecogida =
+    await conexion.query(
+        `
+        SELECT
+
+            CASE
+                WHEN DATE(?) <= CURDATE()
+                    THEN 1
+                ELSE 0
+            END AS recogida_no_permitida
+        `,
+        [
+            disponibilidad
+                .periodo
+                .fechaRecogida
+        ]
+    );
+
+
+if (
+    Number(
+        validacionFechaRecogida[0]
+            ?.recogida_no_permitida
+    ) === 1
+) {
+
+    throw crearErrorReservacion(
+        "FECHA_RECOGIDA_NO_PERMITIDA",
+        "La fecha de recogida debe ser a partir de mañana.",
+        400
+    );
+
+}
 
         if (
             !disponibilidad.suficiente

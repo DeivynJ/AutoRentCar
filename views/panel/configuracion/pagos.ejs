@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Política de pagos de <%= agencia.nombre %>."
+    >
+
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <%- include("../partials/tema") %>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <div class="panel-shell">
+
+
+        <%- include("../partials/sidebar") %>
+
+
+        <div class="panel-content-wrapper">
+
+
+            <%- include("../partials/header") %>
+
+
+            <main class="panel-main">
+
+
+                <%
+
+                    const tipoActual =
+                        String(
+                            configuracion?.tipoAnticipo ||
+                            "sin_anticipo"
+                        );
+
+
+                    const valorActual =
+                        Number(
+                            configuracion?.valorAnticipo ||
+                            0
+                        );
+
+
+                    const horasActuales =
+                        Number(
+                            configuracion?.horasLimitePago ||
+                            24
+                        );
+
+
+                    const politicaActiva =
+                        configuracion?.activo === true;
+
+
+                    const nombresTipo = {
+
+                        sin_anticipo:
+                            "Sin anticipo",
+
+                        porcentaje:
+                            "Porcentaje",
+
+                        monto_fijo:
+                            "Monto fijo",
+
+                        pago_completo:
+                            "Pago completo"
+
+                    };
+
+
+                    let valorResumen =
+                        "No requerido";
+
+
+                    if (
+                        tipoActual ===
+                        "porcentaje"
+                    ) {
+
+                        valorResumen =
+                            `${valorActual.toFixed(2)} %`;
+
+                    }
+
+
+                    if (
+                        tipoActual ===
+                        "monto_fijo"
+                    ) {
+
+                        valorResumen =
+                            `USD $${valorActual.toFixed(2)}`;
+
+                    }
+
+
+                    if (
+                        tipoActual ===
+                        "pago_completo"
+                    ) {
+
+                        valorResumen =
+                            "100 %";
+
+                    }
+
+                %>
+
+
+                <!-- =====================================
+                     ENCABEZADO
+                ====================================== -->
+
+                <section class="panel-module-hero">
+
+                    <div>
+
+                        <span class="panel-module-badge">
+
+                            <i class="fa-solid fa-hand-holding-dollar"></i>
+
+                            Configuración
+
+                        </span>
+
+
+                        <h2>
+
+                            Política de pagos de
+
+                            <span>
+                                <%= agencia.nombre %>
+                            </span>
+
+                        </h2>
+
+
+                        <p>
+
+                            Define si esta agencia solicitará
+                            un anticipo al aprobar una
+                            reservación, cuánto deberá pagar
+                            el cliente y el tiempo disponible
+                            para completar el pago.
+
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =====================================
+                     MENSAJES
+                ====================================== -->
+
+                <% if (resultado === "guardado") { %>
+
+                    <div class="panel-alert panel-alert-success">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <div>
+
+                            <strong>
+                                Política de pagos guardada
+                            </strong>
+
+                            <span>
+
+                                La configuración de anticipos
+                                de esta agencia fue actualizada
+                                correctamente.
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+
+                <% if (resultado === "error") { %>
+
+                    <div class="panel-alert panel-alert-danger">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        <div>
+
+                            <strong>
+                                No fue posible guardar la configuración
+                            </strong>
+
+                            <span>
+
+                                <%= mensaje ||
+                                    "Revisa los datos e inténtalo nuevamente." %>
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+
+                <!-- =====================================
+                     RESUMEN
+                ====================================== -->
+
+                <section class="panel-summary-grid">
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-power-off"></i>
+
+                        </div>
+
+                        <small>
+                            Estado
+                        </small>
+
+                        <strong>
+
+                            <%= politicaActiva
+                                ? "Activa"
+                                : "Inactiva" %>
+
+                        </strong>
+
+                        <span>
+
+                            <%= politicaActiva
+                                ? "La política se aplica al aprobar"
+                                : "Se aprobará sin exigir anticipo" %>
+
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-percent"></i>
+
+                        </div>
+
+                        <small>
+                            Modalidad
+                        </small>
+
+                        <strong>
+
+                            <%= nombresTipo[tipoActual] ||
+                                "Sin anticipo" %>
+
+                        </strong>
+
+                        <span>
+                            Política actual de la agencia
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-clock"></i>
+
+                        </div>
+
+                        <small>
+                            Plazo de pago
+                        </small>
+
+                        <strong>
+                            <%= horasActuales %> h
+                        </strong>
+
+                        <span>
+                            Tiempo disponible para pagar
+                        </span>
+
+                    </article>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     FORMULARIO
+                ====================================== -->
+
+                <form
+                    action="/panel/configuracion/pagos"
+                    method="POST"
+                    class="panel-model-form"
+                >
+
+
+                    <section class="panel-form-card">
+
+
+                        <div class="panel-form-card-header">
+
+                            <span class="panel-form-card-icon">
+
+                                <i class="fa-solid fa-money-check-dollar"></i>
+
+                            </span>
+
+
+                            <div>
+
+                                <span>
+                                    Anticipo
+                                </span>
+
+                                <h3>
+                                    Política para nuevas aprobaciones
+                                </h3>
+
+                                <p>
+
+                                    Selecciona cómo deberá pagar
+                                    el cliente cuando la agencia
+                                    apruebe una reservación.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel-form-grid">
+
+
+                            <div class="panel-form-field">
+
+                                <label for="tipoAnticipo">
+                                    Tipo de anticipo *
+                                </label>
+
+
+                                <select
+                                    id="tipoAnticipo"
+                                    name="tipoAnticipo"
+                                    required
+                                >
+
+                                    <option
+                                        value="sin_anticipo"
+                                        <%= tipoActual === "sin_anticipo"
+                                            ? "selected"
+                                            : "" %>
+                                    >
+                                        Sin anticipo
+                                    </option>
+
+
+                                    <option
+                                        value="porcentaje"
+                                        <%= tipoActual === "porcentaje"
+                                            ? "selected"
+                                            : "" %>
+                                    >
+                                        Porcentaje del total
+                                    </option>
+
+
+                                    <option
+                                        value="monto_fijo"
+                                        <%= tipoActual === "monto_fijo"
+                                            ? "selected"
+                                            : "" %>
+                                    >
+                                        Monto fijo
+                                    </option>
+
+
+                                    <option
+                                        value="pago_completo"
+                                        <%= tipoActual === "pago_completo"
+                                            ? "selected"
+                                            : "" %>
+                                    >
+                                        Pago completo
+                                    </option>
+
+                                </select>
+
+
+                                <small class="panel-field-help">
+
+                                    Sin anticipo confirma directamente.
+                                    Porcentaje y monto fijo generan un
+                                    pago pendiente. Pago completo exige
+                                    el 100 %.
+
+                                </small>
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="valorAnticipo">
+                                    Valor del anticipo *
+                                </label>
+
+
+                                <input
+                                    type="number"
+                                    id="valorAnticipo"
+                                    name="valorAnticipo"
+                                    min="0"
+                                    step="0.01"
+                                    value="<%= valorActual.toFixed(2) %>"
+                                    required
+                                >
+
+
+                                <small class="panel-field-help">
+
+                                    Para porcentaje usa un valor de
+                                    1 a 100. Para monto fijo, indica
+                                    el importe en USD. En Sin anticipo
+                                    y Pago completo AVYNEXO ajusta
+                                    este valor automáticamente.
+
+                                </small>
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="horasLimitePago">
+                                    Tiempo límite para pagar *
+                                </label>
+
+
+                                <input
+                                    type="number"
+                                    id="horasLimitePago"
+                                    name="horasLimitePago"
+                                    min="1"
+                                    max="65535"
+                                    step="1"
+                                    value="<%= horasActuales %>"
+                                    required
+                                >
+
+
+                                <small class="panel-field-help">
+
+                                    Cantidad de horas que tendrá
+                                    el cliente para completar el
+                                    pago después de aprobar la
+                                    reservación.
+
+                                </small>
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="activo">
+                                    Estado de la política *
+                                </label>
+
+
+                                <select
+                                    id="activo"
+                                    name="activo"
+                                    required
+                                >
+
+                                    <option
+                                        value="1"
+                                        <%= politicaActiva
+                                            ? "selected"
+                                            : "" %>
+                                    >
+                                        Activa
+                                    </option>
+
+
+                                    <option
+                                        value="0"
+                                        <%= !politicaActiva
+                                            ? "selected"
+                                            : "" %>
+                                    >
+                                        Inactiva
+                                    </option>
+
+                                </select>
+
+
+                                <small class="panel-field-help">
+
+                                    Si se desactiva, AutoRentCar
+                                    tratará las nuevas aprobaciones
+                                    como reservaciones sin anticipo.
+
+                                </small>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </section>
+
+
+                    <!-- =====================================
+                         NOTA
+                    ====================================== -->
+
+                    <div class="panel-form-note">
+
+                        <i class="fa-solid fa-shield-halved"></i>
+
+
+                        <div>
+
+                            <strong>
+
+                                La configuración pertenece
+                                únicamente a
+                                <%= agencia.nombre %>
+
+                            </strong>
+
+
+                            <p>
+
+                                Los cambios se aplicarán cuando
+                                se aprueben nuevas reservaciones.
+
+                                Las reservaciones ya aprobadas
+                                conservan la política y el monto
+                                que se les aplicó en ese momento.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         GUARDAR
+                    ====================================== -->
+
+                    <div class="panel-form-actions">
+
+                        <button
+                            type="submit"
+                            class="panel-form-submit"
+                        >
+
+                            <i class="fa-solid fa-floppy-disk"></i>
+
+                            Guardar política de pagos
+
+                        </button>
+
+                    </div>
+
+
+                </form>
+
+
+            </main>
+
+
+        </div>
+
+
+    </div>
+
+
+    <script src="/js/panel.js"></script>
+
+
+</body>
+
+</html>

@@ -307,7 +307,7 @@ body.sidebar-collapsed
 
     display: block;
 
-    object-fit: cover;
+    object-fit: contain;
 
     border-radius: 12px;
 }
@@ -359,7 +359,7 @@ body.sidebar-collapsed
     border-radius: 9px;
 
     color:
-        #91a4bb;
+         #a1a1aa;
 
     background:
         rgba(
@@ -441,6 +441,11 @@ body.sidebar-collapsed
             255,
             0.035
         );
+}
+
+.sidebar-profile-footer {
+    margin: 0 0 12px;
+    padding: 10px;
 }
 
 .sidebar-profile-avatar {
@@ -565,7 +570,7 @@ body.sidebar-collapsed
         8px;
 
     color:
-        #6f8299;
+        #a1a1aa;
 
     font-size:
         0.66rem;
@@ -601,7 +606,7 @@ body.sidebar-collapsed
     border-radius: 11px;
 
     color:
-        #a9b8ca;
+        #d4d4d8;
 
     font-size:
         0.82rem;
@@ -706,6 +711,128 @@ body.sidebar-collapsed
         var(--admin-secondary);
 }
 
+/* =========================================================
+   COLORES DE ICONOS DEL SIDEBAR
+========================================================= */
+
+/* Dashboard */
+.sidebar-link[href="/admin"]
+.sidebar-link-icon {
+
+    color:
+        #3b82f6;
+
+    background:
+        rgba(
+            59,
+            130,
+            246,
+            0.10
+        );
+}
+
+
+/* Agencias */
+.sidebar-link[href="/admin/agencias"]
+.sidebar-link-icon {
+
+    color:
+        #34d399;
+
+    background:
+        rgba(
+            52,
+            211,
+            153,
+            0.10
+        );
+}
+
+
+/* Planes */
+.sidebar-link[href="/admin/planes"]
+.sidebar-link-icon {
+
+    color:
+        #a78bfa;
+
+    background:
+        rgba(
+            167,
+            139,
+            250,
+            0.10
+        );
+}
+
+
+/* Suscripciones */
+.sidebar-link[href="/admin/suscripciones"]
+.sidebar-link-icon {
+
+    color:
+        #fbbf24;
+
+    background:
+        rgba(
+            251,
+            191,
+            36,
+            0.10
+        );
+}
+
+
+/* Usuarios */
+.sidebar-link[href="/admin/usuarios"]
+.sidebar-link-icon {
+
+    color:
+        #38bdf8;
+
+    background:
+        rgba(
+            56,
+            189,
+            248,
+            0.10
+        );
+}
+
+
+/* Configuración */
+.sidebar-link[href="/admin/configuracion"]
+.sidebar-link-icon {
+
+    color:
+        #a1a1aa;
+
+    background:
+        rgba(
+            161,
+            161,
+            170,
+            0.10
+        );
+}
+
+
+/* Cerrar sesión */
+.sidebar-logout
+.sidebar-link-icon {
+
+    color:
+        #f87171;
+
+    background:
+        rgba(
+            248,
+            113,
+            113,
+            0.10
+        );
+}
+
 .sidebar-link-text {
 
     white-space: nowrap;
@@ -787,6 +914,10 @@ body.sidebar-collapsed
         );
 }
 
+.sidebar-system-status-top {
+    margin: 18px 14px 10px;
+}
+
 .system-status-indicator {
 
     flex: 0 0 8px;
@@ -836,7 +967,7 @@ body.sidebar-collapsed
         3px;
 
     color:
-        #889ab0;
+         #a1a1aa;
 
     font-size:
         0.6rem;
@@ -862,7 +993,7 @@ body.sidebar-collapsed
     border-radius: 10px;
 
     color:
-        #aab7c8;
+        #d4d4d8;
 
     background:
         transparent;
@@ -947,9 +1078,9 @@ body.sidebar-collapsed
     border:
         1px solid
         rgba(
-            11,
-            31,
-            58,
+            24,
+            24,
+            27,
             0.08
         );
 
@@ -1454,7 +1585,7 @@ small {
         10px;
 
     color:
-        #6e7b90;
+        #71717a;
 
     background:
         #ffffff;
@@ -2120,9 +2251,9 @@ p {
     box-shadow:
         0 8px 18px
         rgba(
-            11,
-            31,
-            58,
+            24,
+            24,
+            27,
             0.06
         );
 }
@@ -2367,7 +2498,7 @@ span {
         8px;
 
     color:
-        #5f6d80;
+        #52525b;
 
     background:
         transparent;
@@ -3030,9 +3161,9 @@ span {
     box-shadow:
         0 8px 22px
         rgba(
-            11,
-            31,
-            58,
+            24,
+            24,
+            27,
             0.035
         );
 
@@ -3117,35 +3248,22 @@ span {
 .stat-icon-blue {
 
     color:
-        #3f3f46;
+        #2563eb;
 
     background:
         rgba(
-            63,
-            63,
-            70,
+            37,
+            99,
+            235,
             0.10
         );
 }
 
+
 .stat-icon-green {
 
     color:
-        #15955f;
-
-    background:
-        rgba(
-            21,
-            149,
-            95,
-            0.1
-        );
-}
-
-.stat-icon-orange {
-
-    color:
-        var(--admin-secondary);
+        #16a34a;
 
     background:
         rgba(
@@ -3156,16 +3274,32 @@ span {
         );
 }
 
-.stat-icon-purple {
+
+.stat-icon-orange {
 
     color:
-        var(--admin-purple);
+        #d97706;
 
     background:
         rgba(
-            82,
-            82,
-            91,
+            217,
+            119,
+            6,
+            0.10
+        );
+}
+
+
+.stat-icon-purple {
+
+    color:
+        #7c3aed;
+
+    background:
+        rgba(
+            124,
+            58,
+            237,
             0.10
         );
 }
@@ -3173,7 +3307,7 @@ span {
 .stat-label {
 
     color:
-        #8f9bab;
+         #71717a;
 
     font-size:
         0.64rem;
@@ -3310,9 +3444,9 @@ span {
     box-shadow:
         0 8px 24px
         rgba(
-            11,
-            31,
-            58,
+            24,
+            24,
+            27,
             0.035
         );
 
@@ -3465,10 +3599,10 @@ span {
         14px 18px;
 
     color:
-        #7e8999;
+         #71717a;
 
     background:
-        #fafbfc;
+        #fafafa;
 
     font-size:
         0.64rem;
@@ -3499,7 +3633,7 @@ span {
         #edf1f5;
 
     color:
-        #566579;
+        #52525b;
 
     font-size:
         0.76rem;
@@ -3610,7 +3744,7 @@ span {
 .table-date {
 
     color:
-        #69778b;
+        #71717a;
 }
 
 .status-badge {
@@ -3824,41 +3958,43 @@ span {
 .system-summary-icon.green {
 
     color:
-        #15955f;
-
-    background:
-        rgba(
-            21,
-            149,
-            95,
-            0.09
-        );
-}
-
-.system-summary-icon.blue {
-
-    color:
-        #52525b;
-
-    background:
-        rgba(
-            82,
-            82,
-            91,
-            0.10
-        );
-}
-
-.system-summary-icon.orange {
-
-    color:
-        var(--admin-secondary);
+        #16a34a;
 
     background:
         rgba(
             22,
             163,
             74,
+            0.10
+        );
+}
+
+
+.system-summary-icon.blue {
+
+    color:
+        #2563eb;
+
+    background:
+        rgba(
+            37,
+            99,
+            235,
+            0.10
+        );
+}
+
+
+.system-summary-icon.orange {
+
+    color:
+        #d97706;
+
+    background:
+        rgba(
+            217,
+            119,
+            6,
             0.10
         );
 }
@@ -4657,7 +4793,7 @@ small {
 .agency-filter i {
 
     color:
-        #9aa5b5;
+        #a1a1aa;
 
     font-size: 0.78rem;
 }
@@ -4685,7 +4821,7 @@ small {
 .agency-search input::placeholder {
 
     color:
-        #a5afbc;
+        #a1a1aa;
 }
 
 
@@ -4707,7 +4843,7 @@ small {
     outline: none;
 
     color:
-        #647186;
+         #52525b;
 
     background:
         transparent;
@@ -5035,9 +5171,9 @@ background:
     box-shadow:
         0 15px 35px
         rgba(
-            11,
-            31,
-            58,
+            24,
+            24,
+            27,
             0.15
         );
 }
@@ -5166,9 +5302,9 @@ background:
     box-shadow:
         0 8px 24px
         rgba(
-            11,
-            31,
-            58,
+            24,
+            24,
+            27,
             0.035
         );
 }
@@ -5221,12 +5357,12 @@ background:
         var(--admin-secondary);
 
     background:
-        rgba(
-            255,
-            138,
-            0,
-            0.09
-        );
+    rgba(
+        22,
+        163,
+        74,
+        0.09
+    );
 }
 
 .form-card-header span {
@@ -6680,9 +6816,9 @@ input[type="file"] {
     box-shadow:
         0 8px 24px
         rgba(
-            11,
-            31,
-            58,
+            24,
+            24,
+            27,
             0.035
         );
 
@@ -8040,13 +8176,12 @@ html[data-admin-tema="oscuro"]
         var(--admin-primary);
 
     background:
-        rgba(
-    22,
-    163,
-    74,
-    0.10
-);
-
+    rgba(
+        22,
+        163,
+        74,
+        0.10
+    );
 }
 
 
@@ -9132,12 +9267,12 @@ strong {
 .agency-subscription-field:hover {
 
     border-color:
-        rgba(
-            255,
-            138,
-            0,
-            0.28
-        );
+    rgba(
+        22,
+        163,
+        74,
+        0.28
+    );
 
     box-shadow:
     0 8px 20px

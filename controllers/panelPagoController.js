@@ -80,18 +80,27 @@ try {
 
 }   
 
-
         return res.redirect(
             `/panel/reservaciones/${resultado.reservacion.id}?resultado=pago_confirmado`
         );
 
     } catch (error) {
 
-        console.error(
-            "Error confirmando pago desde el panel:",
-            error
-        );
+        if (
+    error.codigo ===
+    "RESERVACION_VENCIDA" &&
+    Number.isInteger(
+        Number(
+            error.reservacionId
+        )
+    )
+) {
 
+    return res.redirect(
+        `/panel/reservaciones/${error.reservacionId}?error=pago_reservacion_vencida`
+    );
+
+}
 
         if (
             [
@@ -114,6 +123,11 @@ try {
             );
 
         }
+
+        console.error(
+    "Error inesperado confirmando pago desde el panel:",
+    error
+);
 
 
         return res.status(
@@ -169,12 +183,6 @@ async function rechazarPagoPanel(
 
     } catch (error) {
 
-        console.error(
-            "Error rechazando pago desde el panel:",
-            error
-        );
-
-
         if (
             [
                 "PAGO_NO_ENCONTRADO",
@@ -197,6 +205,12 @@ async function rechazarPagoPanel(
             );
 
         }
+
+
+        console.error(
+    "Error inesperado rechazando pago desde el panel:",
+    error
+);
 
 
         return res.status(

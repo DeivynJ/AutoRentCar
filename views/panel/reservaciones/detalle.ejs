@@ -324,7 +324,10 @@ const puedeEntregarVehiculo =
         esEmpleadoPanel
     ) &&
     reservacion.estado === "confirmada" &&
-    unidadesCompletamenteAsignadas;
+    unidadesCompletamenteAsignadas &&
+    Number(
+        reservacion.periodo_activo
+    ) === 1;
 
     const puedeRegistrarDevolucion =
     (
@@ -498,6 +501,19 @@ const puedeEntregarVehiculo =
 
 <% } %>
 
+<% if (String(queryError || "") === "reservacion_vencida") { %>
+
+    <div class="panel-reservation-message warning">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <span>
+            No es posible continuar con esta reservación porque la fecha de recogida ya venció.
+        </span>
+
+    </div>
+
+<% } %>
 
 <% if (String(queryError || "") === "unidades_completas") { %>
 
@@ -588,6 +604,22 @@ const puedeEntregarVehiculo =
 
 <% } %>
 
+<% if (String(queryError || "") === "entrega_vencida") { %>
+
+    <div class="panel-reservation-message warning">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <span>
+            No es posible entregar el vehículo porque 
+            la fecha y hora de devolución de esta reservación
+            ya vencieron.
+        </span>
+
+    </div>
+
+<% } %>
+
 
 <% if (String(queryError || "") === "entrega_unidades") { %>
 
@@ -597,6 +629,22 @@ const puedeEntregarVehiculo =
 
         <span>
             Debes asignar todas las unidades solicitadas antes de entregar el vehículo.
+        </span>
+
+    </div>
+
+<% } %>
+
+<% if (String(queryError || "") === "pago_reservacion_vencida") { %>
+
+    <div class="panel-reservation-message warning">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <span>
+            No es posible confirmar este pago porque
+            la fecha y hora de recogida de la reservación
+            ya vencieron.
         </span>
 
     </div>
@@ -982,26 +1030,32 @@ const puedeEntregarVehiculo =
         <div class="reservation-compact-decision-actions">
 
 
-            <form
-                action="/panel/reservaciones/<%= reservacion.id %>/confirmar"
-                method="POST"
-                onsubmit="return confirm('¿Aprobar la reservación <%= reservacion.codigo %>? Se aplicará la política de pago configurada para la agencia.');"
-            >
+            <% if (
+    Number(
+        reservacion.antes_recogida
+    ) === 1
+) { %>
 
+    <form
+        action="/panel/reservaciones/<%= reservacion.id %>/confirmar"
+        method="POST"
+        onsubmit="return confirm('¿Aprobar la reservación <%= reservacion.codigo %>? Se aplicará la política de pago configurada para la agencia.');"
+    >
 
-                <button
-                    type="submit"
-                    class="reservation-compact-button reservation-compact-approve"
-                >
+        <button
+            type="submit"
+            class="reservation-compact-button reservation-compact-approve"
+        >
 
-                    <i class="fa-solid fa-circle-check"></i>
+            <i class="fa-solid fa-circle-check"></i>
 
-                    Aprobar reservación
+            Aprobar reservación
 
-                </button>
+        </button>
 
+    </form>
 
-            </form>
+<% } %>
 
 
 
@@ -1320,7 +1374,7 @@ const puedeEntregarVehiculo =
             <div>
 
                 <strong>
-                    Entrega
+                    Devolución
                 </strong>
 
                 <span>
@@ -1345,10 +1399,6 @@ const puedeEntregarVehiculo =
 
 
     </article>
-
-
-
-
 
     <!-- =================================
          PAGO
@@ -1770,7 +1820,7 @@ const puedeEntregarVehiculo =
                 <div>
 
                     <strong>
-                        Fecha de entrega
+                        Fecha de devolución
                     </strong>
 
                     <span>
@@ -1795,7 +1845,7 @@ const puedeEntregarVehiculo =
                 <div>
 
                     <strong>
-                        Lugar de entrega
+                        Lugar de devolución
                     </strong>
 
                     <span>
@@ -1962,8 +2012,11 @@ const puedeEntregarVehiculo =
 
 
             <% if (
-                unidadesReservacion.puedeAsignar
-            ) { %>
+    unidadesReservacion.puedeAsignar &&
+    Number(
+        reservacion.antes_recogida
+    ) === 1
+) { %>
 
 
                 <p class="reservation-compact-comment">
@@ -2584,93 +2637,99 @@ const puedeEntregarVehiculo =
 
                             <% } %>
 
+<% if (
+    pago.estado === "pendiente_validacion" &&
+    puedeValidarPagos
+) { %>
 
 
-                            <% if (
-                                pago.estado === "pendiente_validacion" &&
-                                puedeValidarPagos
-                            ) { %>
+    <div class="reservation-compact-payment-actions">
 
 
-                                <div class="reservation-compact-payment-actions">
+        <% if (
+            Number(
+                reservacion.antes_recogida
+            ) === 1
+        ) { %>
 
 
-                                    <form
-                                        action="/panel/pagos/<%= pago.id %>/confirmar"
-                                        method="POST"
-                                    >
+            <form
+                action="/panel/pagos/<%= pago.id %>/confirmar"
+                method="POST"
+            >
 
 
-                                        <button
-                                            type="submit"
-                                            class="reservation-compact-button reservation-compact-approve"
-                                            onclick="return confirm('¿Confirmar este pago de <%= pago.moneda %>$<%= moneda(pago.monto) %>? Esta acción registrará el pago como validado.');"
-                                        >
+                <button
+                    type="submit"
+                    class="reservation-compact-button reservation-compact-approve"
+                    onclick="return confirm('¿Confirmar este pago de <%= pago.moneda %>$<%= moneda(pago.monto) %>? Esta acción registrará el pago como validado.');"
+                >
 
-                                            <i class="fa-solid fa-circle-check"></i>
+                    <i class="fa-solid fa-circle-check"></i>
 
-                                            Confirmar pago
+                    Confirmar pago
 
-                                        </button>
-
-
-                                    </form>
+                </button>
 
 
-
-                                    <details class="reservation-payment-reject-details">
-
-
-                                        <summary>
-
-                                            <i class="fa-solid fa-circle-xmark"></i>
-
-                                            Rechazar pago
-
-                                        </summary>
+            </form>
 
 
-
-                                        <form
-                                            action="/panel/pagos/<%= pago.id %>/rechazar"
-                                            method="POST"
-                                        >
+        <% } %>
 
 
-                                            <label>
-
-                                                Motivo del rechazo
-
-                                                <textarea
-                                                    name="motivo"
-                                                    required
-                                                    minlength="3"
-                                                    maxlength="500"
-                                                    rows="2"
-                                                    placeholder="Escribe el motivo del rechazo"
-                                                ></textarea>
-
-                                            </label>
+        <details class="reservation-payment-reject-details">
 
 
-                                            <button
-                                                type="submit"
-                                                class="reservation-compact-button reservation-compact-reject"
-                                                onclick="return confirm('¿Seguro que deseas rechazar este comprobante de pago?');"
-                                            >
+            <summary>
 
-                                                Confirmar rechazo
+                <i class="fa-solid fa-circle-xmark"></i>
 
-                                            </button>
+                Rechazar pago
+
+            </summary>
 
 
-                                        </form>
+            <form
+                action="/panel/pagos/<%= pago.id %>/rechazar"
+                method="POST"
+            >
 
 
-                                    </details>
+                <label>
+
+                    Motivo del rechazo
+
+                    <textarea
+                        name="motivo"
+                        required
+                        minlength="3"
+                        maxlength="500"
+                        rows="2"
+                        placeholder="Escribe el motivo del rechazo"
+                    ></textarea>
+
+                </label>
 
 
-                                </div>
+                <button
+                    type="submit"
+                    class="reservation-compact-button reservation-compact-reject"
+                    onclick="return confirm('¿Seguro que deseas rechazar este comprobante de pago?');"
+                >
+
+                    Confirmar rechazo
+
+                </button>
+
+
+            </form>
+
+
+        </details>
+
+
+    </div>
 
 
                             <% } else if (
@@ -2746,9 +2805,6 @@ const puedeEntregarVehiculo =
 
 
     </details>
-
-
-
 
 
     <!-- =================================

@@ -359,8 +359,13 @@ r.monto_anticipo_requerido,
 
 DATE_FORMAT(
     r.fecha_limite_pago,
-    '%d/%m/%Y %H:%i'
+    '%d/%m/%Y'
 ) AS fecha_limite_pago,
+
+TIME_FORMAT(
+    r.fecha_limite_pago,
+    '%H:%i'
+) AS hora_limite_pago,
 
 m.marca
     AS modelo_marca,
@@ -587,7 +592,7 @@ Recogida:
 ${reservacion.fecha_recogida} a las ${reservacion.hora_recogida}
 ${reservacion.lugar_recogida}
 
-Entrega:
+Devolución:
 ${reservacion.fecha_entrega} a las ${reservacion.hora_entrega}
 ${reservacion.lugar_entrega}
 
@@ -751,58 +756,100 @@ Pendiente de revisión
 
 
 
-<table width="100%" style="font-size:14px;line-height:1.6;">
-
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+style="
+font-size:14px;
+line-height:1.7;
+"
+>
 
 <tr>
-<td>
+<td style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+color:#6b7280;
+">
 Código de reservación
 </td>
 
-<td align="right">
+<td
+align="right"
+style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+font-weight:600;
+"
+>
 ${escaparHtml(reservacion.codigo)}
 </td>
 </tr>
 
 
 <tr>
-<td>
+<td style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+color:#6b7280;
+">
 Vehículo
 </td>
 
-<td align="right">
+<td
+align="right"
+style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+font-weight:600;
+"
+>
 ${escaparHtml(vehiculo)}
 </td>
 </tr>
 
 
 <tr>
-<td>
+<td style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+color:#6b7280;
+">
 Recogida
 </td>
 
-<td align="right">
-${formatearFechaHora(
-reservacion.fecha_recogida,
-reservacion.hora_recogida
-)}
+<td
+align="right"
+style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+font-weight:600;
+"
+>
+${escaparHtml(fechaRecogida)}
 </td>
 </tr>
 
 
 <tr>
-<td>
+<td style="
+padding:10px 0;
+color:#6b7280;
+">
 Devolución
 </td>
 
-<td align="right">
-${formatearFechaHora(
-reservacion.fecha_entrega,
-reservacion.hora_entrega
-)}
+<td
+align="right"
+style="
+padding:10px 0;
+font-weight:600;
+"
+>
+${escaparHtml(fechaEntrega)}
 </td>
 </tr>
-
 
 </table>
 
@@ -959,7 +1006,6 @@ async function enviarCorreoReservacionConfirmada({
 
     }
 
-
     const nombreCliente =
         String(
             reservacion.cliente_nombre ||
@@ -991,7 +1037,15 @@ const fechaEntrega =
     formatearFechaHora(
         reservacion.fecha_entrega,
         reservacion.hora_entrega
-    );    
+    );
+    
+    const fechaLimitePago =
+    reservacion.fecha_limite_pago
+        ? formatearFechaHora(
+            reservacion.fecha_limite_pago,
+            reservacion.hora_limite_pago
+        )
+        : "";
 
     const vehiculo =
         [
@@ -1049,13 +1103,14 @@ if (
     text-align:center;
 ">
 
-    <a href="${enlacePago}"
+    <a href="${escaparHtml(enlacePago)}"
        style="
         display:inline-block;
-        background:#2563eb;
+        background:${marca.colorPrimario};
         color:#ffffff;
         padding:14px 24px;
         border-radius:8px;
+        border-bottom:4px solid ${marca.colorSecundario};
         text-decoration:none;
         font-weight:700;
        "
@@ -1092,8 +1147,9 @@ if (
         detallePagoTexto =
 `
 Anticipo requerido: US$${moneda(montoAnticipo)}
-${reservacion.fecha_limite_pago
-    ? `Fecha límite de pago: ${reservacion.fecha_limite_pago}`
+
+${fechaLimitePago
+    ? `Fecha límite de pago: ${fechaLimitePago}`
     : ""}
 
 Tu reservación permanecerá pendiente de pago hasta que la agencia valide el comprobante correspondiente.
@@ -1121,7 +1177,7 @@ Recogida:
 ${reservacion.fecha_recogida} a las ${reservacion.hora_recogida}
 ${reservacion.lugar_recogida}
 
-Entrega:
+Devolución:
 ${reservacion.fecha_entrega} a las ${reservacion.hora_entrega}
 ${reservacion.lugar_entrega}
 
@@ -1132,64 +1188,103 @@ Gracias por utilizar ${nombreAgencia}.`;
 
 
     const bloquePagoHtml =
-        requierePago
-            ? `
+    requierePago
+        ? `
+            <div style="
+                margin-top:24px;
+                padding:18px;
+                background:#fff7ed;
+                border:1px solid #fed7aa;
+                border-radius:10px;
+            ">
+
                 <div style="
-                    margin-top:24px;
-                    padding:18px;
-                    background:#fff7ed;
-                    border:1px solid #fed7aa;
-                    border-radius:10px;
+                    font-size:15px;
+                    font-weight:700;
+                    color:#9a3412;
+                    margin-bottom:14px;
                 ">
+                    Datos del pago
+                </div>
 
-                    <div style="
-                        font-size:14px;
-                        color:#9a3412;
-                        margin-bottom:8px;
-                    ">
-                        Anticipo requerido
-                    </div>
 
-                    <div style="
-                        font-size:22px;
-                        font-weight:700;
-                        color:#7c2d12;
-                    ">
-                        US$${moneda(montoAnticipo)}
-                    </div>
+                <table
+                width="100%"
+                cellspacing="0"
+                cellpadding="0"
+                style="
+                    font-size:14px;
+                    line-height:1.7;
+                "
+                >
+
+                    <tr>
+                        <td style="
+                            padding:8px 0;
+                            border-bottom:1px solid #fed7aa;
+                            color:#9a3412;
+                        ">
+                            Anticipo requerido
+                        </td>
+
+                        <td
+                        align="right"
+                        style="
+                            padding:8px 0;
+                            border-bottom:1px solid #fed7aa;
+                            font-weight:700;
+                            color:#7c2d12;
+                        "
+                        >
+                            US$${moneda(montoAnticipo)}
+                        </td>
+                    </tr>
+
 
                     ${
                         reservacion.fecha_limite_pago
                             ? `
-                                <div style="
-                                    margin-top:8px;
-                                    font-size:13px;
-                                    color:#9a3412;
-                                ">
-                                    Fecha límite:
-                                    ${escaparHtml(
-                                        reservacion.fecha_limite_pago
-                                    )}
-                                </div>
+                                <tr>
+                                    <td style="
+                                        padding:8px 0;
+                                        color:#9a3412;
+                                    ">
+                                        Fecha límite
+                                    </td>
+
+                                    <td
+                                    align="right"
+                                    style="
+                                        padding:8px 0;
+                                        font-weight:700;
+                                        color:#7c2d12;
+                                    "
+                                    >
+                                        ${escaparHtml(fechaLimitePago)}
+
+                                    </td>
+                                </tr>
                             `
                             : ""
                     }
 
-                    <div style="
-                        margin-top:12px;
-                        font-size:13px;
-                        line-height:1.6;
-                        color:#9a3412;
-                    ">
-                        La reservación permanecerá pendiente
-                        de pago hasta que la agencia valide
-                        el comprobante correspondiente.
-                    </div>
+                </table>
 
+
+                <div style="
+                    margin-top:14px;
+                    font-size:13px;
+                    line-height:1.6;
+                    color:#9a3412;
+                ">
+                    La reservación permanecerá pendiente
+                    de pago hasta que la agencia valide
+                    el comprobante correspondiente.
                 </div>
-            `
-            : "";
 
+            </div>
+        `
+        : "";
 
     const html =
 `
@@ -1312,7 +1407,7 @@ color:#4b5563;
 ">
 
 Tu reservación ha sido confirmada correctamente.
-La agencia ha aprobado tu solicitu de reservación
+La agencia ha aprobado tu solicitud de reservación.
 
 </p>
 
@@ -1352,64 +1447,98 @@ ${escaparHtml(estadoTexto)}
 
 <table
 width="100%"
+cellspacing="0"
+cellpadding="0"
 style="
 font-size:14px;
 line-height:1.7;
 "
 >
 
-
 <tr>
-
-<td style="color:#6b7280;">
+<td style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+color:#6b7280;
+">
 Código
 </td>
 
-<td align="right">
+<td
+align="right"
+style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+font-weight:600;
+"
+>
 ${escaparHtml(reservacion.codigo)}
 </td>
-
 </tr>
 
 
 <tr>
-
-<td style="color:#6b7280;">
+<td style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+color:#6b7280;
+">
 Vehículo
 </td>
 
-<td align="right">
+<td
+align="right"
+style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+font-weight:600;
+"
+>
 ${escaparHtml(vehiculo)}
 </td>
-
 </tr>
 
 
 <tr>
-
-<td style="color:#6b7280;">
+<td style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+color:#6b7280;
+">
 Recogida
 </td>
 
-<td align="right">
+<td
+align="right"
+style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+font-weight:600;
+"
+>
 ${escaparHtml(fechaRecogida)}
 </td>
-
 </tr>
 
 
 <tr>
-
-<td style="color:#6b7280;">
+<td style="
+padding:10px 0;
+color:#6b7280;
+">
 Devolución
 </td>
 
-<td align="right">
+<td
+align="right"
+style="
+padding:10px 0;
+font-weight:600;
+"
+>
 ${escaparHtml(fechaEntrega)}
 </td>
-
 </tr>
-
 
 </table>
 
@@ -1532,10 +1661,15 @@ async function enviarCorreoPagoConfirmado({
                     p.metodo_nombre,
                     p.metodo_tipo,
 
-                    DATE_FORMAT(
-                    p.fecha_validacion,
-                    '%d/%m/%Y · %H:%i'
-                    ) AS fecha_validacion
+                   DATE_FORMAT(
+    p.fecha_validacion,
+    '%d/%m/%Y'
+) AS fecha_validacion,
+
+TIME_FORMAT(
+    p.fecha_validacion,
+    '%H:%i'
+) AS hora_validacion
 
                 FROM reservaciones r
 
@@ -1583,7 +1717,10 @@ async function enviarCorreoPagoConfirmado({
 
         const fechaValidacion =
     pago.fecha_validacion
-        ? pago.fecha_validacion
+        ? formatearFechaHora(
+            pago.fecha_validacion,
+            pago.hora_validacion
+        )
         : "";
 
 
@@ -1794,56 +1931,101 @@ Pago confirmado · Pendiente de entrega
 
 
 
-<table width="100%" style="
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+style="
 font-size:14px;
 line-height:1.7;
-">
-
+"
+>
 
 <tr>
-<td style="color:#6b7280;">
+<td style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+color:#6b7280;
+">
 Código
 </td>
 
-<td align="right">
+<td
+align="right"
+style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+font-weight:600;
+"
+>
 ${escaparHtml(pago.codigo)}
 </td>
 </tr>
 
 
 <tr>
-<td style="color:#6b7280;">
+<td style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+color:#6b7280;
+">
 Monto recibido
 </td>
 
-<td align="right">
+<td
+align="right"
+style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+font-weight:600;
+"
+>
 ${escaparHtml(pago.moneda)}
- ${Number(pago.monto).toFixed(2)}
+${Number(pago.monto).toFixed(2)}
 </td>
 </tr>
 
 
 <tr>
-<td style="color:#6b7280;">
+<td style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+color:#6b7280;
+">
 Método de pago
 </td>
 
-<td align="right">
+<td
+align="right"
+style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+font-weight:600;
+"
+>
 ${escaparHtml(pago.metodo_nombre)}
 </td>
 </tr>
 
 
 <tr>
-<td style="color:#6b7280;">
+<td style="
+padding:10px 0;
+color:#6b7280;
+">
 Fecha de validación
 </td>
 
-<td align="right">
+<td
+align="right"
+style="
+padding:10px 0;
+font-weight:600;
+"
+>
 ${escaparHtml(fechaValidacion)}
 </td>
 </tr>
-
 
 </table>
 

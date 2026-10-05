@@ -138,17 +138,26 @@ async function asignarUnidadFisicaReservacion({
                 `
                 SELECT
 
-                    id,
-                    agencia_id,
-                    modelo_id,
-                    cantidad_vehiculos,
-                    estado,
-                    fecha_recogida,
-                    hora_recogida,
-                    fecha_entrega,
-                    hora_entrega
+    id,
+    agencia_id,
+    modelo_id,
+    cantidad_vehiculos,
+    estado,
+    fecha_recogida,
+    hora_recogida,
+    fecha_entrega,
+    hora_entrega,
 
-                FROM reservaciones
+    CASE
+        WHEN NOW() >= TIMESTAMP(
+            fecha_recogida,
+            hora_recogida
+        )
+            THEN 1
+        ELSE 0
+    END AS reservacion_vencida
+
+FROM reservaciones
 
                 WHERE
                     id = ?
@@ -178,10 +187,30 @@ async function asignarUnidadFisicaReservacion({
 
         }
 
-
         const reservacion =
             reservaciones[0];
 
+/* =================================================
+   BLOQUEAR RESERVACIÓN VENCIDA
+================================================= */
+
+if (
+    Number(
+        reservacion.reservacion_vencida
+    ) === 1
+) {
+
+    throw crearErrorAsignacionVehiculo(
+
+        "RESERVACION_VENCIDA",
+
+        "No es posible asignar una unidad porque la fecha de recogida de la reservación ya venció.",
+
+        409
+
+    );
+
+}
 
         if (
             reservacion.estado !==

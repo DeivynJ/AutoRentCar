@@ -127,6 +127,28 @@ const {
     "../controllers/panelComprobantePagoController"
 );
 
+const {
+
+    mostrarConfiguracionCorreoPanel,
+
+    guardarConfiguracionCorreoPanel,
+
+    verificarConfiguracionCorreoPanel
+
+} = require(
+    "../controllers/panelConfiguracionCorreoController"
+);
+
+const {
+
+    mostrarConfiguracionPagosPanel,
+
+    guardarConfiguracionPagosPanel
+
+} = require(
+    "../controllers/panelConfiguracionPagosController"
+);
+
 
 const router =
     express.Router();
@@ -367,6 +389,47 @@ router.post(
     "/panel/vehiculos/modelos/:modeloId/unidades/:unidadId/editar",
     requerirGestionCatalogo,
     actualizarUnidadPanel
+);
+
+/* =========================================================
+   CONFIGURACIÓN DE CORREO AUTOMÁTICO
+========================================================= */
+
+router.get(
+    "/panel/configuracion/correo",
+    requerirAdministradorAgencia,
+    mostrarConfiguracionCorreoPanel
+);
+
+
+router.post(
+    "/panel/configuracion/correo",
+    requerirAdministradorAgencia,
+    guardarConfiguracionCorreoPanel
+);
+
+
+router.post(
+    "/panel/configuracion/correo/verificar",
+    requerirAdministradorAgencia,
+    verificarConfiguracionCorreoPanel
+);
+
+/* =========================================================
+   CONFIGURACIÓN DE PAGOS Y ANTICIPOS
+========================================================= */
+
+router.get(
+    "/panel/configuracion/pagos",
+    requerirAdministradorAgencia,
+    mostrarConfiguracionPagosPanel
+);
+
+
+router.post(
+    "/panel/configuracion/pagos",
+    requerirAdministradorAgencia,
+    guardarConfiguracionPagosPanel
 );
 
 module.exports =

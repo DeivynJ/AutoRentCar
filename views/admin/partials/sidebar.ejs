@@ -53,8 +53,8 @@
             <span class="sidebar-brand-icon">
 
     <img
-        src="/img/logo/autorentcar-icon.png"
-        alt="AutoRentCar"
+        src="/img/logo/autorentcar-logo-oficial.png"
+        alt="AVYNEXO"
     >
 
 </span>
@@ -62,7 +62,7 @@
             <span class="sidebar-brand-text">
 
                 <strong>
-                    AutoRentCar
+                    AVYNEXO
                 </strong>
 
                 <small>
@@ -84,62 +84,6 @@
         </button>
 
     </div>
-
-
-    <!-- =============================================
-         PERFIL RESUMIDO
-    ============================================== -->
-
-    <div class="sidebar-profile">
-
-        <div
-    class="sidebar-profile-avatar"
-    style="overflow:hidden;"
->
-
-    <% if (usuario.foto_perfil) { %>
-
-        <img
-            src="<%= usuario.foto_perfil %>"
-            alt="Foto de perfil"
-            style="
-                width:100%;
-                height:100%;
-                display:block;
-                object-fit:cover;
-            "
-        >
-
-    <% } else { %>
-
-        <%= usuario.nombre
-            .charAt(0)
-            .toUpperCase() %>
-
-    <% } %>
-
-</div>
-
-        <div class="sidebar-profile-info">
-
-            <strong>
-                <%= usuario.nombre %>
-                <%= usuario.apellido || "" %>
-            </strong>
-
-            <span>
-                <%= usuario.rolNombre %>
-            </span>
-
-        </div>
-
-        <span
-            class="sidebar-profile-status"
-            title="Sesión activa"
-        ></span>
-
-    </div>
-
 
     <!-- =============================================
          NAVEGACIÓN
@@ -282,21 +226,53 @@
 
     <div class="sidebar-footer">
 
-        <div class="sidebar-system-status">
+    <div class="sidebar-profile sidebar-profile-footer">
 
-            <span class="system-status-indicator"></span>
+        <div
+            class="sidebar-profile-avatar"
+            style="overflow:hidden;"
+        >
 
-            <div class="system-status-text">
+            <% if (usuario.foto_perfil) { %>
 
-                <strong>
-                    Sistema operativo
-                </strong>
+                <img
+                    src="<%= usuario.foto_perfil %>"
+                    alt="Foto de perfil"
+                    style="
+                        width:100%;
+                        height:100%;
+                        display:block;
+                        object-fit:cover;
+                    "
+                >
 
-                <span>
-                    Servicios funcionando
-                </span>
+            <% } else { %>
 
-            </div>
+                <%= usuario.nombre
+                    .charAt(0)
+                    .toUpperCase() %>
+
+            <% } %>
+
+        </div>
+
+        <div class="sidebar-profile-info">
+
+            <strong>
+                <%= usuario.nombre %>
+                <%= usuario.apellido || "" %>
+            </strong>
+
+            <span>
+                <%= usuario.rolNombre %>
+            </span>
+
+        </div>
+
+        <span
+            class="sidebar-profile-status"
+            title="Sesión activa"
+        ></span>
 
         </div>
 

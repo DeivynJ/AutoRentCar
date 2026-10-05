@@ -277,17 +277,48 @@
     </a>
 
 <% } %>
-            <span class="panel-nav-link panel-nav-disabled">
+          <% if (esAdministradorAgenciaSidebar) { %>
 
-                <span class="panel-nav-icon">
-                    <i class="fa-solid fa-gear"></i>
-                </span>
+    <a
+        href="/panel/configuracion/correo"
+        class="panel-nav-link <%= paginaActual === 'correo-automatico' ? 'activo' : '' %>"
+    >
 
-                <span class="panel-nav-text">
-                    Configuración
-                </span>
+        <span class="panel-nav-icon">
 
-            </span>
+            <i class="fa-solid fa-envelope"></i>
+
+        </span>1
+
+        <span class="panel-nav-text">
+
+            Correo automático
+
+        </span>
+
+    </a>
+
+
+    <a
+        href="/panel/configuracion/pagos"
+        class="panel-nav-link <%= paginaActual === 'configuracion-pagos' ? 'activo' : '' %>"
+    >
+
+        <span class="panel-nav-icon">
+
+            <i class="fa-solid fa-hand-holding-dollar"></i>
+
+        </span>
+
+        <span class="panel-nav-text">
+
+            Política de pagos
+
+        </span>
+
+    </a>
+
+<% } %>
 
         </div>
 

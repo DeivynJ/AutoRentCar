@@ -605,6 +605,92 @@ r.codigo_promocional,
 
 
         /* =================================================
+   ESTADO TEMPORAL DE LA RESERVACIÓN
+
+   Se consulta de forma independiente para no alterar
+   la consulta principal del detalle.
+================================================= */
+
+const periodoTemporalFilas =
+    await conexion.query(
+        `
+        SELECT
+
+            CASE
+                WHEN NOW() < TIMESTAMP(
+                    fecha_recogida,
+                    hora_recogida
+                )
+                    THEN 1
+                ELSE 0
+            END AS antes_recogida,
+
+            CASE
+                WHEN
+                    NOW() >= TIMESTAMP(
+                        fecha_recogida,
+                        hora_recogida
+                    )
+                    AND
+                    NOW() < TIMESTAMP(
+                        fecha_entrega,
+                        hora_entrega
+                    )
+                    THEN 1
+                ELSE 0
+            END AS periodo_activo,
+
+            CASE
+                WHEN NOW() >= TIMESTAMP(
+                    fecha_entrega,
+                    hora_entrega
+                )
+                    THEN 1
+                ELSE 0
+            END AS periodo_vencido
+
+        FROM reservaciones
+
+        WHERE
+            id = ?
+            AND agencia_id = ?
+
+        LIMIT 1
+        `,
+        [
+            reservacion.id,
+            agenciaId
+        ]
+    );
+
+
+const periodoTemporal =
+    periodoTemporalFilas[0] ||
+    {};
+
+
+reservacion.antes_recogida =
+    Number(
+        periodoTemporal.antes_recogida ||
+        0
+    );
+
+
+reservacion.periodo_activo =
+    Number(
+        periodoTemporal.periodo_activo ||
+        0
+    );
+
+
+reservacion.periodo_vencido =
+    Number(
+        periodoTemporal.periodo_vencido ||
+        0
+    );
+
+
+        /* =================================================
            ADICIONALES
 
            Se consultan únicamente utilizando la
@@ -940,11 +1026,6 @@ try {
 
     } catch (error) {
 
-        console.error(
-            "Error confirmando reservación:",
-            error
-        );
-
 
         if (
             error.codigo ===
@@ -971,6 +1052,17 @@ try {
 
         }
 
+        if (
+    error.codigo ===
+    "RESERVACION_VENCIDA"
+) {
+
+    return res.redirect(
+        `/panel/reservaciones/${req.params.reservacionId}?error=reservacion_vencida`
+    );
+
+}
+
 
         if (
             error.codigo ===
@@ -982,9 +1074,12 @@ try {
                 .send(
                     "Reservación no encontrada."
                 );
-
         }
 
+        console.error(
+    "Error inesperado confirmando reservación:",
+    error
+);
 
         return res.redirect(
             `/panel/reservaciones/${req.params.reservacionId}?error=confirmar`
@@ -1029,7 +1124,6 @@ async function rechazarReservacionPanel(
 
             });
 
-
         return res.redirect(
             `/panel/reservaciones/${resultado.id}?resultado=rechazada`
         );
@@ -1037,12 +1131,7 @@ async function rechazarReservacionPanel(
 
     } catch (error) {
 
-        console.error(
-            "Error rechazando reservación:",
-            error
-        );
-
-
+    
         if (
             error.codigo ===
             "RESERVACION_NO_ENCONTRADA"
@@ -1082,6 +1171,11 @@ async function rechazarReservacionPanel(
 
         }
 
+
+console.error(
+    "Error inesperado rechazando reservación:",
+    error
+);
 
         return res.redirect(
             `/panel/reservaciones/${req.params.reservacionId}?error=rechazar`
@@ -1201,11 +1295,6 @@ async function asignarUnidadReservacionPanel(
 
     } catch (error) {
 
-        console.error(
-            "Error asignando unidad física a reservación:",
-            error
-        );
-
 
         const reservacionId =
             Number(
@@ -1242,6 +1331,16 @@ async function asignarUnidadReservacionPanel(
 
         }
 
+        if (
+    error.codigo ===
+    "RESERVACION_VENCIDA"
+) {
+
+    return res.redirect(
+        `/panel/reservaciones/${reservacionId}?error=reservacion_vencida`
+    );
+
+}
 
         if (
             error.codigo ===
@@ -1307,6 +1406,11 @@ async function asignarUnidadReservacionPanel(
             );
 
         }
+
+        console.error(
+    "Error inesperado asignando unidad física a reservación:",
+    error
+);
 
 
         return res.redirect(
@@ -1392,16 +1496,11 @@ return res.redirect(
 
     } catch (error) {
 
-        console.error(
-            "Error al entregar vehículo:",
-            error
-        );
 
-
-        if (
-            error.codigo ===
-            "RESERVACION_NO_ENCONTRADA"
-        ) {
+    if (
+        error.codigo ===
+        "RESERVACION_NO_ENCONTRADA"
+    ) {
 
             return res.status(404).redirect(
                 "/panel/reservaciones?error=reservacion_no_encontrada"
@@ -1429,6 +1528,17 @@ return res.redirect(
     );
 }
 
+if (
+    error.codigo ===
+    "RESERVACION_VENCIDA"
+) {
+
+    return res.redirect(
+        `/panel/reservaciones/${reservacionId}?error=entrega_vencida`
+    );
+
+}
+
 
         if (
             error.codigo ===
@@ -1443,35 +1553,45 @@ return res.redirect(
         }
 
 
-        if (
-            error.codigo ===
-            "UNIDAD_OTRA_AGENCIA" ||
-            error.codigo ===
-            "MODELO_NO_COINCIDE" ||
-            error.codigo ===
-            "UNIDAD_NO_DISPONIBLE"
-        ) {
+        if ( 
+    error.codigo === 
+    "UNIDAD_OTRA_AGENCIA" || 
+    error.codigo === 
+    "MODELO_NO_COINCIDE" || 
+    error.codigo === 
+    "UNIDAD_NO_DISPONIBLE" 
+) { 
 
-            return res.redirect(
-                `/panel/reservaciones/${reservacionId}?error=entrega_unidad_invalida`
-            );
-        }
-
-
-        if (
-            error.codigo ===
-            "CAMBIO_ESTADO_FALLIDO"
-        ) {
-
-            return res.redirect(
-                `/panel/reservaciones/${reservacionId}?error=entrega_estado`
-            );
-        }
+    return res.redirect( 
+        `/panel/reservaciones/${reservacionId}?error=entrega_unidad_invalida` 
+    ); 
+}
 
 
-        return res.redirect(
-            `/panel/reservaciones/${reservacionId}?error=entregar_vehiculo`
-        );
+if ( 
+    error.codigo === 
+    "CAMBIO_ESTADO_FALLIDO" 
+) { 
+
+    return res.redirect( 
+        `/panel/reservaciones/${reservacionId}?error=entrega_estado` 
+    ); 
+}
+
+
+/* -------------------------------------------------
+   ERROR REALMENTE INESPERADO
+------------------------------------------------- */
+
+console.error(
+    "Error inesperado al entregar vehículo:",
+    error
+);
+
+
+return res.redirect( 
+    `/panel/reservaciones/${reservacionId}?error=entregar_vehiculo` 
+);
     }
 }
 
@@ -1548,12 +1668,7 @@ try {
 
     } catch (error) {
 
-        console.error(
-            "Error al registrar devolución:",
-            error
-        );
-
-
+      
         if (
             error.codigo ===
             "RESERVACION_NO_ENCONTRADA"
@@ -1614,6 +1729,11 @@ try {
             );
         }
 
+
+        console.error(
+    "Error inesperado al registrar devolución:",
+    error
+);
 
         return res.redirect(
             `/panel/reservaciones/${reservacionId}?error=registrar_devolucion`

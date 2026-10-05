@@ -288,15 +288,15 @@ function normalizarPeriodo({
      */
 
     if (
-        fin <= inicio
-    ) {
+    fechaFin <= fechaInicio
+) {
 
-        throw crearErrorDisponibilidad(
-            "PERIODO_INVALIDO",
-            "La fecha y hora de entrega deben ser posteriores a la recogida."
-        );
+    throw crearErrorDisponibilidad(
+        "PERIODO_INVALIDO",
+        "La fecha de devolución debe ser como mínimo el día siguiente a la fecha de recogida."
+    );
 
-    }
+}
 
 
     return {

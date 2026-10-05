@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Configuración de correo automático de <%= agencia.nombre %>."
+    >
+
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <%- include("../partials/tema") %>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <div class="panel-shell">
+
+
+        <%- include("../partials/sidebar") %>
+
+
+        <div class="panel-content-wrapper">
+
+
+            <%- include("../partials/header") %>
+
+
+            <main class="panel-main">
+
+
+                <!-- =====================================
+                     ENCABEZADO
+                ====================================== -->
+
+                <section class="panel-module-hero">
+
+                    <div>
+
+                        <span class="panel-module-badge">
+
+                            <i class="fa-solid fa-envelope-circle-check"></i>
+
+                            Configuración
+
+                        </span>
+
+
+                        <h2>
+
+                            Correo automático de
+
+                            <span>
+                                <%= agencia.nombre %>
+                            </span>
+
+                        </h2>
+
+
+                        <p>
+
+                            Configura la cuenta SMTP que esta
+                            agencia utilizará para enviar sus
+                            propios correos automáticos a los
+                            clientes.
+
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =====================================
+                     MENSAJES
+                ====================================== -->
+
+                <% if (resultado === "guardado") { %>
+
+                    <div class="panel-alert panel-alert-success">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <div>
+
+                            <strong>
+                                Configuración guardada
+                            </strong>
+
+                            <span>
+
+                                Los datos SMTP fueron guardados.
+                                Ahora debes verificar la conexión
+                                antes de que el correo automático
+                                pueda utilizarse.
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+
+                <% if (resultado === "verificado") { %>
+
+                    <div class="panel-alert panel-alert-success">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <div>
+
+                            <strong>
+                                Conexión verificada
+                            </strong>
+
+                            <span>
+
+                                La configuración SMTP de esta
+                                agencia fue verificada
+                                correctamente.
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+
+                <%
+                    if (
+                        resultado === "error" ||
+                        resultado === "verificacion_error"
+                    ) {
+                %>
+
+                    <div class="panel-alert panel-alert-danger">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        <div>
+
+                            <strong>
+
+                                <%= resultado === "verificacion_error"
+                                    ? "No fue posible verificar la conexión"
+                                    : "No fue posible guardar la configuración" %>
+
+                            </strong>
+
+                            <span>
+
+                                <%= mensaje ||
+                                    "Revisa los datos e inténtalo nuevamente." %>
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+
+                <!-- =====================================
+                     ESTADO
+                ====================================== -->
+
+                <section class="panel-summary-grid">
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-power-off"></i>
+
+                        </div>
+
+                        <small>
+                            Estado
+                        </small>
+
+                        <strong>
+
+                            <%= configuracion?.activo
+                                ? "Activo"
+                                : "Inactivo" %>
+
+                        </strong>
+
+                        <span>
+                            Uso del correo automático
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                        </div>
+
+                        <small>
+                            Verificación SMTP
+                        </small>
+
+                        <strong>
+
+                            <%= configuracion?.verificado
+                                ? "Verificado"
+                                : "Pendiente" %>
+
+                        </strong>
+
+                        <span>
+
+                            <%= configuracion?.verificado
+                                ? "Conexión lista para enviar"
+                                : "Debe verificarse antes de enviar" %>
+
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-at"></i>
+
+                        </div>
+
+                        <small>
+                            Remitente
+                        </small>
+
+                        <strong>
+
+                            <%= configuracion?.correoRemitente ||
+                                "Sin configurar" %>
+
+                        </strong>
+
+                        <span>
+                            Cuenta utilizada por esta agencia
+                        </span>
+
+                    </article>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     FORMULARIO
+                ====================================== -->
+
+                <form
+                    action="/panel/configuracion/correo"
+                    method="POST"
+                    class="panel-model-form"
+                >
+
+
+                    <!-- IDENTIDAD -->
+
+
+                    <section class="panel-form-card">
+
+
+                        <div class="panel-form-card-header">
+
+                            <span class="panel-form-card-icon">
+
+                                <i class="fa-solid fa-envelope"></i>
+
+                            </span>
+
+
+                            <div>
+
+                                <span>
+                                    Identidad del remitente
+                                </span>
+
+                                <h3>
+                                    Datos visibles para el cliente
+                                </h3>
+
+                                <p>
+
+                                    Estos datos identificarán a la
+                                    agencia en los correos automáticos
+                                    enviados desde AutoRentCar.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel-form-grid">
+
+
+                            <div class="panel-form-field">
+
+                                <label for="proveedor">
+                                    Proveedor *
+                                </label>
+
+                                <select
+                                    id="proveedor"
+                                    name="proveedor"
+                                    required
+                                >
+
+                                    <option
+                                        value="gmail"
+                                        <%= !configuracion ||
+                                            configuracion.proveedor === "gmail"
+                                                ? "selected"
+                                                : "" %>
+                                    >
+                                        Gmail
+                                    </option>
+
+
+                                    <option
+                                        value="outlook"
+                                        <%= configuracion?.proveedor === "outlook"
+                                            ? "selected"
+                                            : "" %>
+                                    >
+                                        Outlook / Microsoft
+                                    </option>
+
+
+                                    <option
+                                        value="otro"
+                                        <%= configuracion?.proveedor === "otro"
+                                            ? "selected"
+                                            : "" %>
+                                    >
+                                        Otro SMTP
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="nombreRemitente">
+                                    Nombre del remitente *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="nombreRemitente"
+                                    name="nombreRemitente"
+                                    maxlength="150"
+                                    value="<%= configuracion?.nombreRemitente || agencia.nombre || '' %>"
+                                    placeholder="Ej.: <%= agencia.nombre %>"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="correoRemitente">
+                                    Correo remitente *
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="correoRemitente"
+                                    name="correoRemitente"
+                                    value="<%= configuracion?.correoRemitente || '' %>"
+                                    placeholder="reservas@tuagencia.com"
+                                    autocomplete="email"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="smtpUsuario">
+                                    Usuario SMTP *
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="smtpUsuario"
+                                    name="smtpUsuario"
+                                    value="<%= configuracion?.smtpUsuario || '' %>"
+                                    placeholder="correo@tuagencia.com"
+                                    autocomplete="username"
+                                    required
+                                >
+
+                            </div>
+
+
+                        </div>
+
+
+                    </section>
+
+
+                    <!-- SERVIDOR SMTP -->
+
+
+                    <section class="panel-form-card">
+
+
+                        <div class="panel-form-card-header">
+
+                            <span class="panel-form-card-icon">
+
+                                <i class="fa-solid fa-server"></i>
+
+                            </span>
+
+
+                            <div>
+
+                                <span>
+                                    Servidor SMTP
+                                </span>
+
+                                <h3>
+                                    Conexión de salida
+                                </h3>
+
+                                <p>
+
+                                    Configura el servidor que pertenece
+                                    exclusivamente a esta agencia.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel-form-grid">
+
+
+                            <div class="panel-form-field">
+
+                                <label for="smtpHost">
+                                    Host SMTP *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="smtpHost"
+                                    name="smtpHost"
+                                    value="<%= configuracion?.smtpHost || 'smtp.gmail.com' %>"
+                                    placeholder="smtp.gmail.com"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="smtpPuerto">
+                                    Puerto SMTP *
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="smtpPuerto"
+                                    name="smtpPuerto"
+                                    min="1"
+                                    max="65535"
+                                    value="<%= configuracion?.smtpPuerto || 465 %>"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="smtpSecure">
+                                    Conexión segura *
+                                </label>
+
+                                <select
+                                    id="smtpSecure"
+                                    name="smtpSecure"
+                                    required
+                                >
+
+                                    <option
+                                        value="1"
+                                        <%= !configuracion ||
+                                            configuracion.smtpSecure
+                                                ? "selected"
+                                                : "" %>
+                                    >
+                                        Sí - SSL/TLS
+                                    </option>
+
+                                    <option
+                                        value="0"
+                                        <%= configuracion &&
+                                            !configuracion.smtpSecure
+                                                ? "selected"
+                                                : "" %>
+                                    >
+                                        No
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="activo">
+                                    Correo automático *
+                                </label>
+
+                                <select
+                                    id="activo"
+                                    name="activo"
+                                    required
+                                >
+
+                                    <option
+                                        value="1"
+                                        <%= !configuracion ||
+                                            configuracion.activo
+                                                ? "selected"
+                                                : "" %>
+                                    >
+                                        Activo
+                                    </option>
+
+                                    <option
+                                        value="0"
+                                        <%= configuracion &&
+                                            !configuracion.activo
+                                                ? "selected"
+                                                : "" %>
+                                    >
+                                        Inactivo
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="panel-form-field panel-form-full">
+
+                                <label for="smtpClave">
+
+                                    <%= configuracion
+                                        ? "Nueva contraseña o contraseña de aplicación"
+                                        : "Contraseña o contraseña de aplicación *" %>
+
+                                </label>
+
+                                <input
+                                    type="password"
+                                    id="smtpClave"
+                                    name="smtpClave"
+                                    placeholder="<%= configuracion
+                                        ? 'Déjala vacía para conservar la contraseña actual'
+                                        : 'Introduce la contraseña SMTP' %>"
+                                    autocomplete="new-password"
+                                    <%= configuracion
+                                        ? ""
+                                        : "required" %>
+                                >
+
+                                <small class="panel-field-help">
+
+                                    <%= configuracion
+                                        ? "Por seguridad, la contraseña guardada nunca se muestra. Si no deseas cambiarla, deja este campo vacío."
+                                        : "La contraseña será protegida por el mecanismo de cifrado del sistema y no volverá a mostrarse en pantalla." %>
+
+                                </small>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </section>
+
+
+                    <!-- NOTA -->
+
+
+                    <div class="panel-form-note">
+
+                        <i class="fa-solid fa-shield-halved"></i>
+
+                        <div>
+
+                            <strong>
+                                Configuración independiente por agencia
+                            </strong>
+
+                            <p>
+
+                                Esta cuenta SMTP pertenece únicamente a
+                                <%= agencia.nombre %>.
+
+                                Guardar cualquier cambio hará que la
+                                configuración vuelva a quedar pendiente
+                                de verificación hasta probar nuevamente
+                                la conexión.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- GUARDAR -->
+
+
+                    <div class="panel-form-actions">
+
+                        <button
+                            type="submit"
+                            class="panel-form-submit"
+                        >
+
+                            <i class="fa-solid fa-floppy-disk"></i>
+
+                            Guardar configuración
+
+                        </button>
+
+                    </div>
+
+
+                </form>
+
+
+                <!-- =====================================
+                     VERIFICAR SMTP
+                ====================================== -->
+
+                <% if (configuracion) { %>
+
+
+                    <form
+                        action="/panel/configuracion/correo/verificar"
+                        method="POST"
+                        style="margin-top: 16px;"
+                    >
+
+
+                        <section class="panel-form-card">
+
+
+                            <div class="panel-form-card-header">
+
+                                <span class="panel-form-card-icon">
+
+                                    <i class="fa-solid fa-plug-circle-check"></i>
+
+                                </span>
+
+
+                                <div>
+
+                                    <span>
+                                        Prueba de conexión
+                                    </span>
+
+                                    <h3>
+                                        Verificar configuración SMTP
+                                    </h3>
+
+                                    <p>
+
+                                        Comprueba que el servidor,
+                                        usuario y contraseña guardados
+                                        permitan establecer una conexión
+                                        correcta.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="panel-form-actions">
+
+                                <button
+                                    type="submit"
+                                    class="panel-form-submit"
+                                >
+
+                                    <i class="fa-solid fa-circle-check"></i>
+
+                                    Verificar conexión SMTP
+
+                                </button>
+
+                            </div>
+
+
+                        </section>
+
+
+                    </form>
+
+
+                <% } %>
+
+
+            </main>
+
+
+        </div>
+
+
+    </div>
+
+
+    <script src="/js/panel.js"></script>
+
+
+</body>
+
+</html>

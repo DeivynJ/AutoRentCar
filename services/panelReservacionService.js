@@ -199,17 +199,34 @@ async function cambiarEstadoReservacionPanel({
                 `
                 SELECT
 
-                    id,
-                    codigo,
-                    agencia_id,
-                    modelo_id,
-                    cantidad_vehiculos,
+    id,
+    codigo,
+    agencia_id,
+    modelo_id,
+    cantidad_vehiculos,
 
-                    total,
+    total,
 
-                    estado
+    estado,
 
-                FROM reservaciones
+fecha_recogida,
+
+hora_recogida,
+
+fecha_entrega,
+
+hora_entrega,
+
+CASE
+    WHEN NOW() >= TIMESTAMP(
+        fecha_recogida,
+        hora_recogida
+    )
+        THEN 1
+    ELSE 0
+END AS recogida_vencida
+
+FROM reservaciones
 
                 WHERE
                     id = ?
@@ -347,6 +364,27 @@ async function cambiarEstadoReservacionPanel({
             };
 
         }
+
+/* =================================================
+   VALIDAR RECOGIDA ANTES DE APROBAR
+
+   El rechazo continúa permitido aunque la fecha
+   de recogida ya haya sido alcanzada.
+================================================= */
+
+if (
+    Number(
+        reservacion.recogida_vencida
+    ) === 1
+) {
+
+    throw crearErrorPanelReservacion(
+        "RESERVACION_VENCIDA",
+        "No es posible aprobar esta reservación porque la fecha y hora de recogida ya vencieron.",
+        409
+    );
+
+}
 
 
         /* =================================================

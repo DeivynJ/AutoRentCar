@@ -1176,6 +1176,30 @@ function asignarValor(id, valor) {
     }
 }
 
+function obtenerHoraActualReserva() {
+
+    const ahora =
+        new Date();
+
+
+    return [
+        String(
+            ahora.getHours()
+        ).padStart(
+            2,
+            "0"
+        ),
+
+        String(
+            ahora.getMinutes()
+        ).padStart(
+            2,
+            "0"
+        )
+    ].join(":");
+
+}
+
 /* =========================================================
    FECHAS
 ========================================================= */
@@ -1194,21 +1218,32 @@ function configurarFechasReserva() {
     }
 
     const hoy = obtenerFechaReserva();
-    const manana = sumarDiasReserva(hoy, 1);
+const manana = sumarDiasReserva(
+    hoy,
+    1
+);
 
-    recogida.min = hoy;
-    entrega.min = manana;
+recogida.min =
+    manana;
 
-    if (!recogida.value || recogida.value < hoy) {
-        recogida.value = hoy;
-    }
+if (
+    !recogida.value ||
+    recogida.value < manana
+) {
 
-    const fechaMinimaEntrega = sumarDiasReserva(
+    recogida.value =
+        manana;
+
+}
+
+const fechaMinimaEntrega =
+    sumarDiasReserva(
         recogida.value,
         1
     );
 
-    entrega.min = fechaMinimaEntrega;
+entrega.min =
+    fechaMinimaEntrega;
 
     if (
         !entrega.value ||
@@ -1252,6 +1287,32 @@ function configurarFechasReserva() {
         document.getElementById(
             "reserva-hora-recogida"
         );
+
+    if (
+    horaRecogida &&
+    recogida.value === hoy
+) {
+
+    const horaActual =
+        obtenerHoraActualReserva();
+
+
+    horaRecogida.min =
+        horaActual;
+
+
+    if (
+        !horaRecogida.value ||
+        horaRecogida.value <
+            horaActual
+    ) {
+
+        horaRecogida.value =
+            horaActual;
+
+    }
+
+}
 
     const horaEntrega =
         document.getElementById(
@@ -2142,14 +2203,13 @@ function configurarEnvioReservacion() {
             const dias = calcularDiasReserva();
 
             if (dias < 1) {
-                mostrarNotificacion(
-                    "Fechas incorrectas",
-                    "La fecha de entrega debe ser posterior a la fecha de recogida."
-                );
+    mostrarNotificacion(
+        "Fechas incorrectas",
+        "La fecha de devolución debe ser posterior a la fecha de recogida."
+    );
 
-                return;
-            }
-
+    return;
+}
             const cantidadSolicitada =
                 obtenerCantidadVehiculosSeleccionada();
 
@@ -2570,17 +2630,30 @@ function validarCampoReserva(campo) {
     }
 
     if (
-        campo.id ===
-            "reserva-fecha-recogida" &&
-        valor
-    ) {
-        const hoy = obtenerFechaReserva();
+    campo.id ===
+        "reserva-fecha-recogida" &&
+    valor
+) {
 
-        if (valor < hoy) {
-            mensaje =
-                "La fecha de recogida no puede ser anterior a hoy.";
-        }
+    const hoy =
+        obtenerFechaReserva();
+
+    const manana =
+        sumarDiasReserva(
+            hoy,
+            1
+        );
+
+    if (
+        valor < manana
+    ) {
+
+        mensaje =
+            "La fecha de recogida debe ser a partir de mañana.";
+
     }
+
+}
 
     if (
         campo.id ===
@@ -2597,7 +2670,8 @@ function validarCampoReserva(campo) {
             valor <= fechaRecogida
         ) {
             mensaje =
-                "La fecha de entrega debe ser posterior a la fecha de recogida.";
+                mensaje =
+    "La fecha de devolución debe ser posterior a la fecha de recogida.";
         }
     }
 

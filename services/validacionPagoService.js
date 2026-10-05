@@ -319,16 +319,28 @@ await validarUsuarioProcesador(
                 `
                 SELECT
 
-                    id,
-                    agencia_id,
-                    codigo,
+    id,
+    agencia_id,
+    codigo,
 
-                    estado,
-                    total,
+    estado,
+    total,
 
-                    monto_anticipo_requerido
+    monto_anticipo_requerido,
 
-                FROM reservaciones
+    fecha_recogida,
+    hora_recogida,
+
+    CASE
+        WHEN NOW() >= TIMESTAMP(
+            fecha_recogida,
+            hora_recogida
+        )
+            THEN 1
+        ELSE 0
+    END AS recogida_vencida
+
+FROM reservaciones
 
                 WHERE
                     id = ?
@@ -357,10 +369,36 @@ await validarUsuarioProcesador(
 
         }
 
-
         const reservacion =
             reservaciones[0];
 
+/* -------------------------------------------------
+   BLOQUEAR CONFIRMACIÓN DE PAGO VENCIDA
+------------------------------------------------- */
+
+if (
+    Number(
+        reservacion.recogida_vencida
+    ) === 1
+) {
+
+    const errorVencida =
+        crearErrorValidacionPago(
+            "RESERVACION_VENCIDA",
+            "No es posible confirmar el pago porque la fecha y hora de recogida de la reservación ya vencieron.",
+            409
+        );
+
+
+    errorVencida.reservacionId =
+        Number(
+            reservacion.id
+        );
+
+
+    throw errorVencida;
+
+}
 
         /* -------------------------------------------------
            TOTAL YA CONFIRMADO

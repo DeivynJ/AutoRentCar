@@ -56,20 +56,29 @@ async function entregarVehiculoReservacion({
         cantidad_vehiculos,
         estado,
 
-        fecha_recogida,
-        hora_recogida,
+fecha_recogida,
+hora_recogida,
 
-        CASE
-            WHEN NOW() >= TIMESTAMP(
-                fecha_recogida,
-                COALESCE(
-                    hora_recogida,
-                    '00:00:00'
-                )
-            )
-                THEN 1
-            ELSE 0
-        END AS entrega_habilitada
+fecha_entrega,
+hora_entrega,
+
+CASE
+    WHEN NOW() >= TIMESTAMP(
+        fecha_recogida,
+        hora_recogida
+    )
+        THEN 1
+    ELSE 0
+END AS recogida_iniciada,
+
+CASE
+    WHEN NOW() >= TIMESTAMP(
+        fecha_entrega,
+        hora_entrega
+    )
+        THEN 1
+    ELSE 0
+END AS periodo_vencido
 
     FROM reservaciones
 
@@ -117,16 +126,45 @@ async function entregarVehiculoReservacion({
  * 3. No permitir entregar antes de
  *    la fecha y hora de recogida.
  */
+/* =================================================
+   VALIDAR PERÍODO DE ENTREGA
+================================================= */
+
 if (
     Number(
-        reservacion.entrega_habilitada
+        reservacion.recogida_iniciada
     ) !== 1
 ) {
 
     throw crearErrorOperacion(
+
         "ENTREGA_ANTICIPADA",
-        "El vehículo todavía no puede ser entregado porque no ha llegado la fecha y hora de recogida."
+
+        "El vehículo todavía no puede ser entregado porque no ha llegado la fecha y hora de recogida.",
+
+        409
+
     );
+
+}
+
+
+if (
+    Number(
+        reservacion.periodo_vencido
+    ) === 1
+) {
+
+    throw crearErrorOperacion(
+
+        "RESERVACION_VENCIDA",
+
+        "No es posible entregar el vehículo porque el período de la reservación ya venció.",
+
+        409
+
+    );
+
 }
 
         /*

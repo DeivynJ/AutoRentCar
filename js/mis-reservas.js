@@ -696,7 +696,7 @@ function verDetalleReservacion(codigo) {
                 )}
 
                 ${crearDatoDetalle(
-                    "Lugar de entrega",
+                    "Lugar de devolución",
                     reserva.lugarEntrega
                 )}
 
@@ -715,14 +715,14 @@ function verDetalleReservacion(codigo) {
                 )}
 
                 ${crearDatoDetalle(
-                    "Fecha de entrega",
+                    "Fecha de devolución",
                     formatearFechaSimpleReserva(
                         reserva.fechaEntrega
                     )
                 )}
 
                 ${crearDatoDetalle(
-                    "Hora de entrega",
+                    "Hora de devolución",
                     formatearHoraReserva(
                         reserva.horaEntrega
                     )

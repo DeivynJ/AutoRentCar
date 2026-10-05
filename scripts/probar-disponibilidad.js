@@ -359,13 +359,13 @@ async function probarDisponibilidad() {
 
         const fechaEntrega =
             await preguntar(
-                "Fecha de entrega (YYYY-MM-DD): "
+                 "Fecha de devolución (YYYY-MM-DD): "
             );
 
 
         const horaEntrega =
             await preguntar(
-                "Hora de entrega (HH:MM): "
+                "Hora de devolución (HH:MM): "
             );
 
 
