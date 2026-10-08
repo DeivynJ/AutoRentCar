@@ -313,21 +313,39 @@ async function cargarContextoAgencia(
 
 
         if (
-            Number(
-                datosSuscripcion
-                    .fecha_vigente
-            ) !== 1
-        ) {
+    Number(
+        datosSuscripcion
+            .fecha_vigente
+    ) !== 1
+) {
 
-            return res
-                .status(403)
-                .send(
-                    "La suscripción de la agencia se encuentra fuera de su período de vigencia."
+    return req.session.destroy(
+        (errorSesion) => {
+
+            if (errorSesion) {
+
+                console.error(
+                    "Error cerrando sesión por suscripción vencida:",
+                    errorSesion
                 );
 
+                return res
+                    .status(500)
+                    .send(
+                        "No fue posible cerrar la sesión correctamente."
+                    );
+
+            }
+
+
+            return res.redirect(
+                "/login?aviso=suscripcion_vencida"
+            );
+
         }
+    );
 
-
+}
         /* =================================================
            4. CONSTRUIR CONTEXTO SEGURO
         ================================================= */

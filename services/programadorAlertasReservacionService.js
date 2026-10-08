@@ -8,7 +8,9 @@ const {
 
     generarAlertasEntregaPendiente,
 
-    generarAlertasDevolucionPendiente
+    generarAlertasDevolucionPendiente,
+
+    generarAlertasDevolucionAtrasada
 
 } = require(
     "./alertasReservacionAgenciaService"
@@ -78,12 +80,16 @@ async function ejecutarRevisionAlertasReservacion() {
     try {
 
 
-        const resultadoEntrega =
+    const resultadoEntrega =
     await generarAlertasEntregaPendiente();
-
-
-const resultadoDevolucion =
+    
+    const resultadoDevolucion =
     await generarAlertasDevolucionPendiente();
+
+    const resultadoDevolucionAtrasada =
+    await generarAlertasDevolucionAtrasada();
+
+
 
 
 
@@ -95,9 +101,11 @@ const totalCreadas =
     Number(
         resultadoDevolucion?.creadas ||
         0
+    ) +
+    Number(
+        resultadoDevolucionAtrasada?.creadas ||
+        0
     );
-
-
 
         if (
             totalCreadas >
@@ -116,23 +124,26 @@ const totalCreadas =
             ),
 
         devoluciones:
-            Number(
-                resultadoDevolucion?.creadas ||
-                0
-            ),
+    Number(
+        resultadoDevolucion?.creadas ||
+        0
+    ),
 
-        total:
-            totalCreadas
+devolucionesAtrasadas:
+    Number(
+        resultadoDevolucionAtrasada?.creadas ||
+        0
+    ),
+
+total:
+    totalCreadas
 
     }
 );
 
- 
         }
 
-
-
-        return {
+       return {
 
     omitida:
         false,
@@ -143,9 +154,13 @@ const totalCreadas =
 
     devolucion:
         resultadoDevolucion ||
+        null,
+
+    devolucionAtrasada:
+        resultadoDevolucionAtrasada ||
         null
 
-};;
+};
 
 
 

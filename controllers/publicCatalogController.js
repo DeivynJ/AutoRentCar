@@ -191,10 +191,34 @@ async function obtenerCatalogoAgencia(
 
                     s.fecha_inicio,
 
-                    s.fecha_fin,
+s.fecha_fin,
 
-                    p.id
-                        AS plan_id,
+CASE
+
+    WHEN
+
+        s.fecha_inicio <=
+            CURDATE()
+
+        AND
+
+        (
+            s.fecha_fin IS NULL
+
+            OR
+
+            s.fecha_fin >=
+                CURDATE()
+        )
+
+    THEN 1
+
+    ELSE 0
+
+END AS fecha_vigente,
+
+p.id
+    AS plan_id,
 
                     p.nombre
                         AS plan_nombre
@@ -251,26 +275,29 @@ async function obtenerCatalogoAgencia(
 
 
         if (
-            !estadosSuscripcionPermitidos.includes(
-                suscripcion.estado
-            )
-        ) {
+    !estadosSuscripcionPermitidos.includes(
+        suscripcion.estado
+    ) ||
+    Number(
+        suscripcion.fecha_vigente
+    ) !== 1
+) {
 
-            return res
-                .status(403)
-                .json(
-                    {
+    return res
+        .status(403)
+        .json(
+            {
 
-                        ok:
-                            false,
+                ok:
+                    false,
 
-                        mensaje:
-                            "El catálogo de esta agencia no está disponible actualmente."
+                mensaje:
+                    "El catálogo de esta agencia no está disponible actualmente."
 
-                    }
-                );
+            }
+        );
 
-        }
+}
 
 
         /* -------------------------------------------------

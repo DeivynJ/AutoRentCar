@@ -121,6 +121,38 @@ const pagoPublicoRoutes = require(
 
 const app = express();
 
+app.disable(
+    "x-powered-by"
+);
+
+app.use(
+    (req, res, next) => {
+
+        res.setHeader(
+            "X-Content-Type-Options",
+            "nosniff"
+        );
+
+        res.setHeader(
+    "Referrer-Policy",
+    "strict-origin-when-cross-origin"
+);
+
+res.setHeader(
+    "X-Frame-Options",
+    "SAMEORIGIN"
+);
+
+res.setHeader(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=()"
+);
+
+        next();
+
+    }
+);
+
 const PORT =
     Number(
         process.env.PORT
@@ -239,6 +271,49 @@ app.use(
                 8
         }
     })
+);
+
+/* =========================================================
+   NO CACHEAR ÁREAS PRIVADAS
+========================================================= */
+
+app.use(
+    (req, res, next) => {
+
+        const rutaPrivada =
+            req.path === "/admin" ||
+            req.path.startsWith(
+                "/admin/"
+            ) ||
+            req.path === "/panel" ||
+            req.path.startsWith(
+                "/panel/"
+            );
+
+
+        if (rutaPrivada) {
+
+            res.setHeader(
+                "Cache-Control",
+                "no-store, no-cache, must-revalidate, private"
+            );
+
+            res.setHeader(
+                "Pragma",
+                "no-cache"
+            );
+
+            res.setHeader(
+                "Expires",
+                "0"
+            );
+
+        }
+
+
+        next();
+
+    }
 );
 
 

@@ -27,7 +27,8 @@ const {
 
  const {
 
-    crearReservacionPublica
+    crearReservacionPublica,
+    consultarReservacionPublica
 
 } = require(
     "../controllers/publicReservacionController"
@@ -136,6 +137,11 @@ router.get(
 router.get(
     "/api/agencias/:slug/disponibilidad",
     consultarDisponibilidadAgencia
+);
+
+router.post(
+    "/api/agencias/:slug/reservaciones/consulta",
+    consultarReservacionPublica
 );
 
 router.post(

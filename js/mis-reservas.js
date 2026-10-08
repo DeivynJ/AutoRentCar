@@ -96,37 +96,656 @@ function reservacionPerteneceAgenciaActual(
    CARGAR DATOS
 ========================================================= */
 
-function cargarReservacionesUsuario() {
-    const contenido = localStorage.getItem(
-    obtenerClaveReservacionesMisReservas()
-);
+/* =========================================================
+   ESTADO AMIGABLE DESDE MARIADB
+========================================================= */
+
+function obtenerTextoEstadoServidorMisReservas(
+    estado
+) {
+
+    const estadoSeguro =
+        String(
+            estado ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    const estados = {
+
+        pendiente:
+            "Pendiente de confirmación",
+
+        pendiente_pago:
+            "Pendiente de pago",
+
+        confirmada:
+            "Confirmada",
+
+        en_curso:
+            "En curso",
+
+        finalizada:
+            "Finalizada",
+
+        rechazada:
+            "Rechazada",
+
+        cancelada:
+            "Cancelada"
+
+    };
+
+
+    return (
+        estados[estadoSeguro] ||
+        estado ||
+        "Pendiente de confirmación"
+    );
+
+}
+
+
+/* =========================================================
+   CONSULTAR RESERVACIÓN REAL EN MARIADB
+========================================================= */
+
+async function consultarReservacionServidorMisReservas(
+    reservacion
+) {
+
+    const codigo =
+        String(
+            reservacion?.codigo ||
+            ""
+        ).trim();
+
+
+    const correo =
+        String(
+            reservacion?.cliente?.correo ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    if (
+        !codigo ||
+        !correo
+    ) {
+
+        return null;
+
+    }
+
+
+    const slug =
+        obtenerSlugAgenciaMisReservas();
+
+
+    const respuesta =
+        await fetch(
+            `/api/agencias/${encodeURIComponent(
+                slug
+            )}/reservaciones/consulta`,
+            {
+
+                method:
+                    "POST",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json"
+
+                },
+
+                body:
+                    JSON.stringify({
+
+                        codigo,
+                        correo
+
+                    })
+
+            }
+        );
+
+
+    let datos;
+
+
+    try {
+
+        datos =
+            await respuesta.json();
+
+    } catch (error) {
+
+        return null;
+
+    }
+
+
+    if (
+        !respuesta.ok ||
+        !datos?.ok ||
+        !datos?.reservacion
+    ) {
+
+        return null;
+
+    }
+
+
+    return datos.reservacion;
+
+}
+
+
+/* =========================================================
+   APLICAR DATOS REALES DEL SERVIDOR
+========================================================= */
+
+function aplicarReservacionServidorMisReservas(
+    reservacionLocal,
+    reservacionServidor
+) {
+
+    if (
+        !reservacionLocal ||
+        !reservacionServidor
+    ) {
+
+        return reservacionLocal;
+
+    }
+
+
+    reservacionLocal.id =
+        Number(
+            reservacionServidor.id ||
+            reservacionLocal.id ||
+            0
+        );
+
+
+    reservacionLocal.codigo =
+        reservacionServidor.codigo ||
+        reservacionLocal.codigo;
+
+
+    reservacionLocal.estadoServidor =
+        reservacionServidor.estado ||
+        reservacionLocal.estadoServidor ||
+        "pendiente";
+
+
+    reservacionLocal.estado =
+        obtenerTextoEstadoServidorMisReservas(
+            reservacionServidor.estado
+        );
+
+
+    reservacionLocal.agencia = {
+
+        ...reservacionLocal.agencia,
+
+        id:
+            Number(
+                reservacionServidor
+                    .agencia
+                    ?.id ||
+                reservacionLocal
+                    .agencia
+                    ?.id ||
+                0
+            ),
+
+        nombre:
+            reservacionServidor
+                .agencia
+                ?.nombre ||
+            reservacionLocal
+                .agencia
+                ?.nombre ||
+            "",
+
+        slug:
+            reservacionServidor
+                .agencia
+                ?.slug ||
+            reservacionLocal
+                .agencia
+                ?.slug ||
+            obtenerSlugAgenciaMisReservas()
+
+    };
+
+
+    reservacionLocal.vehiculo = {
+
+        ...reservacionLocal.vehiculo,
+
+        id:
+            Number(
+                reservacionServidor
+                    .modelo
+                    ?.id ||
+                reservacionLocal
+                    .vehiculo
+                    ?.id ||
+                0
+            ),
+
+        nombre:
+            reservacionServidor
+                .modelo
+                ?.nombre ||
+            reservacionLocal
+                .vehiculo
+                ?.nombre ||
+            "",
+
+        marca:
+            reservacionServidor
+                .modelo
+                ?.marca ||
+            reservacionLocal
+                .vehiculo
+                ?.marca ||
+            "",
+
+        categoria:
+            reservacionServidor
+                .modelo
+                ?.categoria ||
+            reservacionLocal
+                .vehiculo
+                ?.categoria ||
+            "",
+
+        transmision:
+            reservacionServidor
+                .modelo
+                ?.transmision ||
+            reservacionLocal
+                .vehiculo
+                ?.transmision ||
+            "",
+
+        combustible:
+            reservacionServidor
+                .modelo
+                ?.combustible ||
+            reservacionLocal
+                .vehiculo
+                ?.combustible ||
+            "",
+
+        pasajeros:
+            Number(
+                reservacionServidor
+                    .modelo
+                    ?.pasajeros ||
+                reservacionLocal
+                    .vehiculo
+                    ?.pasajeros ||
+                0
+            ),
+
+        puertas:
+            Number(
+                reservacionServidor
+                    .modelo
+                    ?.puertas ||
+                reservacionLocal
+                    .vehiculo
+                    ?.puertas ||
+                0
+            ),
+
+        equipaje:
+            Number(
+                reservacionServidor
+                    .modelo
+                    ?.equipaje ||
+                reservacionLocal
+                    .vehiculo
+                    ?.equipaje ||
+                0
+            ),
+
+        aire:
+            Boolean(
+                reservacionServidor
+                    .modelo
+                    ?.aire
+            ),
+
+        imagen:
+            reservacionServidor
+                .modelo
+                ?.imagen ||
+            reservacionLocal
+                .vehiculo
+                ?.imagen ||
+            "",
+
+        precio:
+            Number(
+                reservacionServidor
+                    .precioDiario ||
+                reservacionLocal
+                    .vehiculo
+                    ?.precio ||
+                0
+            )
+
+    };
+
+
+    reservacionLocal.cantidadVehiculos =
+        Number(
+            reservacionServidor
+                .cantidadVehiculos ||
+            reservacionLocal
+                .cantidadVehiculos ||
+            1
+        );
+
+
+    reservacionLocal.fechaRecogida =
+        reservacionServidor
+            .periodo
+            ?.fechaRecogida ||
+        reservacionLocal.fechaRecogida;
+
+
+    reservacionLocal.horaRecogida =
+        reservacionServidor
+            .periodo
+            ?.horaRecogida ||
+        reservacionLocal.horaRecogida;
+
+
+    reservacionLocal.fechaEntrega =
+        reservacionServidor
+            .periodo
+            ?.fechaEntrega ||
+        reservacionLocal.fechaEntrega;
+
+
+    reservacionLocal.horaEntrega =
+        reservacionServidor
+            .periodo
+            ?.horaEntrega ||
+        reservacionLocal.horaEntrega;
+
+
+    reservacionLocal.lugarRecogida =
+        reservacionServidor
+            .lugarRecogida ||
+        reservacionLocal.lugarRecogida;
+
+
+    reservacionLocal.lugarEntrega =
+        reservacionServidor
+            .lugarEntrega ||
+        reservacionLocal.lugarEntrega;
+
+
+    reservacionLocal.cliente = {
+
+        ...reservacionLocal.cliente,
+
+        nombre:
+            reservacionServidor
+                .cliente
+                ?.nombre ||
+            reservacionLocal
+                .cliente
+                ?.nombre ||
+            "",
+
+        correo:
+            reservacionServidor
+                .cliente
+                ?.correo ||
+            reservacionLocal
+                .cliente
+                ?.correo ||
+            "",
+
+        telefono:
+            reservacionServidor
+                .cliente
+                ?.telefono ||
+            reservacionLocal
+                .cliente
+                ?.telefono ||
+            ""
+
+    };
+
+
+    reservacionLocal.adicionales =
+        Array.isArray(
+            reservacionServidor.adicionales
+        )
+            ? reservacionServidor.adicionales
+            : reservacionLocal.adicionales;
+
+
+    reservacionLocal.codigoPromocional =
+        reservacionServidor
+            .codigoPromocional ||
+        null;
+
+
+    reservacionLocal.dias =
+        Number(
+            reservacionServidor.dias ||
+            0
+        );
+
+
+    reservacionLocal.precioDiario =
+        Number(
+            reservacionServidor
+                .precioDiario ||
+            0
+        );
+
+
+    reservacionLocal.subtotal =
+        Number(
+            reservacionServidor.subtotal ||
+            0
+        );
+
+
+    reservacionLocal.costoAdicionales =
+        Number(
+            reservacionServidor
+                .costoAdicionales ||
+            0
+        );
+
+
+    reservacionLocal.descuento =
+        Number(
+            reservacionServidor.descuento ||
+            0
+        );
+
+
+    reservacionLocal.total =
+        Number(
+            reservacionServidor.total ||
+            0
+        );
+
+
+    reservacionLocal.fechaRegistro =
+        reservacionServidor
+            .fechaRegistro ||
+        reservacionLocal.fechaRegistro;
+
+
+    return reservacionLocal;
+
+}
+
+
+/* =========================================================
+   SINCRONIZAR LISTADO CON MARIADB
+========================================================= */
+
+async function sincronizarReservacionesMisReservas(
+    reservaciones
+) {
+
+    return Promise.all(
+        reservaciones.map(
+            async (reservacion) => {
+
+                try {
+
+                    const reservacionServidor =
+                        await consultarReservacionServidorMisReservas(
+                            reservacion
+                        );
+
+
+                    if (
+                        !reservacionServidor
+                    ) {
+
+                        return reservacion;
+
+                    }
+
+
+                    return aplicarReservacionServidorMisReservas(
+                        reservacion,
+                        reservacionServidor
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        "No fue posible actualizar una reservación desde el servidor:",
+                        error
+                    );
+
+
+                    /*
+                     * Si el servidor no está disponible,
+                     * conservamos la información local.
+                     */
+                    return reservacion;
+
+                }
+
+            }
+        )
+    );
+
+}
+async function cargarReservacionesUsuario() {
+
+    const contenido =
+        localStorage.getItem(
+            obtenerClaveReservacionesMisReservas()
+        );
+
 
     if (!contenido) {
+
         reservacionesUsuario = [];
+
     } else {
+
         try {
-            const reservaciones = JSON.parse(
-                contenido
-            );
+
+            const reservaciones =
+                JSON.parse(
+                    contenido
+                );
+
 
             reservacionesUsuario =
-    Array.isArray(reservaciones)
-        ? reservaciones.filter(
-            reservacionPerteneceAgenciaActual
-        )
-        : [];
+                Array.isArray(
+                    reservaciones
+                )
+                    ? reservaciones.filter(
+                        reservacionPerteneceAgenciaActual
+                    )
+                    : [];
+
         } catch (error) {
+
             reservacionesUsuario = [];
+
 
             console.error(
                 "No fue posible cargar las reservaciones.",
                 error
             );
+
         }
+
     }
 
+
+    /*
+     * Primero mostramos la copia local inmediatamente.
+     */
     actualizarEstadisticasReservaciones();
     aplicarFiltrosReservaciones();
+
+
+    if (
+        reservacionesUsuario.length === 0
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * Después consultamos MariaDB y actualizamos
+     * solamente los datos que el servidor confirma.
+     */
+    const reservacionesSincronizadas =
+        await sincronizarReservacionesMisReservas(
+            reservacionesUsuario
+        );
+
+
+    reservacionesUsuario =
+        reservacionesSincronizadas;
+
+
+    localStorage.setItem(
+        obtenerClaveReservacionesMisReservas(),
+        JSON.stringify(
+            reservacionesUsuario
+        )
+    );
+
+
+    /*
+     * Volvemos a pintar con el estado real.
+     */
+    actualizarEstadisticasReservaciones();
+    aplicarFiltrosReservaciones();
+
 }
 
 /* =========================================================

@@ -49,16 +49,38 @@ async function mostrarLogin(
 
     }
 
-    return res.render(
-        "auth/login",
-        {
-            titulo:
-                "Iniciar sesión",
+    const aviso =
+    String(
+        req.query.aviso ||
+        ""
+    ).trim();
 
-            error:
-                null
-        }
-    );
+
+let mensajeLogin =
+    null;
+
+
+if (
+    aviso ===
+    "suscripcion_vencida"
+) {
+
+    mensajeLogin =
+        "La suscripción de tu agencia ha vencido. Comunícate con el administrador de la plataforma para renovar el servicio.";
+
+}
+
+
+return res.render(
+    "auth/login",
+    {
+        titulo:
+            "Iniciar sesión",
+
+        error:
+            mensajeLogin
+    }
+  );
 }
 
 async function procesarLogin(req, res) {
@@ -99,8 +121,17 @@ async function procesarLogin(req, res) {
                     u.correo,
                     u.foto_perfil,
                     u.password_hash,
-                    u.estado,
-                    r.id AS rol_id,
+u.estado,
+u.intentos_fallidos,
+u.bloqueado_hasta,
+CASE
+    WHEN
+        u.bloqueado_hasta IS NOT NULL
+        AND u.bloqueado_hasta > NOW()
+    THEN 1
+    ELSE 0
+END AS bloqueo_temporal_activo,
+r.id AS rol_id,
                     r.nombre AS rol_nombre,
                     r.codigo AS rol_codigo,
                     r.nivel AS rol_nivel
@@ -139,6 +170,25 @@ async function procesarLogin(req, res) {
             );
         }
 
+        if (
+    Number(
+        usuario.bloqueo_temporal_activo
+    ) === 1
+) {
+
+    return res.status(429).render(
+        "auth/login",
+        {
+            titulo:
+                "Iniciar sesión",
+
+            error:
+                "Demasiados intentos fallidos. El acceso está bloqueado temporalmente. Intenta nuevamente más tarde."
+        }
+    );
+
+}
+
         /*
  * Todo usuario que no sea SuperAdministrador
  * debe pertenecer a una agencia.
@@ -171,28 +221,71 @@ if (
 
         if (!passwordCorrecta) {
 
+    const alcanzaBloqueoTemporal =
+        Number(
+            usuario.intentos_fallidos ||
+            0
+        ) >= 4;
+
+
     await conexion.query(
         `
         UPDATE usuarios
         SET
-            intentos_fallidos = LEAST(
-                intentos_fallidos + 1,
-                65535
-            )
+            bloqueado_hasta =
+                CASE
+                    WHEN intentos_fallidos >= 4
+                    THEN DATE_ADD(
+                        NOW(),
+                        INTERVAL 15 MINUTE
+                    )
+                    ELSE NULL
+                END,
+
+            intentos_fallidos =
+                CASE
+                    WHEN intentos_fallidos >= 4
+                    THEN 0
+                    ELSE LEAST(
+                        intentos_fallidos + 1,
+                        65535
+                    )
+                END
+
         WHERE id = ?
         `,
         [usuario.id]
     );
+
+
+    if (
+        alcanzaBloqueoTemporal
+    ) {
+
+        return res.status(429).render(
+            "auth/login",
+            {
+                titulo:
+                    "Iniciar sesión",
+
+                error:
+                    "Demasiados intentos fallidos. El acceso ha sido bloqueado temporalmente durante 15 minutos."
+            }
+        );
+
+    }
 
     return res.status(401).render(
         "auth/login",
         {
             titulo:
                 "Iniciar sesión",
+
             error:
                 "Correo o contraseña incorrectos."
         }
     );
+
 }
 
                 await new Promise((resolve, reject) => {
@@ -249,10 +342,11 @@ if (
         await conexion.query(
             `
             UPDATE usuarios
-            SET
-                ultimo_acceso = NOW(),
-                intentos_fallidos = 0
-            WHERE id = ?
+SET
+    ultimo_acceso = NOW(),
+    intentos_fallidos = 0,
+    bloqueado_hasta = NULL
+WHERE id = ?
             `,
             [usuario.id]
         );
