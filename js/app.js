@@ -289,6 +289,7 @@ async function cargarIdentidadAgenciaPublica() {
             agenciaPublicaActual
         );
 
+
         aplicarContactoAgenciaPublica(
             agenciaPublicaActual
         
@@ -297,6 +298,11 @@ async function cargarIdentidadAgenciaPublica() {
         aplicarColoresAgenciaPublica(
             agenciaPublicaActual
         );
+
+        aplicarPromocionPublicaAgencia(
+    datos?.catalogo?.promociones,
+    agenciaPublicaActual
+);
 
         requestAnimationFrame(
     () => {
@@ -329,6 +335,146 @@ async function cargarIdentidadAgenciaPublica() {
         );
 
     }
+
+}
+
+/* =========================================================
+   APLICAR PROMOCIÓN PÚBLICA DE LA AGENCIA
+========================================================= */
+
+function aplicarPromocionPublicaAgencia(
+    promociones,
+    agencia
+) {
+
+    const seccion =
+        document.getElementById(
+            "seccion-promocion-publica"
+        );
+
+
+    if (!seccion) {
+
+        return;
+
+    }
+
+
+    const promocionesPublicas =
+        Array.isArray(
+            promociones
+        )
+            ? promociones
+            : [];
+
+
+    /*
+     * El catálogo ya devuelve únicamente
+     * promociones:
+     *
+     * - activas
+     * - públicas
+     * - dentro de vigencia
+     */
+    const promocion =
+        promocionesPublicas[0];
+
+
+    if (!promocion) {
+
+        seccion.hidden =
+            true;
+
+        return;
+
+    }
+
+
+    const porcentaje =
+        Number(
+            promocion.porcentajeDescuento ||
+            0
+        );
+
+
+    const codigo =
+        String(
+            promocion.codigo ||
+            ""
+        )
+            .trim()
+            .toUpperCase();
+
+
+    if (
+        !Number.isFinite(
+            porcentaje
+        ) ||
+        porcentaje <= 0 ||
+        !codigo
+    ) {
+
+        seccion.hidden =
+            true;
+
+        return;
+
+    }
+
+
+    const nombreAgencia =
+        String(
+            agencia?.nombre ||
+            ""
+        ).trim();
+
+
+    const titulo =
+        document.getElementById(
+            "promocion-publica-titulo"
+        );
+
+
+    const descripcion =
+        document.getElementById(
+            "promocion-publica-descripcion"
+        );
+
+
+    const codigoElemento =
+        document.getElementById(
+            "promocion-publica-codigo"
+        );
+
+
+    if (titulo) {
+
+        titulo.textContent =
+            `Obtén un ${porcentaje} % de descuento en tu reservación`;
+
+    }
+
+
+    if (descripcion) {
+
+        descripcion.textContent =
+            nombreAgencia
+                ? `Reserva tu vehículo con ${nombreAgencia} y aprovecha esta oferta especial.`
+                : "Reserva tu vehículo y aprovecha esta oferta especial.";
+
+    }
+
+
+    if (codigoElemento) {
+
+        codigoElemento.textContent =
+            codigo;
+
+    }
+
+
+    seccion.hidden =
+        false;
 
 }
 

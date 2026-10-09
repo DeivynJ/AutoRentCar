@@ -333,7 +333,9 @@ function normalizarEdad(
    Precio y nombre salen del servidor.
 ========================================================= */
 
-function normalizarAdicionales(
+async function normalizarAdicionales(
+    conexion,
+    agenciaId,
     valor
 ) {
 
@@ -387,20 +389,94 @@ function normalizarAdicionales(
     }
 
 
+    if (
+        codigosUnicos.length === 0
+    ) {
+
+        return [];
+
+    }
+
+
+    const marcadores =
+        codigosUnicos
+            .map(
+                () => "?"
+            )
+            .join(", ");
+
+
+    const filas =
+        await conexion.query(
+            `
+            SELECT
+
+                codigo,
+                nombre,
+                precio_diario
+
+            FROM adicionales_agencia
+
+            WHERE
+                agencia_id = ?
+                AND activo = 1
+                AND codigo IN (
+                    ${marcadores}
+                )
+            `,
+            [
+                agenciaId,
+                ...codigosUnicos
+            ]
+        );
+
+
+    const adicionalesPorCodigo =
+        new Map(
+            filas.map(
+                (fila) => [
+
+                    String(
+                        fila.codigo
+                    )
+                        .trim()
+                        .toLowerCase(),
+
+                    {
+
+                        codigo:
+                            fila.codigo,
+
+                        nombre:
+                            fila.nombre,
+
+                        precioDiario:
+                            Number(
+                                fila.precio_diario ||
+                                0
+                            )
+
+                    }
+
+                ]
+            )
+        );
+
+
     return codigosUnicos.map(
         (codigo) => {
 
             const adicional =
-                ADICIONALES_DISPONIBLES[
+                adicionalesPorCodigo.get(
                     codigo
-                ];
+                );
 
 
             if (!adicional) {
 
                 throw crearErrorReservacion(
                     "ADICIONAL_NO_VALIDO",
-                    `El servicio adicional ${codigo} no es válido.`
+                    `El servicio adicional ${codigo} no está disponible para esta agencia.`
                 );
 
             }
@@ -413,7 +489,6 @@ function normalizarAdicionales(
 
 }
 
-
 /* =========================================================
    CÓDIGO PROMOCIONAL
 
@@ -421,7 +496,9 @@ function normalizarAdicionales(
    El servidor decide si existe y cuánto descuenta.
 ========================================================= */
 
-function normalizarPromocion(
+async function normalizarPromocion(
+    conexion,
+    agenciaId,
     valor
 ) {
 
@@ -441,13 +518,10 @@ function normalizarPromocion(
     }
 
 
-    const promocion =
-        PROMOCIONES_DISPONIBLES[
-            codigo
-        ];
-
-
-    if (!promocion) {
+    if (
+        codigo.length >
+        80
+    ) {
 
         throw crearErrorReservacion(
             "CODIGO_PROMOCIONAL_INVALIDO",
@@ -457,10 +531,76 @@ function normalizarPromocion(
     }
 
 
-    return promocion;
+    const filas =
+        await conexion.query(
+            `
+            SELECT
+
+                codigo,
+                porcentaje_descuento
+
+            FROM promociones_agencia
+
+            WHERE
+                agencia_id = ?
+                AND codigo = ?
+                AND activo = 1
+
+                AND (
+                    fecha_inicio IS NULL
+                    OR fecha_inicio <= CURDATE()
+                )
+
+                AND (
+                    fecha_fin IS NULL
+                    OR fecha_fin >= CURDATE()
+                )
+
+            LIMIT 1
+            `,
+            [
+                agenciaId,
+                codigo
+            ]
+        );
+
+
+    if (
+        filas.length === 0
+    ) {
+
+        throw crearErrorReservacion(
+            "CODIGO_PROMOCIONAL_INVALIDO",
+            "El código promocional indicado no es válido o no se encuentra vigente."
+        );
+
+    }
+
+
+    const promocion =
+        filas[0];
+
+
+    return {
+
+        codigo:
+            promocion.codigo,
+
+        /*
+         * MariaDB guarda:
+         * 15.00 = 15 %
+         *
+         * El cálculo interno necesita:
+         * 0.15
+         */
+        porcentaje:
+            Number(
+                promocion.porcentaje_descuento
+            ) / 100
+
+    };
 
 }
-
 
 /* =========================================================
    DÍAS FACTURABLES
@@ -965,16 +1105,19 @@ async function crearReservacionWeb({
 
 
         const adicionales =
-            normalizarAdicionales(
-                cuerpo.adicionales
-            );
+    await normalizarAdicionales(
+        conexion,
+        agencia.id,
+        cuerpo.adicionales
+    );
 
 
-        const promocion =
-            normalizarPromocion(
-                cuerpo.codigoPromocional
-            );
-
+const promocion =
+    await normalizarPromocion(
+        conexion,
+        agencia.id,
+        cuerpo.codigoPromocional
+    );
 
         /* -------------------------------------------------
            DISPONIBILIDAD REAL

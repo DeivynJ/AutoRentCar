@@ -415,6 +415,84 @@ p.id
                 ]
             );
 
+            /* -------------------------------------------------
+   ADICIONALES PÚBLICOS DE LA AGENCIA
+------------------------------------------------- */
+
+const adicionalesResultado =
+    await conexion.query(
+        `
+        SELECT
+
+            codigo,
+            nombre,
+            descripcion,
+            precio_diario,
+            orden
+
+        FROM adicionales_agencia
+
+        WHERE
+            agencia_id = ?
+            AND activo = 1
+
+        ORDER BY
+            orden ASC,
+            id ASC
+        `,
+        [
+            agencia.id
+        ]
+    );
+
+
+/* -------------------------------------------------
+   PROMOCIONES PÚBLICAS Y VIGENTES
+------------------------------------------------- */
+
+const promocionesResultado =
+    await conexion.query(
+        `
+        SELECT
+
+            codigo,
+            nombre,
+            porcentaje_descuento,
+
+            DATE_FORMAT(
+                fecha_inicio,
+                '%Y-%m-%d'
+            ) AS fecha_inicio,
+
+            DATE_FORMAT(
+                fecha_fin,
+                '%Y-%m-%d'
+            ) AS fecha_fin
+
+        FROM promociones_agencia
+
+        WHERE
+            agencia_id = ?
+            AND activo = 1
+            AND publica = 1
+
+            AND (
+                fecha_inicio IS NULL
+                OR fecha_inicio <= CURDATE()
+            )
+
+            AND (
+                fecha_fin IS NULL
+                OR fecha_fin >= CURDATE()
+            )
+
+        ORDER BY
+            id ASC
+        `,
+        [
+            agencia.id
+        ]
+    );
 
         /* -------------------------------------------------
            ADAPTAR DATOS A LA FASE 1
@@ -530,6 +608,62 @@ p.id
                 }
             );
 
+const adicionales =
+    adicionalesResultado.map(
+        (adicional) => ({
+
+            codigo:
+                adicional.codigo,
+
+            nombre:
+                adicional.nombre,
+
+            descripcion:
+                adicional.descripcion ||
+                "",
+
+            precioDiario:
+                Number(
+                    adicional.precio_diario ||
+                    0
+                ),
+
+            orden:
+                Number(
+                    adicional.orden ||
+                    0
+                )
+
+        })
+    );
+
+
+const promociones =
+    promocionesResultado.map(
+        (promocion) => ({
+
+            codigo:
+                promocion.codigo,
+
+            nombre:
+                promocion.nombre,
+
+            porcentajeDescuento:
+                Number(
+                    promocion.porcentaje_descuento ||
+                    0
+                ),
+
+            fechaInicio:
+                promocion.fecha_inicio ||
+                null,
+
+            fechaFin:
+                promocion.fecha_fin ||
+                null
+
+        })
+    );
 
         /*
          * Durante el desarrollo evitamos que el navegador
@@ -615,15 +749,17 @@ p.id
                 },
 
                 catalogo:
-                {
+{
+    totalModelos:
+        vehiculos.length,
 
-                    totalModelos:
-                        vehiculos.length,
+    vehiculos,
 
-                    vehiculos
+    adicionales,
 
-                }
+    promociones
 
+}
             }
         );
 
@@ -663,14 +799,260 @@ p.id
 
 }
 
+/* =========================================================
+   VALIDAR CÓDIGO PROMOCIONAL DE UNA AGENCIA
+========================================================= */
+
+async function validarPromocionAgencia(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    try {
+
+        const slug =
+            String(
+                req.params?.slug ||
+                ""
+            )
+                .trim()
+                .toLowerCase();
+
+
+        const codigo =
+            String(
+                req.body?.codigo ||
+                ""
+            )
+                .trim()
+                .toUpperCase();
+
+
+        if (
+            !slug ||
+            !codigo ||
+            codigo.length > 80
+        ) {
+
+            return res
+                .status(400)
+                .json({
+
+                    ok:
+                        false,
+
+                    mensaje:
+                        "El código promocional indicado no es válido."
+
+                });
+
+        }
+
+
+        conexion =
+            await pool.getConnection();
+
+
+        const promociones =
+            await conexion.query(
+                `
+                SELECT
+
+                    pa.codigo,
+                    pa.nombre,
+                    pa.porcentaje_descuento,
+                    pa.publica,
+
+                    DATE_FORMAT(
+                        pa.fecha_inicio,
+                        '%Y-%m-%d'
+                    ) AS fecha_inicio,
+
+                    DATE_FORMAT(
+                        pa.fecha_fin,
+                        '%Y-%m-%d'
+                    ) AS fecha_fin
+
+                FROM promociones_agencia pa
+
+                INNER JOIN agencias a
+                    ON a.id = pa.agencia_id
+
+                WHERE
+                    a.slug = ?
+
+                    AND a.estado IN (
+                        'prueba',
+                        'activa'
+                    )
+
+                    AND pa.codigo = ?
+                    AND pa.activo = 1
+
+                    AND (
+                        pa.fecha_inicio IS NULL
+                        OR pa.fecha_inicio <= CURDATE()
+                    )
+
+                    AND (
+                        pa.fecha_fin IS NULL
+                        OR pa.fecha_fin >= CURDATE()
+                    )
+
+                    AND EXISTS (
+
+                        SELECT 1
+
+                        FROM suscripciones s
+
+                        WHERE
+                            s.agencia_id = a.id
+
+                            AND s.id = (
+
+                                SELECT
+                                    MAX(s2.id)
+
+                                FROM suscripciones s2
+
+                                WHERE
+                                    s2.agencia_id = a.id
+
+                            )
+
+                            AND s.estado IN (
+                                'prueba',
+                                'activa'
+                            )
+
+                            AND s.fecha_inicio <= CURDATE()
+
+                            AND (
+                                s.fecha_fin IS NULL
+                                OR s.fecha_fin >= CURDATE()
+                            )
+
+                    )
+
+                LIMIT 1
+                `,
+                [
+                    slug,
+                    codigo
+                ]
+            );
+
+
+        if (
+            promociones.length === 0
+        ) {
+
+            return res
+                .status(404)
+                .json({
+
+                    ok:
+                        false,
+
+                    mensaje:
+                        "El código promocional no es válido o no se encuentra vigente."
+
+                });
+
+        }
+
+
+        const promocion =
+            promociones[0];
+
+
+        res.set(
+            "Cache-Control",
+            "no-store"
+        );
+
+
+        return res.json({
+
+            ok:
+                true,
+
+            promocion: {
+
+                codigo:
+                    promocion.codigo,
+
+                nombre:
+                    promocion.nombre,
+
+                porcentajeDescuento:
+                    Number(
+                        promocion.porcentaje_descuento ||
+                        0
+                    ),
+
+                publica:
+                    Number(
+                        promocion.publica
+                    ) === 1,
+
+                fechaInicio:
+                    promocion.fecha_inicio ||
+                    null,
+
+                fechaFin:
+                    promocion.fecha_fin ||
+                    null
+
+            }
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Error validando promoción pública:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .json({
+
+                ok:
+                    false,
+
+                mensaje:
+                    "No fue posible validar el código promocional."
+
+            });
+
+
+    } finally {
+
+        if (conexion) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
 
 /* =========================================================
    EXPORTACIONES
 ========================================================= */
 
-module.exports =
-{
+module.exports = {
 
-    obtenerCatalogoAgencia
+    obtenerCatalogoAgencia,
+
+    validarPromocionAgencia
 
 };

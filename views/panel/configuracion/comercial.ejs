@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Configuración comercial de <%= agencia.nombre %>."
+    >
+
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <%- include("../partials/tema") %>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <div class="panel-shell">
+
+
+        <%- include("../partials/sidebar") %>
+
+
+        <div class="panel-content-wrapper">
+
+
+            <%- include("../partials/header") %>
+
+
+            <main class="panel-main">
+
+
+                <%
+
+                    const adicionales =
+                        Array.isArray(
+                            configuracion?.adicionales
+                        )
+                            ? configuracion.adicionales
+                            : [];
+
+
+                    const promociones =
+                        Array.isArray(
+                            configuracion?.promociones
+                        )
+                            ? configuracion.promociones
+                            : [];
+
+
+                    const adicionalesActivos =
+                        adicionales.filter(
+                            (adicional) =>
+                                adicional.activo === true
+                        ).length;
+
+
+                    const promocionesActivas =
+                        promociones.filter(
+                            (promocion) =>
+                                promocion.activo === true
+                        ).length;
+
+
+                    function formatearFechaComercial(
+                        fecha
+                    ) {
+
+                        if (!fecha) {
+
+                            return "Sin límite";
+
+                        }
+
+
+                        const partes =
+                            String(
+                                fecha
+                            ).split("-");
+
+
+                        if (
+                            partes.length !== 3
+                        ) {
+
+                            return fecha;
+
+                        }
+
+
+                        return (
+                            `${partes[2]}/` +
+                            `${partes[1]}/` +
+                            `${partes[0]}`
+                        );
+
+                    }
+
+                %>
+
+
+                <!-- =====================================
+                     ENCABEZADO
+                ====================================== -->
+
+                <section class="panel-module-hero">
+
+                    <div>
+
+                        <span class="panel-module-badge">
+
+                            <i class="fa-solid fa-tags"></i>
+
+                            Configuración
+
+                        </span>
+
+
+                        <h2>
+
+                            Configuración comercial de
+
+                            <span>
+                                <%= agencia.nombre %>
+                            </span>
+
+                        </h2>
+
+
+                        <p>
+
+                            Consulta los servicios adicionales
+                            y promociones configurados
+                            exclusivamente para esta agencia.
+
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =====================================
+                     RESUMEN
+                ====================================== -->
+
+                <section class="panel-summary-grid">
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-puzzle-piece"></i>
+
+                        </div>
+
+                        <small>
+                            Adicionales
+                        </small>
+
+                        <strong>
+                            <%= adicionales.length %>
+                        </strong>
+
+                        <span>
+                            Servicios configurados
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        </div>
+
+                        <small>
+                            Adicionales activos
+                        </small>
+
+                        <strong>
+                            <%= adicionalesActivos %>
+                        </strong>
+
+                        <span>
+                            Disponibles actualmente
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-percent"></i>
+
+                        </div>
+
+                        <small>
+                            Promociones activas
+                        </small>
+
+                        <strong>
+                            <%= promocionesActivas %>
+                        </strong>
+
+                        <span>
+                            Códigos disponibles
+                        </span>
+
+                    </article>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     ADICIONALES
+                ====================================== -->
+
+                <section class="panel-units-card">
+
+
+                    <div class="panel-units-header">
+
+                        <div>
+
+                            <span>
+                                Servicios adicionales
+                            </span>
+
+
+                            <h3>
+                                Adicionales de la agencia
+                            </h3>
+
+
+                            <p>
+
+                                Estos servicios pertenecen
+                                únicamente a
+                                <%= agencia.nombre %>.
+
+                                Por ahora esta pantalla es
+                                solamente informativa.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <% if (adicionales.length) { %>
+
+
+                        <div class="panel-units-table-wrapper">
+
+
+                            <table class="panel-units-table">
+
+
+                                <thead>
+
+    <tr>
+
+        <th>
+            Servicio
+        </th>
+
+        <th>
+            Código
+        </th>
+
+        <th>
+            Descripción
+        </th>
+
+        <th>
+            Precio / día
+        </th>
+
+        <th>
+            Orden
+        </th>
+
+        <th>
+            Estado
+        </th>
+
+        <th>
+            Acción
+        </th>
+
+    </tr>
+
+</thead>
+
+
+<tbody>
+
+
+    <% adicionales.forEach((adicional) => { %>
+
+
+        <%
+
+            const formularioAdicional =
+                `form-adicional-${adicional.id}`;
+
+        %>
+
+
+        <tr>
+
+
+            <td>
+
+                <form
+                    id="<%= formularioAdicional %>"
+                    action="/panel/configuracion/comercial/adicionales/<%= adicional.id %>"
+                    method="POST"
+                ></form>
+
+
+                <strong>
+                    <%= adicional.nombre %>
+                </strong>
+
+            </td>
+
+
+            <td>
+
+                <%= adicional.codigo %>
+
+            </td>
+
+
+            <td>
+
+                <%= adicional.descripcion ||
+                    "Sin descripción" %>
+
+            </td>
+
+
+            <td>
+
+                <div class="panel-form-field">
+
+                    <input
+                        type="number"
+                        name="precioDiario"
+                        min="0"
+                        max="9999999999.99"
+                        step="0.01"
+                        value="<%= Number(
+                            adicional.precioDiario ||
+                            0
+                        ).toFixed(2) %>"
+                        form="<%= formularioAdicional %>"
+                        required
+                    >
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <%= adicional.orden %>
+
+            </td>
+
+
+            <td>
+
+                <div class="panel-form-field">
+
+                    <select
+                        name="activo"
+                        form="<%= formularioAdicional %>"
+                        required
+                    >
+
+                        <option
+                            value="1"
+                            <%= adicional.activo
+                                ? "selected"
+                                : "" %>
+                        >
+                            Activo
+                        </option>
+
+
+                        <option
+                            value="0"
+                            <%= !adicional.activo
+                                ? "selected"
+                                : "" %>
+                        >
+                            Inactivo
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <button
+                    type="submit"
+                    form="<%= formularioAdicional %>"
+                    class="panel-action-primary"
+                >
+
+                    <i class="fa-solid fa-floppy-disk"></i>
+
+                    Guardar
+
+                </button>
+
+            </td>
+
+
+        </tr>
+
+
+    <% }); %>
+
+
+</tbody>
+
+
+                            </table>
+
+
+                        </div>
+
+
+                    <% } else { %>
+
+
+                        <div class="catalog-empty">
+
+                            <div>
+
+                                <i class="fa-solid fa-puzzle-piece"></i>
+
+                            </div>
+
+
+                            <h3>
+                                No hay servicios adicionales
+                            </h3>
+
+
+                            <p>
+
+                                Esta agencia todavía no tiene
+                                servicios adicionales
+                                configurados.
+
+                            </p>
+
+                        </div>
+
+
+                    <% } %>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     PROMOCIONES
+                ====================================== -->
+
+                <section class="panel-units-card">
+
+
+                    <div class="panel-units-header">
+
+                        <div>
+
+                            <span>
+                                Promociones
+                            </span>
+
+
+                            <h3>
+                                Códigos promocionales
+                            </h3>
+
+
+                            <p>
+
+                                Cada promoción mostrada
+                                pertenece exclusivamente a
+                                <%= agencia.nombre %>.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <% if (promociones.length) { %>
+
+
+                        <div class="panel-units-table-wrapper">
+
+
+                            <table class="panel-units-table">
+
+
+                                <thead>
+
+    <tr>
+
+        <th>
+            Promoción
+        </th>
+
+        <th>
+            Código
+        </th>
+
+        <th>
+            Descuento
+        </th>
+
+        <th>
+            Desde
+        </th>
+
+        <th>
+            Hasta
+        </th>
+
+        <th>
+            Visibilidad
+        </th>
+
+        <th>
+            Estado
+        </th>
+
+        <th>
+            Acción
+        </th>
+
+    </tr>
+
+</thead>
+
+
+<tbody>
+
+
+    <% promociones.forEach((promocion) => { %>
+
+
+        <%
+
+            const formularioPromocion =
+                `form-promocion-${promocion.id}`;
+
+        %>
+
+
+        <tr>
+
+
+            <td>
+
+                <form
+                    id="<%= formularioPromocion %>"
+                    action="/panel/configuracion/comercial/promociones/<%= promocion.id %>"
+                    method="POST"
+                ></form>
+
+
+                <strong>
+                    % de descuento
+                </strong>
+
+            </td>
+
+
+            <td>
+
+    <div class="panel-form-field">
+
+        <input
+            type="text"
+            name="codigo"
+            value="<%= promocion.codigo %>"
+            maxlength="80"
+            pattern="[A-Za-z0-9_-]+"
+            title="Utiliza únicamente letras, números, guiones o guion bajo."
+            autocomplete="off"
+            form="<%= formularioPromocion %>"
+            required
+        >
+
+    </div>
+
+</td>
+
+
+            <td>
+
+                <div class="panel-form-field">
+
+                    <input
+                        type="number"
+                        name="porcentajeDescuento"
+                        min="0.01"
+                        max="100"
+                        step="0.01"
+                        value="<%= Number(
+                            promocion.porcentajeDescuento ||
+                            0
+                        ).toFixed(2) %>"
+                        form="<%= formularioPromocion %>"
+                        required
+                    >
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <div class="panel-form-field">
+
+                    <input
+                        type="date"
+                        name="fechaInicio"
+                        value="<%= promocion.fechaInicio || '' %>"
+                        form="<%= formularioPromocion %>"
+                    >
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <div class="panel-form-field">
+
+                    <input
+                        type="date"
+                        name="fechaFin"
+                        value="<%= promocion.fechaFin || '' %>"
+                        form="<%= formularioPromocion %>"
+                    >
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <div class="panel-form-field">
+
+                    <select
+                        name="publica"
+                        form="<%= formularioPromocion %>"
+                        required
+                    >
+
+                        <option
+                            value="1"
+                            <%= promocion.publica
+                                ? "selected"
+                                : "" %>
+                        >
+                            Pública
+                        </option>
+
+
+                        <option
+                            value="0"
+                            <%= !promocion.publica
+                                ? "selected"
+                                : "" %>
+                        >
+                            Privada
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <div class="panel-form-field">
+
+                    <select
+                        name="activo"
+                        form="<%= formularioPromocion %>"
+                        required
+                    >
+
+                        <option
+                            value="1"
+                            <%= promocion.activo
+                                ? "selected"
+                                : "" %>
+                        >
+                            Activa
+                        </option>
+
+
+                        <option
+                            value="0"
+                            <%= !promocion.activo
+                                ? "selected"
+                                : "" %>
+                        >
+                            Inactiva
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <button
+                    type="submit"
+                    form="<%= formularioPromocion %>"
+                    class="panel-action-primary"
+                >
+
+                    <i class="fa-solid fa-floppy-disk"></i>
+
+                    Guardar
+
+                </button>
+
+            </td>
+
+
+        </tr>
+
+
+    <% }); %>
+
+
+</tbody>
+
+
+                            </table>
+
+
+                        </div>
+
+
+                    <% } else { %>
+
+
+                        <div class="catalog-empty">
+
+                            <div>
+
+                                <i class="fa-solid fa-percent"></i>
+
+                            </div>
+
+
+                            <h3>
+                                No hay promociones
+                            </h3>
+
+
+                            <p>
+
+                                Esta agencia todavía no tiene
+                                códigos promocionales
+                                configurados.
+
+                            </p>
+
+                        </div>
+
+
+                    <% } %>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     NOTA
+                ====================================== -->
+
+                <div class="panel-form-note">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+
+                    <div>
+
+                        <strong>
+
+                            Configuración exclusiva de
+                            <%= agencia.nombre %>
+
+                        </strong>
+
+
+                        <p>
+
+                            Los servicios y promociones
+                            mostrados pertenecen únicamente
+                            a esta agencia.
+
+                            Los cambios comerciales de otras
+                            agencias no afectan esta
+                            configuración.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </main>
+
+
+        </div>
+
+
+    </div>
+
+
+    <script src="/js/panel.js"></script>
+
+
+</body>
+
+</html>

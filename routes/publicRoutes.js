@@ -11,7 +11,9 @@ const path =
 
 const {
 
-    obtenerCatalogoAgencia
+    obtenerCatalogoAgencia,
+
+    validarPromocionAgencia
 
 } = require(
     "../controllers/publicCatalogController"
@@ -132,6 +134,11 @@ router.get(
 router.get(
     "/api/agencias/:slug/catalogo",
     obtenerCatalogoAgencia
+);
+
+router.post(
+    "/api/agencias/:slug/promociones/validar",
+    validarPromocionAgencia
 );
 
 router.get(

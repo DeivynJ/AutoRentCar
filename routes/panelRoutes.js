@@ -149,6 +149,18 @@ const {
     "../controllers/panelConfiguracionPagosController"
 );
 
+const {
+
+    mostrarConfiguracionComercialPanel,
+
+    actualizarAdicionalComercialPanel,
+
+    actualizarPromocionComercialPanel
+
+} = require(
+    "../controllers/panelConfiguracionComercialController"
+);
+
 
 const router =
     express.Router();
@@ -430,6 +442,28 @@ router.post(
     "/panel/configuracion/pagos",
     requerirAdministradorAgencia,
     guardarConfiguracionPagosPanel
+);
+
+/* =========================================================
+   CONFIGURACIÓN COMERCIAL
+========================================================= */
+
+router.get(
+    "/panel/configuracion/comercial",
+    requerirAdministradorAgencia,
+    mostrarConfiguracionComercialPanel
+);
+
+router.post(
+    "/panel/configuracion/comercial/adicionales/:adicionalId",
+    requerirAdministradorAgencia,
+    actualizarAdicionalComercialPanel
+);
+
+router.post(
+    "/panel/configuracion/comercial/promociones/:promocionId",
+    requerirAdministradorAgencia,
+    actualizarPromocionComercialPanel
 );
 
 module.exports =

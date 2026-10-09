@@ -4,6 +4,7 @@
 
 let vehiculoReserva = null;
 let descuentoReserva = 0;
+let codigoPromocionalReserva = null;
 let reservacionEnProceso = false;
 
 let cantidadVehiculosReserva = 1;
@@ -12,6 +13,7 @@ let cantidadDisponibleReserva = 0;
 document.addEventListener("DOMContentLoaded", () => {
     cargarVehiculoReserva();
     cargarBusquedaReserva();
+    cargarAdicionalesAgenciaReserva();
     configurarFechasReserva();
     configurarCantidadVehiculos();
     configurarCalculoReserva();
@@ -66,6 +68,277 @@ function obtenerClaveReservacionesReserva() {
 function obtenerClaveUltimaReservacionReserva() {
 
     return `autorentcarUltimaReservacion:${obtenerSlugAgenciaReserva()}`;
+
+}
+
+/* =========================================================
+   ICONO DE SERVICIO ADICIONAL
+========================================================= */
+
+function obtenerIconoAdicionalReserva(
+    codigo
+) {
+
+    const iconos = {
+
+        "seguro-ampliado":
+            "fa-shield",
+
+        "gps-adicional":
+            "fa-map-location-dot",
+
+        "asiento-infantil":
+            "fa-baby"
+
+    };
+
+
+    return (
+        iconos[
+            String(
+                codigo ||
+                ""
+            )
+                .trim()
+                .toLowerCase()
+        ] ||
+        "fa-circle-plus"
+    );
+
+}
+
+
+/* =========================================================
+   CARGAR ADICIONALES DE LA AGENCIA
+========================================================= */
+
+async function cargarAdicionalesAgenciaReserva() {
+
+    const contenedor =
+        document.querySelector(
+            ".opciones-adicionales"
+        );
+
+
+    if (!contenedor) {
+
+        return;
+
+    }
+
+
+    /*
+     * Evitamos mostrar temporalmente precios
+     * antiguos escritos en el HTML.
+     */
+    contenedor.innerHTML =
+        `
+        <p>
+            Cargando servicios adicionales...
+        </p>
+        `;
+
+
+    try {
+
+        const slug =
+            obtenerSlugAgenciaReserva();
+
+
+        const respuesta =
+            await fetch(
+                `/api/agencias/${encodeURIComponent(
+                    slug
+                )}/catalogo`,
+                {
+
+                    method:
+                        "GET",
+
+                    headers: {
+
+                        Accept:
+                            "application/json"
+
+                    },
+
+                    cache:
+                        "no-store"
+
+                }
+            );
+
+
+        const datos =
+            await respuesta.json();
+
+
+        if (
+            !respuesta.ok ||
+            !datos?.ok
+        ) {
+
+            throw new Error(
+                datos?.mensaje ||
+                "No fue posible consultar la configuración comercial."
+            );
+
+        }
+
+
+        const adicionales =
+            Array.isArray(
+                datos?.catalogo?.adicionales
+            )
+                ? datos.catalogo.adicionales
+                : [];
+
+
+        if (
+            adicionales.length === 0
+        ) {
+
+            contenedor.innerHTML =
+                `
+                <p>
+                    Esta agencia no ofrece servicios adicionales actualmente.
+                </p>
+                `;
+
+
+            actualizarResumenReserva();
+
+            return;
+
+        }
+
+
+        contenedor.innerHTML =
+            adicionales
+                .map(
+                    (adicional) => {
+
+                        const codigo =
+                            String(
+                                adicional.codigo ||
+                                ""
+                            )
+                                .trim()
+                                .toLowerCase();
+
+
+                        const nombre =
+                            String(
+                                adicional.nombre ||
+                                "Servicio adicional"
+                            );
+
+
+                        const descripcion =
+                            String(
+                                adicional.descripcion ||
+                                ""
+                            );
+
+
+                        const precio =
+                            Number(
+                                adicional.precioDiario ||
+                                0
+                            );
+
+
+                        const icono =
+                            obtenerIconoAdicionalReserva(
+                                codigo
+                            );
+
+
+                        return `
+                            <label class="opcion-adicional">
+
+                                <input
+                                    type="checkbox"
+                                    id="${escaparReservaHTML(
+                                        codigo
+                                    )}"
+                                    data-precio="${precio}"
+                                >
+
+                                <span class="opcion-adicional-icono">
+
+                                    <i
+                                        class="fa-solid ${escaparReservaHTML(
+                                            icono
+                                        )}"
+                                    ></i>
+
+                                </span>
+
+
+                                <span class="opcion-adicional-texto">
+
+                                    <strong>
+                                        ${escaparReservaHTML(
+                                            nombre
+                                        )}
+                                    </strong>
+
+                                    <small>
+                                        ${escaparReservaHTML(
+                                            descripcion
+                                        )}
+                                    </small>
+
+                                </span>
+
+
+                                <span class="opcion-adicional-precio">
+
+                                    US$${precio.toFixed(
+                                        2
+                                    )}/día
+
+                                </span>
+
+                            </label>
+                        `;
+
+                    }
+                )
+                .join("");
+
+
+        /*
+         * Los inputs acaban de ser creados.
+         * Conectamos nuevamente sus eventos
+         * al resumen de la reservación.
+         */
+        configurarCalculoReserva();
+
+
+        actualizarResumenReserva();
+
+
+    } catch (error) {
+
+        console.error(
+            "No fue posible cargar los servicios adicionales de la agencia:",
+            error
+        );
+
+
+        contenedor.innerHTML =
+            `
+            <p>
+                No fue posible cargar los servicios adicionales en este momento.
+            </p>
+            `;
+
+
+        actualizarResumenReserva();
+
+    }
 
 }
 
@@ -1959,9 +2232,9 @@ function actualizarResumenReserva() {
         });
 
     /*
-     * AUTO15 se aplica únicamente sobre
-     * el costo de los vehículos.
-     */
+ * La promoción se aplica únicamente
+ * sobre el costo de los vehículos.
+ */
     const descuento =
         subtotal * descuentoReserva;
 
@@ -2029,83 +2302,287 @@ function colocarTexto(id, valor) {
 ========================================================= */
 
 function configurarCodigoPromocional() {
-    const boton = document.getElementById(
-        "aplicar-codigo"
-    );
 
-    const campo = document.getElementById(
-        "codigo-promocional"
-    );
+    const boton =
+        document.getElementById(
+            "aplicar-codigo"
+        );
 
-    const mensaje = document.getElementById(
-        "mensaje-codigo"
-    );
 
-    if (!boton || !campo || !mensaje) {
+    const campo =
+        document.getElementById(
+            "codigo-promocional"
+        );
+
+
+    const mensaje =
+        document.getElementById(
+            "mensaje-codigo"
+        );
+
+
+    if (
+        !boton ||
+        !campo ||
+        !mensaje
+    ) {
+
         return;
+
     }
 
-    boton.addEventListener("click", () => {
-        const codigo = campo.value
-            .trim()
-            .toUpperCase();
 
-        if (!codigo) {
-            descuentoReserva = 0;
+    boton.addEventListener(
+        "click",
+        async () => {
 
-            mensaje.textContent =
-                "Escribe un código promocional.";
+            const codigo =
+                campo.value
+                    .trim()
+                    .toUpperCase();
 
-            mensaje.style.color = "#ef4444";
 
-            actualizarResumenReserva();
+            if (!codigo) {
 
-            return;
+                descuentoReserva =
+                    0;
+
+                codigoPromocionalReserva =
+                    null;
+
+
+                mensaje.textContent =
+                    "Escribe un código promocional.";
+
+                mensaje.style.color =
+                    "#ef4444";
+
+
+                actualizarResumenReserva();
+
+                return;
+
+            }
+
+
+            const textoBoton =
+                boton.textContent;
+
+
+            boton.disabled =
+                true;
+
+            boton.textContent =
+                "Validando...";
+
+
+            try {
+
+                const slug =
+                    obtenerSlugAgenciaReserva();
+
+
+                const respuesta =
+                    await fetch(
+                        `/api/agencias/${encodeURIComponent(
+                            slug
+                        )}/promociones/validar`,
+                        {
+
+                            method:
+                                "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                Accept:
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    codigo
+
+                                })
+
+                        }
+                    );
+
+
+                const datos =
+                    await respuesta.json();
+
+
+                if (
+                    !respuesta.ok ||
+                    !datos?.ok ||
+                    !datos?.promocion
+                ) {
+
+                    descuentoReserva =
+                        0;
+
+                    codigoPromocionalReserva =
+                        null;
+
+
+                    mensaje.textContent =
+                        datos?.mensaje ||
+                        "El código introducido no es válido.";
+
+                    mensaje.style.color =
+                        "#ef4444";
+
+
+                    mostrarNotificacion(
+                        "Código no válido",
+                        "Revisa el código promocional e inténtalo nuevamente."
+                    );
+
+
+                    actualizarResumenReserva();
+
+                    return;
+
+                }
+
+
+                const promocion =
+                    datos.promocion;
+
+
+                const porcentaje =
+                    Number(
+                        promocion
+                            .porcentajeDescuento ||
+                        0
+                    );
+
+
+                if (
+                    !Number.isFinite(
+                        porcentaje
+                    ) ||
+                    porcentaje <= 0 ||
+                    porcentaje > 100
+                ) {
+
+                    throw new Error(
+                        "PORCENTAJE_PROMOCION_INVALIDO"
+                    );
+
+                }
+
+
+                descuentoReserva =
+                    porcentaje / 100;
+
+
+                codigoPromocionalReserva =
+                    String(
+                        promocion.codigo ||
+                        codigo
+                    )
+                        .trim()
+                        .toUpperCase();
+
+
+                campo.value =
+                    codigoPromocionalReserva;
+
+
+                mensaje.textContent =
+                    `Código aplicado: ${porcentaje} % de descuento sobre el costo de los vehículos. No aplica a los servicios adicionales.`;
+
+                mensaje.style.color =
+                    "#16a36a";
+
+
+                mostrarNotificacion(
+                    "Descuento aplicado",
+                    `Se aplicó un ${porcentaje} % sobre el costo de los vehículos. Los servicios adicionales no están incluidos.`
+                );
+
+
+                actualizarResumenReserva();
+
+
+            } catch (error) {
+
+                descuentoReserva =
+                    0;
+
+                codigoPromocionalReserva =
+                    null;
+
+
+                mensaje.textContent =
+                    "No fue posible validar el código promocional en este momento.";
+
+                mensaje.style.color =
+                    "#ef4444";
+
+
+                console.error(
+                    "Error validando código promocional:",
+                    error
+                );
+
+
+                actualizarResumenReserva();
+
+
+            } finally {
+
+                boton.disabled =
+                    false;
+
+                boton.textContent =
+                    textoBoton;
+
+            }
+
         }
+    );
 
-        if (codigo === "AUTO15") {
-            descuentoReserva = 0.15;
-            campo.value = "AUTO15";
 
-            mensaje.textContent =
-                "Código aplicado: 15 % de descuento sobre el costo de los vehículos. No aplica a los servicios adicionales.";
+    campo.addEventListener(
+        "input",
+        () => {
 
-            mensaje.style.color = "#16a36a";
+            const codigoActual =
+                campo.value
+                    .trim()
+                    .toUpperCase();
 
-            mostrarNotificacion(
-                "Descuento aplicado",
-                "Se aplicó un 15 % sobre el costo de los vehículos. Los servicios adicionales no están incluidos."
-            );
-        } else {
-            descuentoReserva = 0;
 
-            mensaje.textContent =
-                "El código introducido no es válido.";
+            if (
+                codigoPromocionalReserva &&
+                codigoActual !==
+                    codigoPromocionalReserva
+            ) {
 
-            mensaje.style.color = "#ef4444";
+                descuentoReserva =
+                    0;
 
-            mostrarNotificacion(
-                "Código no válido",
-                "Revisa el código promocional e inténtalo nuevamente."
-            );
+                codigoPromocionalReserva =
+                    null;
+
+                mensaje.textContent =
+                    "";
+
+
+                actualizarResumenReserva();
+
+            }
+
         }
+    );
 
-        actualizarResumenReserva();
-    });
-
-    campo.addEventListener("input", () => {
-        if (
-            campo.value
-                .trim()
-                .toUpperCase() !== "AUTO15" &&
-            descuentoReserva > 0
-        ) {
-            descuentoReserva = 0;
-            mensaje.textContent = "";
-
-            actualizarResumenReserva();
-        }
-    });
 }
 
 /* =========================================================
@@ -2959,12 +3436,11 @@ function construirReservacion() {
             adicionalesSeleccionados,
 
         codigoPromocional:
-            descuentoReserva > 0
-                ? "AUTO15"
-                : null,
+    codigoPromocionalReserva ||
+    null,
 
-        porcentajeDescuento:
-            descuentoReserva * 100,
+porcentajeDescuento:
+    descuentoReserva * 100,
 
         dias,
         precioDiario,
