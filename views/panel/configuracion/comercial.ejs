@@ -181,6 +181,56 @@
 
                 </section>
 
+                <!-- =====================================
+     MENSAJES
+====================================== -->
+
+<% if (resultado === "promocion_creada") { %>
+
+    <div class="panel-alert panel-alert-success">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <div>
+
+            <strong>
+                Promoción creada
+            </strong>
+
+            <span>
+                El código promocional fue creado correctamente.
+            </span>
+
+        </div>
+
+    </div>
+
+<% } %>
+
+
+<% if (resultado === "error") { %>
+
+    <div class="panel-alert panel-alert-danger">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <div>
+
+            <strong>
+                No fue posible crear la promoción
+            </strong>
+
+            <span>
+                <%= mensaje ||
+                    "Revisa los datos e inténtalo nuevamente." %>
+            </span>
+
+        </div>
+
+    </div>
+
+<% } %>
+
 
                 <!-- =====================================
                      RESUMEN
@@ -371,7 +421,18 @@
 
 
                 <strong>
-                    <%= adicional.nombre %>
+                    <div class="panel-form-field">
+
+    <input
+        type="text"
+        name="nombre"
+        value="<%= adicional.nombre %>"
+        maxlength="150"
+        form="<%= formularioAdicional %>"
+        required
+    >
+
+</div>
                 </strong>
 
             </td>
@@ -379,15 +440,39 @@
 
             <td>
 
-                <%= adicional.codigo %>
+                <div class="panel-form-field">
+
+    <input
+        type="text"
+        name="codigo"
+        value="<%= adicional.codigo %>"
+        maxlength="80"
+        pattern="[A-Za-z0-9_-]+"
+        title="Utiliza únicamente letras, números, guiones o guion bajo."
+        autocomplete="off"
+        form="<%= formularioAdicional %>"
+        required
+    >
+
+</div>
 
             </td>
 
 
             <td>
 
-                <%= adicional.descripcion ||
-                    "Sin descripción" %>
+                <div class="panel-form-field">
+
+    <input
+        type="text"
+        name="descripcion"
+        value="<%= adicional.descripcion || '' %>"
+        maxlength="255"
+        placeholder="Descripción del servicio"
+        form="<%= formularioAdicional %>"
+    >
+
+</div>
 
             </td>
 
@@ -417,7 +502,20 @@
 
             <td>
 
-                <%= adicional.orden %>
+                <div class="panel-form-field">
+
+    <input
+        type="number"
+        name="orden"
+        value="<%= Number(adicional.orden || 0) %>"
+        min="0"
+        max="32767"
+        step="1"
+        form="<%= formularioAdicional %>"
+        required
+    >
+
+</div>
 
             </td>
 
@@ -556,6 +654,207 @@
                         </div>
 
                     </div>
+
+
+                    <div class="panel-form-card">
+
+    <div class="panel-form-card-header">
+
+        <div class="panel-form-card-icon">
+
+            <i class="fa-solid fa-ticket"></i>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                Nueva promoción
+            </span>
+
+
+            <h3>
+                Crear código promocional
+            </h3>
+
+
+            <p>
+                Configura un nuevo descuento
+                para esta agencia.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <form
+        action="/panel/configuracion/comercial/promociones"
+        method="POST"
+    >
+
+        <div class="panel-form-grid">
+
+            <div class="panel-form-field">
+
+                <label for="promocion-nombre">
+                    Nombre
+                </label>
+
+                <input
+                    id="promocion-nombre"
+                    type="text"
+                    name="nombre"
+                    maxlength="150"
+                    placeholder="Ej. Oferta de verano"
+                    required
+                >
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label for="promocion-codigo">
+                    Código
+                </label>
+
+                <input
+                    id="promocion-codigo"
+                    type="text"
+                    name="codigo"
+                    maxlength="80"
+                    pattern="[A-Za-z0-9_-]+"
+                    title="Utiliza únicamente letras, números, guiones o guion bajo."
+                    placeholder="Ej. VERANO10"
+                    autocomplete="off"
+                    required
+                >
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label for="promocion-descuento">
+                    Descuento (%)
+                </label>
+
+                <input
+                    id="promocion-descuento"
+                    type="number"
+                    name="porcentajeDescuento"
+                    min="0.01"
+                    max="100"
+                    step="0.01"
+                    placeholder="Ej. 10"
+                    required
+                >
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label for="promocion-publica">
+                    Visibilidad
+                </label>
+
+                <select
+                    id="promocion-publica"
+                    name="publica"
+                    required
+                >
+
+                    <option value="0" selected>
+                        Privada
+                    </option>
+
+                    <option value="1">
+                        Pública
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label for="promocion-fecha-inicio">
+                    Fecha de inicio
+                </label>
+
+                <input
+                    id="promocion-fecha-inicio"
+                    type="date"
+                    name="fechaInicio"
+                >
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label for="promocion-fecha-fin">
+                    Fecha final
+                </label>
+
+                <input
+                    id="promocion-fecha-fin"
+                    type="date"
+                    name="fechaFin"
+                >
+
+            </div>
+
+
+            <div class="panel-form-field">
+
+                <label for="promocion-activa">
+                    Estado
+                </label>
+
+                <select
+                    id="promocion-activa"
+                    name="activo"
+                    required
+                >
+
+                    <option value="0" selected>
+                        Inactiva
+                    </option>
+
+                    <option value="1">
+                        Activa
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="panel-form-actions panel-form-full">
+
+                <button
+                    type="submit"
+                    class="panel-form-submit"
+                >
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Crear promoción
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
 
 
                     <% if (promociones.length) { %>

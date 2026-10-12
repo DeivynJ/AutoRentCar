@@ -23,71 +23,6 @@ const {
     "./correoReservacionService"
 );
 
-
-/* =========================================================
-   CONFIGURACIÓN COMERCIAL TEMPORAL
-
-   IMPORTANTE:
-   Los precios se validan en el servidor.
-   El navegador NO decide estos importes.
-
-   Más adelante estos adicionales y promociones podrán
-   administrarse por agencia desde MariaDB.
-========================================================= */
-
-const ADICIONALES_DISPONIBLES = {
-
-    "seguro-ampliado": {
-        codigo:
-            "seguro-ampliado",
-
-        nombre:
-            "Seguro ampliado",
-
-        precioDiario:
-            12
-    },
-
-
-    "gps-adicional": {
-        codigo:
-            "gps-adicional",
-
-        nombre:
-            "Sistema GPS",
-
-        precioDiario:
-            5
-    },
-
-
-    "asiento-infantil": {
-        codigo:
-            "asiento-infantil",
-
-        nombre:
-            "Asiento infantil",
-
-        precioDiario:
-            4
-    }
-
-};
-
-
-const PROMOCIONES_DISPONIBLES = {
-
-    AUTO15: {
-        codigo:
-            "AUTO15",
-
-        porcentaje:
-            0.15
-    }
-
-};
-
-
 /* =========================================================
    ERROR CONTROLADO
 ========================================================= */
@@ -115,7 +50,6 @@ function crearErrorReservacion(
     return error;
 
 }
-
 
 /* =========================================================
    NORMALIZAR TEXTO
@@ -1803,10 +1737,6 @@ return {
 
 module.exports = {
 
-    ADICIONALES_DISPONIBLES,
-
-    PROMOCIONES_DISPONIBLES,
-
-    crearReservacionWeb
+    crearReservacionWeb,
 
 };

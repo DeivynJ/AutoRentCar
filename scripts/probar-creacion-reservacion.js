@@ -132,7 +132,7 @@ async function ejecutarPrueba() {
 
 
                     codigoPromocional:
-                        "AUTO15",
+                        process.env.CODIGO_PROMOCIONAL_PRUEBA || null,
 
 
                     comentarios:

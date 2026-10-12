@@ -1946,6 +1946,54 @@ async function crearAgencia(
 
 
         /* -------------------------------------------------
+   CREAR ADICIONALES INICIALES
+------------------------------------------------- */
+
+await conexion.query(
+    `
+        INSERT INTO adicionales_agencia (
+            agencia_id,
+            codigo,
+            nombre,
+            descripcion,
+            precio_diario,
+            activo,
+            orden
+        )
+        VALUES
+            (?, ?, ?, ?, ?, ?, ?),
+            (?, ?, ?, ?, ?, ?, ?),
+            (?, ?, ?, ?, ?, ?, ?)
+    `,
+    [
+        agenciaId,
+        "seguro-ampliado",
+        "Seguro ampliado",
+        "Mayor protección durante el alquiler.",
+        12.00,
+        1,
+        10,
+
+        agenciaId,
+        "gps-adicional",
+        "Sistema GPS",
+        "Navegación para tus recorridos.",
+        5.00,
+        1,
+        20,
+
+        agenciaId,
+        "asiento-infantil",
+        "Asiento infantil",
+        "Seguridad adicional para niños.",
+        4.00,
+        1,
+        30
+    ]
+);
+
+
+        /* -------------------------------------------------
            CONFIRMAR
         ------------------------------------------------- */
 

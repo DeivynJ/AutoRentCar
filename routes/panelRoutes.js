@@ -155,6 +155,8 @@ const {
 
     actualizarAdicionalComercialPanel,
 
+    crearPromocionComercialPanel,
+
     actualizarPromocionComercialPanel
 
 } = require(
@@ -458,6 +460,12 @@ router.post(
     "/panel/configuracion/comercial/adicionales/:adicionalId",
     requerirAdministradorAgencia,
     actualizarAdicionalComercialPanel
+);
+
+router.post(
+    "/panel/configuracion/comercial/promociones",
+    requerirAdministradorAgencia,
+    crearPromocionComercialPanel
 );
 
 router.post(

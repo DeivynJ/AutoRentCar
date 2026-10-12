@@ -353,11 +353,102 @@ async function actualizarAdicionalAgencia({
 
     adicionalId,
 
+    codigo,
+
+    nombre,
+
+    descripcion,
+
     precioDiario,
+
+    orden,
 
     activo
 
 }) {
+
+    const codigoNormalizado =
+    String(
+        codigo ||
+        ""
+    )
+        .trim()
+        .toLowerCase();
+
+
+const nombreNormalizado =
+    String(
+        nombre ||
+        ""
+    )
+        .trim();
+
+
+const descripcionNormalizada =
+    String(
+        descripcion ||
+        ""
+    )
+        .trim();
+
+
+const ordenNormalizado =
+    Number(
+        orden
+    );
+
+
+if (
+    !codigoNormalizado ||
+    codigoNormalizado.length > 80 ||
+    !/^[a-z0-9_-]+$/.test(
+        codigoNormalizado
+    )
+) {
+
+    throw new Error(
+        "CODIGO_ADICIONAL_INVALIDO"
+    );
+
+}
+
+
+if (
+    !nombreNormalizado ||
+    nombreNormalizado.length > 150
+) {
+
+    throw new Error(
+        "NOMBRE_ADICIONAL_INVALIDO"
+    );
+
+}
+
+
+if (
+    descripcionNormalizada.length > 255
+) {
+
+    throw new Error(
+        "DESCRIPCION_ADICIONAL_INVALIDA"
+    );
+
+}
+
+
+if (
+    !Number.isInteger(
+        ordenNormalizado
+    ) ||
+    ordenNormalizado < 0 ||
+    ordenNormalizado > 32767
+) {
+
+    throw new Error(
+        "ORDEN_ADICIONAL_INVALIDO"
+    );
+
+}
 
     const idAgencia =
         normalizarAgenciaId(
@@ -420,27 +511,67 @@ async function actualizarAdicionalAgencia({
 
     try {
 
+        const adicionalesMismoCodigo =
+    await conexion.query(
+        `
+        SELECT
+            id
+        FROM adicionales_agencia
+        WHERE
+            agencia_id = ?
+            AND codigo = ?
+            AND id <> ?
+        LIMIT 1
+        `,
+        [
+            idAgencia,
+            codigoNormalizado,
+            idAdicional
+        ]
+    );
+
+
+if (
+    adicionalesMismoCodigo.length >
+    0
+) {
+
+    throw new Error(
+        "CODIGO_ADICIONAL_DUPLICADO"
+    );
+
+}
+
         const resultado =
             await conexion.query(
                 `
                 UPDATE adicionales_agencia
 
-                SET
-                    precio_diario = ?,
-                    activo = ?
+SET
+    codigo = ?,
+    nombre = ?,
+    descripcion = ?,
+    precio_diario = ?,
+    orden = ?,
+    activo = ?
 
-                WHERE
-                    id = ?
-                    AND agencia_id = ?
+WHERE
+    id = ?
+    AND agencia_id = ?
                 `,
                 [
-                    precio,
-                    estadoActivo
-                        ? 1
-                        : 0,
-                    idAdicional,
-                    idAgencia
-                ]
+    codigoNormalizado,
+    nombreNormalizado,
+    descripcionNormalizada ||
+        null,
+    precio,
+    ordenNormalizado,
+    estadoActivo
+        ? 1
+        : 0,
+    idAdicional,
+    idAgencia
+]
             );
 
 
@@ -490,23 +621,345 @@ async function actualizarAdicionalAgencia({
 
         }
 
+   return {
+
+    actualizado:
+        true,
+
+    adicionalId:
+        idAdicional,
+
+    agenciaId:
+        idAgencia,
+
+    codigo:
+        codigoNormalizado,
+
+    nombre:
+        nombreNormalizado,
+
+    descripcion:
+        descripcionNormalizada ||
+        null,
+
+    precioDiario:
+        precio,
+
+    orden:
+        ordenNormalizado,
+
+    activo:
+        estadoActivo
+
+};
+
+
+    } finally {
+
+        conexion.release();
+
+    }
+
+}
+
+/* =========================================================
+   CREAR PROMOCIÓN DE LA AGENCIA
+========================================================= */
+
+async function crearPromocionAgencia({
+
+    agenciaId,
+
+    codigo,
+
+    nombre,
+
+    porcentajeDescuento,
+
+    fechaInicio,
+
+    fechaFin,
+
+    publica,
+
+    activo
+
+}) {
+
+    const idAgencia =
+        normalizarAgenciaId(
+            agenciaId
+        );
+
+
+    const codigoNormalizado =
+        String(
+            codigo ||
+            ""
+        )
+            .trim()
+            .toUpperCase();
+
+
+    if (
+        !codigoNormalizado ||
+        codigoNormalizado.length > 80 ||
+        !/^[A-Z0-9_-]+$/.test(
+            codigoNormalizado
+        )
+    ) {
+
+        throw new Error(
+            "CODIGO_PROMOCION_INVALIDO"
+        );
+
+    }
+
+
+    const nombreNormalizado =
+        String(
+            nombre ||
+            ""
+        )
+            .trim();
+
+
+    if (
+        !nombreNormalizado ||
+        nombreNormalizado.length > 150
+    ) {
+
+        throw new Error(
+            "NOMBRE_PROMOCION_INVALIDO"
+        );
+
+    }
+
+
+    const porcentaje =
+        Number(
+            porcentajeDescuento
+        );
+
+
+    if (
+        !Number.isFinite(
+            porcentaje
+        ) ||
+        porcentaje <= 0 ||
+        porcentaje > 100
+    ) {
+
+        throw new Error(
+            "PORCENTAJE_PROMOCION_INVALIDO"
+        );
+
+    }
+
+
+    const fechaInicioNormalizada =
+        String(
+            fechaInicio ||
+            ""
+        ).trim() ||
+        null;
+
+
+    const fechaFinNormalizada =
+        String(
+            fechaFin ||
+            ""
+        ).trim() ||
+        null;
+
+
+    const patronFecha =
+        /^\d{4}-\d{2}-\d{2}$/;
+
+
+    if (
+        fechaInicioNormalizada &&
+        !patronFecha.test(
+            fechaInicioNormalizada
+        )
+    ) {
+
+        throw new Error(
+            "FECHA_PROMOCION_INVALIDA"
+        );
+
+    }
+
+
+    if (
+        fechaFinNormalizada &&
+        !patronFecha.test(
+            fechaFinNormalizada
+        )
+    ) {
+
+        throw new Error(
+            "FECHA_PROMOCION_INVALIDA"
+        );
+
+    }
+
+
+    const esPublica =
+        publica === true ||
+        publica === 1 ||
+        publica === "1" ||
+        publica === "true" ||
+        publica === "on";
+
+
+    const estaActiva =
+        activo === true ||
+        activo === 1 ||
+        activo === "1" ||
+        activo === "true" ||
+        activo === "on";
+
+
+    const conexion =
+        await pool.getConnection();
+
+
+    try {
+
+        const promocionesMismoCodigo =
+            await conexion.query(
+                `
+                SELECT
+                    id
+                FROM promociones_agencia
+                WHERE
+                    agencia_id = ?
+                    AND codigo = ?
+                LIMIT 1
+                `,
+                [
+                    idAgencia,
+                    codigoNormalizado
+                ]
+            );
+
+
+        if (
+            promocionesMismoCodigo.length >
+            0
+        ) {
+
+            throw new Error(
+                "CODIGO_PROMOCION_DUPLICADO"
+            );
+
+        }
+
+
+        if (
+            fechaInicioNormalizada &&
+            fechaFinNormalizada
+        ) {
+
+            const validacionFechas =
+                await conexion.query(
+                    `
+                    SELECT
+                        CASE
+                            WHEN DATE(?) <= DATE(?)
+                                THEN 1
+                            ELSE 0
+                        END AS fechas_validas
+                    `,
+                    [
+                        fechaInicioNormalizada,
+                        fechaFinNormalizada
+                    ]
+                );
+
+
+            if (
+                Number(
+                    validacionFechas[0]
+                        ?.fechas_validas
+                ) !== 1
+            ) {
+
+                throw new Error(
+                    "PERIODO_PROMOCION_INVALIDO"
+                );
+
+            }
+
+        }
+
+
+        const resultado =
+            await conexion.query(
+                `
+                INSERT INTO promociones_agencia (
+                    agencia_id,
+                    codigo,
+                    nombre,
+                    porcentaje_descuento,
+                    fecha_inicio,
+                    fecha_fin,
+                    publica,
+                    activo
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                `,
+                [
+                    idAgencia,
+                    codigoNormalizado,
+                    nombreNormalizado,
+                    porcentaje,
+                    fechaInicioNormalizada,
+                    fechaFinNormalizada,
+                    esPublica
+                        ? 1
+                        : 0,
+                    estaActiva
+                        ? 1
+                        : 0
+                ]
+            );
+
 
         return {
 
-            actualizado:
+            creado:
                 true,
 
-            adicionalId:
-                idAdicional,
+            promocionId:
+                Number(
+                    resultado.insertId
+                ),
 
             agenciaId:
                 idAgencia,
 
-            precioDiario:
-                precio,
+            codigo:
+                codigoNormalizado,
+
+            nombre:
+                nombreNormalizado,
+
+            porcentajeDescuento:
+                porcentaje,
+
+            fechaInicio:
+                fechaInicioNormalizada,
+
+            fechaFin:
+                fechaFinNormalizada,
+
+            publica:
+                esPublica,
 
             activo:
-                estadoActivo
+                estaActiva
 
         };
 
@@ -677,41 +1130,41 @@ if (
 
 
     const conexion =
-        await pool.getConnection();
+    await pool.getConnection();
+
+
+try {
 
     const promocionesMismoCodigo =
-    await conexion.query(
-        `
-        SELECT
-            id
-        FROM promociones_agencia
-        WHERE
-            agencia_id = ?
-            AND codigo = ?
-            AND id <> ?
-        LIMIT 1
-        `,
-        [
-            idAgencia,
-            codigoNormalizado,
-            idPromocion
-        ]
-    );
+        await conexion.query(
+            `
+            SELECT
+                id
+            FROM promociones_agencia
+            WHERE
+                agencia_id = ?
+                AND codigo = ?
+                AND id <> ?
+            LIMIT 1
+            `,
+            [
+                idAgencia,
+                codigoNormalizado,
+                idPromocion
+            ]
+        );
 
 
-if (
-    promocionesMismoCodigo.length >
-    0
-) {
+    if (
+        promocionesMismoCodigo.length >
+        0
+    ) {
 
-    throw new Error(
-        "CODIGO_PROMOCION_DUPLICADO"
-    );
+        throw new Error(
+            "CODIGO_PROMOCION_DUPLICADO"
+        );
 
-}   
-
-    try {
-
+    }
         /*
          * Validamos las fechas utilizando MariaDB
          * para evitar depender del reloj de JavaScript.
@@ -900,14 +1353,14 @@ async function obtenerConfiguracionComercialAgencia(
 
     return {
 
-        agenciaId:
-            idAgencia,
+    agenciaId:
+        idAgencia,
 
-        adicionales,
+    adicionales,
 
-        promociones
+    promociones
 
-    };
+};
 
 }
 
@@ -922,6 +1375,8 @@ module.exports = {
     obtenerPromocionesAgencia,
 
     actualizarAdicionalAgencia,
+
+    crearPromocionAgencia,
 
     actualizarPromocionAgencia,
 

@@ -9,6 +9,8 @@ const {
 
     actualizarAdicionalAgencia,
 
+    crearPromocionAgencia,
+
     actualizarPromocionAgencia
 
 } = require(
@@ -110,12 +112,24 @@ async function mostrarConfiguracionComercialPanel(
                     req.agencia,
 
                 suscripcion:
-                    req.suscripcion,
+    req.suscripcion,
 
-                plan:
-                    req.plan,
+plan:
+    req.plan,
 
-                configuracion
+configuracion,
+
+resultado:
+    String(
+        req.query?.resultado ||
+        ""
+    ).trim(),
+
+mensaje:
+    String(
+        req.query?.mensaje ||
+        ""
+    ).trim()
 
             }
         );
@@ -169,17 +183,29 @@ async function actualizarAdicionalComercialPanel(
 
         await actualizarAdicionalAgencia({
 
-            agenciaId,
+    agenciaId,
 
-            adicionalId,
+    adicionalId,
 
-            precioDiario:
-                req.body?.precioDiario,
+    codigo:
+        req.body?.codigo,
 
-            activo:
-                req.body?.activo
+    nombre:
+        req.body?.nombre,
 
-        });
+    descripcion:
+        req.body?.descripcion,
+
+    precioDiario:
+        req.body?.precioDiario,
+
+    orden:
+        req.body?.orden,
+
+    activo:
+        req.body?.activo
+
+});
 
 
         return res.redirect(
@@ -217,7 +243,50 @@ async function actualizarAdicionalComercialPanel(
             mensaje =
                 "El precio del servicio adicional no es válido.";
 
-        } else if (
+        } 
+        else if (
+    codigo ===
+    "CODIGO_ADICIONAL_INVALIDO"
+) {
+
+    mensaje =
+        "El código del servicio adicional no es válido. Utiliza únicamente letras, números, guiones o guion bajo.";
+
+} else if (
+    codigo ===
+    "CODIGO_ADICIONAL_DUPLICADO"
+) {
+
+    mensaje =
+        "Ya existe un servicio adicional con ese código dentro de esta agencia.";
+
+} else if (
+    codigo ===
+    "NOMBRE_ADICIONAL_INVALIDO"
+) {
+
+    mensaje =
+        "El nombre del servicio adicional no es válido.";
+
+} else if (
+    codigo ===
+    "DESCRIPCION_ADICIONAL_INVALIDA"
+) {
+
+    mensaje =
+        "La descripción del servicio adicional es demasiado larga.";
+
+} else if (
+    codigo ===
+    "ORDEN_ADICIONAL_INVALIDO"
+) {
+
+    mensaje =
+        "El orden del servicio adicional no es válido.";
+
+}
+        
+        else if (
             codigo ===
             "AGENCIA_ID_INVALIDO" ||
             codigo ===
@@ -237,6 +306,151 @@ async function actualizarAdicionalComercialPanel(
 
             mensaje =
                 "No fue posible actualizar el servicio adicional.";
+
+        }
+
+
+        return res.redirect(
+            `/panel/configuracion/comercial?resultado=error&mensaje=${encodeURIComponent(
+                mensaje
+            )}`
+        );
+
+    }
+
+}
+
+/* =========================================================
+   CREAR PROMOCIÓN
+========================================================= */
+
+async function crearPromocionComercialPanel(
+    req,
+    res
+) {
+
+    try {
+
+        const agenciaId =
+            obtenerAgenciaId(
+                req
+            );
+
+
+        await crearPromocionAgencia({
+
+            agenciaId,
+
+            codigo:
+                req.body?.codigo,
+
+            nombre:
+                req.body?.nombre,
+
+            porcentajeDescuento:
+                req.body?.porcentajeDescuento,
+
+            fechaInicio:
+                req.body?.fechaInicio,
+
+            fechaFin:
+                req.body?.fechaFin,
+
+            publica:
+                req.body?.publica,
+
+            activo:
+                req.body?.activo
+
+        });
+
+
+        return res.redirect(
+            "/panel/configuracion/comercial?resultado=promocion_creada"
+        );
+
+
+    } catch (error) {
+
+        const codigo =
+            String(
+                error?.codigo ||
+                error?.message ||
+                ""
+            ).trim();
+
+
+        let mensaje;
+
+
+        if (
+            codigo ===
+            "CODIGO_PROMOCION_INVALIDO"
+        ) {
+
+            mensaje =
+                "El código promocional no es válido. Utiliza únicamente letras, números, guiones o guion bajo.";
+
+        } else if (
+            codigo ===
+            "CODIGO_PROMOCION_DUPLICADO"
+        ) {
+
+            mensaje =
+                "Ya existe una promoción con ese código dentro de esta agencia.";
+
+        } else if (
+            codigo ===
+            "NOMBRE_PROMOCION_INVALIDO"
+        ) {
+
+            mensaje =
+                "El nombre de la promoción no es válido.";
+
+        } else if (
+            codigo ===
+            "PORCENTAJE_PROMOCION_INVALIDO"
+        ) {
+
+            mensaje =
+                "El porcentaje de descuento debe ser mayor que 0 y no puede superar el 100 %.";
+
+        } else if (
+            codigo ===
+            "FECHA_PROMOCION_INVALIDA"
+        ) {
+
+            mensaje =
+                "Una de las fechas de la promoción no es válida.";
+
+        } else if (
+            codigo ===
+            "PERIODO_PROMOCION_INVALIDO"
+        ) {
+
+            mensaje =
+                "La fecha final de la promoción no puede ser anterior a la fecha inicial.";
+
+        } else if (
+            codigo ===
+            "AGENCIA_ID_INVALIDO" ||
+            codigo ===
+            "AGENCIA_NO_DETERMINADA"
+        ) {
+
+            mensaje =
+                "No fue posible determinar la agencia.";
+
+        } else {
+
+            console.error(
+                "Error inesperado creando promoción:",
+                error
+            );
+
+
+            mensaje =
+                "No fue posible crear la promoción.";
 
         }
 
@@ -418,6 +632,8 @@ module.exports = {
     mostrarConfiguracionComercialPanel,
 
     actualizarAdicionalComercialPanel,
+
+    crearPromocionComercialPanel,
 
     actualizarPromocionComercialPanel
 
