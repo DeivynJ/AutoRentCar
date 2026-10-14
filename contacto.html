@@ -10,10 +10,9 @@
 
     <meta
         name="description"
-        content="Contacta con AutoRentCar para solicitar información, soporte o realizar una reservación."
-    >
-
-    <title>Contacto | AutoRentCar</title>
+        content="Contáctanos para solicitar información, soporte o realizar una reservación."
+>
+    <title>Contacto | Agencia</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -52,10 +51,9 @@
                         +1 849-276-6030
                     </span>
 
-                    <span>
-                        <i class="fa-solid fa-envelope"></i>
-                        contacto@autorentcar.com
-                    </span>
+                    <span hidden>
+    <i class="fa-solid fa-envelope"></i>
+</span>
 
                     <span>
                         <i class="fa-solid fa-location-dot"></i>
@@ -263,9 +261,10 @@
 
                                 <span>Correo electrónico</span>
 
-                                <a href="mailto:contacto@autorentcar.com">
-                                    contacto@autorentcar.com
-                                </a>
+                                <a
+    hidden
+    data-agencia-correo
+></a>
 
                                 <small>
                                     Respondemos en menos de 24 horas
@@ -561,8 +560,7 @@
 
                             </span>
 
-                            Acepto que AutoRentCar utilice estos datos para
-                            responder mi solicitud.
+                           Acepto que<span data-agencia-nombre>la agencia</span>utilice estos datos para responder mi solicitud.
 
                         </label>
 
@@ -610,151 +608,11 @@
 
                 </div>
 
-                <div class="rejilla-sucursales">
-
-                    <article class="tarjeta-sucursal activa">
-
-                        <div class="sucursal-superior">
-
-                            <div class="sucursal-icono">
-
-                                <i class="fa-solid fa-building"></i>
-
-                            </div>
-
-                            <span>Oficina principal</span>
-
-                        </div>
-
-                        <h3>Santiago</h3>
-
-                        <p>
-                            Avenida 27 de Febrero, Santiago de los Caballeros.
-                        </p>
-
-                        <div class="sucursal-detalles">
-
-                            <span>
-                                <i class="fa-solid fa-phone"></i>
-                                849-276-6030
-                            </span>
-
-                            <span>
-                                <i class="fa-solid fa-clock"></i>
-                                8:00 a. m. – 6:00 p. m.
-                            </span>
-
-                        </div>
-
-                    </article>
-
-                    <article class="tarjeta-sucursal">
-
-                        <div class="sucursal-superior">
-
-                            <div class="sucursal-icono">
-
-                                <i class="fa-solid fa-plane"></i>
-
-                            </div>
-
-                            <span>Aeropuerto</span>
-
-                        </div>
-
-                        <h3>Santo Domingo</h3>
-
-                        <p>
-                            Servicio de recogida y entrega previa reservación.
-                        </p>
-
-                        <div class="sucursal-detalles">
-
-                            <span>
-                                <i class="fa-solid fa-phone"></i>
-                                809-555-2030
-                            </span>
-
-                            <span>
-                                <i class="fa-solid fa-clock"></i>
-                                24 horas
-                            </span>
-
-                        </div>
-
-                    </article>
-
-                    <article class="tarjeta-sucursal">
-
-                        <div class="sucursal-superior">
-
-                            <div class="sucursal-icono">
-
-                                <i class="fa-solid fa-umbrella-beach"></i>
-
-                            </div>
-
-                            <span>Zona turística</span>
-
-                        </div>
-
-                        <h3>Puerto Plata</h3>
-
-                        <p>
-                            Entregas coordinadas en hoteles y zonas turísticas.
-                        </p>
-
-                        <div class="sucursal-detalles">
-
-                            <span>
-                                <i class="fa-solid fa-phone"></i>
-                                809-555-2040
-                            </span>
-
-                            <span>
-                                <i class="fa-solid fa-clock"></i>
-                                8:00 a. m. – 5:00 p. m.
-                            </span>
-
-                        </div>
-
-                    </article>
-
-                    <article class="tarjeta-sucursal">
-
-                        <div class="sucursal-superior">
-
-                            <div class="sucursal-icono">
-
-                                <i class="fa-solid fa-plane-arrival"></i>
-
-                            </div>
-
-                            <span>Aeropuerto</span>
-
-                        </div>
-
-                        <h3>Punta Cana</h3>
-
-                        <p>
-                            Servicio para aeropuertos, hoteles y complejos.
-                        </p>
-
-                        <div class="sucursal-detalles">
-
-                            <span>
-                                <i class="fa-solid fa-phone"></i>
-                                809-555-2050
-                            </span>
-
-                            <span>
-                                <i class="fa-solid fa-clock"></i>
-                                24 horas
-                            </span>
-
-                        </div>
-
-                    </article>
+                <div
+    class="rejilla-sucursales"
+    id="contenedor-sucursales"
+    aria-live="polite"
+></div>
 
                 </div>
 

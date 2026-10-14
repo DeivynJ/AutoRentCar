@@ -41,7 +41,7 @@ const {
 const {
     entregarVehiculoReservacion,
     registrarDevolucionReservacion
-} = require("../services/pane10peracionReservacionService");
+} = require("../services/panelOperacionReservacionService");
 
 
 /* =========================================================

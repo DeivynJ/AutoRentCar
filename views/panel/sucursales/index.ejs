@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Sucursales de <%= agencia.nombre %>."
+    >
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <%- include("../partials/tema") %>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <div class="panel-shell">
+
+
+        <%- include("../partials/sidebar") %>
+
+
+        <div class="panel-content-wrapper">
+
+
+            <%- include("../partials/header") %>
+
+
+            <main class="panel-main">
+
+
+                <!-- =====================================
+                     MENSAJES
+                ====================================== -->
+
+                <% if (mensaje) { %>
+
+                    <div
+                        class="panel-alert <%= resultado === 'exito'
+                            ? 'panel-alert-success'
+                            : 'panel-alert-danger' %>"
+                    >
+
+                        <i
+                            class="fa-solid <%= resultado === 'exito'
+                                ? 'fa-circle-check'
+                                : 'fa-circle-exclamation' %>"
+                        ></i>
+
+
+                        <div>
+
+                            <strong>
+
+                                <%= resultado === "exito"
+                                    ? "Operación completada"
+                                    : "No fue posible completar la operación" %>
+
+                            </strong>
+
+
+                            <span>
+                                <%= mensaje %>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+
+                <!-- =====================================
+                     ENCABEZADO
+                ====================================== -->
+
+                <section class="panel-module-hero">
+
+
+                    <div>
+
+                        <span class="panel-module-badge">
+
+                            <i class="fa-solid fa-location-dot"></i>
+
+                            Operaciones
+
+                        </span>
+
+
+                        <h2>
+
+                            Sucursales de
+
+                            <span>
+                                <%= agencia.nombre %>
+                            </span>
+
+                        </h2>
+
+
+                        <p>
+
+                            Consulta las ubicaciones operativas
+                            registradas para tu agencia y los
+                            datos de contacto asociados a cada
+                            sucursal.
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="panel-module-actions">
+
+    <a
+        href="/contacto.html?agencia=<%= encodeURIComponent(agencia.slug) %>"
+        target="_blank"
+        rel="noopener"
+        class="panel-action-secondary"
+    >
+
+        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+        Ver contacto público
+
+    </a>
+
+
+    <a
+        href="/panel/sucursales/nueva"
+        class="panel-action-primary"
+    >
+
+        <i class="fa-solid fa-plus"></i>
+
+        Nueva sucursal
+
+    </a>
+
+</div>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     RESUMEN
+                ====================================== -->
+
+                <section class="panel-summary-grid">
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-building"></i>
+
+                        </div>
+
+                        <small>
+                            Total
+                        </small>
+
+                        <strong>
+                            <%= resumen.total %>
+                        </strong>
+
+                        <span>
+                            Sucursales registradas
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        </div>
+
+                        <small>
+                            Activas
+                        </small>
+
+                        <strong>
+                            <%= resumen.activas %>
+                        </strong>
+
+                        <span>
+                            Disponibles actualmente
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-circle-pause"></i>
+
+                        </div>
+
+                        <small>
+                            Inactivas
+                        </small>
+
+                        <strong>
+                            <%= resumen.inactivas %>
+                        </strong>
+
+                        <span>
+                            Temporalmente deshabilitadas
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-layer-group"></i>
+
+                        </div>
+
+                        <small>
+                            Límite del plan
+                        </small>
+
+                        <strong>
+
+                            <%= plan.limiteSucursales === null
+                                ? "∞"
+                                : plan.limiteSucursales %>
+
+                        </strong>
+
+                        <span>
+                            Sucursales activas permitidas
+                        </span>
+
+                    </article>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     LISTADO
+                ====================================== -->
+
+                <section class="panel-units-card">
+
+
+                    <div class="panel-units-header">
+
+                        <span>
+                            Gestión de ubicaciones
+                        </span>
+
+                        <h3>
+                            Sucursales registradas
+                        </h3>
+
+                        <p>
+
+                            Estas son las sucursales
+                            pertenecientes exclusivamente a
+                            <%= agencia.nombre %>.
+
+                        </p>
+
+                    </div>
+
+
+                    <% if (sucursales.length) { %>
+
+
+                        <div class="panel-units-table-wrapper">
+
+
+                            <table class="panel-units-table">
+
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Sucursal
+                                        </th>
+
+                                        <th>
+                                            Ubicación
+                                        </th>
+
+                                        <th>
+                                            Contacto
+                                        </th>
+
+                                        <th>
+                                            WhatsApp
+                                        </th>
+
+                                        <th>
+                                            Tipo
+                                        </th>
+
+                                        <th>
+                                            Estado
+                                        </th>
+
+                                        <th>
+                                            Acciones
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+
+                                    <% sucursales.forEach((sucursal) => { %>
+
+
+                                        <tr>
+
+
+                                            <!-- SUCURSAL -->
+
+                                            <td>
+
+                                                <strong>
+                                                    <%= sucursal.nombre %>
+                                                </strong>
+
+
+                                                <% if (
+                                                    Number(
+                                                        sucursal.es_principal
+                                                    ) === 1
+                                                ) { %>
+
+                                                    <span class="unit-main-branch">
+
+                                                        <i class="fa-solid fa-star"></i>
+
+                                                        Principal
+
+                                                    </span>
+
+                                                <% } %>
+
+                                            </td>
+
+
+                                            <!-- UBICACIÓN -->
+
+                                            <td>
+
+    <div class="branch-location">
+
+        <strong>
+
+            <%= [
+                sucursal.ciudad,
+                sucursal.provincia
+            ]
+                .filter(Boolean)
+                .join(", ") ||
+                "Sin especificar" %>
+
+        </strong>
+
+
+        <% if (sucursal.direccion) { %>
+
+            <small>
+
+                <%= sucursal.direccion %>
+
+            </small>
+
+        <% } %>
+
+    </div>
+
+</td>
+
+
+                                            <!-- CONTACTO -->
+
+                                            <td>
+
+                                                <% if (sucursal.telefono) { %>
+
+                                                    <div>
+
+                                                        <i class="fa-solid fa-phone"></i>
+
+                                                        <%= sucursal.telefono %>
+
+                                                    </div>
+
+                                                <% } %>
+
+
+                                                <% if (sucursal.correo) { %>
+
+                                                    <div>
+
+                                                        <i class="fa-solid fa-envelope"></i>
+
+                                                        <%= sucursal.correo %>
+
+                                                    </div>
+
+                                                <% } %>
+
+
+                                                <% if (
+                                                    !sucursal.telefono &&
+                                                    !sucursal.correo
+                                                ) { %>
+
+                                                    —
+
+                                                <% } %>
+
+                                            </td>
+
+
+                                            <!-- WHATSAPP -->
+
+                                            <td>
+
+    <% if (sucursal.whatsapp) { %>
+
+        <span class="branch-whatsapp">
+
+            <i class="fa-brands fa-whatsapp"></i>
+
+            <%= sucursal.whatsapp %>
+
+        </span>
+
+    <% } else { %>
+
+        —
+
+    <% } %>
+
+</td>
+
+
+                                            <!-- TIPO -->
+
+                                            <td>
+
+                                                <% if (
+                                                    Number(
+                                                        sucursal.es_principal
+                                                    ) === 1
+                                                ) { %>
+
+                                                    <span
+                                                        class="unit-status unit-status-reservado"
+                                                    >
+                                                        Principal
+                                                    </span>
+
+                                                <% } else { %>
+
+                                                    <span
+                                                        class="unit-status unit-status-alquilado"
+                                                    >
+                                                        Sucursal
+                                                    </span>
+
+                                                <% } %>
+
+                                            </td>
+
+
+                                            <!-- ESTADO -->
+
+                                            <td>
+
+                                                <span
+                                                    class="unit-status <%= sucursal.estado === 'activa'
+                                                        ? 'unit-status-disponible'
+                                                        : 'unit-status-inactivo' %>"
+                                                >
+
+                                                    <%= sucursal.estado === "activa"
+                                                        ? "Activa"
+                                                        : "Inactiva" %>
+
+                                                </span>
+
+                                            </td>
+
+                                            <!-- ACCIONES -->
+
+<td>
+
+    <a
+        href="/panel/sucursales/<%= sucursal.id %>/editar"
+        class="panel-action-secondary"
+    >
+
+        <i class="fa-solid fa-pen-to-square"></i>
+
+        Editar
+
+    </a>
+
+</td>
+
+
+                                        </tr>
+
+
+                                    <% }); %>
+
+
+                                </tbody>
+
+
+                            </table>
+
+
+                        </div>
+
+
+                    <% } else { %>
+
+
+                        <div class="catalog-empty">
+
+
+                            <div>
+
+                                <i class="fa-solid fa-building-circle-xmark"></i>
+
+                            </div>
+
+
+                            <h3>
+                                Todavía no hay sucursales
+                            </h3>
+
+
+                            <p>
+
+                                Cuando registres una sucursal
+                                para esta agencia aparecerá
+                                automáticamente en este espacio.
+
+                            </p>
+
+
+                        </div>
+
+
+                    <% } %>
+
+
+                </section>
+
+
+            </main>
+
+
+        </div>
+
+
+    </div>
+
+
+    <script src="/js/panel.js"></script>
+
+
+</body>
+
+</html>

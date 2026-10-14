@@ -5665,6 +5665,60 @@ html[data-panel-tema="oscuro"]
         );
 }
 
+.branch-location {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        3px;
+}
+
+
+.branch-location strong {
+
+    display:
+        block;
+
+    line-height:
+        1.35;
+}
+
+
+.branch-location small {
+
+    display:
+        block;
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.58rem;
+
+    line-height:
+        1.4;
+}
+
+
+.branch-whatsapp {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    gap:
+        4px;
+
+    white-space:
+        nowrap;
+}
+
 
 .unit-main-branch {
 

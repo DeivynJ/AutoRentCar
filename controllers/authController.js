@@ -4,6 +4,32 @@ const {
     pool
 } = require("../config/database");
 
+const MENSAJE_LOGIN_INVALIDO =
+    "No fue posible iniciar sesión con las credenciales proporcionadas.";
+
+const HASH_PASSWORD_FICTICIO =
+    bcrypt.hashSync(
+        "AUTORENTCAR_COMPARACION_SEGURA_NO_USAR",
+        12
+    );
+
+function renderizarLoginInvalido(
+    res
+) {
+
+    return res.status(401).render(
+        "auth/login",
+        {
+            titulo:
+                "Iniciar sesión",
+
+            error:
+                MENSAJE_LOGIN_INVALIDO
+        }
+    );
+
+}
+
 /* =========================================================
    RUTA DE INICIO SEGÚN EL USUARIO
 ========================================================= */
@@ -144,89 +170,43 @@ r.id AS rol_id,
                 [correo]
             );
 
-        if (!usuarios.length) {
-            return res.status(401).render(
-                "auth/login",
-                {
-                    titulo:
-                        "Iniciar sesión",
-                    error:
-                        "Correo o contraseña incorrectos."
-                }
-            );
-        }
+        const usuario =
+    usuarios[0] ||
+    null;
 
-        const usuario = usuarios[0];
 
-        if (usuario.estado !== "activo") {
-            return res.status(403).render(
-                "auth/login",
-                {
-                    titulo:
-                        "Iniciar sesión",
-                    error:
-                        "Tu cuenta no está activa."
-                }
-            );
-        }
+const hashComparacion =
+    usuario?.password_hash ||
+    HASH_PASSWORD_FICTICIO;
 
-        if (
-    Number(
-        usuario.bloqueo_temporal_activo
-    ) === 1
-) {
 
-    return res.status(429).render(
-        "auth/login",
-        {
-            titulo:
-                "Iniciar sesión",
-
-            error:
-                "Demasiados intentos fallidos. El acceso está bloqueado temporalmente. Intenta nuevamente más tarde."
-        }
+const passwordCorrecta =
+    await bcrypt.compare(
+        password,
+        hashComparacion
     );
 
-}
-
-        /*
- * Todo usuario que no sea SuperAdministrador
- * debe pertenecer a una agencia.
- */
 
 if (
-    usuario.rol_codigo !==
-        "superadmin" &&
-    !usuario.agencia_id
+    !usuario ||
+    usuario.estado !== "activo" ||
+    Number(
+        usuario.bloqueo_temporal_activo
+    ) === 1 ||
+    (
+        usuario.rol_codigo !==
+            "superadmin" &&
+        !usuario.agencia_id
+    )
 ) {
 
-    return res.status(403).render(
-        "auth/login",
-        {
-            titulo:
-                "Iniciar sesión",
-
-            error:
-                "Tu cuenta no está asociada a una agencia."
-        }
+    return renderizarLoginInvalido(
+        res
     );
 
 }
 
-        const passwordCorrecta =
-            await bcrypt.compare(
-                password,
-                usuario.password_hash
-            );
-
-        if (!passwordCorrecta) {
-
-    const alcanzaBloqueoTemporal =
-        Number(
-            usuario.intentos_fallidos ||
-            0
-        ) >= 4;
-
+       if (!passwordCorrecta) {
 
     await conexion.query(
         `
@@ -258,32 +238,8 @@ if (
     );
 
 
-    if (
-        alcanzaBloqueoTemporal
-    ) {
-
-        return res.status(429).render(
-            "auth/login",
-            {
-                titulo:
-                    "Iniciar sesión",
-
-                error:
-                    "Demasiados intentos fallidos. El acceso ha sido bloqueado temporalmente durante 15 minutos."
-            }
-        );
-
-    }
-
-    return res.status(401).render(
-        "auth/login",
-        {
-            titulo:
-                "Iniciar sesión",
-
-            error:
-                "Correo o contraseña incorrectos."
-        }
+    return renderizarLoginInvalido(
+        res
     );
 
 }

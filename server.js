@@ -53,6 +53,29 @@ if (variablesFaltantes.length > 0) {
     process.exit(1);
 }
 
+/* =========================================================
+   VALIDAR CLAVE DE SESIÓN
+========================================================= */
+
+const sessionSecret =
+    String(
+        process.env.SESSION_SECRET ||
+        ""
+    ).trim();
+
+
+if (
+    sessionSecret.length < 32
+) {
+
+    console.error(
+        "❌ SESSION_SECRET debe tener al menos 32 caracteres."
+    );
+
+    process.exit(1);
+
+}
+
 
 /* =========================================================
    BASE DE DATOS
@@ -113,6 +136,12 @@ const publicRoutes = require(
 
 const pagoPublicoRoutes = require(
     "./routes/pagoPublicoRoutes"
+);
+
+const {
+    validarOrigenMismaAplicacion
+} = require(
+    "./middleware/validarOrigenMiddleware"
 );
 
 /* =========================================================
@@ -325,13 +354,34 @@ app.use(
     authRoutes
 );
 
+
+/* =========================================================
+   VALIDACIÓN DE ORIGEN - SUPERADMIN
+========================================================= */
+
+app.use(
+    "/admin",
+    validarOrigenMismaAplicacion
+);
+
 app.use(
     adminRoutes
+);
+
+
+/* =========================================================
+   VALIDACIÓN DE ORIGEN - PANEL DE AGENCIA
+========================================================= */
+
+app.use(
+    "/panel",
+    validarOrigenMismaAplicacion
 );
 
 app.use(
     panelRoutes
 );
+
 
 app.use(
     sucursalRoutes

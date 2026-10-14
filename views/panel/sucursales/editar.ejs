@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Editar sucursal de <%= agencia.nombre %>."
+    >
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <%- include("../partials/tema") %>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="panel-shell">
+
+
+    <%- include("../partials/sidebar") %>
+
+
+    <div class="panel-content-wrapper">
+
+
+        <%- include("../partials/header") %>
+
+
+        <main class="panel-main">
+
+
+            <!-- =====================================
+                 VOLVER
+            ====================================== -->
+
+            <div class="panel-form-back">
+
+                <a href="/panel/sucursales">
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Volver a sucursales
+
+                </a>
+
+            </div>
+
+
+            <!-- =====================================
+                 ENCABEZADO
+            ====================================== -->
+
+            <section class="panel-module-hero panel-form-hero">
+
+
+                <div>
+
+                    <span class="panel-module-badge">
+
+                        <i class="fa-solid fa-pen-to-square"></i>
+
+                        Editar sucursal
+
+                    </span>
+
+
+                    <h2>
+
+                        <%= sucursalEditar.nombre %>
+
+                    </h2>
+
+
+                    <p>
+
+                        Actualiza la información y configuración
+                        de esta ubicación de
+                        <%= agencia.nombre %>.
+
+                    </p>
+
+                </div>
+
+
+                <div class="panel-form-hero-icon">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                </div>
+
+
+            </section>
+
+
+            <!-- =====================================
+                 ERROR
+            ====================================== -->
+
+            <% if (error) { %>
+
+                <div class="panel-alert panel-alert-danger">
+
+                    <i class="fa-solid fa-circle-exclamation"></i>
+
+
+                    <div>
+
+                        <strong>
+                            No fue posible actualizar la sucursal
+                        </strong>
+
+                        <span>
+                            <%= error %>
+                        </span>
+
+                    </div>
+
+                </div>
+
+            <% } %>
+
+
+            <!-- =====================================
+                 AVISO DE LÍMITE
+            ====================================== -->
+
+            <%
+                const sucursalEstaInactiva =
+                    sucursalEditar.estado === "inactiva";
+            %>
+
+
+            <% if (
+                sucursalEstaInactiva &&
+                !puedeActivar
+            ) { %>
+
+                <div class="panel-alert panel-alert-danger">
+
+                    <i class="fa-solid fa-layer-group"></i>
+
+
+                    <div>
+
+                        <strong>
+                            No hay cupo para activar esta sucursal
+                        </strong>
+
+                        <span>
+
+                            Tu plan permite
+
+                            <%= limiteSucursales %>
+
+                            <%= limiteSucursales === 1
+                                ? "sucursal activa"
+                                : "sucursales activas" %>
+
+                            y actualmente utilizas todo el cupo
+                            disponible.
+
+                            Puedes seguir modificando los datos
+                            de esta sucursal, pero permanecerá
+                            inactiva hasta que exista capacidad.
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            <% } %>
+
+
+            <!-- =====================================
+                 USO DEL PLAN
+            ====================================== -->
+
+            <section class="panel-fleet-plan panel-fleet-plan-form">
+
+
+                <div>
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+
+                    <div>
+
+                        <small>
+                            Sucursales activas
+                        </small>
+
+
+                        <strong>
+
+                            <%= sucursalesActivas %>
+
+                            /
+
+                            <%= limiteSucursales === null
+                                ? "Ilimitado"
+                                : limiteSucursales %>
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <small>
+                        Plan actual
+                    </small>
+
+                    <strong>
+                        <%= plan.nombre %>
+                    </strong>
+
+                </div>
+
+
+            </section>
+
+
+            <!-- =====================================
+                 FORMULARIO
+            ====================================== -->
+
+            <form
+                action="/panel/sucursales/<%= sucursalEditar.id %>/editar"
+                method="POST"
+                class="panel-model-form"
+            >
+
+
+                <!-- ==============================
+                     INFORMACIÓN GENERAL
+                =============================== -->
+
+                <section class="panel-form-card">
+
+
+                    <div class="panel-form-card-header">
+
+
+                        <span class="panel-form-card-icon">
+
+                            <i class="fa-solid fa-building"></i>
+
+                        </span>
+
+
+                        <div>
+
+                            <span>
+                                Información general
+                            </span>
+
+                            <h3>
+                                Datos de la sucursal
+                            </h3>
+
+                            <p>
+
+                                Modifica la información de contacto
+                                y operación de esta ubicación.
+
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="panel-form-grid">
+
+
+                        <div class="panel-form-field panel-form-full">
+
+                            <label for="nombre">
+                                Nombre de la sucursal *
+                            </label>
+
+
+                            <input
+                                type="text"
+                                id="nombre"
+                                name="nombre"
+                                maxlength="120"
+                                value="<%= sucursalEditar.nombre || '' %>"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="panel-form-field">
+
+                            <label for="correo">
+                                Correo electrónico
+                            </label>
+
+
+                            <input
+                                type="email"
+                                id="correo"
+                                name="correo"
+                                maxlength="150"
+                                value="<%= sucursalEditar.correo || '' %>"
+                                placeholder="sucursal@ejemplo.com"
+                            >
+
+                        </div>
+
+
+                        <div class="panel-form-field">
+
+                            <label for="telefono">
+                                Teléfono
+                            </label>
+
+
+                            <input
+                                type="text"
+                                id="telefono"
+                                name="telefono"
+                                maxlength="30"
+                                value="<%= sucursalEditar.telefono || '' %>"
+                                placeholder="809-000-0000"
+                            >
+
+                        </div>
+
+
+                        <div class="panel-form-field">
+
+                            <label for="whatsapp">
+                                WhatsApp
+                            </label>
+
+
+                            <input
+                                type="text"
+                                id="whatsapp"
+                                name="whatsapp"
+                                maxlength="30"
+                                value="<%= sucursalEditar.whatsapp || '' %>"
+                                placeholder="809-000-0000"
+                            >
+
+                        </div>
+
+
+                        <div class="panel-form-field">
+
+                            <label for="estado">
+                                Estado *
+                            </label>
+
+
+                            <select
+                                id="estado"
+                                name="estado"
+                                required
+                            >
+
+                                <option
+                                    value="activa"
+                                    <%= sucursalEditar.estado === "activa"
+                                        ? "selected"
+                                        : "" %>
+                                    <%= (
+                                        sucursalEditar.estado === "inactiva" &&
+                                        !puedeActivar
+                                    )
+                                        ? "disabled"
+                                        : "" %>
+                                >
+                                    Activa
+                                </option>
+
+
+                                <option
+                                    value="inactiva"
+                                    <%= sucursalEditar.estado === "inactiva"
+                                        ? "selected"
+                                        : "" %>
+                                >
+                                    Inactiva
+                                </option>
+
+                            </select>
+
+
+                            <% if (
+                                sucursalEditar.estado === "inactiva" &&
+                                !puedeActivar
+                            ) { %>
+
+                                <small class="panel-field-help">
+
+                                    No puede activarse mientras
+                                    el plan no tenga un cupo
+                                    disponible.
+
+                                </small>
+
+                            <% } %>
+
+                        </div>
+
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- ==============================
+                     UBICACIÓN
+                =============================== -->
+
+                <section class="panel-form-card">
+
+
+                    <div class="panel-form-card-header">
+
+
+                        <span class="panel-form-card-icon">
+
+                            <i class="fa-solid fa-map-location-dot"></i>
+
+                        </span>
+
+
+                        <div>
+
+                            <span>
+                                Ubicación
+                            </span>
+
+                            <h3>
+                                Dirección de la sucursal
+                            </h3>
+
+                            <p>
+
+                                Mantén actualizada la ubicación que
+                                utilizará la agencia y el sitio
+                                público.
+
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="panel-form-grid">
+
+
+                        <div class="panel-form-field panel-form-full">
+
+                            <label for="direccion">
+                                Dirección
+                            </label>
+
+
+                            <input
+                                type="text"
+                                id="direccion"
+                                name="direccion"
+                                maxlength="255"
+                                value="<%= sucursalEditar.direccion || '' %>"
+                            >
+
+                        </div>
+
+
+                        <div class="panel-form-field">
+
+                            <label for="ciudad">
+                                Ciudad
+                            </label>
+
+
+                            <input
+                                type="text"
+                                id="ciudad"
+                                name="ciudad"
+                                maxlength="100"
+                                value="<%= sucursalEditar.ciudad || '' %>"
+                            >
+
+                        </div>
+
+
+                        <div class="panel-form-field">
+
+                            <label for="provincia">
+                                Provincia
+                            </label>
+
+
+                            <input
+                                type="text"
+                                id="provincia"
+                                name="provincia"
+                                maxlength="100"
+                                value="<%= sucursalEditar.provincia || '' %>"
+                            >
+
+                        </div>
+
+
+                        <div class="panel-form-field panel-form-full">
+
+                            <label for="pais">
+                                País *
+                            </label>
+
+
+                            <input
+                                type="text"
+                                id="pais"
+                                name="pais"
+                                maxlength="100"
+                                value="<%= sucursalEditar.pais || 'República Dominicana' %>"
+                                required
+                            >
+
+                        </div>
+
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- ==============================
+                     SUCURSAL PRINCIPAL
+                =============================== -->
+
+                <section class="panel-form-card">
+
+
+                    <div class="panel-form-card-header">
+
+
+                        <span class="panel-form-card-icon">
+
+                            <i class="fa-solid fa-star"></i>
+
+                        </span>
+
+
+                        <div>
+
+                            <span>
+                                Organización
+                            </span>
+
+                            <h3>
+                                Tipo de sucursal
+                            </h3>
+
+                            <p>
+
+                                Define si esta ubicación será la
+                                sucursal principal de la agencia.
+
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <% if (
+                        Number(
+                            sucursalEditar.es_principal
+                        ) === 1
+                    ) { %>
+
+
+                        <div class="panel-form-note">
+
+                            <i class="fa-solid fa-star"></i>
+
+
+                            <div>
+
+                                <strong>
+                                    Sucursal principal actual
+                                </strong>
+
+
+                                <p>
+
+                                    Esta ubicación está configurada
+                                    actualmente como principal.
+
+                                    Si posteriormente seleccionas
+                                    otra sucursal como principal,
+                                    esta dejará de serlo
+                                    automáticamente.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                    <% } %>
+
+
+                    <div class="panel-form-grid">
+
+
+                        <div class="panel-form-field panel-form-full">
+
+                            <label for="es_principal">
+                                Tipo
+                            </label>
+
+
+                            <select
+                                id="es_principal"
+                                name="es_principal"
+                            >
+
+                                <option
+                                    value="0"
+                                    <%= Number(
+                                        sucursalEditar.es_principal
+                                    ) !== 1
+                                        ? "selected"
+                                        : "" %>
+                                >
+                                    Sucursal secundaria
+                                </option>
+
+
+                                <option
+                                    value="1"
+                                    <%= Number(
+                                        sucursalEditar.es_principal
+                                    ) === 1
+                                        ? "selected"
+                                        : "" %>
+                                    <%= sucursalEditar.estado === "inactiva"
+                                        ? "disabled"
+                                        : "" %>
+                                >
+                                    Sucursal principal
+                                </option>
+
+                            </select>
+
+
+                            <% if (
+                                sucursalEditar.estado === "inactiva"
+                            ) { %>
+
+                                <small class="panel-field-help">
+
+                                    Una sucursal inactiva no puede
+                                    convertirse en principal.
+
+                                </small>
+
+                            <% } %>
+
+                        </div>
+
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     POLÍTICA
+                ====================================== -->
+
+                <div class="panel-form-note">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+
+                    <div>
+
+                        <strong>
+                            Política de sucursales
+                        </strong>
+
+
+                        <p>
+
+                            Solo las sucursales con estado Activa
+                            consumen un espacio del límite de la
+                            suscripción.
+
+                            Si una sucursal inactiva se intenta
+                            activar, el sistema comprobará
+                            nuevamente la disponibilidad del plan
+                            antes de guardar el cambio.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================
+                     ACCIONES
+                ====================================== -->
+
+                <div class="panel-form-actions">
+
+
+                    <a
+                        href="/panel/sucursales"
+                        class="panel-form-cancel"
+                    >
+                        Cancelar
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="panel-form-submit"
+                    >
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Guardar cambios
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+            <footer class="panel-footer">
+
+                <span>
+                    <%= agencia.nombre %>
+                </span>
+
+                <span>
+                    AVYNEXO Platform ·
+                    © <%= new Date().getFullYear() %>
+                </span>
+
+            </footer>
+
+
+        </main>
+
+
+    </div>
+
+
+</div>
+
+
+<script src="/js/panel.js"></script>
+
+
+</body>
+
+</html>

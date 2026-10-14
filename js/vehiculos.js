@@ -11,6 +11,88 @@ const CATEGORIAS_VEHICULOS = [
 let vehiculos = [];
 
 let agenciaCatalogo = null;
+
+/* =========================================================
+   IDENTIDAD BÁSICA DE LA AGENCIA
+========================================================= */
+
+function aplicarIdentidadBasicaAgencia() {
+
+    const nombreAgencia =
+        String(
+            agenciaCatalogo?.nombre ||
+            ""
+        ).trim();
+
+
+    if (!nombreAgencia) {
+
+        return;
+
+    }
+
+
+    const nombreCabecera =
+        document.getElementById(
+            "nombre-agencia-cabecera"
+        );
+
+
+    const nombrePie =
+        document.getElementById(
+            "nombre-agencia-pie"
+        );
+
+
+    const logoCabecera =
+        document.getElementById(
+            "logo-agencia-cabecera"
+        );
+
+
+    if (nombreCabecera) {
+
+        nombreCabecera.textContent =
+            nombreAgencia;
+
+    }
+
+
+    if (nombrePie) {
+
+        nombrePie.textContent =
+            nombreAgencia;
+
+    }
+
+
+    if (logoCabecera) {
+
+        logoCabecera.setAttribute(
+            "aria-label",
+            `Ir al inicio de ${nombreAgencia}`
+        );
+
+    }
+
+
+    const paginaActual =
+    window.location.pathname
+        .split("/")
+        .pop();
+
+
+if (
+    paginaActual ===
+        "vehiculos.html"
+) {
+
+    document.title =
+        `Vehículos | ${nombreAgencia}`;
+
+}
+
+}
     
 /* =========================================================
    CATÁLOGO DINÁMICO
@@ -105,6 +187,8 @@ async function cargarCatalogoDesdeAPI() {
         agenciaCatalogo =
             datos.agencia ||
             null;
+
+        aplicarIdentidadBasicaAgencia();    
 
 
         const catalogoRecibido =

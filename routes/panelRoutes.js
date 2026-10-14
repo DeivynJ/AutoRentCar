@@ -163,6 +163,21 @@ const {
     "../controllers/panelConfiguracionComercialController"
 );
 
+const {
+
+    mostrarSucursalesPanel,
+
+    mostrarNuevaSucursalPanel,
+
+    crearSucursalPanel,
+
+    mostrarEditarSucursalPanel,
+
+    actualizarSucursalPanel
+
+} = require(
+    "../controllers/panelSucursalController"
+);
 
 const router =
     express.Router();
@@ -403,6 +418,40 @@ router.post(
     "/panel/vehiculos/modelos/:modeloId/unidades/:unidadId/editar",
     requerirGestionCatalogo,
     actualizarUnidadPanel
+);
+
+/* =========================================================
+   SUCURSALES
+========================================================= */
+
+router.get(
+    "/panel/sucursales",
+    requerirAdministradorAgencia,
+    mostrarSucursalesPanel
+);
+
+router.get(
+    "/panel/sucursales/nueva",
+    requerirAdministradorAgencia,
+    mostrarNuevaSucursalPanel
+);
+
+router.post(
+    "/panel/sucursales/nueva",
+    requerirAdministradorAgencia,
+    crearSucursalPanel
+);
+
+router.get(
+    "/panel/sucursales/:sucursalId/editar",
+    requerirAdministradorAgencia,
+    mostrarEditarSucursalPanel
+);
+
+router.post(
+    "/panel/sucursales/:sucursalId/editar",
+    requerirAdministradorAgencia,
+    actualizarSucursalPanel
 );
 
 /* =========================================================

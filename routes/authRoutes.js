@@ -8,6 +8,12 @@ const {
     "../controllers/authController"
 );
 
+const {
+    validarOrigenMismaAplicacion
+} = require(
+    "../middleware/validarOrigenMiddleware"
+);
+
 const router = express.Router();
 
 router.get(
@@ -17,11 +23,13 @@ router.get(
 
 router.post(
     "/login",
+    validarOrigenMismaAplicacion,
     procesarLogin
 );
 
 router.post(
     "/logout",
+    validarOrigenMismaAplicacion,
     cerrarSesion
 );
 

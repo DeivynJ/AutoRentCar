@@ -494,6 +494,41 @@ const promocionesResultado =
         ]
     );
 
+    /* -------------------------------------------------
+   SUCURSALES PÚBLICAS DE LA AGENCIA
+------------------------------------------------- */
+
+const sucursalesResultado =
+    await conexion.query(
+        `
+        SELECT
+
+            id,
+            nombre,
+            correo,
+            telefono,
+            whatsapp,
+            direccion,
+            ciudad,
+            provincia,
+            pais,
+            es_principal
+
+        FROM sucursales
+
+        WHERE
+            agencia_id = ?
+            AND estado = 'activa'
+
+        ORDER BY
+            es_principal DESC,
+            nombre ASC
+        `,
+        [
+            agencia.id
+        ]
+    );
+
         /* -------------------------------------------------
            ADAPTAR DATOS A LA FASE 1
         ------------------------------------------------- */
@@ -607,6 +642,55 @@ const promocionesResultado =
 
                 }
             );
+
+
+ const sucursales =
+    sucursalesResultado.map(
+        (sucursal) => ({
+
+            id:
+                Number(
+                    sucursal.id
+                ),
+
+            nombre:
+                sucursal.nombre,
+
+            correo:
+                sucursal.correo ||
+                "",
+
+            telefono:
+                sucursal.telefono ||
+                "",
+
+            whatsapp:
+                sucursal.whatsapp ||
+                "",
+
+            direccion:
+                sucursal.direccion ||
+                "",
+
+            ciudad:
+                sucursal.ciudad ||
+                "",
+
+            provincia:
+                sucursal.provincia ||
+                "",
+
+            pais:
+                sucursal.pais ||
+                "",
+
+            esPrincipal:
+                Number(
+                    sucursal.es_principal
+                ) === 1
+
+        })
+    );          
 
 const adicionales =
     adicionalesResultado.map(
@@ -751,13 +835,15 @@ const promociones =
                 catalogo:
 {
     totalModelos:
-        vehiculos.length,
+    vehiculos.length,
 
-    vehiculos,
+vehiculos,
 
-    adicionales,
+adicionales,
 
-    promociones
+promociones,
+
+sucursales
 
 }
             }

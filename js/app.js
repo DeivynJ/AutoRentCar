@@ -295,6 +295,10 @@ async function cargarIdentidadAgenciaPublica() {
         
         );
 
+        aplicarSucursalesAgenciaPublica(
+    datos?.catalogo?.sucursales
+);
+
         aplicarColoresAgenciaPublica(
             agenciaPublicaActual
         );
@@ -497,7 +501,7 @@ function aplicarIdentidadAgenciaPublica(
     const nombre =
         String(
             agencia.nombre ||
-            "AutoRentCar"
+            "Agencia"
         ).trim();
 
 
@@ -506,8 +510,26 @@ function aplicarIdentidadAgenciaPublica(
             agencia.logo ||
             ""
         ).trim();
-        
 
+
+    /* -----------------------------------------------------
+   NOMBRE DINÁMICO DE LA AGENCIA
+----------------------------------------------------- */
+
+const referenciasNombreAgencia =
+    document.querySelectorAll(
+        "[data-agencia-nombre]"
+    );
+
+
+referenciasNombreAgencia.forEach(
+    (elemento) => {
+
+        elemento.textContent =
+            nombre;
+
+    }
+);
 
     /* -----------------------------------------------------
        NOMBRE EN LOS LOGOS
@@ -600,20 +622,61 @@ function aplicarIdentidadAgenciaPublica(
 
 
     /* -----------------------------------------------------
-       TÍTULO DEL NAVEGADOR
-    ----------------------------------------------------- */
+   TÍTULO DEL NAVEGADOR
+----------------------------------------------------- */
 
-    if (
-        document.title.includes(
-            "AutoRentCar"
-        )
-    ) {
+const paginaActual =
+    window.location.pathname
+        .split("/")
+        .pop();
 
-        document.title =
-            document.title.replace(
-                /AutoRentCar/g,
-                nombre
-            );
+
+if (
+    paginaActual ===
+        "index.html" ||
+    paginaActual ===
+        ""
+) {
+
+    document.title =
+        `Inicio | ${nombre}`;
+
+} else if (
+    document.title.includes(
+        "| Agencia"
+    )
+) {
+
+    document.title =
+        document.title.replace(
+            /\|\s*Agencia\b/,
+            `| ${nombre}`
+        );
+
+
+} else if (
+    document.title.includes(
+        "AutoRentCar"
+    )
+) {        
+
+
+} else if (
+    document.title.includes(
+        "AutoRentCar"
+    )
+) {
+
+    /*
+     * Compatibilidad temporal con las demás páginas
+     * públicas mientras se actualizan una por una.
+     */
+
+    document.title =
+        document.title.replace(
+            /AutoRentCar/g,
+            nombre
+        );
 
     }
 
@@ -642,7 +705,7 @@ function aplicarContactoAgenciaPublica(
     const nombre =
         String(
             agencia.nombre ||
-            "AutoRentCar"
+            "Agencia"
         ).trim();
 
 
@@ -712,6 +775,62 @@ function aplicarContactoAgenciaPublica(
             pais
         );
 
+    /* -----------------------------------------------------
+   CORREO DINÁMICO DE LA AGENCIA
+----------------------------------------------------- */
+
+const referenciasCorreo =
+    document.querySelectorAll(
+        "[data-agencia-correo]"
+    );
+
+
+referenciasCorreo.forEach(
+    (elemento) => {
+
+        if (!correo) {
+
+            elemento.hidden =
+                true;
+
+
+            if (
+                elemento.tagName ===
+                "A"
+            ) {
+
+                elemento.removeAttribute(
+                    "href"
+                );
+
+            }
+
+
+            return;
+
+        }
+
+
+        elemento.hidden =
+            false;
+
+        elemento.textContent =
+            correo;
+
+
+        if (
+            elemento.tagName ===
+                "A"
+        ) {
+
+            elemento.href =
+                `mailto:${correo}`;
+
+        }
+
+    }
+);
+
 
     /* -----------------------------------------------------
        BARRA SUPERIOR
@@ -730,58 +849,79 @@ function aplicarContactoAgenciaPublica(
                     );
 
 
-                elementos.forEach(
-                    (elemento) => {
+               elementos.forEach(
+    (elemento) => {
 
-                        if (
-                            elemento.querySelector(
-                                ".fa-phone"
-                            ) &&
-                            telefono
-                        ) {
+        if (
+            elemento.querySelector(
+                ".fa-phone"
+            )
+        ) {
 
-                            reemplazarTextoConIcono(
-                                elemento,
-                                telefono
-                            );
-
-                        }
+            elemento.hidden =
+                !telefono;
 
 
-                        if (
-                            elemento.querySelector(
-                                ".fa-envelope"
-                            ) &&
-                            correo
-                        ) {
+            if (telefono) {
 
-                            reemplazarTextoConIcono(
-                                elemento,
-                                correo
-                            );
-
-                        }
-
-
-                        if (
-                            elemento.querySelector(
-                                ".fa-location-dot"
-                            ) &&
-                            ubicacionCorta
-                        ) {
-
-                            reemplazarTextoConIcono(
-                                elemento,
-                                ubicacionCorta
-                            );
-
-                        }
-
-                    }
+                reemplazarTextoConIcono(
+                    elemento,
+                    telefono
                 );
 
             }
-        );
+
+        }
+
+
+        if (
+            elemento.querySelector(
+                ".fa-envelope"
+            )
+        ) {
+
+            elemento.hidden =
+                !correo;
+
+
+            if (correo) {
+
+                reemplazarTextoConIcono(
+                    elemento,
+                    correo
+                );
+
+            }
+
+        }
+
+
+        if (
+            elemento.querySelector(
+                ".fa-location-dot"
+            )
+        ) {
+
+            elemento.hidden =
+                !ubicacionCorta;
+
+
+            if (ubicacionCorta) {
+
+                reemplazarTextoConIcono(
+                    elemento,
+                    ubicacionCorta
+                );
+
+            }
+
+        }
+
+    }
+);
+
+}
+);
 
 
     /* -----------------------------------------------------
@@ -814,62 +954,82 @@ function aplicarContactoAgenciaPublica(
                 }
 
 
-                columna
-                    .querySelectorAll(
-                        "p"
-                    )
-                    .forEach(
-                        (elemento) => {
+               columna
+    .querySelectorAll(
+        "p"
+    )
+    .forEach(
+        (elemento) => {
 
-                            if (
-                                elemento.querySelector(
-                                    ".fa-location-dot"
-                                ) &&
-                                ubicacionCorta
-                            ) {
+            if (
+                elemento.querySelector(
+                    ".fa-location-dot"
+                )
+            ) {
 
-                                reemplazarTextoConIcono(
-                                    elemento,
-                                    ubicacionCorta
-                                );
-
-                            }
+                elemento.hidden =
+                    !ubicacionCorta;
 
 
-                            if (
-                                elemento.querySelector(
-                                    ".fa-phone"
-                                ) &&
-                                telefono
-                            ) {
+                if (ubicacionCorta) {
 
-                                reemplazarTextoConIcono(
-                                    elemento,
-                                    telefono
-                                );
-
-                            }
-
-
-                            if (
-                                elemento.querySelector(
-                                    ".fa-envelope"
-                                ) &&
-                                correo
-                            ) {
-
-                                reemplazarTextoConIcono(
-                                    elemento,
-                                    correo
-                                );
-
-                            }
-
-                        }
+                    reemplazarTextoConIcono(
+                        elemento,
+                        ubicacionCorta
                     );
 
+                }
+
             }
-        );
+
+
+            if (
+                elemento.querySelector(
+                    ".fa-phone"
+                )
+            ) {
+
+                elemento.hidden =
+                    !telefono;
+
+
+                if (telefono) {
+
+                    reemplazarTextoConIcono(
+                        elemento,
+                        telefono
+                    );
+
+                }
+
+            }
+
+
+            if (
+                elemento.querySelector(
+                    ".fa-envelope"
+                )
+            ) {
+
+                elemento.hidden =
+                    !correo;
+
+
+                if (correo) {
+
+                    reemplazarTextoConIcono(
+                        elemento,
+                        correo
+                    );
+
+                }
+
+            }
+
+        }
+    );
+  }
+);
 
 
     /* -----------------------------------------------------
@@ -936,71 +1096,87 @@ function aplicarContactoAgenciaPublica(
 
 
     /* -----------------------------------------------------
-       WHATSAPP
-    ----------------------------------------------------- */
+   WHATSAPP
+----------------------------------------------------- */
 
-    if (whatsapp) {
+const enlacesWhatsApp =
+    document.querySelectorAll(
+        [
+            ".boton-whatsapp",
+            'a[href*="wa.me"]',
+            'a[aria-label="WhatsApp"]'
+        ].join(",")
+    );
 
-        const numeroWhatsApp =
-            normalizarTelefonoEnlaceAgencia(
-                whatsapp,
-                pais
+
+const numeroWhatsApp =
+    normalizarTelefonoEnlaceAgencia(
+        whatsapp,
+        pais
+    );
+
+
+if (numeroWhatsApp) {
+
+    const mensaje =
+        encodeURIComponent(
+            `Hola, deseo información sobre los servicios de ${nombre}.`
+        );
+
+
+    const enlaceWhatsApp =
+        `https://wa.me/${numeroWhatsApp}?text=${mensaje}`;
+
+
+    enlacesWhatsApp.forEach(
+        (enlace) => {
+
+            enlace.hidden =
+                false;
+
+
+            enlace.href =
+                enlaceWhatsApp;
+
+
+            enlace.setAttribute(
+                "target",
+                "_blank"
             );
 
 
-        if (numeroWhatsApp) {
-
-            const mensaje =
-                encodeURIComponent(
-                    `Hola, deseo información sobre los servicios de ${nombre}.`
-                );
+            enlace.setAttribute(
+                "rel",
+                "noopener noreferrer"
+            );
 
 
-            const enlaceWhatsApp =
-                `https://wa.me/${numeroWhatsApp}?text=${mensaje}`;
-
-
-            const enlacesWhatsApp =
-                document.querySelectorAll(
-                    [
-                        ".boton-whatsapp",
-                        'a[href*="wa.me"]',
-                        'a[aria-label="WhatsApp"]'
-                    ].join(",")
-                );
-
-
-            enlacesWhatsApp.forEach(
-                (enlace) => {
-
-                    enlace.href =
-                        enlaceWhatsApp;
-
-
-                    enlace.setAttribute(
-                        "target",
-                        "_blank"
-                    );
-
-
-                    enlace.setAttribute(
-                        "rel",
-                        "noopener noreferrer"
-                    );
-
-
-                    enlace.setAttribute(
-                        "aria-label",
-                        `Contactar a ${nombre} por WhatsApp`
-                    );
-
-                }
+            enlace.setAttribute(
+                "aria-label",
+                `Contactar a ${nombre} por WhatsApp`
             );
 
         }
+    );
 
-    }
 
+} else {
+
+    enlacesWhatsApp.forEach(
+        (enlace) => {
+
+            enlace.hidden =
+                true;
+
+
+            enlace.removeAttribute(
+                "href"
+            );
+
+        }
+    );
+
+}
 
     /* -----------------------------------------------------
        TARJETAS DE CONTACTO
@@ -1162,6 +1338,360 @@ function aplicarContactoAgenciaPublica(
         }
 
     }
+
+}
+
+/* =========================================================
+   SUCURSALES PÚBLICAS DE LA AGENCIA
+========================================================= */
+
+function aplicarSucursalesAgenciaPublica(
+    sucursales
+) {
+
+    const contenedor =
+        document.getElementById(
+            "contenedor-sucursales"
+        );
+
+
+    if (!contenedor) {
+
+        return;
+
+    }
+
+
+    const lista =
+        Array.isArray(
+            sucursales
+        )
+            ? sucursales
+            : [];
+
+
+    contenedor.replaceChildren();
+
+
+    if (!lista.length) {
+
+        const mensaje =
+            document.createElement(
+                "p"
+            );
+
+
+        mensaje.textContent =
+            "No hay sucursales disponibles en este momento.";
+
+
+        contenedor.appendChild(
+            mensaje
+        );
+
+
+        return;
+
+    }
+
+
+    lista.forEach(
+        (sucursal) => {
+
+            const tarjeta =
+                document.createElement(
+                    "article"
+                );
+
+
+            tarjeta.className =
+                "tarjeta-sucursal";
+
+
+            if (
+                sucursal.esPrincipal ===
+                true
+            ) {
+
+                tarjeta.classList.add(
+                    "activa"
+                );
+
+            }
+
+
+            /* ---------------------------------------------
+               PARTE SUPERIOR
+            --------------------------------------------- */
+
+            const superior =
+                document.createElement(
+                    "div"
+                );
+
+
+            superior.className =
+                "sucursal-superior";
+
+
+            const icono =
+                document.createElement(
+                    "div"
+                );
+
+
+            icono.className =
+                "sucursal-icono";
+
+
+            const iconoElemento =
+                document.createElement(
+                    "i"
+                );
+
+
+            iconoElemento.className =
+                sucursal.esPrincipal
+                    ? "fa-solid fa-building"
+                    : "fa-solid fa-location-dot";
+
+
+            icono.appendChild(
+                iconoElemento
+            );
+
+
+            const tipo =
+                document.createElement(
+                    "span"
+                );
+
+
+            tipo.textContent =
+                sucursal.esPrincipal
+                    ? "Sucursal principal"
+                    : "Sucursal";
+
+
+            superior.append(
+                icono,
+                tipo
+            );
+
+
+            /* ---------------------------------------------
+               NOMBRE
+            --------------------------------------------- */
+
+            const titulo =
+                document.createElement(
+                    "h3"
+                );
+
+
+            titulo.textContent =
+                String(
+                    sucursal.nombre ||
+                    "Sucursal"
+                ).trim();
+
+
+            /* ---------------------------------------------
+               DIRECCIÓN
+            --------------------------------------------- */
+
+            const partesDireccion =
+                [
+                    sucursal.direccion,
+                    sucursal.ciudad,
+                    sucursal.provincia,
+                    sucursal.pais
+                ]
+                    .map(
+                        (valor) =>
+                            String(
+                                valor ||
+                                ""
+                            ).trim()
+                    )
+                    .filter(
+                        Boolean
+                    );
+
+
+            const direccion =
+                document.createElement(
+                    "p"
+                );
+
+
+            direccion.textContent =
+                partesDireccion.length
+                    ? partesDireccion.join(
+                        ", "
+                    )
+                    : "Ubicación no especificada";
+
+
+            /* ---------------------------------------------
+               DETALLES
+            --------------------------------------------- */
+
+            const detalles =
+                document.createElement(
+                    "div"
+                );
+
+
+            detalles.className =
+                "sucursal-detalles";
+
+
+            const telefono =
+                String(
+                    sucursal.telefono ||
+                    ""
+                ).trim();
+
+
+            if (telefono) {
+
+                const telefonoElemento =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                const telefonoIcono =
+                    document.createElement(
+                        "i"
+                    );
+
+
+                telefonoIcono.className =
+                    "fa-solid fa-phone";
+
+
+                telefonoElemento.append(
+                    telefonoIcono,
+                    document.createTextNode(
+                        ` ${telefono}`
+                    )
+                );
+
+
+                detalles.appendChild(
+                    telefonoElemento
+                );
+
+            }
+
+
+            const correo =
+                String(
+                    sucursal.correo ||
+                    ""
+                ).trim();
+
+
+            if (correo) {
+
+                const correoElemento =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                const correoIcono =
+                    document.createElement(
+                        "i"
+                    );
+
+
+                correoIcono.className =
+                    "fa-solid fa-envelope";
+
+
+                correoElemento.append(
+                    correoIcono,
+                    document.createTextNode(
+                        ` ${correo}`
+                    )
+                );
+
+
+                detalles.appendChild(
+                    correoElemento
+                );
+
+            }
+
+
+            const whatsapp =
+                String(
+                    sucursal.whatsapp ||
+                    ""
+                ).trim();
+
+
+            if (whatsapp) {
+
+                const whatsappElemento =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                const whatsappIcono =
+                    document.createElement(
+                        "i"
+                    );
+
+
+                whatsappIcono.className =
+                    "fa-brands fa-whatsapp";
+
+
+                whatsappElemento.append(
+                    whatsappIcono,
+                    document.createTextNode(
+                        ` ${whatsapp}`
+                    )
+                );
+
+
+                detalles.appendChild(
+                    whatsappElemento
+                );
+
+            }
+
+
+            tarjeta.append(
+                superior,
+                titulo,
+                direccion
+            );
+
+
+            if (
+                detalles.children.length >
+                0
+            ) {
+
+                tarjeta.appendChild(
+                    detalles
+                );
+
+            }
+
+
+            contenedor.appendChild(
+                tarjeta
+            );
+
+        }
+    );
 
 }
 
