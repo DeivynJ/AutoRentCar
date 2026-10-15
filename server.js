@@ -247,6 +247,16 @@ app.use(
     )
 );
 
+app.use(
+    "/videos",
+    express.static(
+        path.join(
+            __dirname,
+            "videos"
+        )
+    )
+);
+
 
 /* =========================================================
    PARSERS

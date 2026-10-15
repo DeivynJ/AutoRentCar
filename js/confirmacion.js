@@ -2302,8 +2302,8 @@ async function obtenerAgenciaParaPdf(
         slug,
 
         nombre:
-            reservacion?.agencia?.nombre ||
-            "AutoRentCar",
+    reservacion?.agencia?.nombre ||
+    "Agencia",
 
         logo:
             "",
@@ -2339,10 +2339,10 @@ function construirIdentidadAgenciaPdf(
 
 
     const nombre =
-        String(
-            agencia?.nombre ||
-            "AutoRentCar"
-        ).trim();
+    String(
+        agencia?.nombre ||
+        "Agencia"
+    ).trim();
 
 
     const telefono =
@@ -3467,10 +3467,10 @@ function obtenerInicialesAgenciaPdf(
 ) {
 
     const palabras =
-        String(
-            nombre ||
-            "AutoRentCar"
-        )
+    String(
+        nombre ||
+        "Agencia"
+    )
             .trim()
             .split(
                 /\s+/

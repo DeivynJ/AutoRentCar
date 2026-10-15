@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     configurarNavegacionMultiagencia();
 
+    configurarTransicionPaginasPublicas();
+
     configurarMenuMovil();
     configurarModoOscuro();
     configurarPreguntasFrecuentes();
@@ -208,6 +210,257 @@ function configurarNavegacionMultiagencia() {
 }
 
 /* =========================================================
+   TRANSICIÓN ENTRE PÁGINAS PÚBLICAS
+========================================================= */
+
+function configurarTransicionPaginasPublicas() {
+
+    const paginasPublicas =
+        new Set(
+            [
+                "index.html",
+                "vehiculos.html",
+                "reserva.html",
+                "confirmacion.html",
+                "mis-reservas.html",
+                "nosotros.html",
+                "contacto.html"
+            ]
+        );
+
+
+    /*
+     * Si el navegador recupera una página mediante
+     * Atrás / Adelante, nos aseguramos de que vuelva
+     * a mostrarse normalmente.
+     */
+
+    window.addEventListener(
+        "pageshow",
+        () => {
+
+            document.documentElement.classList.remove(
+                "pagina-saliendo"
+            );
+
+        }
+    );
+
+
+    document.addEventListener(
+        "click",
+        (evento) => {
+
+            /*
+             * Solo navegación normal con clic izquierdo.
+             */
+
+            if (
+                evento.defaultPrevented ||
+                evento.button !== 0 ||
+                evento.ctrlKey ||
+                evento.metaKey ||
+                evento.shiftKey ||
+                evento.altKey
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                !(evento.target instanceof Element)
+            ) {
+
+                return;
+
+            }
+
+
+            const enlace =
+                evento.target.closest(
+                    "a[href]"
+                );
+
+
+            if (!enlace) {
+
+                return;
+
+            }
+
+
+            /*
+             * No alteramos enlaces que se abren
+             * en una pestaña nueva.
+             */
+
+            if (
+                enlace.target === "_blank" ||
+                enlace.hasAttribute("download")
+            ) {
+
+                return;
+
+            }
+
+
+            const href =
+                String(
+                    enlace.getAttribute(
+                        "href"
+                    ) ||
+                    ""
+                ).trim();
+
+
+            if (
+                !href ||
+                href.startsWith("#") ||
+                href.startsWith("mailto:") ||
+                href.startsWith("tel:") ||
+                href.startsWith("javascript:")
+            ) {
+
+                return;
+
+            }
+
+
+            let url;
+
+
+            try {
+
+                url =
+                    new URL(
+                        enlace.href,
+                        window.location.href
+                    );
+
+            } catch (error) {
+
+                return;
+
+            }
+
+
+            /*
+             * Solo páginas internas de este sitio.
+             */
+
+            if (
+                url.origin !==
+                window.location.origin
+            ) {
+
+                return;
+
+            }
+
+
+            const partesRuta =
+                url.pathname.split("/");
+
+
+            const nombreArchivo =
+                partesRuta[
+                    partesRuta.length - 1
+                ];
+
+
+            if (
+                !paginasPublicas.has(
+                    nombreArchivo
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+             * Si realmente estamos permaneciendo
+             * en la misma URL, no hacemos transición.
+             */
+
+            if (
+                url.href ===
+                window.location.href
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+             * Para usuarios que prefieran reducir
+             * animaciones, navegamos normalmente.
+             */
+
+            if (
+                window.matchMedia(
+                    "(prefers-reduced-motion: reduce)"
+                ).matches
+            ) {
+
+                return;
+
+            }
+
+
+            evento.preventDefault();
+
+
+            /*
+             * Evitamos múltiples clics mientras
+             * comienza la navegación.
+             */
+
+            if (
+                document.documentElement.classList.contains(
+                    "pagina-saliendo"
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            document.documentElement.classList.add(
+                "pagina-saliendo"
+            );
+
+
+            /*
+             * Damos tiempo al fade-out para comenzar
+             * antes de cargar el nuevo documento.
+             *
+             * Debe ser ligeramente menor que los
+             * 0.24 s definidos en el CSS para que
+             * la navegación siga sintiéndose rápida.
+             */
+
+            window.setTimeout(
+                () => {
+
+                    window.location.href =
+                        url.href;
+
+                },
+                190
+            );
+
+        }
+    );
+
+}
+
+/* =========================================================
    IDENTIDAD PÚBLICA DE LA AGENCIA
 ========================================================= */
 
@@ -269,18 +522,6 @@ async function cargarIdentidadAgenciaPublica() {
             datos.agencia;
 
 
-        /*
-         * También dejamos disponible la agencia
-         * globalmente para las funciones que
-         * añadiremos después:
-         *
-         * contacto
-         * colores
-         * PDF
-         * WhatsApp
-         * branding
-         */
-
         window.AutoRentCarAgencia =
             agenciaPublicaActual;
 
@@ -292,50 +533,48 @@ async function cargarIdentidadAgenciaPublica() {
 
         aplicarContactoAgenciaPublica(
             agenciaPublicaActual
-        
         );
 
+
         aplicarSucursalesAgenciaPublica(
-    datos?.catalogo?.sucursales
-);
+            datos?.catalogo?.sucursales
+        );
+
 
         aplicarColoresAgenciaPublica(
             agenciaPublicaActual
         );
 
+
         aplicarPromocionPublicaAgencia(
-    datos?.catalogo?.promociones,
-    agenciaPublicaActual
-);
-
-        requestAnimationFrame(
-    () => {
-
-        requestAnimationFrame(
-            () => {
-
-                document.documentElement.classList.remove(
-                    "cargando-branding"
-                );
-
-            }
+            datos?.catalogo?.promociones,
+            agenciaPublicaActual
         );
-
-    }
-);
 
 
     } catch (error) {
 
-        /*
-         * Si por alguna razón falla la API,
-         * mantenemos la identidad original
-         * de AutoRentCar y no rompemos la página.
-         */
-
         console.error(
             "No fue posible cargar la identidad pública de la agencia:",
             error
+        );
+
+    } finally {
+
+        requestAnimationFrame(
+            () => {
+
+                requestAnimationFrame(
+                    () => {
+
+                        document.documentElement.classList.remove(
+                            "cargando-branding"
+                        );
+
+                    }
+                );
+
+            }
         );
 
     }
@@ -658,19 +897,7 @@ if (
     document.title.includes(
         "AutoRentCar"
     )
-) {        
-
-
-} else if (
-    document.title.includes(
-        "AutoRentCar"
-    )
 ) {
-
-    /*
-     * Compatibilidad temporal con las demás páginas
-     * públicas mientras se actualizan una por una.
-     */
 
     document.title =
         document.title.replace(
@@ -1178,7 +1405,7 @@ if (numeroWhatsApp) {
 
 }
 
-    /* -----------------------------------------------------
+        /* -----------------------------------------------------
        TARJETAS DE CONTACTO
     ----------------------------------------------------- */
 
@@ -1189,6 +1416,10 @@ if (numeroWhatsApp) {
         .forEach(
             (tarjeta) => {
 
+                /* -----------------------------------------
+                   TELÉFONO
+                ----------------------------------------- */
+
                 if (
                     tarjeta.querySelector(
                         ".fa-phone"
@@ -1197,22 +1428,66 @@ if (numeroWhatsApp) {
 
                     const enlace =
                         tarjeta.querySelector(
-                            'a[href^="tel:"]'
+                            "a"
                         );
 
 
-                    if (
-                        enlace &&
-                        telefono
-                    ) {
+                    const detalle =
+                        tarjeta.querySelector(
+                            "small"
+                        );
+
+
+                    tarjeta.hidden =
+                        !telefono;
+
+
+                    if (!telefono) {
+
+                        return;
+
+                    }
+
+
+                    if (enlace) {
+
+                        const numeroTelefono =
+                            normalizarTelefonoEnlaceAgencia(
+                                telefono,
+                                pais
+                            );
+
 
                         enlace.textContent =
                             telefono;
 
+
+                        if (numeroTelefono) {
+
+                            enlace.href =
+                                `tel:+${numeroTelefono}`;
+
+                        }
+
                     }
+
+
+                    if (detalle) {
+
+                        detalle.textContent =
+                            "Teléfono de contacto";
+
+                    }
+
+
+                    return;
 
                 }
 
+
+                /* -----------------------------------------
+                   CORREO
+                ----------------------------------------- */
 
                 if (
                     tarjeta.querySelector(
@@ -1222,22 +1497,59 @@ if (numeroWhatsApp) {
 
                     const enlace =
                         tarjeta.querySelector(
-                            'a[href^="mailto:"]'
+                            "a"
                         );
 
 
-                    if (
-                        enlace &&
-                        correo
-                    ) {
+                    const detalle =
+                        tarjeta.querySelector(
+                            "small"
+                        );
+
+
+                    tarjeta.hidden =
+                        !correo;
+
+
+                    if (!correo) {
+
+                        return;
+
+                    }
+
+
+                    if (enlace) {
+
+                        enlace.hidden =
+                            false;
+
+
+                        enlace.href =
+                            `mailto:${correo}`;
+
 
                         enlace.textContent =
                             correo;
 
                     }
 
+
+                    if (detalle) {
+
+                        detalle.textContent =
+                            "Correo de contacto";
+
+                    }
+
+
+                    return;
+
                 }
 
+
+                /* -----------------------------------------
+                   UBICACIÓN
+                ----------------------------------------- */
 
                 if (
                     tarjeta.querySelector(
@@ -1257,24 +1569,117 @@ if (numeroWhatsApp) {
                         );
 
 
-                    if (
-                        ubicacion &&
-                        ubicacionCorta
-                    ) {
+                    const tieneUbicacion =
+                        Boolean(
+                            ubicacionCorta ||
+                            direccionCompleta
+                        );
 
-                        ubicacion.textContent =
-                            ubicacionCorta;
+
+                    tarjeta.hidden =
+                        !tieneUbicacion;
+
+
+                    if (!tieneUbicacion) {
+
+                        return;
 
                     }
 
 
-                    if (
-                        detalle &&
-                        direccionCompleta
-                    ) {
+                    if (ubicacion) {
+
+                        ubicacion.textContent =
+                            ubicacionCorta ||
+                            direccionCompleta;
+
+                    }
+
+
+                    if (detalle) {
 
                         detalle.textContent =
-                            direccionCompleta;
+                            direccionCompleta &&
+                            direccionCompleta !==
+                                ubicacionCorta
+                                ? direccionCompleta
+                                : "Ubicación registrada";
+
+                    }
+
+
+                    return;
+
+                }
+
+
+                /* -----------------------------------------
+                   WHATSAPP
+                ----------------------------------------- */
+
+                if (
+                    tarjeta.querySelector(
+                        ".fa-whatsapp"
+                    )
+                ) {
+
+                    const enlace =
+                        tarjeta.querySelector(
+                            "a"
+                        );
+
+
+                    const detalle =
+                        tarjeta.querySelector(
+                            "small"
+                        );
+
+
+                    tarjeta.hidden =
+                        !numeroWhatsApp;
+
+
+                    if (!numeroWhatsApp) {
+
+                        return;
+
+                    }
+
+
+                    if (enlace) {
+
+                        const mensaje =
+                            encodeURIComponent(
+                                `Hola, deseo información sobre los servicios de ${nombre}.`
+                            );
+
+
+                        enlace.href =
+                            `https://wa.me/${numeroWhatsApp}?text=${mensaje}`;
+
+
+                        enlace.textContent =
+                            "Escribir por WhatsApp";
+
+
+                        enlace.setAttribute(
+                            "target",
+                            "_blank"
+                        );
+
+
+                        enlace.setAttribute(
+                            "rel",
+                            "noopener noreferrer"
+                        );
+
+                    }
+
+
+                    if (detalle) {
+
+                        detalle.textContent =
+                            "WhatsApp de contacto";
 
                     }
 
@@ -1344,18 +1749,21 @@ if (numeroWhatsApp) {
 /* =========================================================
    SUCURSALES PÚBLICAS DE LA AGENCIA
 ========================================================= */
-
-function aplicarSucursalesAgenciaPublica(
+function aplicarMapaSucursalPublica(
     sucursales
 ) {
 
-    const contenedor =
-        document.getElementById(
-            "contenedor-sucursales"
+    const seccionMapa =
+        document.querySelector(
+            ".mapa-contacto"
         );
 
 
-    if (!contenedor) {
+    /*
+     * Esta sección solamente existe
+     * en contacto.html.
+     */
+    if (!seccionMapa) {
 
         return;
 
@@ -1368,6 +1776,202 @@ function aplicarSucursalesAgenciaPublica(
         )
             ? sucursales
             : [];
+
+
+    /*
+     * Preferimos la sucursal principal.
+     *
+     * Si por alguna razón no existe una marcada
+     * como principal, utilizamos la primera activa
+     * recibida desde el backend.
+     */
+    const sucursal =
+        lista.find(
+            (item) =>
+                item?.esPrincipal ===
+                true
+        ) ||
+        lista[0] ||
+        null;
+
+
+    /*
+     * Nunca mostramos el mapa estático anterior
+     * si la agencia no tiene una sucursal activa.
+     */
+    if (!sucursal) {
+
+        seccionMapa.hidden =
+            true;
+
+        return;
+
+    }
+
+
+    const nombreSucursal =
+        String(
+            sucursal.nombre ||
+            "Sucursal"
+        ).trim();
+
+
+    const partesUbicacion =
+        [
+            sucursal.direccion,
+            sucursal.ciudad,
+            sucursal.provincia,
+            sucursal.pais
+        ]
+            .map(
+                (valor) =>
+                    String(
+                        valor ||
+                        ""
+                    ).trim()
+            )
+            .filter(
+                Boolean
+            );
+
+
+    /*
+     * Si no existe ninguna información real
+     * de ubicación, ocultamos el mapa.
+     */
+    if (!partesUbicacion.length) {
+
+        seccionMapa.hidden =
+            true;
+
+        return;
+
+    }
+
+
+    const ubicacion =
+        partesUbicacion.join(
+            ", "
+        );
+
+
+    const iframe =
+        seccionMapa.querySelector(
+            "iframe"
+        );
+
+
+    const subtitulo =
+        seccionMapa.querySelector(
+            ".mapa-informacion .subtitulo"
+        );
+
+
+    const titulo =
+        seccionMapa.querySelector(
+            ".mapa-informacion h2"
+        );
+
+
+    const descripcion =
+        seccionMapa.querySelector(
+            ".mapa-informacion p"
+        );
+
+
+    const enlaceMapa =
+        seccionMapa.querySelector(
+            ".mapa-informacion a"
+        );
+
+
+    seccionMapa.hidden =
+        false;
+
+
+    if (iframe) {
+
+        iframe.src =
+            `https://www.google.com/maps?q=${encodeURIComponent(
+                ubicacion
+            )}&output=embed`;
+
+
+        iframe.title =
+            `Ubicación de ${nombreSucursal}`;
+
+    }
+
+
+    if (subtitulo) {
+
+        subtitulo.textContent =
+            sucursal.esPrincipal
+                ? "Sucursal principal"
+                : "Sucursal";
+
+    }
+
+
+    if (titulo) {
+
+        titulo.textContent =
+            `Visítanos en ${nombreSucursal}`;
+
+    }
+
+
+    if (descripcion) {
+
+        descripcion.textContent =
+            ubicacion;
+
+    }
+
+
+    if (enlaceMapa) {
+
+        enlaceMapa.href =
+            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                ubicacion
+            )}`;
+
+    }
+
+}
+
+function aplicarSucursalesAgenciaPublica(
+    sucursales
+) {
+
+    const lista =
+        Array.isArray(
+            sucursales
+        )
+            ? sucursales
+            : [];
+
+
+    /*
+     * Actualizamos también el mapa de Contacto
+     * utilizando únicamente ubicaciones reales.
+     */
+    aplicarMapaSucursalPublica(
+        lista
+    );
+
+
+    const contenedor =
+        document.getElementById(
+            "contenedor-sucursales"
+        );
+
+
+    if (!contenedor) {
+
+        return;
+
+    }
 
 
     contenedor.replaceChildren();
