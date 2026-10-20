@@ -1034,6 +1034,339 @@ a {
 }
 
 /* =========================================================
+   LOGIN COMPACTO - ESCRITORIO
+========================================================= */
+
+@media (
+    min-width:
+        961px
+) {
+
+    .auth-pagina {
+
+        padding:
+            30px;
+
+    }
+
+
+    .auth-contenedor {
+
+        width:
+            min(
+                1000px,
+                100%
+            );
+
+        min-height:
+            590px;
+
+        grid-template-columns:
+            minmax(
+                0,
+                1.04fr
+            )
+            minmax(
+                360px,
+                0.96fr
+            );
+
+    }
+
+
+    .auth-panel-marca {
+
+        padding:
+            30px 34px;
+
+    }
+
+
+    .auth-marca-contenido {
+
+        max-width:
+            480px;
+
+    }
+
+
+    .auth-subtitulo {
+
+        margin-bottom:
+            12px;
+
+        font-size:
+            0.66rem;
+
+    }
+
+
+    .auth-marca-contenido h1 {
+
+        margin-bottom:
+            14px;
+
+        font-size:
+            clamp(
+                1.9rem,
+                3vw,
+                2.65rem
+            );
+
+        line-height:
+            1.07;
+
+    }
+
+
+    .auth-marca-contenido > p {
+
+        max-width:
+            460px;
+
+        font-size:
+            0.80rem;
+
+        line-height:
+            1.65;
+
+    }
+
+
+    .auth-beneficios {
+
+        margin-top:
+            24px;
+
+        gap:
+            10px;
+
+    }
+
+
+    .auth-beneficios article {
+
+        padding:
+            10px 11px;
+
+        gap:
+            11px;
+
+    }
+
+
+    .auth-beneficios article > div {
+
+        flex:
+            0 0 34px;
+
+        width:
+            34px;
+
+        height:
+            34px;
+
+    }
+
+
+    .auth-beneficios strong {
+
+        font-size:
+            0.72rem;
+
+    }
+
+
+    .auth-beneficios span {
+
+        font-size:
+            0.62rem;
+
+    }
+
+
+    .auth-panel-formulario {
+
+        padding:
+            28px 38px 24px;
+
+    }
+
+
+    .auth-logo-icono,
+    .auth-logo-icono img {
+
+        width:
+            95px;
+
+    }
+
+
+    .auth-formulario-marca {
+
+        margin-bottom:
+            10px;
+
+    }
+
+
+    .auth-formulario-contenido {
+
+        width:
+            min(
+                365px,
+                100%
+            );
+
+    }
+
+
+    .auth-formulario-encabezado {
+
+        margin-bottom:
+            20px;
+
+    }
+
+
+    .auth-icono-acceso {
+
+        width:
+            45px;
+
+        height:
+            45px;
+
+        margin-bottom:
+            13px;
+
+        border-radius:
+            12px;
+
+        font-size:
+            1rem;
+
+    }
+
+
+    .auth-formulario-encabezado h2 {
+
+        font-size:
+            clamp(
+                1.45rem,
+                2.4vw,
+                1.85rem
+            );
+
+    }
+
+
+    .auth-formulario-encabezado p {
+
+        font-size:
+            0.72rem;
+
+        line-height:
+            1.55;
+
+    }
+
+
+    .auth-formulario {
+
+        gap:
+            15px;
+
+    }
+
+
+    .auth-campo label {
+
+        margin-bottom:
+            6px;
+
+        font-size:
+            0.67rem;
+
+    }
+
+
+    .auth-input-contenedor {
+
+        height:
+            46px;
+
+        border-radius:
+            10px;
+
+    }
+
+
+    .auth-input-contenedor input {
+
+        font-size:
+            0.72rem;
+
+    }
+
+
+    .auth-ver-password {
+
+        width:
+            40px;
+
+        height:
+            40px;
+
+    }
+
+
+    .auth-boton {
+
+        min-height:
+            47px;
+
+        border-radius:
+            10px;
+
+        font-size:
+            0.72rem;
+
+    }
+
+
+    .auth-seguridad {
+
+        margin-top:
+            16px;
+
+        padding:
+            10px 11px;
+
+    }
+
+
+    .auth-seguridad p {
+
+        font-size:
+            0.60rem;
+
+    }
+
+
+    .auth-formulario-pie {
+
+        padding-top:
+            18px;
+
+        font-size:
+            0.57rem;
+
+    }
+
+}
+
+/* =========================================================
    RESPONSIVE
 ========================================================= */
 

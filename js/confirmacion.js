@@ -6,6 +6,32 @@ let ultimaReservacion = null;
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    const esPaginaConfirmacion =
+        Boolean(
+            document.getElementById(
+                "confirmacion-contenido"
+            )
+        );
+
+
+    /*
+     * Este archivo también contiene el generador
+     * del comprobante PDF.
+     *
+     * Si se carga desde otra página, como el panel,
+     * no debe iniciar la lógica propia de
+     * confirmacion.html.
+     */
+
+    if (
+        !esPaginaConfirmacion
+    ) {
+
+        return;
+
+    }
+
+
     actualizarEnlacesAgenciaConfirmacion();
 
     cargarConfirmacionReserva();
@@ -13,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
     configurarAccionesConfirmacion();
 
 });
-
 /* =========================================================
    CONTEXTO DE AGENCIA
 ========================================================= */
@@ -1035,15 +1060,70 @@ function copiarTextoAlternativo(texto) {
 }
 
 /* =========================================================
+   NOTIFICACIÓN DEL COMPROBANTE
+========================================================= */
+
+function mostrarNotificacionComprobante(
+    titulo,
+    mensaje,
+    tipo = "info"
+) {
+
+    /*
+     * En el catálogo público app.js proporciona
+     * el sistema visual de notificaciones.
+     */
+
+    if (
+        typeof window.mostrarNotificacion ===
+        "function"
+    ) {
+
+        window.mostrarNotificacion(
+            titulo,
+            mensaje
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * En otras páginas, como el panel,
+     * el generador puede funcionar sin app.js.
+     */
+
+    if (
+        tipo === "error"
+    ) {
+
+        console.error(
+            `${titulo}: ${mensaje}`
+        );
+
+        return;
+
+    }
+
+
+    console.info(
+        `${titulo}: ${mensaje}`
+    );
+
+}
+
+/* =========================================================
    DESCARGAR RESUMEN EN PDF
 ========================================================= */
 
 async function descargarResumenReservacion() {
     if (!ultimaReservacion) {
-        mostrarNotificacion(
-            "Reservación no disponible",
-            "No hay una reservación para descargar."
-        );
+        mostrarNotificacionComprobante(
+    "Reservación no disponible",
+    "No hay una reservación para descargar.",
+    "error"
+);
 
         return;
     }
@@ -1056,10 +1136,11 @@ async function descargarResumenReservacion() {
             "La biblioteca jsPDF no está disponible."
         );
 
-        mostrarNotificacion(
-            "PDF no disponible",
-            "No se pudo cargar el generador de PDF. Revisa tu conexión y actualiza la página."
-        );
+        mostrarNotificacionComprobante(
+    "PDF no disponible",
+    "No se pudo cargar el generador de PDF. Revisa tu conexión y actualiza la página.",
+    "error"
+);
 
         return;
     }
@@ -1205,7 +1286,7 @@ const logoPdf =
                 "bold"
             );
 
-            documento.setFontSize(8.5);
+           documento.setFontSize(9.2);
 
             documento.text(
                 titulo,
@@ -1225,8 +1306,8 @@ const logoPdf =
             const {
                 alto = 13,
                 fondo = colores.fondo,
-                valorTamano = 8.2,
-                valorNegrita = true
+                valorTamano = 8.8,
+                valorNegrita = false
             } = opciones;
 
             documento.setFillColor(
@@ -1256,7 +1337,7 @@ const logoPdf =
                 "bold"
             );
 
-            documento.setFontSize(6.5);
+            documento.setFontSize(7.3);
 
             documento.text(
                 etiqueta.toUpperCase(),
@@ -1392,7 +1473,7 @@ documento.text(
             "bold"
         );
 
-        documento.setFontSize(6.5);
+        documento.setFontSize(7.4);
 
         documento.text(
             "CÓDIGO DE RESERVACIÓN",
@@ -1419,7 +1500,7 @@ documento.text(
             ...colores.azul
         );
 
-        documento.setFontSize(7);
+        documento.setFontSize(7.8);
 
         documento.text(
             textoSeguro(
@@ -1451,7 +1532,7 @@ documento.text(
             "normal"
         );
 
-        documento.setFontSize(7);
+        documento.setFontSize(7.8);
 
         documento.text(
             `Emitido: ${formatearFechaHoraRegistro(
@@ -1569,7 +1650,7 @@ documento.text(
     ...colores.acentoTexto
 );
 
-        documento.setFontSize(8);
+        documento.setFontSize(8.7);
 
         documento.text(
             textoSeguro(
@@ -1590,7 +1671,7 @@ documento.text(
             "normal"
         );
 
-        documento.setFontSize(7.5);
+        documento.setFontSize(8.2);
 
         documento.text(
             `${textoSeguro(
@@ -1624,7 +1705,7 @@ documento.text(
             ...colores.texto
         );
 
-        documento.setFontSize(7);
+       documento.setFontSize(7.6);
 
         documento.text(
             "PRECIO POR VEHÍCULO/DÍA",
@@ -1661,7 +1742,7 @@ documento.text(
             "normal"
         );
 
-        documento.setFontSize(6.5);
+        documento.setFontSize(7.3);
 
         documento.text(
             `${cantidadVehiculos} vehículo(s) × ${dias} día(s)`,
@@ -1681,7 +1762,7 @@ documento.text(
             ...colores.texto
         );
 
-        documento.setFontSize(7);
+        documento.setFontSize(7.8);
 
         documento.text(
             `Subtotal: ${formatearMoneda(
@@ -1830,7 +1911,7 @@ documento.text(
             cliente.correo,
             anchoColumna,
             {
-                valorTamano: 7.2
+                valorTamano: 8
             }
         );
 
@@ -1865,7 +1946,7 @@ documento.text(
             ),
             anchoColumna,
             {
-                valorTamano: 6.8,
+                valorTamano: 7.5,
                 valorNegrita: false
             }
         );
@@ -1947,7 +2028,7 @@ documento.text(
             "normal"
         );
 
-        documento.setFontSize(7.5);
+       documento.setFontSize(8.2);
 
         if (!adicionales.length) {
             documento.setTextColor(
@@ -2039,7 +2120,7 @@ documento.text(
                     "italic"
                 );
 
-                documento.setFontSize(6.5);
+                documento.setFontSize(8);
 
                 documento.text(
                     `+ ${
@@ -2111,7 +2192,7 @@ documento.text(
                     "normal"
                 );
 
-                documento.setFontSize(7.3);
+                documento.setFontSize(8);
 
                 documento.text(
                     etiqueta,
@@ -2163,7 +2244,7 @@ documento.text(
             "bold"
         );
 
-        documento.setFontSize(8.5);
+        documento.setFontSize(9.2);
 
         documento.text(
             "TOTAL ESTIMADO",
@@ -2235,7 +2316,7 @@ documento.setDrawColor(
             "bold"
         );
 
-        documento.setFontSize(7);
+        documento.setFontSize(8.2);
 
         documento.text(
             "i",
@@ -2255,7 +2336,7 @@ documento.setDrawColor(
             "bold"
         );
 
-        documento.setFontSize(7.5);
+        documento.setFontSize(9.2);
 
         documento.text(
             "Importante",
@@ -2272,7 +2353,7 @@ documento.setDrawColor(
             "normal"
         );
 
-        documento.setFontSize(6.8);
+        documento.setFontSize(8.3);
 
         const textoAviso =
             documento.splitTextToSize(
@@ -2311,7 +2392,7 @@ documento.setDrawColor(
             "bold"
         );
 
-        documento.setFontSize(7.2);
+        documento.setFontSize(9.2);
 
         documento.text(
     identidadPdf.nombre,
@@ -2330,7 +2411,7 @@ documento.setDrawColor(
             225
         );
 
-        documento.setFontSize(6.7);
+        documento.setFontSize(8.2);
 
         const contactoPiePdf =
     documento
@@ -2346,6 +2427,8 @@ documento.text(
     291
 );
 
+documento.setFontSize(8.2);
+
         documento.text(
             "Documento generado electrónicamente",
             paginaAncho - margen,
@@ -2354,6 +2437,8 @@ documento.text(
                 align: "right"
             }
         );
+
+        documento.setFontSize(8);
 
         documento.text(
             "Página 1 de 1",
@@ -2382,7 +2467,7 @@ documento.text(
             `reservacion-${codigoArchivo}.pdf`
         );
 
-        mostrarNotificacion(
+        mostrarNotificacionComprobante(
     "PDF descargado",
     `El comprobante de ${identidadPdf.nombre} fue generado correctamente.`
 );
@@ -2392,12 +2477,62 @@ documento.text(
             error
         );
 
-        mostrarNotificacion(
-            "Error al generar PDF",
-            "No fue posible crear el comprobante. Revisa la consola del navegador."
-        );
+        mostrarNotificacionComprobante(
+    "Error al generar PDF",
+    "No fue posible crear el comprobante. Revisa la consola del navegador.",
+    "error"
+);
     }
 }
+
+
+/* =========================================================
+   GENERAR COMPROBANTE DESDE DATOS EXTERNOS
+========================================================= */
+
+async function descargarComprobanteReservacionDesdeDatos(
+    reservacion
+) {
+
+    if (
+        !reservacion ||
+        typeof reservacion !== "object"
+    ) {
+
+        throw new Error(
+            "La reservación no es válida."
+        );
+
+    }
+
+
+    const reservacionAnterior =
+        ultimaReservacion;
+
+
+    try {
+
+        ultimaReservacion =
+            reservacion;
+
+
+        normalizarReservacionConfirmacion();
+
+
+        await descargarResumenReservacion();
+
+    } finally {
+
+        ultimaReservacion =
+            reservacionAnterior;
+
+    }
+
+}
+
+
+window.descargarComprobanteReservacionDesdeDatos =
+    descargarComprobanteReservacionDesdeDatos;
 
 /* =========================================================
    IDENTIDAD DE AGENCIA PARA PDF
@@ -2409,6 +2544,25 @@ async function obtenerAgenciaParaPdf(
 
     const slug =
         obtenerSlugAgenciaConfirmacion();
+
+
+        /*
+     * Si la reservación ya incluye la identidad completa
+     * de la agencia, la reutilizamos directamente.
+     */
+
+    if (
+        reservacion?.agencia &&
+        (
+            reservacion.agencia.logo ||
+            reservacion.agencia.colores ||
+            reservacion.agencia.contacto
+        )
+    ) {
+
+        return reservacion.agencia;
+
+    }
 
 
     /*

@@ -91,6 +91,10 @@ const {
 
     actualizarModeloPanel,
 
+    agregarImagenGaleriaModeloPanel,
+
+    eliminarImagenGaleriaModeloPanel
+
 } = require(
     "../controllers/panelCatalogoController"
 );
@@ -409,6 +413,19 @@ router.post(
     requerirGestionCatalogo,
     subirImagenModelo,
     actualizarModeloPanel
+);
+
+router.post(
+    "/panel/catalogo/modelos/:modeloId/galeria",
+    requerirGestionCatalogo,
+    subirImagenModelo,
+    agregarImagenGaleriaModeloPanel
+);
+
+router.post(
+    "/panel/catalogo/modelos/:modeloId/galeria/:imagenId/eliminar",
+    requerirGestionCatalogo,
+    eliminarImagenGaleriaModeloPanel
 );
 
 /* =========================================================

@@ -879,9 +879,9 @@
                                             Total
                                         </th>
 
-                                        <th>
-                                            Acción
-                                        </th>
+                                        <th class="panel-client-history-action-heading">
+    Acción
+</th>
 
                                     </tr>
 
@@ -1003,18 +1003,37 @@
 
                                             <td>
 
-                                                <a
-                                                    href="/panel/reservaciones/<%= reservacion.id %>"
-                                                    class="panel-secondary-button"
-                                                >
+    <div class="panel-client-history-actions">
 
-                                                    <i class="fa-solid fa-eye"></i>
+        <a
+            href="/panel/reservaciones/<%= reservacion.id %>"
+            class="panel-secondary-button"
+        >
 
-                                                    Ver detalle
+            <i class="fa-solid fa-eye"></i>
 
-                                                </a>
+            Ver detalle
 
-                                            </td>
+        </a>
+
+
+        <a
+    href="#"
+    role="button"
+    class="panel-secondary-button panel-client-history-download"
+    data-descargar-comprobante
+    data-reservacion-id="<%= reservacion.id %>"
+>
+
+           <i class="fa-solid fa-file-pdf"></i>
+
+            Descargar comprobante
+
+        </a>
+
+    </div>
+
+</td>
 
 
                                         </tr>
@@ -1077,8 +1096,191 @@
     </div>
 
 
+       <script
+        src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"
+    ></script>
+
+    <script src="/js/confirmacion.js"></script>
+
     <script src="/js/panel.js"></script>
 
+    <script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        () => {
+
+            const botonesComprobante =
+                document.querySelectorAll(
+                    "[data-descargar-comprobante]"
+                );
+
+
+            botonesComprobante.forEach(
+                (
+                    boton
+                ) => {
+
+                    boton.addEventListener(
+                        "click",
+                        async (
+                            evento
+                        ) => {
+
+                            evento.preventDefault();
+
+
+                            if (
+                                boton.dataset.cargando ===
+                                "1"
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            const reservacionId =
+                                Number(
+                                    boton.dataset.reservacionId
+                                );
+
+
+                            if (
+                                !Number.isInteger(
+                                    reservacionId
+                                ) ||
+                                reservacionId <= 0
+                            ) {
+
+                                console.error(
+                                    "La reservación no es válida."
+                                );
+
+                                return;
+
+                            }
+
+
+                            const contenidoOriginal =
+                                boton.innerHTML;
+
+
+                            boton.dataset.cargando =
+                                "1";
+
+
+                            boton.setAttribute(
+                                "aria-disabled",
+                                "true"
+                            );
+
+
+                            boton.innerHTML =
+                                `
+                                    <i class="fa-solid fa-spinner fa-spin"></i>
+                                    Generando...
+                                `;
+
+
+                            try {
+
+                                const respuesta =
+                                    await fetch(
+                                        `/panel/reservaciones/${reservacionId}/comprobante`,
+                                        {
+                                            method:
+                                                "GET",
+
+                                            credentials:
+                                                "same-origin",
+
+                                            headers:
+                                            {
+                                                Accept:
+                                                    "application/json"
+                                            }
+                                        }
+                                    );
+
+
+                                const datos =
+                                    await respuesta.json();
+
+
+                                if (
+                                    !respuesta.ok ||
+                                    !datos?.ok ||
+                                    !datos?.reservacion
+                                ) {
+
+                                    throw new Error(
+                                        datos?.mensaje ||
+                                        "No fue posible obtener el comprobante."
+                                    );
+
+                                }
+
+
+                                if (
+                                    typeof window
+                                        .descargarComprobanteReservacionDesdeDatos !==
+                                    "function"
+                                ) {
+
+                                    throw new Error(
+                                        "El generador del comprobante no está disponible."
+                                    );
+
+                                }
+
+
+                                await window
+                                    .descargarComprobanteReservacionDesdeDatos(
+                                        datos.reservacion
+                                    );
+
+                            } catch (
+                                error
+                            ) {
+
+                                console.error(
+                                    "Error descargando comprobante desde Clientes:",
+                                    error
+                                );
+
+
+                                window.alert(
+                                    error.message ||
+                                    "No fue posible descargar el comprobante."
+                                );
+
+                            } finally {
+
+                                boton.dataset.cargando =
+                                    "0";
+
+
+                                boton.removeAttribute(
+                                    "aria-disabled"
+                                );
+
+
+                                boton.innerHTML =
+                                    contenidoOriginal;
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+    );
+
+</script>
 
 </body>
 

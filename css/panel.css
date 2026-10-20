@@ -5236,6 +5236,376 @@ html[data-panel-tema="oscuro"]
     color: var(--panel-accent);
 }
 
+/* =========================================================
+   GALERÍA DEL VEHÍCULO
+========================================================= */
+
+.panel-vehicle-gallery {
+
+    width:
+        100%;
+
+}
+
+
+.panel-vehicle-gallery-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(
+                180px,
+                220px
+            )
+        );
+
+    gap:
+        14px;
+
+    justify-content:
+        start;
+
+}
+
+
+.panel-vehicle-gallery-item {
+
+    aspect-ratio:
+        4 / 3;
+
+    overflow:
+        hidden;
+
+    position:
+        relative;
+
+    border:
+        1px solid
+        var(--panel-border);
+
+    border-radius:
+        13px;
+
+    background:
+        var(--panel-surface-alt);
+
+}
+
+
+.panel-vehicle-gallery-item img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    display:
+        block;
+
+    object-fit:
+        cover;
+
+}
+
+.panel-vehicle-gallery-delete {
+
+    position:
+        absolute;
+
+    top:
+        10px;
+
+    right:
+        10px;
+
+    width:
+        34px;
+
+    height:
+        34px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    padding:
+        0;
+
+    border:
+        1px solid
+        var(--panel-border);
+
+    border-radius:
+        10px;
+
+    color:
+        var(--panel-danger);
+
+    background:
+        var(--panel-surface);
+
+    box-shadow:
+        0 4px 14px
+        rgba(
+            0,
+            0,
+            0,
+            0.16
+        );
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 0.18s ease,
+        background 0.18s ease,
+        color 0.18s ease;
+
+}
+
+
+.panel-vehicle-gallery-delete:hover {
+
+    color:
+        #ffffff;
+
+    background:
+        var(--panel-danger);
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+.panel-vehicle-gallery-delete i {
+
+    font-size:
+        0.78rem;
+
+}
+
+
+.panel-vehicle-gallery-empty {
+
+    min-height:
+        150px;
+
+    padding:
+        24px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        14px;
+
+    border:
+        1px dashed
+        var(--panel-border);
+
+    border-radius:
+        14px;
+
+    background:
+        var(--panel-surface-alt);
+
+}
+
+
+.panel-vehicle-gallery-empty > span {
+
+    flex:
+        0 0 44px;
+
+    width:
+        44px;
+
+    height:
+        44px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        12px;
+
+    color:
+        var(--panel-accent);
+
+    background:
+        rgba(
+            var(--panel-accent-rgb),
+            0.10
+        );
+
+    font-size:
+        1.1rem;
+
+}
+
+
+.panel-vehicle-gallery-empty strong {
+
+    display:
+        block;
+
+    margin-bottom:
+        5px;
+
+    font-size:
+        0.75rem;
+
+}
+
+
+.panel-vehicle-gallery-empty p {
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.64rem;
+
+    line-height:
+        1.5;
+
+}
+
+.panel-vehicle-gallery-upload {
+
+    margin-top:
+        20px;
+
+    padding-top:
+        20px;
+
+    border-top:
+        1px solid
+        var(--panel-border);
+
+}
+
+.panel-vehicle-gallery-upload-actions {
+
+    margin-top:
+        14px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    flex-wrap:
+        wrap;
+
+}
+
+.panel-vehicle-gallery-upload-actions
+.panel-image-select {
+
+    margin-top:
+        0;
+
+    transition:
+        transform 0.18s ease,
+        opacity 0.18s ease;
+
+}
+
+
+.panel-vehicle-gallery-upload-actions
+.panel-image-select:hover {
+
+    transform:
+        translateY(-1px);
+
+    opacity:
+        0.92;
+
+}
+
+.panel-vehicle-gallery-add {
+
+    min-height:
+        44px;
+
+    padding:
+        0 18px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        8px;
+
+    border:
+        0;
+
+    border-radius:
+        11px;
+
+    background:
+        var(--panel-accent);
+
+    color:
+         #000000;
+
+    font: inherit;
+
+    font-size:
+        0.72rem;
+
+    font-weight:
+        700;
+
+    white-space:
+        nowrap;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 0.18s ease,
+        opacity 0.18s ease;
+
+}
+
+
+.panel-vehicle-gallery-add:hover {
+
+    transform:
+        translateY(-1px);
+
+    opacity:
+        0.92;
+
+}
 
 /* =========================================================
    RESPONSIVE FOTO
@@ -5261,6 +5631,20 @@ html[data-panel-tema="oscuro"]
 
     }
 
+
+    .panel-vehicle-gallery-grid {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    220px
+                )
+            );
+
+    }
+
 }
 
 
@@ -5282,7 +5666,28 @@ html[data-panel-tema="oscuro"]
     }
 
 
-    .panel-image-select {
+    .panel-vehicle-gallery-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .panel-vehicle-gallery-upload-actions {
+
+        align-items:
+            stretch;
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .panel-vehicle-gallery-upload-actions
+    .panel-image-select,
+    .panel-vehicle-gallery-add {
 
         width:
             100%;
@@ -7853,6 +8258,60 @@ html[data-panel-tema="oscuro"]
 
     transform:
         scale(1.08);
+}
+
+
+/* =========================================================
+   ACCIONES DEL HISTORIAL DEL CLIENTE
+========================================================= */
+
+.panel-units-table
+th.panel-client-history-action-heading {
+
+    text-align:
+        center;
+
+}
+
+
+.panel-client-history-actions {
+
+    width:
+        100%;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        14px;
+
+    flex-wrap:
+        wrap;
+
+}
+
+
+.panel-client-history-actions
+.panel-secondary-button {
+
+    white-space:
+        nowrap;
+
+}
+
+
+.panel-client-history-download
+> i {
+
+    color:
+        var(--panel-danger);
+
 }
 
 .reservation-overview-list > div {

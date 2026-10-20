@@ -1040,7 +1040,8 @@ async function crearModeloPanel(
 async function guardarImagenModeloPanel(
     archivo,
     agenciaId,
-    modeloId
+    modeloId,
+    tipoImagen = "principal"
 ) {
 
     const extensiones =
@@ -1099,8 +1100,15 @@ async function guardarImagenModeloPanel(
     );
 
 
+        const prefijoArchivo =
+        tipoImagen ===
+            "galeria"
+            ? "galeria"
+            : "principal";
+
+
     const nombreArchivo =
-        `principal-${Date.now()}${extension}`;
+        `${prefijoArchivo}-${Date.now()}${extension}`;
 
 
     const rutaFisica =
@@ -1183,6 +1191,484 @@ async function eliminarImagenModeloPanel(
                 "Error eliminando imagen anterior del modelo:",
                 error
             );
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+   AGREGAR IMAGEN A LA GALERÍA DEL MODELO
+========================================================= */
+
+async function agregarImagenGaleriaModeloPanel(
+    req,
+    res
+) {
+
+    let conexion;
+
+    let imagenGuardada =
+        null;
+
+
+    try {
+
+        const agenciaId =
+            Number(
+                req.agencia?.id
+            );
+
+
+        const modeloId =
+            Number(
+                req.params.modeloId
+            );
+
+
+        if (
+            !Number.isInteger(
+                agenciaId
+            ) ||
+            agenciaId <= 0
+        ) {
+
+            return res
+                .status(403)
+                .send(
+                    "No fue posible identificar la agencia del usuario."
+                );
+
+        }
+
+
+        if (
+            !Number.isInteger(
+                modeloId
+            ) ||
+            modeloId <= 0
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "ID de modelo inválido."
+                );
+
+        }
+
+
+        /*
+         * El mismo middleware utilizado para la
+         * imagen principal valida formato, tamaño
+         * y contenido real del archivo.
+         */
+
+        if (
+            req.errorSubidaImagen
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    req.errorSubidaImagen
+                );
+
+        }
+
+
+        if (
+            !req.file
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "Selecciona una fotografía para agregar a la galería."
+                );
+
+        }
+
+
+        conexion =
+            await pool.getConnection();
+
+
+        /* =================================================
+           VALIDAR MODELO DE LA AGENCIA AUTENTICADA
+        ================================================= */
+
+        const modeloResultado =
+            await conexion.query(
+                `
+                SELECT
+                    id
+
+                FROM modelos_vehiculos
+
+                WHERE
+                    id = ?
+
+                    AND agencia_id = ?
+
+                LIMIT 1
+                `,
+                [
+                    modeloId,
+                    agenciaId
+                ]
+            );
+
+
+        if (
+            modeloResultado.length ===
+            0
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "Modelo de vehículo no encontrado para esta agencia."
+                );
+
+        }
+
+
+        /* =================================================
+           GUARDAR ARCHIVO FÍSICO
+        ================================================= */
+
+        imagenGuardada =
+            await guardarImagenModeloPanel(
+                req.file,
+                agenciaId,
+                modeloId,
+                "galeria"
+            );
+
+
+        /* =================================================
+           OBTENER SIGUIENTE ORDEN
+        ================================================= */
+
+        const ordenResultado =
+            await conexion.query(
+                `
+                SELECT
+                    COALESCE(
+                        MAX(orden),
+                        0
+                    ) + 1
+                        AS siguiente_orden
+
+                FROM modelo_vehiculo_imagenes
+
+                WHERE
+                    modelo_id = ?
+
+                    AND agencia_id = ?
+                `,
+                [
+                    modeloId,
+                    agenciaId
+                ]
+            );
+
+
+        const siguienteOrden =
+            Number(
+                ordenResultado[0]
+                    ?.siguiente_orden ||
+                1
+            );
+
+
+        /* =================================================
+           REGISTRAR IMAGEN
+        ================================================= */
+
+        await conexion.query(
+            `
+            INSERT INTO modelo_vehiculo_imagenes (
+                agencia_id,
+                modelo_id,
+                imagen,
+                orden
+            )
+            VALUES (
+                ?,
+                ?,
+                ?,
+                ?
+            )
+            `,
+            [
+                agenciaId,
+                modeloId,
+                imagenGuardada.rutaPublica,
+                siguienteOrden
+            ]
+        );
+
+
+        return res.redirect(
+            `/panel/catalogo/modelos/${modeloId}/editar?galeriaAgregada=1`
+        );
+
+
+    } catch (
+        error
+    ) {
+
+        /*
+         * Si el archivo alcanzó a guardarse,
+         * pero MariaDB falló después,
+         * eliminamos el archivo huérfano.
+         */
+
+        if (
+            imagenGuardada?.rutaFisica
+        ) {
+
+            try {
+
+                await fs.promises.unlink(
+                    imagenGuardada.rutaFisica
+                );
+
+
+            } catch (
+                errorEliminando
+            ) {
+
+                if (
+                    errorEliminando.code !==
+                    "ENOENT"
+                ) {
+
+                    console.error(
+                        "Error eliminando imagen de galería no registrada:",
+                        errorEliminando
+                    );
+
+                }
+
+            }
+
+        }
+
+
+        console.error(
+            "Error agregando imagen a la galería del modelo:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible agregar la fotografía a la galería."
+            );
+
+
+    } finally {
+
+        if (
+            conexion
+        ) {
+
+            conexion.release();
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+   ELIMINAR IMAGEN DE LA GALERÍA DEL MODELO
+========================================================= */
+
+async function eliminarImagenGaleriaModeloPanel(
+    req,
+    res
+) {
+
+    let conexion;
+
+
+    try {
+
+        const agenciaId =
+            Number(
+                req.agencia?.id
+            );
+
+
+        const modeloId =
+            Number(
+                req.params.modeloId
+            );
+
+
+        const imagenId =
+            Number(
+                req.params.imagenId
+            );
+
+
+        if (
+            !Number.isInteger(
+                agenciaId
+            ) ||
+            agenciaId <= 0
+        ) {
+
+            return res
+                .status(403)
+                .send(
+                    "No fue posible identificar la agencia del usuario."
+                );
+
+        }
+
+
+        if (
+            !Number.isInteger(
+                modeloId
+            ) ||
+            modeloId <= 0 ||
+            !Number.isInteger(
+                imagenId
+            ) ||
+            imagenId <= 0
+        ) {
+
+            return res
+                .status(400)
+                .send(
+                    "La fotografía seleccionada no es válida."
+                );
+
+        }
+
+
+        conexion =
+            await pool.getConnection();
+
+
+        /* =================================================
+           BUSCAR IMAGEN DENTRO DE LA PROPIA AGENCIA
+        ================================================= */
+
+        const imagenResultado =
+            await conexion.query(
+                `
+                SELECT
+
+                    id,
+
+                    imagen
+
+                FROM modelo_vehiculo_imagenes
+
+                WHERE
+                    id = ?
+
+                    AND modelo_id = ?
+
+                    AND agencia_id = ?
+
+                LIMIT 1
+                `,
+                [
+                    imagenId,
+                    modeloId,
+                    agenciaId
+                ]
+            );
+
+
+        if (
+            imagenResultado.length ===
+            0
+        ) {
+
+            return res
+                .status(404)
+                .send(
+                    "La fotografía no fue encontrada para este vehículo."
+                );
+
+        }
+
+
+        const imagenGaleria =
+            imagenResultado[0];
+
+
+        /* =================================================
+           ELIMINAR REGISTRO
+        ================================================= */
+
+        await conexion.query(
+            `
+            DELETE FROM modelo_vehiculo_imagenes
+
+            WHERE
+                id = ?
+
+                AND modelo_id = ?
+
+                AND agencia_id = ?
+            `,
+            [
+                imagenId,
+                modeloId,
+                agenciaId
+            ]
+        );
+
+
+        /* =================================================
+           ELIMINAR ARCHIVO FÍSICO
+        ================================================= */
+
+        await eliminarImagenModeloPanel(
+            imagenGaleria.imagen
+        );
+
+
+        return res.redirect(
+            `/panel/catalogo/modelos/${modeloId}/editar?galeriaEliminada=1`
+        );
+
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "Error eliminando imagen de la galería del modelo:",
+            error
+        );
+
+
+        return res
+            .status(500)
+            .send(
+                "No fue posible eliminar la fotografía de la galería."
+            );
+
+
+    } finally {
+
+        if (
+            conexion
+        ) {
+
+            conexion.release();
 
         }
 
@@ -1311,6 +1797,41 @@ async function mostrarEditarModeloPanel(
 
 
         /* =================================================
+           GALERÍA DEL MODELO
+        ================================================= */
+
+        const galeriaModelo =
+            await conexion.query(
+                `
+                SELECT
+
+                    id,
+
+                    imagen,
+
+                    orden,
+
+                    fecha_creacion
+
+                FROM modelo_vehiculo_imagenes
+
+                WHERE
+                    modelo_id = ?
+
+                    AND agencia_id = ?
+
+                ORDER BY
+                    orden ASC,
+                    id ASC
+                `,
+                [
+                    modeloId,
+                    agenciaId
+                ]
+            );
+
+
+        /* =================================================
            RESUMEN DE UNIDADES
         ================================================= */
 
@@ -1378,6 +1899,9 @@ async function mostrarEditarModeloPanel(
 
                 modeloEditar:
                     modeloResultado[0],
+
+                galeriaModelo:
+                    galeriaModelo,    
 
                 resumenUnidades:
                 {
@@ -1693,6 +2217,35 @@ async function actualizarModeloPanel(
                     ]
                 );
 
+            const galeriaModelo =
+                await conexion.query(
+                    `
+                    SELECT
+
+                        id,
+
+                        imagen,
+
+                        orden,
+
+                        fecha_creacion
+
+                    FROM modelo_vehiculo_imagenes
+
+                    WHERE
+                        modelo_id = ?
+
+                        AND agencia_id = ?
+
+                    ORDER BY
+                        orden ASC,
+                        id ASC
+                    `,
+                    [
+                        modeloId,
+                        agenciaId
+                    ]
+                );
 
             return res
                 .status(
@@ -1738,6 +2291,9 @@ async function actualizarModeloPanel(
                             ...datos
 
                         },
+
+                    galeriaModelo:
+                            galeriaModelo,
 
                         resumenUnidades:
                         {
@@ -2309,6 +2865,10 @@ module.exports = {
 
     mostrarEditarModeloPanel,
 
-    actualizarModeloPanel
+    actualizarModeloPanel,
+
+    agregarImagenGaleriaModeloPanel,
+
+    eliminarImagenGaleriaModeloPanel
 
 };

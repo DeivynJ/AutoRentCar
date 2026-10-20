@@ -162,7 +162,7 @@ ul {
 
 .boton-principal {
     background-color: var(--color-secundario);
-    color: var(--color-blanco);
+    color: var(--color-texto-sobre-secundario);
     box-shadow: 0 12px 25px rgba(var(--color-secundario-rgb), 0.25);
 }
 
@@ -1821,7 +1821,7 @@ body.modo-oscuro .numero-paso {
     display: grid;
     place-items: center;
     padding: 20px;
-    background-color: rgba(3, 10, 20, 0.78);
+    background-color: rgba(0, 0, 0, 0.72);
     backdrop-filter: blur(8px);
     opacity: 0;
     visibility: hidden;
@@ -1870,10 +1870,162 @@ body.modo-oscuro .numero-paso {
     transform: rotate(90deg);
 }
 
+/* =========================================================
+   GALERÍA DEL MODAL DE VEHÍCULO
+========================================================= */
+
+.modal-vehiculo-galeria {
+
+    padding:
+        0;
+
+    background:
+        var(--color-fondo);
+
+}
+
+
+.modal-vehiculo-imagen-principal {
+
+    width:
+        100%;
+
+    height:
+        340px;
+
+    overflow:
+        hidden;
+
+}
+
+
 .modal-vehiculo-imagen {
-    width: 100%;
-    height: 340px;
-    object-fit: cover;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    display:
+        block;
+
+    object-fit:
+        cover;
+
+    transition:
+        opacity 0.2s ease;
+
+}
+
+
+.modal-vehiculo-miniaturas {
+
+    padding:
+        12px 15px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        9px;
+
+    overflow-x:
+        auto;
+
+    border-bottom:
+        1px solid
+        var(--color-borde);
+
+    scrollbar-width:
+        thin;
+
+}
+
+
+.modal-vehiculo-miniatura {
+
+    flex:
+        0 0 82px;
+
+    width:
+        82px;
+
+    height:
+        62px;
+
+    padding:
+        0;
+
+    overflow:
+        hidden;
+
+    border:
+        2px solid
+        transparent;
+
+    border-radius:
+        10px;
+
+    background:
+        transparent;
+
+    opacity:
+        0.68;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform
+        var(--transicion),
+        opacity
+        var(--transicion),
+        border-color
+        var(--transicion);
+
+}
+
+
+.modal-vehiculo-miniatura img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    display:
+        block;
+
+    object-fit:
+        cover;
+
+}
+
+
+.modal-vehiculo-miniatura:hover {
+
+    opacity:
+        1;
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+.modal-vehiculo-miniatura.activa {
+
+    opacity:
+        1;
+
+    border-color:
+        var(--color-secundario);
+
 }
 
 .modal-vehiculo-informacion {

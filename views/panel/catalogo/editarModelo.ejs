@@ -407,6 +407,200 @@
 
                 </section>
 
+                                <!-- =====================================
+                     GALERÍA DEL VEHÍCULO
+                ====================================== -->
+
+                <section class="panel-form-card">
+
+                    <div class="panel-form-card-header">
+
+                        <span class="panel-form-card-icon">
+
+                            <i class="fa-solid fa-images"></i>
+
+                        </span>
+
+
+                        <div>
+
+                            <span>
+                                Galería
+                            </span>
+
+                            <h3>
+                                Galería del vehículo
+                            </h3>
+
+                            <p>
+                                La fotografía principal se mantiene
+                                como portada. Aquí se mostrarán las
+                                imágenes adicionales del vehículo.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="panel-vehicle-gallery">
+
+                        <% if (
+                            Array.isArray(galeriaModelo) &&
+                            galeriaModelo.length
+                        ) { %>
+
+                            <div class="panel-vehicle-gallery-grid">
+
+                                <% galeriaModelo.forEach((foto) => { %>
+
+                                    <div class="panel-vehicle-gallery-item">
+
+    <img
+        src="<%= foto.imagen %>"
+        alt="Fotografía adicional de <%= modeloEditar.marca %> <%= modeloEditar.nombre %>"
+        loading="lazy"
+    >
+
+
+    <button
+        type="submit"
+        form="panel-gallery-delete-<%= foto.id %>"
+        class="panel-vehicle-gallery-delete"
+        title="Eliminar fotografía"
+        aria-label="Eliminar fotografía"
+    >
+
+        <i class="fa-solid fa-trash"></i>
+
+    </button>
+
+</div>
+
+                                <% }); %>
+
+                            </div>
+
+                        <% } else { %>
+
+                            <div class="panel-vehicle-gallery-empty">
+
+                                <span>
+
+                                    <i class="fa-regular fa-images"></i>
+
+                                </span>
+
+
+                                <div>
+
+                                    <strong>
+                                        Sin fotografías adicionales
+                                    </strong>
+
+                                    <p>
+                                        Este modelo todavía utiliza
+                                        únicamente su fotografía principal.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        <% } %>
+
+                    </div>
+
+                   <div class="panel-vehicle-gallery-upload">
+
+    <div class="panel-image-controls">
+
+        <div>
+
+            <span class="panel-image-label">
+                Nueva fotografía
+            </span>
+
+            <h4>
+                Agregar a la galería
+            </h4>
+
+            <p>
+                Selecciona una fotografía adicional de este
+                vehículo. La imagen principal no será modificada.
+            </p>
+
+        </div>
+
+
+       <div class="panel-vehicle-gallery-upload-actions">
+
+    <label
+        for="imagen-galeria"
+        class="panel-image-select"
+    >
+
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+
+        <span>
+            Seleccionar fotografía
+        </span>
+
+    </label>
+
+
+    <button
+        type="submit"
+        form="panel-gallery-upload-form"
+        class="panel-vehicle-gallery-add"
+    >
+
+        <i class="fa-solid fa-plus"></i>
+
+        Agregar a galería
+
+    </button>
+
+</div>
+
+
+<input
+    type="file"
+    id="imagen-galeria"
+    name="imagen"
+    accept="image/jpeg,image/png,image/webp"
+    class="panel-image-input"
+    form="panel-gallery-upload-form"
+    required
+>
+
+
+<div class="panel-image-rules">
+
+    <span>
+        <i class="fa-solid fa-check"></i>
+        JPG
+    </span>
+
+    <span>
+        <i class="fa-solid fa-check"></i>
+        PNG
+    </span>
+
+    <span>
+        <i class="fa-solid fa-check"></i>
+        WEBP
+    </span>
+
+    <span>
+        <i class="fa-solid fa-check"></i>
+        Máximo 5 MB
+    </span>
+
+</div>
+
+</section>
+
 
                 <!-- =====================================
                      INFORMACIÓN PRINCIPAL
@@ -913,7 +1107,32 @@
 
             </form>
 
+            <form
+    id="panel-gallery-upload-form"
+    method="POST"
+    enctype="multipart/form-data"
+    action="/panel/catalogo/modelos/<%= modeloEditar.id %>/galeria"
+></form>
 
+<% if (
+    Array.isArray(galeriaModelo) &&
+    galeriaModelo.length
+) { %>
+
+    <% galeriaModelo.forEach((foto) => { %>
+
+        <form
+            id="panel-gallery-delete-<%= foto.id %>"
+            method="POST"
+            action="/panel/catalogo/modelos/<%= modeloEditar.id %>/galeria/<%= foto.id %>/eliminar"
+            onsubmit="return window.confirm(
+                '¿Deseas eliminar esta fotografía de la galería?'
+            );"
+        ></form>
+
+    <% }); %>
+
+<% } %>
             <footer class="panel-footer">
 
                 <span>

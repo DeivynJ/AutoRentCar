@@ -118,6 +118,37 @@ function obtenerTextoEstadoComprobante(
 
 }
 
+/* =========================================================
+   TEXTO DE CATEGORÍA PARA EL COMPROBANTE
+========================================================= */
+
+function obtenerTextoCategoriaComprobante(
+    categoria
+) {
+
+    const categorias =
+    {
+
+        economico:
+            "Económico",
+
+        gama_media:
+            "Gama media",
+
+        lujo:
+            "Vehículo de lujo"
+
+    };
+
+
+    return categorias[
+        categoria
+    ] ||
+    categoria ||
+    "Sin categoría";
+
+}
+
 
 /* =========================================================
    OBTENER DATOS DEL COMPROBANTE
@@ -222,13 +253,43 @@ async function obtenerDatosComprobanteReservacionPanel({
                     ) AS dias,
 
                     a.id
-                        AS agencia_id,
+    AS agencia_id,
 
-                    a.nombre
-                        AS agencia_nombre,
+a.nombre
+    AS agencia_nombre,
 
-                    a.slug
-                        AS agencia_slug,
+a.slug
+    AS agencia_slug,
+
+a.logo
+    AS agencia_logo,
+
+a.color_primario
+    AS agencia_color_primario,
+
+a.color_secundario
+    AS agencia_color_secundario,
+
+a.correo
+    AS agencia_correo,
+
+a.telefono
+    AS agencia_telefono,
+
+a.whatsapp
+    AS agencia_whatsapp,
+
+a.direccion
+    AS agencia_direccion,
+
+a.ciudad
+    AS agencia_ciudad,
+
+a.provincia
+    AS agencia_provincia,
+
+a.pais
+    AS agencia_pais,
 
                     m.id
                         AS modelo_id,
@@ -403,7 +464,7 @@ async function obtenerDatosComprobanteReservacionPanel({
                     reservacion.estado
                 ),
 
-            agencia:
+              agencia:
             {
 
                 id:
@@ -415,10 +476,60 @@ async function obtenerDatosComprobanteReservacionPanel({
                     reservacion.agencia_nombre,
 
                 slug:
-                    reservacion.agencia_slug
+                    reservacion.agencia_slug,
+
+                logo:
+                    reservacion.agencia_logo ||
+                    "",
+
+                colores:
+                {
+
+                    primario:
+                        reservacion.agencia_color_primario ||
+                        "",
+
+                    secundario:
+                        reservacion.agencia_color_secundario ||
+                        ""
+
+                },
+
+                contacto:
+                {
+
+                    correo:
+                        reservacion.agencia_correo ||
+                        "",
+
+                    telefono:
+                        reservacion.agencia_telefono ||
+                        "",
+
+                    whatsapp:
+                        reservacion.agencia_whatsapp ||
+                        "",
+
+                    direccion:
+                        reservacion.agencia_direccion ||
+                        "",
+
+                    ciudad:
+                        reservacion.agencia_ciudad ||
+                        "",
+
+                    provincia:
+                        reservacion.agencia_provincia ||
+                        "",
+
+                    pais:
+                        reservacion.agencia_pais ||
+                        ""
+
+                }
 
             },
-
+            
             vehiculo:
             {
 
@@ -434,10 +545,12 @@ async function obtenerDatosComprobanteReservacionPanel({
                     reservacion.modelo_marca,
 
                 categoria:
-                    reservacion.modelo_categoria,
+    reservacion.modelo_categoria,
 
-                categoriaTexto:
-                    reservacion.modelo_categoria,
+categoriaTexto:
+    obtenerTextoCategoriaComprobante(
+        reservacion.modelo_categoria
+    ),
 
                 transmision:
                     reservacion.modelo_transmision,

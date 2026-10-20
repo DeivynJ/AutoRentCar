@@ -796,6 +796,76 @@ function mostrarVehiculosDestacados() {
    MODAL DE DETALLES
 ========================================================= */
 
+function cambiarImagenModalVehiculo(
+    boton
+) {
+
+    if (
+        !boton
+    ) {
+
+        return;
+
+    }
+
+
+    const imagen =
+        boton.dataset.imagen;
+
+
+    if (
+        !imagen
+    ) {
+
+        return;
+
+    }
+
+
+    const imagenPrincipal =
+        document.querySelector(
+            "#contenido-modal .modal-vehiculo-imagen"
+        );
+
+
+    if (
+        !imagenPrincipal
+    ) {
+
+        return;
+
+    }
+
+
+    imagenPrincipal.src =
+        imagen;
+
+
+    const miniaturas =
+        document.querySelectorAll(
+            "#contenido-modal .modal-vehiculo-miniatura"
+        );
+
+
+    miniaturas.forEach(
+        (
+            miniatura
+        ) => {
+
+            miniatura.classList.remove(
+                "activa"
+            );
+
+        }
+    );
+
+
+    boton.classList.add(
+        "activa"
+    );
+
+}
+
 function mostrarDetallesVehiculo(id) {
     const vehiculo = vehiculos.find(
         (elemento) =>
@@ -833,19 +903,105 @@ function mostrarDetallesVehiculo(id) {
             cantidadTotal
         );
 
-    contenidoModal.innerHTML = `
-        <img
-            src="${escaparVehiculoHTML(
-                vehiculo.imagen || ""
-            )}"
-            alt="${escaparVehiculoHTML(
-                vehiculo.nombre ||
-                "Vehículo"
-            )}"
-            class="modal-vehiculo-imagen"
-        >
+        const galeriaVehiculo =
+        Array.isArray(
+            vehiculo.galeria
+        ) &&
+        vehiculo.galeria.length
+            ? vehiculo.galeria.filter(
+                Boolean
+            )
+            : [
+                vehiculo.imagen
+            ].filter(
+                Boolean
+            );
 
-        <div class="modal-vehiculo-informacion">
+
+    const imagenPrincipal =
+        galeriaVehiculo[0] ||
+        vehiculo.imagen ||
+        "";
+
+
+    const miniaturasGaleria =
+        galeriaVehiculo.length > 1
+            ? `
+                <div class="modal-vehiculo-miniaturas">
+
+                    ${
+                        galeriaVehiculo
+                            .map(
+                                (
+                                    imagen,
+                                    indice
+                                ) => `
+                                    <button
+                                        type="button"
+                                        class="modal-vehiculo-miniatura ${
+                                            indice === 0
+                                                ? "activa"
+                                                : ""
+                                        }"
+                                        data-imagen="${escaparVehiculoHTML(
+                                            imagen
+                                        )}"
+                                        onclick="cambiarImagenModalVehiculo(
+                                            this
+                                        )"
+                                        aria-label="Ver fotografía ${
+                                            indice + 1
+                                        }"
+                                    >
+
+                                        <img
+                                            src="${escaparVehiculoHTML(
+                                                imagen
+                                            )}"
+                                            alt="Fotografía ${
+                                                indice + 1
+                                            } de ${escaparVehiculoHTML(
+                                                vehiculo.nombre ||
+                                                "vehículo"
+                                            )}"
+                                            loading="lazy"
+                                        >
+
+                                    </button>
+                                `
+                            )
+                            .join("")
+                    }
+
+                </div>
+            `
+            : "";
+
+   contenidoModal.innerHTML = `
+
+    <div class="modal-vehiculo-galeria">
+
+        <div class="modal-vehiculo-imagen-principal">
+
+            <img
+                src="${escaparVehiculoHTML(
+                    imagenPrincipal
+                )}"
+                alt="${escaparVehiculoHTML(
+                    vehiculo.nombre ||
+                    "Vehículo"
+                )}"
+                class="modal-vehiculo-imagen"
+            >
+
+        </div>
+
+
+        ${miniaturasGaleria}
+
+    </div>
+
+    <div class="modal-vehiculo-informacion">
 
             <span class="subtitulo">
                 ${escaparVehiculoHTML(

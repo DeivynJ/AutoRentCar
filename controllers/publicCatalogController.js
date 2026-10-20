@@ -415,7 +415,37 @@ p.id
                 ]
             );
 
-            /* -------------------------------------------------
+        /* -------------------------------------------------
+           GALERÍA PÚBLICA DE LOS MODELOS
+        ------------------------------------------------- */
+
+        const galeriaResultado =
+            await conexion.query(
+                `
+                SELECT
+
+                    modelo_id,
+
+                    imagen,
+
+                    orden
+
+                FROM modelo_vehiculo_imagenes
+
+                WHERE
+                    agencia_id = ?
+
+                ORDER BY
+                    modelo_id ASC,
+                    orden ASC,
+                    id ASC
+                `,
+                [
+                    agencia.id
+                ]
+            );
+
+/* -------------------------------------------------
    ADICIONALES PÚBLICOS DE LA AGENCIA
 ------------------------------------------------- */
 
@@ -532,6 +562,51 @@ const sucursalesResultado =
         /* -------------------------------------------------
            ADAPTAR DATOS A LA FASE 1
         ------------------------------------------------- */
+        const galeriaPorModelo =
+            new Map();
+
+
+        galeriaResultado.forEach(
+            (
+                foto
+            ) => {
+
+                const modeloId =
+                    Number(
+                        foto.modelo_id
+                    );
+
+
+                if (
+                    !galeriaPorModelo.has(
+                        modeloId
+                    )
+                ) {
+
+                    galeriaPorModelo.set(
+                        modeloId,
+                        []
+                    );
+
+                }
+
+
+                if (
+                    foto.imagen
+                ) {
+
+                    galeriaPorModelo
+                        .get(
+                            modeloId
+                        )
+                        .push(
+                            foto.imagen
+                        );
+
+                }
+
+            }
+        );
 
         const vehiculos =
             modelosResultado.map(
@@ -543,6 +618,31 @@ const sucursalesResultado =
                             modelo.categoria
                         );
 
+                                        const imagenPrincipal =
+                        modelo.imagen ||
+                        "";
+
+
+                    const imagenesAdicionales =
+                        galeriaPorModelo.get(
+                            Number(
+                                modelo.id
+                            )
+                        ) ||
+                        [];
+
+
+                    const galeria =
+                        Array.from(
+                            new Set(
+                                [
+                                    imagenPrincipal,
+                                    ...imagenesAdicionales
+                                ].filter(
+                                    Boolean
+                                )
+                            )
+                        );
 
                     return {
 
@@ -635,8 +735,10 @@ const sucursalesResultado =
                             "",
 
                         imagen:
-                            modelo.imagen ||
-                            ""
+                            imagenPrincipal,
+
+                        galeria:
+                            galeria
 
                     };
 
