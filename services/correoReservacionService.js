@@ -544,7 +544,7 @@ async function enviarCorreoSolicitudReservacionRecibida({
     const nombreAgencia =
         String(
             reservacion.agencia_nombre ||
-            "AutoRentCar"
+            "AVYNEXO"
         ).trim();
 
     const marca =
@@ -884,7 +884,7 @@ color:#6b7280;
 ">
 
 ${escaparHtml(nombreAgencia)}
-· AutoRentCar
+· AVYNEXO
 
 </td>
 </tr>
@@ -1016,7 +1016,7 @@ async function enviarCorreoReservacionConfirmada({
     const nombreAgencia =
         String(
             reservacion.agencia_nombre ||
-            "AutoRentCar"
+            "AVYNEXO"
         ).trim();
 
 
@@ -1579,7 +1579,7 @@ color:#6b7280;
 ">
 
 ${escaparHtml(nombreAgencia)}
-· AutoRentCar
+· AVYNEXO
 
 </td>
 
@@ -2064,7 +2064,7 @@ color:#6b7280;
 ">
 
 ${escaparHtml(pago.agencia_nombre)}
-· AutoRentCar
+· AVYNEXO
 
 </td>
 </tr>
@@ -2188,7 +2188,7 @@ async function enviarCorreoVehiculoEntregado({
     const nombreAgencia =
         String(
             reservacion.agencia_nombre ||
-            "AutoRentCar"
+            "AVYNEXO"
         ).trim();
 
 
@@ -2597,7 +2597,7 @@ Gracias por utilizar ${nombreAgencia}.`;
                             text-align:center;
                         ">
                             ${escaparHtml(nombreAgencia)}
-                            · AutoRentCar
+                            · AVYNEXO
                         </td>
                     </tr>
 
@@ -3049,7 +3049,7 @@ color:#6b7280;
 ">
 
 ${escaparHtml(reservacion.agencia_nombre)}
-· AutoRentCar
+· AVYNEXO
 
 </td>
 </tr>
@@ -3515,7 +3515,7 @@ color:#6b7280;
 ">
 
 ${escaparHtml(reservacion.agencia_nombre)}
-· AutoRentCar
+· AVYNEXO
 
 </td>
 </tr>

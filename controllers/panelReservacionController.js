@@ -43,6 +43,13 @@ const {
     registrarDevolucionReservacion
 } = require("../services/panelOperacionReservacionService");
 
+const {
+
+    obtenerDatosComprobanteReservacionPanel
+
+} = require(
+    "../services/comprobanteReservacionPanelService"
+);
 
 /* =========================================================
    MOSTRAR RESERVACIONES DE LA AGENCIA AUTENTICADA
@@ -89,6 +96,149 @@ async function mostrarReservacionesPanel(
                 );
 
         }
+
+
+                /* =================================================
+           FILTROS DEL LISTADO
+
+           Todos los valores procedentes de req.query se
+           normalizan y validan antes de utilizarlos.
+
+           La agencia nunca procede de estos filtros.
+        ================================================= */
+
+        const busqueda =
+            String(
+                req.query.busqueda ||
+                ""
+            )
+                .trim()
+                .slice(
+                    0,
+                    120
+                );
+
+
+        const estadosPermitidos =
+            new Set([
+                "pendiente",
+                "pendiente_pago",
+                "confirmada",
+                "en_curso",
+                "finalizada",
+                "rechazada",
+                "cancelada"
+            ]);
+
+
+        const estadoSolicitado =
+            String(
+                req.query.estado ||
+                ""
+            )
+                .trim();
+
+
+        const estado =
+            estadosPermitidos.has(
+                estadoSolicitado
+            )
+                ? estadoSolicitado
+                : "";
+
+
+        const origenesPermitidos =
+            new Set([
+                "web",
+                "panel"
+            ]);
+
+
+        const origenSolicitado =
+            String(
+                req.query.origen ||
+                ""
+            )
+                .trim();
+
+
+        const origen =
+            origenesPermitidos.has(
+                origenSolicitado
+            )
+                ? origenSolicitado
+                : "";
+
+
+        const normalizarFechaFiltro =
+            (valor) => {
+
+                const fecha =
+                    String(
+                        valor ||
+                        ""
+                    )
+                        .trim();
+
+
+                if (
+                    !/^\d{4}-\d{2}-\d{2}$/.test(
+                        fecha
+                    )
+                ) {
+
+                    return "";
+
+                }
+
+
+                const fechaValidacion =
+                    new Date(
+                        `${fecha}T00:00:00`
+                    );
+
+
+                if (
+                    Number.isNaN(
+                        fechaValidacion.getTime()
+                    )
+                ) {
+
+                    return "";
+
+                }
+
+
+                return fecha;
+
+            };
+
+
+        const fechaDesde =
+            normalizarFechaFiltro(
+                req.query.fecha_desde
+            );
+
+
+        const fechaHasta =
+            normalizarFechaFiltro(
+                req.query.fecha_hasta
+            );
+
+
+        const filtros = {
+
+            busqueda,
+
+            estado,
+
+            origen,
+
+            fechaDesde,
+
+            fechaHasta
+
+        };
 
 
         conexion =
@@ -242,6 +392,132 @@ confirmadas:
 
            Esos datos pertenecerán a la vista de detalle.
         ================================================= */
+        /* =================================================
+           CONSTRUCCIÓN SEGURA DE FILTROS
+
+           La condición de agencia siempre es obligatoria.
+           Los demás filtros únicamente refinan el listado.
+        ================================================= */
+
+        const condicionesListado = [
+            "r.agencia_id = ?"
+        ];
+
+
+        const parametrosListado = [
+            agenciaId
+        ];
+
+
+        if (
+            filtros.busqueda
+        ) {
+
+            const patronBusqueda =
+                `%${filtros.busqueda}%`;
+
+
+            condicionesListado.push(
+                `
+                (
+                    r.codigo LIKE ?
+
+                    OR r.cliente_nombre LIKE ?
+
+                    OR r.cliente_correo LIKE ?
+
+                    OR r.cliente_telefono LIKE ?
+
+                    OR m.marca LIKE ?
+
+                    OR m.nombre LIKE ?
+
+                    OR CONCAT_WS(
+                        ' ',
+                        m.marca,
+                        m.nombre
+                    ) LIKE ?
+                )
+                `
+            );
+
+
+            parametrosListado.push(
+                patronBusqueda,
+                patronBusqueda,
+                patronBusqueda,
+                patronBusqueda,
+                patronBusqueda,
+                patronBusqueda,
+                patronBusqueda
+            );
+
+        }
+
+
+        if (
+            filtros.estado
+        ) {
+
+            condicionesListado.push(
+                "r.estado = ?"
+            );
+
+
+            parametrosListado.push(
+                filtros.estado
+            );
+
+        }
+
+
+        if (
+            filtros.origen
+        ) {
+
+            condicionesListado.push(
+                "r.origen = ?"
+            );
+
+
+            parametrosListado.push(
+                filtros.origen
+            );
+
+        }
+
+
+        if (
+            filtros.fechaDesde
+        ) {
+
+            condicionesListado.push(
+                "r.fecha_recogida >= ?"
+            );
+
+
+            parametrosListado.push(
+                filtros.fechaDesde
+            );
+
+        }
+
+
+        if (
+            filtros.fechaHasta
+        ) {
+
+            condicionesListado.push(
+                "r.fecha_recogida <= ?"
+            );
+
+
+            parametrosListado.push(
+                filtros.fechaHasta
+            );
+
+        }
+
 
         const reservaciones =
             await conexion.query(
@@ -311,8 +587,11 @@ confirmadas:
                     AND m.agencia_id =
                         r.agencia_id
 
-                WHERE
-                    r.agencia_id = ?
+                               WHERE
+
+                    ${condicionesListado.join(
+                        "\nAND "
+                    )}
 
                 ORDER BY
 
@@ -347,9 +626,7 @@ confirmadas:
 
                     r.id DESC
                 `,
-                [
-                    agenciaId
-                ]
+                                parametrosListado
             );
 
 
@@ -385,6 +662,8 @@ confirmadas:
                     req.plan,
 
                 resumen,
+
+                filtros,
 
                 reservaciones
 
@@ -1742,6 +2021,146 @@ try {
 }
 
 /* =========================================================
+   OBTENER DATOS DEL COMPROBANTE PARA EL PANEL
+========================================================= */
+
+async function obtenerComprobanteReservacionPanel(
+    req,
+    res
+) {
+
+    try {
+
+        /* -------------------------------------------------
+           AGENCIA AUTENTICADA
+
+           Nunca se acepta agencia_id desde:
+           - params
+           - query
+           - body
+        ------------------------------------------------- */
+
+        const agenciaId =
+            Number(
+                req.agencia?.id
+            );
+
+
+        if (
+            !Number.isInteger(
+                agenciaId
+            ) ||
+            agenciaId <= 0
+        ) {
+
+            return res
+                .status(403)
+                .json(
+                    {
+                        ok:
+                            false,
+
+                        mensaje:
+                            "No fue posible identificar la agencia del usuario."
+                    }
+                );
+
+        }
+
+
+        const reservacionId =
+            Number(
+                req.params.reservacionId
+            );
+
+
+        if (
+            !Number.isInteger(
+                reservacionId
+            ) ||
+            reservacionId <= 0
+        ) {
+
+            return res
+                .status(400)
+                .json(
+                    {
+                        ok:
+                            false,
+
+                        mensaje:
+                            "La reservación no es válida."
+                    }
+                );
+
+        }
+
+
+        const reservacion =
+            await obtenerDatosComprobanteReservacionPanel(
+                {
+                    agenciaId,
+
+                    reservacionId
+                }
+            );
+
+
+        return res.json(
+            {
+                ok:
+                    true,
+
+                reservacion
+            }
+        );
+
+
+    } catch (
+        error
+    ) {
+
+        const status =
+            Number.isInteger(
+                error.status
+            )
+                ? error.status
+                : 500;
+
+
+        if (
+            status >= 500
+        ) {
+
+            console.error(
+                "Error obteniendo comprobante de reservación del panel:",
+                error
+            );
+
+        }
+
+
+        return res
+            .status(
+                status
+            )
+            .json(
+                {
+                    ok:
+                        false,
+
+                    mensaje:
+                        status >= 500
+                            ? "No fue posible preparar el comprobante."
+                            : error.message
+                }
+            );
+
+    }
+
+}
+
+/* =========================================================
    EXPORTACIONES
 ========================================================= */
 
@@ -1750,6 +2169,8 @@ module.exports = {
     mostrarReservacionesPanel,
 
     mostrarDetalleReservacionPanel,
+
+    obtenerComprobanteReservacionPanel,
 
     confirmarReservacionPanel,
 

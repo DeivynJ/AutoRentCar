@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Detalle del cliente de <%= agencia.nombre %>."
+    >
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <%- include("../partials/tema") %>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <div class="panel-shell">
+
+
+        <%- include("../partials/sidebar") %>
+
+
+        <div class="panel-content-wrapper">
+
+
+            <%- include("../partials/header") %>
+
+
+            <main class="panel-main">
+
+
+                <%
+
+                    function fechaSegura(
+                        valor
+                    ) {
+
+                        if (
+                            !valor
+                        ) {
+
+                            return "—";
+
+                        }
+
+
+                        const fecha =
+                            new Date(
+                                valor
+                            );
+
+
+                        if (
+                            Number.isNaN(
+                                fecha.getTime()
+                            )
+                        ) {
+
+                            return "—";
+
+                        }
+
+
+                        return fecha
+                            .toISOString()
+                            .slice(
+                                0,
+                                10
+                            );
+
+                    }
+
+
+                    function horaSegura(
+                        valor
+                    ) {
+
+                        if (
+                            !valor
+                        ) {
+
+                            return "—";
+
+                        }
+
+
+                        const texto =
+                            String(
+                                valor
+                            )
+                                .trim()
+                                .slice(
+                                    0,
+                                    5
+                                );
+
+
+                        const partes =
+                            texto.split(
+                                ":"
+                            );
+
+
+                        if (
+                            partes.length !== 2
+                        ) {
+
+                            return texto;
+
+                        }
+
+
+                        let hora =
+                            Number(
+                                partes[0]
+                            );
+
+
+                        const minutos =
+                            partes[1];
+
+
+                        const periodo =
+                            hora >= 12
+                                ? "p.m."
+                                : "a.m.";
+
+
+                        hora =
+                            hora % 12;
+
+
+                        if (
+                            hora === 0
+                        ) {
+
+                            hora = 12;
+
+                        }
+
+
+                        return `${hora}:${minutos} ${periodo}`;
+
+                    }
+
+
+                    function moneda(
+                        valor
+                    ) {
+
+                        return Number(
+                            valor ||
+                            0
+                        ).toFixed(
+                            2
+                        );
+
+                    }
+
+
+                    function nombreEstado(
+                        estado
+                    ) {
+
+                        const nombres =
+                        {
+
+                            pendiente:
+                                "Pendiente de confirmación",
+
+                            pendiente_pago:
+                                "Pendiente de pago",
+
+                            confirmada:
+                                "Confirmada",
+
+                            en_curso:
+                                "Alquiler en curso",
+
+                            finalizada:
+                                "Finalizada",
+
+                            rechazada:
+                                "Rechazada",
+
+                            cancelada:
+                                "Cancelada"
+
+                        };
+
+
+                        return nombres[
+                            estado
+                        ] ||
+                        estado ||
+                        "—";
+
+                    }
+
+
+                    function claseEstado(
+                        estado
+                    ) {
+
+                        if (
+                            estado ===
+                            "confirmada"
+                        ) {
+
+                            return "unit-status-disponible";
+
+                        }
+
+
+                        if (
+                            estado ===
+                            "en_curso"
+                        ) {
+
+                            return "unit-status-alquilado";
+
+                        }
+
+
+                        if (
+                            [
+                                "finalizada",
+                                "rechazada",
+                                "cancelada"
+                            ].includes(
+                                estado
+                            )
+                        ) {
+
+                            return "unit-status-inactivo";
+
+                        }
+
+
+                        return "unit-status-reservado";
+
+                    }
+
+
+                    function telefonoWhatsApp(
+                        telefono
+                    ) {
+
+                        return String(
+                            telefono ||
+                            ""
+                        ).replace(
+                            /\D/g,
+                            ""
+                        );
+
+                    }
+
+
+                    const whatsapp =
+                        telefonoWhatsApp(
+                            cliente.telefono
+                        );
+
+                %>
+
+
+                <!-- =====================================
+                     NAVEGACIÓN / CLIENTE
+                ====================================== -->
+
+                <section class="panel-module-hero">
+
+
+                    <div>
+
+
+                        <a
+                            href="/panel/clientes"
+                            class="panel-secondary-button"
+                        >
+
+                            <i class="fa-solid fa-arrow-left"></i>
+
+                            Volver a clientes
+
+                        </a>
+
+
+                        <span class="panel-module-badge">
+
+                            <i class="fa-solid fa-user"></i>
+
+                            Cliente
+
+                        </span>
+
+
+                        <h2>
+
+                            <span>
+                                <%= cliente.nombre || "Cliente" %>
+                            </span>
+
+                        </h2>
+
+
+                        <p>
+
+                            Consulta la información y el
+                            historial de reservaciones de
+                            este cliente en
+                            <%= agencia.nombre %>.
+
+                        </p>
+
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     RESUMEN
+                ====================================== -->
+
+                <section class="panel-summary-grid">
+
+
+                    <article class="panel-summary-card">
+
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-calendar-check"></i>
+
+                        </div>
+
+
+                        <small>
+                            Reservaciones
+                        </small>
+
+
+                        <strong>
+                            <%= resumen.totalReservaciones %>
+                        </strong>
+
+
+                        <span>
+                            Historial registrado
+                        </span>
+
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-car-side"></i>
+
+                        </div>
+
+
+                        <small>
+                            Activas
+                        </small>
+
+
+                        <strong>
+                            <%= resumen.reservacionesActivas %>
+                        </strong>
+
+
+                        <span>
+                            Actualmente en proceso
+                        </span>
+
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        </div>
+
+
+                        <small>
+                            Finalizadas
+                        </small>
+
+
+                        <strong>
+                            <%= resumen.finalizadas %>
+                        </strong>
+
+
+                        <span>
+                            Operaciones completadas
+                        </span>
+
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-user-group"></i>
+
+                        </div>
+
+
+                        <small>
+                            Tipo de cliente
+                        </small>
+
+
+                        <strong>
+
+                            <%= resumen.recurrente
+                                ? "Recurrente"
+                                : "Regular" %>
+
+                        </strong>
+
+
+                        <span>
+
+                            <%= resumen.recurrente
+                                ? "Tiene 2 o más reservaciones"
+                                : "Primera etapa de relación" %>
+
+                        </span>
+
+
+                    </article>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     INFORMACIÓN PRINCIPAL
+                ====================================== -->
+
+                <section class="reservation-overview-grid">
+
+
+                    <!-- CLIENTE -->
+
+                    <article
+                        class="panel-units-card reservation-overview-card"
+                    >
+
+
+                        <div class="reservation-overview-card-header">
+
+
+                            <div class="reservation-overview-icon">
+
+                                <i class="fa-solid fa-user"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Cliente
+                                </span>
+
+                                <h3>
+                                    <%= cliente.nombre || "No registrado" %>
+                                </h3>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="reservation-overview-list">
+
+
+                            <div>
+
+                                <strong>
+                                    Documento
+                                </strong>
+
+                                <span>
+                                    <%= cliente.documento || "No registrado" %>
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    Edad
+                                </strong>
+
+                                <span>
+
+                                    <%= cliente.edad
+                                        ? `${cliente.edad} años`
+                                        : "No registrada" %>
+
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    Licencia
+                                </strong>
+
+                                <span>
+                                    <%= cliente.licencia || "No registrada" %>
+                                </span>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </article>
+
+
+                    <!-- CONTACTO -->
+
+                    <article
+                        class="panel-units-card reservation-overview-card"
+                    >
+
+
+                        <div class="reservation-overview-card-header">
+
+
+                            <div class="reservation-overview-icon">
+
+                                <i class="fa-solid fa-address-book"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Contacto
+                                </span>
+
+                                <h3>
+                                    Información del cliente
+                                </h3>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="reservation-overview-list">
+
+
+                            <div>
+
+                                <strong>
+                                    Teléfono
+                                </strong>
+
+                                <span>
+                                    <%= cliente.telefono || "No registrado" %>
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    Correo
+                                </strong>
+
+                                <span>
+                                    <%= cliente.correo || "No registrado" %>
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+    <strong>
+        Contacto rápido
+    </strong>
+
+
+    <div class="panel-client-contact-actions">
+
+
+        <% if (
+            whatsapp
+        ) { %>
+
+            <a
+    href="https://wa.me/<%= whatsapp %>"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="panel-secondary-button panel-client-contact-whatsapp"
+>
+
+                <i class="fa-brands fa-whatsapp"></i>
+
+                WhatsApp
+
+            </a>
+
+        <% } %>
+
+
+        <% if (
+            cliente.correo
+        ) { %>
+
+            <a
+    href="mailto:<%= cliente.correo %>"
+    class="panel-secondary-button panel-client-contact-email"
+>
+
+                <i class="fa-solid fa-envelope"></i>
+
+                Correo
+
+            </a>
+
+        <% } %>
+
+
+        <% if (
+            !whatsapp &&
+            !cliente.correo
+        ) { %>
+
+            <span>
+                No hay medios de contacto disponibles.
+            </span>
+
+        <% } %>
+
+
+      </div>
+
+  </div>
+
+</div>
+
+
+                    </article>
+
+
+                    <!-- ACTIVIDAD -->
+
+                    <article
+                        class="panel-units-card reservation-overview-card"
+                    >
+
+
+                        <div class="reservation-overview-card-header">
+
+
+                            <div class="reservation-overview-icon">
+
+                                <i class="fa-solid fa-chart-line"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Actividad
+                                </span>
+
+                                <h3>
+
+                                    <%= resumen.recurrente
+                                        ? "Cliente recurrente"
+                                        : "Cliente registrado" %>
+
+                                </h3>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="reservation-overview-list">
+
+
+                            <div>
+
+                                <strong>
+                                    Reservaciones
+                                </strong>
+
+                                <span>
+                                    <%= resumen.totalReservaciones %>
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    Activas
+                                </strong>
+
+                                <span>
+                                    <%= resumen.reservacionesActivas %>
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    Finalizadas
+                                </strong>
+
+                                <span>
+                                    <%= resumen.finalizadas %>
+                                </span>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </article>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     HISTORIAL
+                ====================================== -->
+
+                <section
+                    class="panel-units-card"
+                    style="margin-top: 28px;"
+                >
+
+
+                    <div class="panel-units-header">
+
+
+                        <span>
+                            Historial del cliente
+                        </span>
+
+
+                        <h3>
+                            Reservaciones registradas
+                        </h3>
+
+
+                        <p>
+
+                            Consulta las reservaciones
+                            asociadas a este cliente dentro
+                            de la agencia.
+
+                        </p>
+
+
+                    </div>
+
+
+                    <% if (
+                        reservaciones.length
+                    ) { %>
+
+
+                        <div class="panel-units-table-wrapper">
+
+
+                            <table class="panel-units-table">
+
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Código
+                                        </th>
+
+                                        <th>
+                                            Vehículo
+                                        </th>
+
+                                        <th>
+                                            Recogida
+                                        </th>
+
+                                        <th>
+                                            Entrega
+                                        </th>
+
+                                        <th>
+                                            Estado
+                                        </th>
+
+                                        <th>
+                                            Total
+                                        </th>
+
+                                        <th>
+                                            Acción
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+
+                                    <% reservaciones.forEach(
+                                        (reservacion) => {
+                                    %>
+
+
+                                        <tr>
+
+
+                                            <td>
+
+                                                <strong>
+                                                    <%= reservacion.codigo %>
+                                                </strong>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <strong>
+
+                                                    <%= reservacion.modelo_marca || "" %>
+                                                    <%= reservacion.modelo_nombre || "" %>
+
+                                                </strong>
+
+                                                <br>
+
+                                                <small>
+
+                                                    <%= reservacion.cantidad_vehiculos %>
+
+                                                    <%= Number(
+                                                        reservacion.cantidad_vehiculos
+                                                    ) === 1
+                                                        ? "vehículo"
+                                                        : "vehículos" %>
+
+                                                </small>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <%= fechaSegura(
+                                                    reservacion.fecha_recogida
+                                                ) %>
+
+                                                <br>
+
+                                                <small>
+
+                                                    <%= horaSegura(
+                                                        reservacion.hora_recogida
+                                                    ) %>
+
+                                                </small>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <%= fechaSegura(
+                                                    reservacion.fecha_entrega
+                                                ) %>
+
+                                                <br>
+
+                                                <small>
+
+                                                    <%= horaSegura(
+                                                        reservacion.hora_entrega
+                                                    ) %>
+
+                                                </small>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <span
+                                                    class="unit-status <%= claseEstado(reservacion.estado) %>"
+                                                    style="text-transform: none;"
+                                                >
+
+                                                    <%= nombreEstado(
+                                                        reservacion.estado
+                                                    ) %>
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <strong>
+
+                                                    US$<%= moneda(
+                                                        reservacion.total
+                                                    ) %>
+
+                                                </strong>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <a
+                                                    href="/panel/reservaciones/<%= reservacion.id %>"
+                                                    class="panel-secondary-button"
+                                                >
+
+                                                    <i class="fa-solid fa-eye"></i>
+
+                                                    Ver detalle
+
+                                                </a>
+
+                                            </td>
+
+
+                                        </tr>
+
+
+                                    <% }); %>
+
+
+                                </tbody>
+
+
+                            </table>
+
+
+                        </div>
+
+
+                    <% } else { %>
+
+
+                        <div class="catalog-empty">
+
+
+                            <div>
+
+                                <i class="fa-solid fa-calendar-xmark"></i>
+
+                            </div>
+
+
+                            <h3>
+                                No hay reservaciones
+                            </h3>
+
+
+                            <p>
+
+                                No se encontró historial
+                                de reservaciones para este
+                                cliente.
+
+                            </p>
+
+
+                        </div>
+
+
+                    <% } %>
+
+
+                </section>
+
+
+            </main>
+
+
+        </div>
+
+
+    </div>
+
+
+    <script src="/js/panel.js"></script>
+
+
+</body>
+
+</html>

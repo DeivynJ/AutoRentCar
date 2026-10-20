@@ -418,7 +418,7 @@ app.get(
     (req, res) => {
 
         res.send(
-            "AutoRentCar - Backend funcionando correctamente"
+            "AVYNEXO - Backend funcionando correctamente"
         );
     }
 );
@@ -447,7 +447,7 @@ async function iniciarServidor() {
     () => {
 
         console.log(
-            `🚗 AutoRentCar ejecutándose en http://localhost:${PORT}`
+            `🚗 AVYNEXO ejecutándose en http://localhost:${PORT}`
         );
 
 
@@ -467,7 +467,7 @@ async function iniciarServidor() {
     } catch (error) {
 
         console.error(
-            "❌ AutoRentCar no pudo iniciar."
+            "❌ AVYNEXO no pudo iniciar."
         );
 
         console.error(

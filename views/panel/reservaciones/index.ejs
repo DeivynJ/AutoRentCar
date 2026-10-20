@@ -227,10 +227,8 @@
                         </span>
 
                     </article>
-
-
+                
                 </section>
-
 
                 <!-- =====================================
                      LISTADO
@@ -242,29 +240,203 @@
 >
 
 
-                    <div class="panel-units-header">
+                    <div class="panel-units-header panel-reservation-list-header">
 
-                        <div>
+    <div class="panel-reservation-list-title">
 
-                            <span>
-                                Gestión de reservaciones
-                            </span>
+        <span>
+            Gestión de reservaciones
+        </span>
 
-                            <h3>
-                                Solicitudes registradas
-                            </h3>
+        <h3>
+            Solicitudes registradas
+        </h3>
 
-                            <p>
+        <p>
 
-                                Las reservaciones pendientes
-                                aparecen primero para facilitar
-                                su revisión.
+            Las reservaciones pendientes
+            aparecen primero para facilitar
+            su revisión.
 
-                            </p>
+        </p>
 
-                        </div>
+    </div>
 
-                    </div>
+
+    <!-- =====================================
+         FILTROS DEL MISMO LISTADO
+    ====================================== -->
+
+    <form
+        action="/panel/reservaciones"
+        method="get"
+        class="panel-reservation-filters"
+        role="search"
+    >
+
+
+        <!-- BÚSQUEDA -->
+
+        <div class="panel-reservation-search">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="search"
+                name="busqueda"
+                value="<%= filtros.busqueda %>"
+                maxlength="120"
+                placeholder="Buscar reservación..."
+                aria-label="Buscar reservación"
+            >
+
+        </div>
+
+
+        <!-- ESTADO -->
+
+        <select
+            name="estado"
+            aria-label="Filtrar por estado"
+            title="Estado"
+        >
+
+            <option value="">
+                Todos los estados
+            </option>
+
+            <option
+                value="pendiente"
+                <%= filtros.estado === "pendiente"
+                    ? "selected"
+                    : "" %>
+            >
+                Pendientes
+            </option>
+
+            <option
+                value="pendiente_pago"
+                <%= filtros.estado === "pendiente_pago"
+                    ? "selected"
+                    : "" %>
+            >
+                Pendientes de pago
+            </option>
+
+            <option
+                value="confirmada"
+                <%= filtros.estado === "confirmada"
+                    ? "selected"
+                    : "" %>
+            >
+                Confirmadas
+            </option>
+
+            <option
+                value="en_curso"
+                <%= filtros.estado === "en_curso"
+                    ? "selected"
+                    : "" %>
+            >
+                En curso
+            </option>
+
+            <option
+                value="finalizada"
+                <%= filtros.estado === "finalizada"
+                    ? "selected"
+                    : "" %>
+            >
+                Finalizadas
+            </option>
+
+            <option
+                value="rechazada"
+                <%= filtros.estado === "rechazada"
+                    ? "selected"
+                    : "" %>
+            >
+                Rechazadas
+            </option>
+
+            <option
+                value="cancelada"
+                <%= filtros.estado === "cancelada"
+                    ? "selected"
+                    : "" %>
+            >
+                Canceladas
+            </option>
+
+        </select>
+
+
+        <!-- ORIGEN -->
+
+        <select
+            name="origen"
+            aria-label="Filtrar por origen"
+            title="Origen"
+        >
+
+            <option value="">
+                Todos los orígenes
+            </option>
+
+            <option
+                value="web"
+                <%= filtros.origen === "web"
+                    ? "selected"
+                    : "" %>
+            >
+                Web
+            </option>
+
+            <option
+                value="panel"
+                <%= filtros.origen === "panel"
+                    ? "selected"
+                    : "" %>
+            >
+                Panel
+            </option>
+
+        </select>
+
+
+        <!-- FILTRAR -->
+
+        <button
+            type="submit"
+            class="panel-reservation-filter-button"
+            title="Aplicar filtros"
+        >
+
+            <i class="fa-solid fa-filter"></i>
+
+            <span>
+                Filtrar
+            </span>
+
+        </button>
+
+
+        <!-- LIMPIAR -->
+
+        <a
+            href="/panel/reservaciones"
+            class="panel-reservation-filter-clear"
+            title="Limpiar filtros"
+            aria-label="Limpiar filtros"
+        >
+
+            <i class="fa-solid fa-rotate-left"></i>
+
+        </a>
+
+    </form>
+
+</div>
 
 
                     <% if (reservaciones.length) { %>
@@ -713,33 +885,65 @@ if (
 
                     <% } else { %>
 
-
-                        <div class="catalog-empty">
-
-                            <div>
-
-                                <i class="fa-solid fa-calendar-check"></i>
-
-                            </div>
-
-
-                            <h3>
-                                Todavía no hay reservaciones
-                            </h3>
+    <%
+        const hayFiltrosActivos =
+            Boolean(
+                filtros.busqueda ||
+                filtros.estado ||
+                filtros.origen ||
+                filtros.fechaDesde ||
+                filtros.fechaHasta
+            );
+    %>
 
 
-                            <p>
+    <div class="catalog-empty">
 
-                                Las nuevas solicitudes recibidas
-                                para esta agencia aparecerán aquí
-                                automáticamente.
+        <div>
 
-                            </p>
+            <i
+                class="fa-solid
+                <%= hayFiltrosActivos
+                    ? 'fa-magnifying-glass'
+                    : 'fa-calendar-check' %>"
+            ></i>
 
-                        </div>
+        </div>
 
 
-                    <% } %>
+        <h3>
+
+            <%= hayFiltrosActivos
+                ? "No se encontraron reservaciones"
+                : "Todavía no hay reservaciones" %>
+
+        </h3>
+
+
+        <p>
+
+            <% if (hayFiltrosActivos) { %>
+
+                No hay solicitudes que coincidan
+                con los filtros seleccionados.
+                Puedes modificar los criterios
+                o limpiar los filtros para volver
+                a ver el listado completo.
+
+            <% } else { %>
+
+                Las nuevas solicitudes recibidas
+                para esta agencia aparecerán aquí
+                automáticamente.
+
+            <% } %>
+
+        </p>
+
+    </div>
+
+
+<% } %>
 
 
                 </section>

@@ -1,5 +1,5 @@
 /* =========================================================
-   AUTORENTCAR
+   AVYNEXO
    ALERTAS DE SUSCRIPCIÓN
    SUPERADMIN + ADMINISTRADORES DE AGENCIA
 ========================================================= */
@@ -158,7 +158,7 @@ function determinarEventoSuscripcion(
 
             mensajeAgencia:
                 esPrueba
-                    ? `Tu período de prueba del plan ${suscripcion.plan_nombre} vence hoy. Comunícate con AutoRentCar para continuar utilizando el servicio.`
+                    ? `Tu período de prueba del plan ${suscripcion.plan_nombre} vence hoy. Comunícate con AVYNEXO para continuar utilizando el servicio.`
                     : `Tu suscripción al plan ${suscripcion.plan_nombre} vence hoy. Realiza la renovación para mantener activo el servicio.`,
 
             tipoAgencia:
@@ -214,7 +214,7 @@ function determinarEventoSuscripcion(
 
             mensajeAgencia:
                 esPrueba
-                    ? `Tu período de prueba del plan ${suscripcion.plan_nombre} vence mañana. Comunícate con AutoRentCar para continuar utilizando el servicio.`
+                    ? `Tu período de prueba del plan ${suscripcion.plan_nombre} vence mañana. Comunícate con AVYNEXO para continuar utilizando el servicio.`
                     : `Tu suscripción al plan ${suscripcion.plan_nombre} vence mañana. Te recomendamos realizar la renovación antes de su vencimiento.`,
 
             tipoAgencia:
@@ -270,7 +270,7 @@ function determinarEventoSuscripcion(
 
             mensajeAgencia:
                 esPrueba
-                    ? `Tu período de prueba del plan ${suscripcion.plan_nombre} vence en ${diasRestantes} días. Comunícate con AutoRentCar para continuar con el servicio.`
+                    ? `Tu período de prueba del plan ${suscripcion.plan_nombre} vence en ${diasRestantes} días. Comunícate con AVYNEXO para continuar con el servicio.`
                     : `Tu suscripción al plan ${suscripcion.plan_nombre} vence en ${diasRestantes} días. Te recomendamos realizar la renovación a tiempo.`,
 
             tipoAgencia:
@@ -326,8 +326,8 @@ function determinarEventoSuscripcion(
 
             mensajeAgencia:
                 esPrueba
-                    ? `Tu período de prueba del plan ${suscripcion.plan_nombre} vence en ${diasRestantes} días. Comunícate con AutoRentCar si deseas continuar con el servicio.`
-                    : `Tu suscripción al plan ${suscripcion.plan_nombre} vence en ${diasRestantes} días. Puedes gestionar la renovación con AutoRentCar antes de la fecha de vencimiento.`,
+                    ? `Tu período de prueba del plan ${suscripcion.plan_nombre} vence en ${diasRestantes} días. Comunícate con AVYNEXO si deseas continuar con el servicio.`
+                    : `Tu suscripción al plan ${suscripcion.plan_nombre} vence en ${diasRestantes} días. Puedes gestionar la renovación con AVYNEXO antes de la fecha de vencimiento.`,
 
             tipoAgencia:
                 esPrueba

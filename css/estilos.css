@@ -6285,23 +6285,29 @@ article:nth-child(2) > div {
  * visibility:hidden conserva el espacio y evita saltos
  * de diseño mientras se cargan los datos dinámicos.
  */
-body {
-    opacity: 1;
-    transition: opacity 0.16s ease-out;
+/*
+ * Mientras se obtiene y aplica la identidad pública,
+ * el catálogo permanece completamente oculto.
+ *
+ * El fondo de espera se adapta al modo visual para evitar
+ * destellos claros u oscuros durante la navegación.
+ */
+html.cargando-branding {
+    background-color: var(--color-fondo);
+}
+
+
+html.cargando-branding:has(body.modo-oscuro) {
+    background-color: var(--color-principal-oscuro);
 }
 
 
 html.cargando-branding body {
-    opacity: 0;
+    visibility: hidden;
     pointer-events: none;
 }
 
 
-/*
- * Durante este proceso tampoco permitimos transiciones.
- * Así, cuando se libera la página, aparece directamente
- * con la identidad correcta de la agencia.
- */
 html.cargando-branding *,
 html.cargando-branding *::before,
 html.cargando-branding *::after {

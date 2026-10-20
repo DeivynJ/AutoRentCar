@@ -6,10 +6,13 @@ document.documentElement.classList.add(
 );
 
 aplicarTemaAgenciaGuardado();
+cargarPreferenciaVisual();
 
 document.addEventListener("DOMContentLoaded", () => {
 
     configurarNavegacionMultiagencia();
+
+    configurarVisibilidadMisReservaciones();
 
     configurarTransicionPaginasPublicas();
 
@@ -19,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     configurarModal();
     configurarEnlacesInternos();
     colocarAnioActual();
-    cargarPreferenciaVisual();
     configurarFormularioContacto();
     cargarIdentidadAgenciaPublica();
 
@@ -206,6 +208,80 @@ function configurarNavegacionMultiagencia() {
 
         }
     );
+
+}
+
+/* =========================================================
+   VISIBILIDAD DE "MIS RESERVACIONES"
+
+   Solo se muestra cuando este navegador conserva al menos
+   una reservación de la agencia pública actual.
+========================================================= */
+
+function configurarVisibilidadMisReservaciones() {
+
+    const slug =
+        obtenerSlugAgenciaPublica();
+
+
+    const claveReservaciones =
+        `autorentcarReservaciones:${slug}`;
+
+
+    let tieneReservaciones =
+        false;
+
+
+    try {
+
+        const contenido =
+            localStorage.getItem(
+                claveReservaciones
+            );
+
+
+        if (contenido) {
+
+            const reservaciones =
+                JSON.parse(
+                    contenido
+                );
+
+
+            tieneReservaciones =
+                Array.isArray(
+                    reservaciones
+                ) &&
+                reservaciones.length > 0;
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "No fue posible comprobar las reservaciones guardadas.",
+            error
+        );
+
+
+        tieneReservaciones =
+            false;
+
+    }
+
+
+    document
+        .querySelectorAll(
+            'a[href*="mis-reservas.html"]'
+        )
+        .forEach(
+            (enlace) => {
+
+                enlace.hidden =
+                    !tieneReservaciones;
+
+            }
+        );
 
 }
 

@@ -58,7 +58,199 @@ function obtenerClaveReservacionesConfirmacion() {
    CARGAR LA ÚLTIMA RESERVACIÓN
 ========================================================= */
 
-function cargarConfirmacionReserva() {
+async function cargarConfirmacionReserva() {
+
+        /* =====================================================
+       COMPROBANTE SOLICITADO DESDE EL PANEL
+
+       Cuando existe panel_reservacion, los datos no se
+       toman de localStorage. Se consultan mediante la ruta
+       privada del panel.
+    ===================================================== */
+
+    const parametros =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const reservacionPanelId =
+        Number(
+            parametros.get(
+                "panel_reservacion"
+            )
+        );
+
+
+    if (
+        Number.isInteger(
+            reservacionPanelId
+        ) &&
+        reservacionPanelId > 0
+    ) {
+
+        const contenido =
+            document.getElementById(
+                "confirmacion-contenido"
+            );
+
+
+        const sinDatos =
+            document.getElementById(
+                "confirmacion-sin-datos"
+            );
+
+
+        try {
+
+            const respuesta =
+                await fetch(
+                    `/panel/reservaciones/${reservacionPanelId}/comprobante`,
+                    {
+                        headers:
+                        {
+                            Accept:
+                                "application/json"
+                        },
+
+                        cache:
+                            "no-store"
+                    }
+                );
+
+
+            const tipoContenido =
+                respuesta.headers.get(
+                    "content-type"
+                ) ||
+                "";
+
+
+            if (
+                !tipoContenido.includes(
+                    "application/json"
+                )
+            ) {
+
+                throw new Error(
+                    "La sesión del panel no está disponible."
+                );
+
+            }
+
+
+            const datos =
+                await respuesta.json();
+
+
+            if (
+                !respuesta.ok ||
+                datos?.ok !== true ||
+                !datos?.reservacion
+            ) {
+
+                throw new Error(
+                    datos?.mensaje ||
+                    "No fue posible cargar la reservación."
+                );
+
+            }
+
+
+            ultimaReservacion =
+                datos.reservacion;
+
+
+            const slugAgenciaActual =
+                obtenerSlugAgenciaConfirmacion();
+
+
+            if (
+                ultimaReservacion
+                    ?.agencia
+                    ?.slug &&
+                ultimaReservacion
+                    .agencia
+                    .slug !==
+                    slugAgenciaActual
+            ) {
+
+                throw new Error(
+                    "La reservación pertenece a otra agencia."
+                );
+
+            }
+
+
+            normalizarReservacionConfirmacion();
+
+
+            sinDatos?.classList.remove(
+                "visible"
+            );
+
+
+            contenido?.classList.add(
+                "visible"
+            );
+
+
+            mostrarDatosConfirmacion();
+
+
+            /*
+             * Si posteriormente abrimos esta página
+             * con descargar=1, generará automáticamente
+             * el mismo comprobante PDF.
+             */
+
+            if (
+                parametros.get(
+                    "descargar"
+                ) ===
+                "1"
+            ) {
+
+                window.setTimeout(
+                    descargarResumenReservacion,
+                    250
+                );
+
+            }
+
+
+            return;
+
+        } catch (
+            error
+        ) {
+
+            console.error(
+                "No fue posible cargar la reservación desde el panel.",
+                error
+            );
+
+
+            ultimaReservacion =
+                null;
+
+
+            contenido?.classList.remove(
+                "visible"
+            );
+
+
+            sinDatos?.classList.add(
+                "visible"
+            );
+
+
+            return;
+
+        }
+
+    }
+    
     const reservacionGuardada = localStorage.getItem(
     obtenerClaveUltimaReservacionConfirmacion()
 );

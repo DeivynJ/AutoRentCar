@@ -5574,6 +5574,489 @@ html[data-panel-tema="oscuro"]
 }
 
 
+/* =========================================================
+   FILTROS COMPACTOS DE RESERVACIONES
+========================================================= */
+
+.panel-reservation-list-header {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        22px;
+}
+
+
+.panel-reservation-list-title {
+
+    flex:
+        1 1 auto;
+
+    min-width:
+        260px;
+}
+
+
+.panel-reservation-filters {
+
+    flex:
+        0 1 720px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(190px, 1fr)
+        155px
+        125px
+        auto
+        40px;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    margin-left:
+        auto;
+}
+
+.panel-client-filters {
+
+    flex-basis:
+        600px;
+
+    grid-template-columns:
+        minmax(210px, 1fr)
+        190px
+        auto
+        40px;
+}
+
+
+/* =========================================================
+   BUSCADOR
+========================================================= */
+
+.panel-reservation-search {
+
+    position:
+        relative;
+
+    min-width:
+        0;
+}
+
+
+.panel-reservation-search > i {
+
+    position:
+        absolute;
+
+    top:
+        50%;
+
+    left:
+        12px;
+
+    transform:
+        translateY(-50%);
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.7rem;
+
+    pointer-events:
+        none;
+}
+
+
+.panel-reservation-search input {
+
+    width:
+        100%;
+
+    height:
+        40px;
+
+    padding:
+        0 12px
+        0 35px;
+
+    border:
+        1px solid
+        var(--panel-border);
+
+    border-radius:
+        9px;
+
+    outline:
+        none;
+
+    color:
+        var(--panel-text);
+
+    background:
+        var(--panel-surface-alt);
+
+    font-family:
+        inherit;
+
+    font-size:
+        0.67rem;
+
+    transition:
+        border-color
+        var(--panel-transition),
+        box-shadow
+        var(--panel-transition);
+}
+
+
+.panel-reservation-search input::placeholder {
+
+    color:
+        var(--panel-text-soft);
+}
+
+
+/* =========================================================
+   SELECTORES
+========================================================= */
+
+.panel-reservation-filters select {
+
+    width:
+        100%;
+
+    height:
+        40px;
+
+    padding:
+        0 30px
+        0 10px;
+
+    border:
+        1px solid
+        var(--panel-border);
+
+    border-radius:
+        9px;
+
+    outline:
+        none;
+
+    color:
+        var(--panel-text);
+
+    background:
+        var(--panel-surface-alt);
+
+    font-family:
+        inherit;
+
+    font-size:
+        0.65rem;
+
+    font-weight:
+        600;
+
+    cursor:
+        pointer;
+}
+
+
+/* =========================================================
+   FOCO
+========================================================= */
+
+.panel-reservation-search input:focus,
+.panel-reservation-filters select:focus {
+
+    border-color:
+        var(--panel-accent);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            var(--panel-accent-rgb),
+            0.10
+        );
+}
+
+
+/* =========================================================
+   BOTÓN FILTRAR
+========================================================= */
+
+.panel-reservation-filter-button {
+
+    min-height:
+        40px;
+
+    padding:
+        0 14px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        7px;
+
+    border:
+        none;
+
+    border-radius:
+        9px;
+
+    color:
+        var(--panel-text-on-accent);
+
+    background:
+        var(--panel-accent);
+
+    font-family:
+        inherit;
+
+    font-size:
+        0.65rem;
+
+    font-weight:
+        800;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform
+        var(--panel-transition),
+        box-shadow
+        var(--panel-transition);
+}
+
+
+/*
+ * Evita que el span del botón herede
+ * el estilo del subtítulo del encabezado.
+ */
+
+.panel-units-header
+.panel-reservation-filter-button
+span {
+
+    display:
+        inline;
+
+    margin:
+        0;
+
+    color:
+        inherit;
+
+    font-size:
+        inherit;
+
+    font-weight:
+        inherit;
+
+    text-transform:
+        none;
+
+    letter-spacing:
+        normal;
+}
+
+
+.panel-reservation-filter-button:hover {
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 7px 16px
+        rgba(
+            var(--panel-accent-rgb),
+            0.18
+        );
+}
+
+
+/* =========================================================
+   BOTÓN LIMPIAR
+========================================================= */
+
+.panel-reservation-filter-clear {
+
+    width:
+        40px;
+
+    height:
+        40px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border:
+        1px solid
+        var(--panel-border);
+
+    border-radius:
+        9px;
+
+    color:
+        var(--panel-text-soft);
+
+    background:
+        var(--panel-surface-alt);
+
+    font-size:
+        0.72rem;
+
+    transition:
+        color
+        var(--panel-transition),
+        border-color
+        var(--panel-transition),
+        background
+        var(--panel-transition);
+}
+
+
+.panel-reservation-filter-clear:hover {
+
+    color:
+        var(--panel-accent);
+
+    border-color:
+        rgba(
+            var(--panel-accent-rgb),
+            0.45
+        );
+
+    background:
+        rgba(
+            var(--panel-accent-rgb),
+            0.06
+        );
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (
+    max-width: 1180px
+) {
+
+    .panel-reservation-list-header {
+
+        align-items:
+            stretch;
+
+        flex-direction:
+            column;
+    }
+
+
+    .panel-reservation-filters {
+
+        flex:
+            none;
+
+        width:
+            100%;
+
+        margin-left:
+            0;
+    }
+
+}
+
+
+@media (
+    max-width: 760px
+) {
+
+    .panel-reservation-filters {
+
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+
+    .panel-reservation-search {
+
+        grid-column:
+            1 / -1;
+    }
+
+
+    .panel-reservation-filter-button {
+
+        width:
+            100%;
+    }
+
+
+    .panel-reservation-filter-clear {
+
+        width:
+            100%;
+    }
+
+}
+
+
+@media (
+    max-width: 520px
+) {
+
+    .panel-reservation-filters {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .panel-reservation-search {
+
+        grid-column:
+            auto;
+    }
+
+
+    .panel-reservation-filter-clear {
+
+        width:
+            100%;
+    }
+
+}
+
+
 .panel-units-table-wrapper {
 
     width:
@@ -6742,7 +7225,9 @@ html[data-panel-tema="oscuro"]
 }
 
 
-.reservation-compact-section-header > div > span {
+.reservation-compact-section-header 
+> div 
+> span {
 
     display:
         block;
@@ -6754,7 +7239,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-accent);
 
     font-size:
-        0.57rem;
+       0.65rem;
 
     font-weight:
         800;
@@ -6793,7 +7278,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text-soft);
 
     font-size:
-        0.62rem;
+         0.67rem;
 
     font-weight:
         500;
@@ -6867,7 +7352,7 @@ html[data-panel-tema="oscuro"]
         inherit;
 
     font-size:
-        0.64rem;
+        0.70rem;
 
     font-weight:
         800;
@@ -7200,7 +7685,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text-soft);
 
     font-size:
-        0.55rem;
+         0.65rem;
 
     font-weight:
         800;
@@ -7222,7 +7707,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text);
 
     font-size:
-        0.75rem;
+         0.90rem;
 
     font-weight:
         800;
@@ -7247,6 +7732,128 @@ html[data-panel-tema="oscuro"]
 
 }
 
+/* =========================================================
+   ACCIONES DE CONTACTO DEL CLIENTE
+========================================================= */
+
+.panel-client-contact-actions {
+
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    margin-top:
+        4px;
+}
+
+
+.panel-client-contact-actions
+.panel-secondary-button {
+
+    min-height:
+        36px;
+
+    padding:
+        0 12px;
+
+    font-size:
+        0.70rem;
+
+    white-space:
+        nowrap;
+}
+
+/* =========================================================
+   ICONOS DE CONTACTO DEL CLIENTE
+========================================================= */
+
+.panel-client-contact-actions
+.panel-secondary-button
+> i {
+
+    width:
+        28px;
+
+    height:
+        28px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    flex-shrink:
+        0;
+
+    border-radius:
+        8px;
+
+    font-size:
+        0.85rem;
+
+    transition:
+        transform
+        var(--panel-transition);
+}
+
+
+/* WhatsApp */
+
+.panel-client-contact-whatsapp
+> i {
+
+    color:
+        #25d366;
+
+    background:
+        rgba(
+            37,
+            211,
+            102,
+            0.12
+        );
+}
+
+
+/* Correo */
+
+.panel-client-contact-email
+> i {
+
+    color:
+        #2563eb;
+
+    background:
+        rgba(
+            37,
+            99,
+            235,
+            0.12
+        );
+}
+
+
+/* Pequeño efecto visual */
+
+.panel-client-contact-actions
+.panel-secondary-button:hover
+> i {
+
+    transform:
+        scale(1.08);
+}
 
 .reservation-overview-list > div {
 
@@ -7290,7 +7897,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text);
 
     font-size:
-        0.58rem;
+        0.67rem;
 
     font-weight:
         800;
@@ -7306,7 +7913,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text-soft);
 
     font-size:
-        0.62rem;
+         0.72rem;
 
     font-weight:
         500;
@@ -7387,7 +7994,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text);
 
     font-size:
-        0.56rem;
+        0.67rem;
 
     font-weight:
         800;
@@ -7404,7 +8011,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text-soft);
 
     font-size:
-        0.68rem;
+        0.72rem;
 
     font-weight:
         500;
@@ -7596,7 +8203,7 @@ html[data-panel-tema="oscuro"]
         9px;
 
     font-size:
-        0.65rem;
+        0.72rem;
 
     font-weight:
         800;
@@ -7661,7 +8268,7 @@ html[data-panel-tema="oscuro"]
         );
 
     font-size:
-        0.54rem;
+        0.62rem;
 
     font-weight:
         800;
@@ -7677,7 +8284,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text);
 
     font-size:
-        0.65rem;
+          0.72rem;
 
     font-weight:
         800;
@@ -7791,7 +8398,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text);
 
     font-size:
-        0.57rem;
+           0.67rem;
 
     font-weight:
         800;
@@ -7808,7 +8415,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text-soft);
 
     font-size:
-        0.64rem;
+         0.72rem;
 
     font-weight:
         500;
@@ -7890,7 +8497,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text);
 
     font-size:
-        0.64rem;
+       0.72rem;
 
     font-weight:
         800;
@@ -7909,7 +8516,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text-soft);
 
     font-size:
-        0.59rem;
+        0.67rem;
 
     font-weight:
         500;
@@ -7926,7 +8533,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text);
 
     font-size:
-        0.68rem;
+        0.72rem;
 
     font-weight:
         700;
@@ -8009,7 +8616,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text);
 
     font-size:
-        0.67rem;
+        0.72rem;
 
     font-weight:
         800;
@@ -8028,7 +8635,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text-soft);
 
     font-size:
-        0.61rem;
+        0.67rem;
 
     font-weight:
         500;
@@ -8082,7 +8689,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text);
 
     font-size:
-        0.55rem;
+         0.67rem;
 
     font-weight:
         800;
@@ -8099,7 +8706,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text-soft);
 
     font-size:
-        0.59rem;
+         0.72rem;
 
     font-weight:
         500;
@@ -8181,7 +8788,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text-soft);
 
     font-size:
-        0.59rem;
+         0.67rem;
 
     font-weight:
         500;
@@ -8278,7 +8885,7 @@ html[data-panel-tema="oscuro"]
         );
 
     font-size:
-        0.62rem;
+        0.70rem;
 
     font-weight:
         800;
@@ -8331,7 +8938,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text);
 
     font-size:
-        0.58rem;
+        0.67rem;
 
     font-weight:
         800;
@@ -8373,7 +8980,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-surface-alt);
 
     font-size:
-        0.62rem;
+         0.72rem;
 
     font-weight:
         500;
@@ -8437,7 +9044,7 @@ html[data-panel-tema="oscuro"]
         );
 
     font-size:
-        0.59rem;
+        0.67rem;
 
     font-weight:
         500;
@@ -8509,7 +9116,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text-soft);
 
     font-size:
-        0.62rem;
+         0.67rem;
 
     font-weight:
         500;
@@ -8523,7 +9130,7 @@ html[data-panel-tema="oscuro"]
         var(--panel-text);
 
     font-size:
-        0.64rem;
+        0.72rem;
 
     font-weight:
         700;
@@ -8587,7 +9194,7 @@ strong {
         var(--panel-text-soft);
 
     font-size:
-        0.65rem;
+        0.72rem;
 
     font-weight:
         500;

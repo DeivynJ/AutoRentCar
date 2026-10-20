@@ -855,7 +855,7 @@ async function exportarResumenDashboard(
         filas.push(
             [
                 escaparCampoCsv(
-                    "AUTORENTCAR - RESUMEN ADMINISTRATIVO"
+                     "AVYNEXO - RESUMEN ADMINISTRATIVO"
                 )
             ].join(",")
         );

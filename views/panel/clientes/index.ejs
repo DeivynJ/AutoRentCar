@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Clientes de <%= agencia.nombre %>."
+    >
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <%- include("../partials/tema") %>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <div class="panel-shell">
+
+
+        <%- include("../partials/sidebar") %>
+
+
+        <div class="panel-content-wrapper">
+
+
+            <%- include("../partials/header") %>
+
+
+            <main class="panel-main">
+
+
+                <!-- =====================================
+                     ENCABEZADO
+                ====================================== -->
+
+                <section class="panel-module-hero">
+
+                    <div>
+
+                        <span class="panel-module-badge">
+
+                            <i class="fa-solid fa-users"></i>
+
+                            Clientes
+
+                        </span>
+
+
+                        <h2>
+
+                            Clientes de
+
+                            <span>
+                                <%= agencia.nombre %>
+                            </span>
+
+                        </h2>
+
+
+                        <p>
+
+                            Consulta los clientes registrados
+                            a partir de las reservaciones
+                            realizadas exclusivamente en
+                            tu agencia.
+
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =====================================
+                     RESUMEN
+                ====================================== -->
+
+                <section class="panel-summary-grid">
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-users"></i>
+
+                        </div>
+
+                        <small>
+                            Total
+                        </small>
+
+                        <strong>
+                            <%= resumen.total %>
+                        </strong>
+
+                        <span>
+                            Clientes registrados
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-user-group"></i>
+
+                        </div>
+
+                        <small>
+                            Recurrentes
+                        </small>
+
+                        <strong>
+                            <%= resumen.recurrentes %>
+                        </strong>
+
+                        <span>
+                            Con 2 o más reservaciones
+                        </span>
+
+                    </article>
+
+
+                    <article class="panel-summary-card">
+
+                        <div class="panel-summary-icon">
+
+                            <i class="fa-solid fa-car-side"></i>
+
+                        </div>
+
+                        <small>
+                            Con reservación activa
+                        </small>
+
+                        <strong>
+                            <%= resumen.conReservacionActiva %>
+                        </strong>
+
+                        <span>
+                            Con operaciones en proceso
+                        </span>
+
+                    </article>
+
+
+                </section>
+
+
+                <!-- =====================================
+                     LISTADO
+                ====================================== -->
+
+                <section
+                    class="panel-units-card"
+                    style="margin-top: 28px;"
+                >
+
+
+                    <div class="panel-units-header panel-reservation-list-header">
+
+    <div class="panel-reservation-list-title">
+
+        <span>
+            Gestión de clientes
+        </span>
+
+        <h3>
+            Clientes registrados
+        </h3>
+
+        <p>
+
+            Los clientes se identifican
+            automáticamente a partir de
+            las reservaciones de la agencia.
+
+        </p>
+
+    </div>
+
+
+    <!-- =====================================
+         FILTROS DEL LISTADO
+    ====================================== -->
+
+    <form
+        action="/panel/clientes"
+        method="get"
+        class="panel-reservation-filters panel-client-filters"
+        role="search"
+    >
+
+
+        <!-- BÚSQUEDA -->
+
+        <div class="panel-reservation-search">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="search"
+                name="busqueda"
+                value="<%= filtros.busqueda %>"
+                maxlength="120"
+                placeholder="Buscar cliente..."
+                aria-label="Buscar cliente"
+            >
+
+        </div>
+
+
+        <!-- ACTIVIDAD -->
+
+        <select
+            name="actividad"
+            aria-label="Filtrar clientes por actividad"
+            title="Actividad"
+        >
+
+            <option value="">
+                Todos los clientes
+            </option>
+
+            <option
+                value="activa"
+                <%= filtros.actividad === "activa"
+                    ? "selected"
+                    : "" %>
+            >
+                Con reservación activa
+            </option>
+
+            <option
+                value="recurrente"
+                <%= filtros.actividad === "recurrente"
+                    ? "selected"
+                    : "" %>
+            >
+                Recurrentes
+            </option>
+
+            <option
+                value="sin_activa"
+                <%= filtros.actividad === "sin_activa"
+                    ? "selected"
+                    : "" %>
+            >
+                Sin reservación activa
+            </option>
+
+        </select>
+
+
+        <!-- FILTRAR -->
+
+        <button
+            type="submit"
+            class="panel-reservation-filter-button"
+            title="Aplicar filtros"
+        >
+
+            <i class="fa-solid fa-filter"></i>
+
+            <span>
+                Filtrar
+            </span>
+
+        </button>
+
+
+        <!-- LIMPIAR -->
+
+        <a
+            href="/panel/clientes"
+            class="panel-reservation-filter-clear"
+            title="Limpiar filtros"
+            aria-label="Limpiar filtros"
+        >
+
+            <i class="fa-solid fa-rotate-left"></i>
+
+        </a>
+
+    </form>
+
+</div>
+
+
+                    <% if (clientes.length) { %>
+
+
+                        <%
+                            function fechaSegura(
+                                valor
+                            ) {
+
+                                if (
+                                    !valor
+                                ) {
+
+                                    return "—";
+
+                                }
+
+
+                                const fecha =
+                                    new Date(
+                                        valor
+                                    );
+
+
+                                if (
+                                    Number.isNaN(
+                                        fecha.getTime()
+                                    )
+                                ) {
+
+                                    return "—";
+
+                                }
+
+
+                                return new Intl.DateTimeFormat(
+                                    "es-DO",
+                                    {
+                                        day:
+                                            "2-digit",
+
+                                        month:
+                                            "2-digit",
+
+                                        year:
+                                            "numeric"
+                                    }
+                                ).format(
+                                    fecha
+                                );
+
+                            }
+
+
+                            function nombreEstado(
+                                estado
+                            ) {
+
+                                const nombres =
+                                {
+
+                                    pendiente:
+                                        "Pendiente",
+
+                                    pendiente_pago:
+                                        "Pendiente de pago",
+
+                                    confirmada:
+                                        "Confirmada",
+
+                                    en_curso:
+                                        "En curso",
+
+                                    finalizada:
+                                        "Finalizada",
+
+                                    rechazada:
+                                        "Rechazada",
+
+                                    cancelada:
+                                        "Cancelada"
+
+                                };
+
+
+                                return nombres[
+                                    estado
+                                ] ||
+                                estado ||
+                                "—";
+
+                            }
+                        %>
+
+
+                        <div class="panel-units-table-wrapper">
+
+
+                            <table class="panel-units-table">
+
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Cliente
+                                        </th>
+
+                                        <th>
+                                            Contacto
+                                        </th>
+
+                                        <th>
+                                            Documento
+                                        </th>
+
+                                        <th>
+                                            Reservaciones
+                                        </th>
+
+                                        <th>
+                                            Actividad
+                                        </th>
+
+                                        <th>
+                                            Última reservación
+                                        </th>
+
+                                        <th>
+                                            Acción
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+
+                                    <% clientes.forEach((cliente) => { %>
+
+
+                                        <tr>
+
+
+                                            <!-- CLIENTE -->
+
+                                            <td>
+
+                                                <strong>
+
+                                                    <%= cliente.nombre ||
+                                                        "Cliente sin nombre" %>
+
+                                                </strong>
+
+                                            </td>
+
+
+                                            <!-- CONTACTO -->
+
+                                            <td>
+
+                                                <div>
+
+                                                    <span>
+
+                                                        <i class="fa-solid fa-phone"></i>
+
+                                                        <%= cliente.telefono ||
+                                                            "—" %>
+
+                                                    </span>
+
+                                                    <br>
+
+                                                    <span>
+
+                                                        <i class="fa-solid fa-envelope"></i>
+
+                                                        <%= cliente.correo ||
+                                                            "—" %>
+
+                                                    </span>
+
+                                                </div>
+
+                                            </td>
+
+
+                                            <!-- DOCUMENTO -->
+
+                                            <td>
+
+                                                <%= cliente.documento ||
+                                                    "—" %>
+
+                                            </td>
+
+
+                                            <!-- RESERVACIONES -->
+
+                                            <td>
+
+                                                <strong>
+                                                    <%= cliente.totalReservaciones %>
+                                                </strong>
+
+                                                <% if (
+                                                    cliente.totalReservaciones >= 2
+                                                ) { %>
+
+                                                    <span
+                                                        class="unit-status unit-status-disponible"
+                                                    >
+                                                        Recurrente
+                                                    </span>
+
+                                                <% } %>
+
+                                            </td>
+
+
+                                            <!-- ACTIVIDAD -->
+
+                                            <td>
+
+                                                <% if (
+                                                    cliente.tieneReservacionActiva
+                                                ) { %>
+
+                                                    <span
+                                                        class="unit-status unit-status-disponible"
+                                                    >
+                                                        Activa
+                                                    </span>
+
+                                                <% } else { %>
+
+                                                    <span
+                                                        class="unit-status unit-status-inactivo"
+                                                    >
+                                                        Sin reservación activa
+                                                    </span>
+
+                                                <% } %>
+
+                                            </td>
+
+
+                                            <!-- ÚLTIMA RESERVACIÓN -->
+
+                                            <td>
+
+                                                <strong>
+
+                                                    <%= cliente.ultimaReservacion.codigo ||
+                                                        "—" %>
+
+                                                </strong>
+
+                                                <br>
+
+                                                <span>
+
+                                                    <%= nombreEstado(
+                                                        cliente
+                                                            .ultimaReservacion
+                                                            .estado
+                                                    ) %>
+
+                                                </span>
+
+                                                <br>
+
+                                                <small>
+
+                                                    <%= fechaSegura(
+                                                        cliente
+                                                            .ultimaReservacion
+                                                            .fechaCreacion
+                                                    ) %>
+
+                                                </small>
+
+                                            </td>
+
+                                          <td>
+
+    <a
+        href="/panel/clientes/<%= cliente.ultimaReservacion.id %>"
+        class="panel-secondary-button"
+    >
+
+        <i class="fa-solid fa-eye"></i>
+
+        Ver cliente
+
+    </a>
+
+</td>  
+
+
+                                        </tr>
+
+
+                                    <% }); %>
+
+
+                                </tbody>
+
+
+                            </table>
+
+
+                        </div>
+
+
+                    <% } else { %>
+
+
+                        <div class="catalog-empty">
+
+
+                            <div>
+
+                                <i class="fa-solid fa-users-slash"></i>
+
+                            </div>
+
+
+                            <h3>
+                                Todavía no hay clientes
+                            </h3>
+
+
+                            <p>
+
+                                Los clientes aparecerán
+                                automáticamente cuando la
+                                agencia reciba sus primeras
+                                reservaciones.
+
+                            </p>
+
+
+                        </div>
+
+
+                    <% } %>
+
+
+                </section>
+
+
+            </main>
+
+
+        </div>
+
+
+    </div>
+
+
+    <script src="/js/panel.js"></script>
+
+
+</body>
+
+</html>

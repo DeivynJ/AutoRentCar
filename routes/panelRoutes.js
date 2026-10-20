@@ -30,9 +30,21 @@ const {
 
 const {
 
+    mostrarClientesPanel,
+
+    mostrarDetalleClientePanel
+
+} = require(
+    "../controllers/panelClienteController"
+);
+
+const {
+
     mostrarReservacionesPanel,
 
     mostrarDetalleReservacionPanel,
+
+    obtenerComprobanteReservacionPanel,
 
     confirmarReservacionPanel,
 
@@ -208,6 +220,20 @@ router.get(
 );
 
 /* =========================================================
+   CLIENTES
+========================================================= */
+
+router.get(
+    "/panel/clientes",
+    mostrarClientesPanel
+);
+
+router.get(
+    "/panel/clientes/:referenciaReservacionId",
+    mostrarDetalleClientePanel
+);
+
+/* =========================================================
    RESERVACIONES
 ========================================================= */
 
@@ -219,6 +245,11 @@ router.get(
 router.get(
     "/panel/reservaciones/:reservacionId",
     mostrarDetalleReservacionPanel
+);
+
+router.get(
+    "/panel/reservaciones/:reservacionId/comprobante",
+    obtenerComprobanteReservacionPanel
 );
 
 /* =========================================================
