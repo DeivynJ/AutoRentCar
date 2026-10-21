@@ -907,6 +907,25 @@ referenciasNombreAgencia.forEach(
                     "logo-icono-imagen"
                 );
 
+                const imagenesMarcaAgencia =
+    document.querySelectorAll(
+        "[data-agencia-logo]"
+    );
+
+
+imagenesMarcaAgencia.forEach(
+    (imagen) => {
+
+        imagen.src =
+            logo;
+
+
+        imagen.alt =
+            `Logo de ${nombre}`;
+
+    }
+);
+
 
                 const imagen =
                     document.createElement(

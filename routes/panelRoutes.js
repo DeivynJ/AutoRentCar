@@ -181,6 +181,23 @@ const {
 
 const {
 
+    mostrarConfiguracionPerfilPanel,
+
+    actualizarConfiguracionPerfilPanel
+
+} = require(
+    "../controllers/panelConfiguracionPerfilController"
+);
+
+
+const {
+    subirFotoPerfil
+} = require(
+    "../middleware/uploadFotoPerfilMiddleware"
+);
+
+const {
+
     mostrarSucursalesPanel,
 
     mostrarNuevaSucursalPanel,
@@ -500,6 +517,24 @@ router.post(
     "/panel/sucursales/:sucursalId/editar",
     requerirAdministradorAgencia,
     actualizarSucursalPanel
+);
+
+/* =========================================================
+   CONFIGURACIÓN DEL PERFIL
+========================================================= */
+
+router.get(
+    "/panel/configuracion/perfil",
+    requerirAdministradorAgencia,
+    mostrarConfiguracionPerfilPanel
+);
+
+
+router.post(
+    "/panel/configuracion/perfil",
+    requerirAdministradorAgencia,
+    subirFotoPerfil,
+    actualizarConfiguracionPerfilPanel
 );
 
 /* =========================================================

@@ -48,13 +48,14 @@ async function cargarContextoAgencia(
         const usuarios =
             await conexion.query(
                 `
-                SELECT
-                    u.id,
-                    u.agencia_id,
-                    u.nombre,
-                    u.apellido,
-                    u.correo,
-                    u.estado,
+               SELECT
+    u.id,
+    u.agencia_id,
+    u.nombre,
+    u.apellido,
+    u.correo,
+    u.foto_perfil,
+    u.estado,
 
                     r.id AS rol_id,
                     r.nombre AS rol_nombre,
@@ -366,6 +367,10 @@ async function cargarContextoAgencia(
 
             correo:
                 usuario.correo,
+            
+            fotoPerfil:
+                usuario.foto_perfil ||
+                null,
 
             estado:
                 usuario.estado,

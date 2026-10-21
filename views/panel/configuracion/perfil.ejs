@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Configuración del perfil administrativo de <%= agencia.nombre %>."
+    >
+
+
+    <title>
+        <%= titulo %> | <%= agencia.nombre %>
+    </title>
+
+
+    <%- include("../partials/tema") %>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/panel.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <div class="panel-shell">
+
+
+        <%- include("../partials/sidebar") %>
+
+
+        <div class="panel-content-wrapper">
+
+
+            <%- include("../partials/header") %>
+
+
+            <main class="panel-main">
+
+
+                <!-- =====================================
+                     ENCABEZADO
+                ====================================== -->
+
+                <section class="panel-module-hero">
+
+                    <div>
+
+                        <span class="panel-module-badge">
+
+                            <i class="fa-solid fa-user-gear"></i>
+
+                            Configuración
+
+                        </span>
+
+
+                        <h2>
+
+                            Personaliza tu
+
+                            <span>
+                                perfil administrativo
+                            </span>
+
+                        </h2>
+
+
+                        <p>
+
+                            Actualiza el nombre y la fotografía
+                            que identifican tu cuenta dentro del
+                            panel de <%= agencia.nombre %>.
+
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =====================================
+                     MENSAJES
+                ====================================== -->
+
+                <% if (resultado === "guardado") { %>
+
+                    <div class="panel-alert panel-alert-success">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <div>
+
+                            <strong>
+                                Perfil actualizado
+                            </strong>
+
+                            <span>
+
+                                Los cambios de tu perfil
+                                fueron guardados correctamente.
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+
+                <% if (error) { %>
+
+                    <div class="panel-alert panel-alert-danger">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        <div>
+
+                            <strong>
+                                No fue posible guardar el perfil
+                            </strong>
+
+                            <span>
+                                <%= error %>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+
+                <!-- =====================================
+                     FORMULARIO
+                ====================================== -->
+
+                <form
+                    action="/panel/configuracion/perfil"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    class="panel-model-form"
+                >
+
+
+                    <!-- =================================
+                         FOTO DE PERFIL
+                    ================================== -->
+
+                    <section class="panel-form-card">
+
+
+                        <div class="panel-form-card-header">
+
+                            <span class="panel-form-card-icon">
+
+                                <i class="fa-solid fa-camera"></i>
+
+                            </span>
+
+
+                            <div>
+
+                                <span>
+                                    Fotografía
+                                </span>
+
+                                <h3>
+                                    Foto de perfil
+                                </h3>
+
+                                <p>
+
+                                    Esta fotografía identificará
+                                    tu cuenta dentro del panel
+                                    administrativo.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                       <div class="panel-image-editor panel-profile-image-editor">
+
+
+                            <div
+                                class="panel-image-preview"
+                                id="panel-profile-preview"
+                            >
+
+                                <% if (perfil.foto_perfil) { %>
+
+                                    <img
+                                        src="<%= perfil.foto_perfil %>"
+                                        alt="Foto de perfil de <%= perfil.nombre %>"
+                                        id="panel-profile-preview-img"
+                                    >
+
+                                <% } else { %>
+
+                                    <div
+                                        class="panel-image-empty"
+                                        id="panel-profile-empty"
+                                    >
+
+                                        <i class="fa-solid fa-user"></i>
+
+                                        <strong>
+
+                                            <%= perfil.nombre
+                                                .charAt(0)
+                                                .toUpperCase() %>
+
+                                        </strong>
+
+                                        <span>
+
+                                            Todavía no has agregado
+                                            una fotografía de perfil.
+
+                                        </span>
+
+                                    </div>
+
+                                <% } %>
+
+                            </div>
+
+
+                            <div class="panel-image-controls">
+
+
+                                <div>
+
+                                    <span class="panel-image-label">
+                                        Imagen del usuario
+                                    </span>
+
+                                    <h4>
+                                        Selecciona una fotografía
+                                    </h4>
+
+                                    <p>
+
+                                        Puedes cargar una imagen
+                                        personal para identificar
+                                        fácilmente tu cuenta.
+
+                                    </p>
+
+                                </div>
+
+
+                                <label
+                                    for="foto_perfil"
+                                    class="panel-image-select"
+                                >
+
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+
+                                    <span>
+                                        Seleccionar fotografía
+                                    </span>
+
+                                </label>
+
+
+                                <input
+                                    type="file"
+                                    id="foto_perfil"
+                                    name="foto_perfil"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    class="panel-image-input"
+                                >
+
+
+                                <span
+                                    class="panel-image-file-name"
+                                    id="panel-profile-file-name"
+                                >
+
+                                    Ningún archivo nuevo seleccionado.
+
+                                </span>
+
+
+                                <div class="panel-image-rules">
+
+                                    <span>
+
+                                        <i class="fa-solid fa-image"></i>
+
+                                        JPG, PNG o WebP
+
+                                    </span>
+
+
+                                    <span>
+
+                                        <i class="fa-solid fa-weight-hanging"></i>
+
+                                        Máximo 3 MB
+
+                                    </span>
+
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </section>
+
+
+                    <!-- =================================
+                         INFORMACIÓN PERSONAL
+                    ================================== -->
+
+                    <section class="panel-form-card">
+
+
+                        <div class="panel-form-card-header">
+
+                            <span class="panel-form-card-icon">
+
+                                <i class="fa-solid fa-address-card"></i>
+
+                            </span>
+
+
+                            <div>
+
+                                <span>
+                                    Cuenta
+                                </span>
+
+                                <h3>
+                                    Información personal
+                                </h3>
+
+                                <p>
+
+                                    Estos datos corresponden al
+                                    administrador que ha iniciado
+                                    sesión.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel-form-grid">
+
+
+                            <div class="panel-form-field">
+
+                                <label for="nombre">
+                                    Nombre
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="nombre"
+                                    name="nombre"
+                                    maxlength="120"
+                                    value="<%= perfil.nombre || '' %>"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label for="apellido">
+                                    Apellido
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="apellido"
+                                    name="apellido"
+                                    maxlength="120"
+                                    value="<%= perfil.apellido || '' %>"
+                                >
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label>
+                                    Correo electrónico
+                                </label>
+
+                                <input
+                                    type="email"
+                                    value="<%= perfil.correo || '' %>"
+                                    readonly
+                                >
+
+                                <small class="panel-field-help">
+
+                                    El correo no se modifica desde
+                                    esta sección.
+
+                                </small>
+
+                            </div>
+
+
+                            <div class="panel-form-field">
+
+                                <label>
+                                    Rol
+                                </label>
+
+                                <input
+                                    type="text"
+                                    value="<%= perfil.rol_nombre || '' %>"
+                                    readonly
+                                >
+
+                            </div>
+
+
+                        </div>
+
+
+                    </section>
+
+
+                    <!-- =================================
+                         NOTA
+                    ================================== -->
+
+                    <div class="panel-form-note">
+
+                        <i class="fa-solid fa-circle-info"></i>
+
+                        <div>
+
+                            <strong>
+                                Perfil personal
+                            </strong>
+
+                            <p>
+
+                                Esta información identifica al
+                                usuario administrador. No modifica
+                                el nombre comercial ni el logo de
+                                <%= agencia.nombre %>.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================
+                         ACCIONES
+                    ================================== -->
+
+                    <div class="panel-form-actions">
+
+                        <button
+                            type="submit"
+                            class="panel-form-submit"
+                        >
+
+                            <i class="fa-solid fa-floppy-disk"></i>
+
+                            Guardar cambios
+
+                        </button>
+
+                    </div>
+
+
+                </form>
+
+
+            </main>
+
+
+        </div>
+
+
+    </div>
+
+
+    <script src="/js/panel.js"></script>
+
+
+    <script>
+
+        const inputFotoPerfil =
+            document.getElementById(
+                "foto_perfil"
+            );
+
+
+        const nombreArchivoPerfil =
+            document.getElementById(
+                "panel-profile-file-name"
+            );
+
+
+        inputFotoPerfil
+            ?.addEventListener(
+                "change",
+                () => {
+
+                    const archivo =
+                        inputFotoPerfil.files?.[0];
+
+
+                    nombreArchivoPerfil.textContent =
+                        archivo
+                            ? archivo.name
+                            : "Ningún archivo nuevo seleccionado.";
+
+                }
+            );
+
+    </script>
+
+
+</body>
+
+</html>

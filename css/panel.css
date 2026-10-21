@@ -505,6 +505,9 @@ textarea {
     place-items:
         center;
 
+    overflow:
+        hidden;
+
     color:
         var(--panel-text-on-accent);
 
@@ -513,6 +516,22 @@ textarea {
 
     font-weight:
         800;
+}
+
+.panel-sidebar-avatar img,
+.panel-user-avatar img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    display:
+        block;
+
+    object-fit:
+        cover;
 }
 
 
@@ -707,8 +726,30 @@ textarea {
 
     font-weight:
         600;
+
+transition:
+    var(--panel-transition);
 }
 
+
+.panel-nav-link:hover {
+
+    color:
+        #ffffff;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.05
+        );
+
+    transform:
+        translateX(
+            2px
+        );
+}
 
 .panel-nav-link.activo {
 
@@ -2199,8 +2240,23 @@ body.panel-sidebar-collapsed
     background:
         transparent;
 
+    font-family:
+        inherit;
+
+    font-size:
+        0.72rem;
+
+    font-weight:
+        600;
+
+    text-align:
+        left;
+
     cursor:
         pointer;
+
+    transition:
+        var(--panel-transition);
 }
 
 
@@ -2537,24 +2593,124 @@ body.panel-sidebar-collapsed
     padding:
         19px;
 
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
     border:
         1px solid
-        var(--panel-border);
+        rgba(
+            var(--panel-accent-rgb),
+            0.14
+        );
+
+    border-left:
+        4px solid
+        var(--panel-accent);
 
     border-radius:
         var(--panel-radius);
 
     background:
-        var(--panel-surface);
+        linear-gradient(
+            135deg,
+            rgba(
+                var(--panel-accent-rgb),
+                0.075
+            ),
+            var(--panel-surface)
+            48%
+        );
 
     box-shadow:
-        0 8px 22px
+        0 10px 28px
         rgba(
-            var(--panel-primary-rgb),
-            0.035
+            var(--panel-accent-rgb),
+            0.07
+        );
+
+    transition:
+        var(--panel-transition);
+}
+
+.panel-summary-card:hover {
+
+    border-color:
+        rgba(
+            var(--panel-accent-rgb),
+            0.24
+        );
+
+    box-shadow:
+        0 14px 34px
+        rgba(
+            var(--panel-accent-rgb),
+            0.11
+        );
+
+    transform:
+        translateY(
+            -2px
         );
 }
 
+.panel-summary-card::after {
+
+    content:
+        "";
+
+    width:
+        95px;
+
+    height:
+        95px;
+
+    position:
+        absolute;
+
+    top:
+        -42px;
+
+    right:
+        -38px;
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(
+            var(--panel-accent-rgb),
+            0.055
+        );
+
+    pointer-events:
+        none;
+}
+
+/* =========================================================
+   TARJETA REMITENTE - CORREO AUTOMÁTICO
+========================================================= */
+
+.panel-summary-card-remitente {
+
+    grid-column:
+        span 2;
+}
+
+
+.panel-summary-card-remitente strong {
+
+    max-width:
+        100%;
+
+    overflow-wrap:
+        anywhere;
+
+    word-break:
+        break-word;
+}
 
 .panel-summary-icon {
 
@@ -2899,6 +3055,12 @@ body.panel-sidebar-collapsed
 
         flex-direction:
             column;
+
+    .panel-summary-card-remitente {
+
+    grid-column:
+        auto;
+       }
 
     }
 
@@ -3349,15 +3511,37 @@ body.panel-sidebar-collapsed
     overflow:
         hidden;
 
+    position:
+        relative;
+
     border:
         1px solid
-        var(--panel-border);
+        rgba(
+            var(--panel-accent-rgb),
+            0.14
+        );
 
     border-radius:
         15px;
 
     background:
-        var(--panel-surface-alt);
+        linear-gradient(
+            180deg,
+            var(--panel-surface-alt)
+            55%,
+            rgba(
+                var(--panel-accent-rgb),
+                0.045
+            )
+            100%
+        );
+
+    box-shadow:
+        0 10px 28px
+        rgba(
+            var(--panel-accent-rgb),
+            0.055
+        );
 
     transition:
         transform
@@ -3372,19 +3556,21 @@ body.panel-sidebar-collapsed
 .catalog-card:hover {
 
     transform:
-        translateY(-3px);
+        translateY(
+            -3px
+        );
 
     border-color:
         rgba(
             var(--panel-accent-rgb),
-            0.28
+            0.32
         );
 
     box-shadow:
-        0 15px 30px
+        0 16px 36px
         rgba(
-            var(--panel-primary-rgb),
-            0.08
+            var(--panel-accent-rgb),
+            0.11
         );
 }
 
@@ -3543,7 +3729,19 @@ body.panel-sidebar-collapsed
 ========================================================= */
 
 .catalog-card-content {
-    padding: 17px;
+
+    padding:
+        17px;
+
+    position:
+        relative;
+
+    border-top:
+        1px solid
+        rgba(
+            var(--panel-accent-rgb),
+            0.08
+        );
 }
 
 
@@ -5033,6 +5231,71 @@ html[data-panel-tema="oscuro"]
         1.5;
 }
 
+/* =========================================================
+   FOTO DE PERFIL - VISTA CUADRADA
+========================================================= */
+
+.panel-profile-image-editor {
+
+    grid-template-columns:
+        320px
+        minmax(
+            0,
+            1fr
+        );
+
+    gap:
+        28px;
+}
+
+
+#panel-profile-preview {
+
+    width:
+        320px;
+
+    min-height:
+        0;
+
+    aspect-ratio:
+        1 / 1;
+
+    justify-self:
+        start;
+}
+
+
+#panel-profile-preview img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    aspect-ratio:
+        1 / 1;
+
+    object-fit:
+        cover;
+
+    object-position:
+        center;
+}
+
+
+#panel-profile-preview
+.panel-image-empty {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    min-height:
+        0;
+}
 
 /* =========================================================
    CONTROLES DE IMAGEN

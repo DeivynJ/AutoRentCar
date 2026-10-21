@@ -2122,20 +2122,74 @@ body.modo-oscuro .numero-paso {
 ========================================================= */
 
 .notificacion {
-    position: fixed;
-    top: 110px;
-    right: -420px;
-    z-index: 2500;
-    width: min(380px, calc(100% - 30px));
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 18px;
-    border-left: 5px solid var(--color-exito);
-    border-radius: 14px;
-    background-color: var(--color-blanco);
-    box-shadow: var(--sombra-fuerte);
-    transition: right 0.45s ease;
+
+    position:
+        fixed;
+
+    top:
+        110px;
+
+    right:
+        -420px;
+
+    z-index:
+        2500;
+
+    width:
+        min(
+            380px,
+            calc(
+                100% - 30px
+            )
+        );
+
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    gap:
+        14px;
+
+    padding:
+        18px;
+
+    border:
+        1px solid
+        rgba(
+            var(--color-secundario-rgb),
+            0.18
+        );
+
+    border-left:
+        5px solid
+        var(--color-secundario);
+
+    border-radius:
+        14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(
+                var(--color-secundario-rgb),
+                0.10
+            ),
+            var(--color-blanco)
+            48%
+        );
+
+    box-shadow:
+        0 18px 45px
+        rgba(
+            var(--color-secundario-rgb),
+            0.16
+        );
+
+    transition:
+        right
+        0.45s ease;
 }
 
 .notificacion.visible {
@@ -2143,14 +2197,57 @@ body.modo-oscuro .numero-paso {
 }
 
 .notificacion > i {
-    margin-top: 3px;
-    color: var(--color-exito);
-    font-size: 1.35rem;
+
+    flex:
+        0 0 38px;
+
+    width:
+        38px;
+
+    height:
+        38px;
+
+    margin-top:
+        0;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        11px;
+
+    color:
+        var(--color-secundario);
+
+    background:
+        rgba(
+            var(--color-secundario-rgb),
+            0.12
+        );
+
+    font-size:
+        1.15rem;
 }
 
 .notificacion strong {
-    display: block;
-    margin-bottom: 3px;
+
+    display:
+        block;
+
+    margin-bottom:
+        3px;
+
+    color:
+        var(--color-texto);
+
+    font-size:
+        0.84rem;
+
+    font-weight:
+        800;
 }
 
 .notificacion p {
@@ -3227,6 +3324,19 @@ body.modo-oscuro .numero-paso {
     object-fit: cover;
     border-radius: 30px;
     box-shadow: var(--sombra-fuerte);
+}
+
+.presentacion-imagen
+> .presentacion-logo-agencia {
+
+    object-fit:
+        contain;
+
+    padding:
+        28px;
+
+    background:
+        #ffffff;
 }
 
 .experiencia-flotante {

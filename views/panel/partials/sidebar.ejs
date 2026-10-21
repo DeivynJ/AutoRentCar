@@ -67,11 +67,22 @@
 
         <span class="panel-sidebar-avatar">
 
-            <%= usuario.nombre
-                .charAt(0)
-                .toUpperCase() %>
+    <% if (usuario.fotoPerfil) { %>
 
-        </span>
+        <img
+            src="<%= usuario.fotoPerfil %>"
+            alt="Foto de perfil de <%= usuario.nombre %>"
+        >
+
+    <% } else { %>
+
+        <%= usuario.nombre
+            .charAt(0)
+            .toUpperCase() %>
+
+    <% } %>
+
+</span>
 
 
         <div class="panel-sidebar-user-info">

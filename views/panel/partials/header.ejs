@@ -420,11 +420,22 @@
 
                 <span class="panel-user-avatar">
 
-                    <%= usuario.nombre
-                        .charAt(0)
-                        .toUpperCase() %>
+    <% if (usuario.fotoPerfil) { %>
 
-                </span>
+        <img
+            src="<%= usuario.fotoPerfil %>"
+            alt="Foto de perfil de <%= usuario.nombre %>"
+        >
+
+    <% } else { %>
+
+        <%= usuario.nombre
+            .charAt(0)
+            .toUpperCase() %>
+
+    <% } %>
+
+</span>
 
                 <span class="panel-user-info">
 
@@ -452,16 +463,26 @@
                 class="panel-user-menu"
                 id="panel-user-menu"
             >
-
                 <div class="panel-user-menu-header">
 
-                    <span class="panel-user-avatar grande">
+                   <span class="panel-user-avatar">
 
-                        <%= usuario.nombre
-                            .charAt(0)
-                            .toUpperCase() %>
+    <% if (usuario.fotoPerfil) { %>
 
-                    </span>
+        <img
+            src="<%= usuario.fotoPerfil %>"
+            alt="Foto de perfil de <%= usuario.nombre %>"
+        >
+
+    <% } else { %>
+
+        <%= usuario.nombre
+            .charAt(0)
+            .toUpperCase() %>
+
+    <% } %>
+
+</span>
 
                     <div>
 
@@ -478,31 +499,23 @@
 
                 </div>
 
-
                 <div class="panel-user-divider"></div>
 
+                <a
+    href="/panel/configuracion/perfil"
+    class="panel-user-menu-link"
+>
 
-                <div class="panel-user-agency">
+    <i class="fa-solid fa-user-gear"></i>
 
-                    <i class="fa-solid fa-building"></i>
+    <span>
+        Mi perfil
+    </span>
 
-                    <div>
-
-                        <small>
-                            Agencia
-                        </small>
-
-                        <strong>
-                            <%= agencia.nombre %>
-                        </strong>
-
-                    </div>
-
-                </div>
+</a>
 
 
-                <div class="panel-user-divider"></div>
-
+<div class="panel-user-divider"></div>
 
                 <form
                     action="/logout"
