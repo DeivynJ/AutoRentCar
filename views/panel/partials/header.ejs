@@ -11,20 +11,116 @@
             <i class="fa-solid fa-bars"></i>
         </button>
 
-        <div>
+        <a
+    href="/panel"
+    class="panel-topbar-agency"
+    aria-label="Ir al Dashboard"
+>
 
-            <span class="panel-topbar-eyebrow">
-                <%= subtituloPagina %>
-            </span>
+    <span class="panel-topbar-agency-logo">
 
-            <h1>
-                <%= titulo %>
-            </h1>
+        <% if (agencia.logo) { %>
 
-        </div>
+            <img
+                src="<%= agencia.logo %>"
+                alt="Logo de <%= agencia.nombre %>"
+            >
+
+        <% } else { %>
+
+            <i class="fa-solid fa-building"></i>
+
+        <% } %>
+
+    </span>
+
+
+    <span class="panel-topbar-agency-info">
+
+        <strong>
+            <%= agencia.nombre %>
+        </strong>
+
+        <small>
+            Panel de agencia
+        </small>
+
+    </span>
+
+</a>
 
     </div>
 
+    <!-- =============================================
+     NAVEGACIÓN PRINCIPAL
+============================================== -->
+
+<nav
+    class="panel-topbar-primary-nav"
+    aria-label="Navegación principal del panel"
+>
+
+    <div class="panel-topbar-primary-nav-inner">
+
+
+        <a
+            href="/panel"
+            class="panel-topbar-nav-link <%= paginaActual === 'dashboard' ? 'activo' : '' %>"
+            <%= paginaActual === 'dashboard'
+                ? 'aria-current="page"'
+                : '' %>
+        >
+            Dashboard
+        </a>
+
+
+        <a
+            href="/panel/reservaciones"
+            class="panel-topbar-nav-link <%= paginaActual === 'reservaciones' ? 'activo' : '' %>"
+            <%= paginaActual === 'reservaciones'
+                ? 'aria-current="page"'
+                : '' %>
+        >
+            Reservaciones
+        </a>
+
+
+        <a
+            href="/panel/catalogo"
+            class="panel-topbar-nav-link <%= paginaActual === 'catalogo' ? 'activo' : '' %>"
+            <%= paginaActual === 'catalogo'
+                ? 'aria-current="page"'
+                : '' %>
+        >
+            Catálogo
+        </a>
+
+
+        <a
+            href="/panel/clientes"
+            class="panel-topbar-nav-link <%= paginaActual === 'clientes' ? 'activo' : '' %>"
+            <%= paginaActual === 'clientes'
+                ? 'aria-current="page"'
+                : '' %>
+        >
+            Clientes
+        </a>
+
+
+        <a
+            href="/panel/sucursales"
+            class="panel-topbar-nav-link <%= paginaActual === 'sucursales' ? 'activo' : '' %>"
+            <%= paginaActual === 'sucursales'
+                ? 'aria-current="page"'
+                : '' %>
+        >
+            Sucursales
+        </a>
+
+
+    </div>
+
+</nav>
 
     <div class="panel-topbar-right">
 
@@ -221,56 +317,64 @@
 
                 <% notificacionesSeguras.forEach((notificacion) => { %>
 
-                    <%
+                   <%
 
-                        let iconoNotificacion =
-                            "fa-solid fa-bell";
-
-
-                        let nombreCategoria =
-                            "Sistema";
-
-
-                        if (
-                            notificacion.categoria ===
-                            "reservaciones"
-                        ) {
-
-                            iconoNotificacion =
-                                "fa-solid fa-calendar-check";
-
-                            nombreCategoria =
-                                "Reservaciones";
-
-                        }
+    const categoriaNotificacion =
+        notificacion.categoria ===
+        "suscripciones"
+            ? "suscripcion"
+            : notificacion.categoria;
 
 
-                        if (
-                            notificacion.categoria ===
-                            "pagos"
-                        ) {
-
-                            iconoNotificacion =
-                                "fa-solid fa-credit-card";
-
-                            nombreCategoria =
-                                "Pagos";
-
-                        }
+    let iconoNotificacion =
+        "fa-solid fa-bell";
 
 
-                        if (
-                            notificacion.categoria ===
-                            "suscripcion"
-                        ) {
+    let nombreCategoria =
+        "Sistema";
 
-                            iconoNotificacion =
-                                "fa-solid fa-clock";
 
-                            nombreCategoria =
-                                "Suscripción";
+    if (
+        categoriaNotificacion ===
+        "reservaciones"
+    ) {
 
-                        }
+        iconoNotificacion =
+            "fa-solid fa-calendar-check";
+
+        nombreCategoria =
+            "Reservaciones";
+
+    }
+
+
+    if (
+        categoriaNotificacion ===
+        "pagos"
+    ) {
+
+        iconoNotificacion =
+            "fa-solid fa-credit-card";
+
+        nombreCategoria =
+            "Pagos";
+
+    }
+
+
+    if (
+        categoriaNotificacion ===
+        "suscripcion"
+    ) {
+
+        iconoNotificacion =
+            "fa-solid fa-clock";
+
+        nombreCategoria =
+            "Suscripción";
+
+    }
+
 
 
                         let fechaNotificacion =
@@ -305,7 +409,7 @@
                         action="/panel/notificaciones/<%= notificacion.id %>/abrir"
                         method="POST"
                         class="panel-notification-item <%= notificacion.leida ? 'leida' : 'no-leida' %>"
-                        data-notification-category="<%= notificacion.categoria %>"
+                        data-notification-category="<%= categoriaNotificacion %>"
                     >
 
                         <button

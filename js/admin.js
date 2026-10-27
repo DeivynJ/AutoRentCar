@@ -171,10 +171,6 @@ botonTema?.addEventListener(
     }
 );
 
-    const botonColapsar = document.getElementById(
-        "sidebar-collapse-btn"
-    );
-
     const botonMenuMovil = document.getElementById(
         "topbar-menu-mobile"
     );
@@ -190,49 +186,6 @@ botonTema?.addEventListener(
     const botonUsuario = document.getElementById(
         "topbar-user-button"
     );
-
-
-    /* =====================================================
-       SIDEBAR - ESTADO GUARDADO
-    ===================================================== */
-
-    const estadoSidebar = localStorage.getItem(
-        "autorentcar-admin-sidebar"
-    );
-
-    if (estadoSidebar === "collapsed") {
-        body.classList.add("sidebar-collapsed");
-    }
-
-
-    /* =====================================================
-       COLAPSAR SIDEBAR
-    ===================================================== */
-
-    if (botonColapsar) {
-
-        botonColapsar.addEventListener("click", () => {
-
-            body.classList.toggle(
-                "sidebar-collapsed"
-            );
-
-            const colapsado =
-                body.classList.contains(
-                    "sidebar-collapsed"
-                );
-
-            localStorage.setItem(
-                "autorentcar-admin-sidebar",
-                colapsado
-                    ? "collapsed"
-                    : "expanded"
-            );
-
-        });
-
-    }
-
 
     /* =====================================================
        SIDEBAR MÓVIL

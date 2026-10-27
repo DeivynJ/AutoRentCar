@@ -760,51 +760,112 @@ const puedeEntregarVehiculo =
                      NAVEGACIÓN
                 ====================================== -->
 
-                <section class="panel-module-hero">
+                <section class="panel-module-hero reservation-detail-hero">
 
-                    <div>
+    <div>
 
-                        <a
-                            href="/panel/reservaciones"
-                            class="panel-secondary-button"
-                        >
+        <a
+            href="/panel/reservaciones"
+            class="panel-secondary-button"
+        >
 
-                            <i class="fa-solid fa-arrow-left"></i>
+            <i class="fa-solid fa-arrow-left"></i>
 
-                            Volver a reservaciones
+            Volver a reservaciones
 
-                        </a>
-
-
-                        <span class="panel-module-badge">
-
-                            <i class="fa-solid fa-calendar-check"></i>
-
-                            Reservación
-
-                        </span>
+        </a>
 
 
-                        <h2>
+        <span class="panel-module-badge">
 
-                            <span>
-                                <%= reservacion.codigo %>
-                            </span>
+            <i class="fa-solid fa-calendar-check"></i>
 
-                        </h2>
+            Reservación
+
+        </span>
 
 
-                        <p>
+        <h2>
 
-                            Consulta la información completa
-                            de esta reservación perteneciente
-                            a <%= agencia.nombre %>.
+            <span>
+                <%= reservacion.codigo %>
+            </span>
 
-                        </p>
+        </h2>
 
-                    </div>
 
-                </section>
+        <p>
+
+            Consulta la información completa
+            de esta reservación perteneciente
+            a <%= agencia.nombre %>.
+
+        </p>
+
+    </div>
+
+
+    <% if (
+        reservacion.estado === "pendiente" &&
+        puedeValidarPagos
+    ) { %>
+
+        <div class="panel-module-actions reservation-detail-hero-actions">
+
+
+            <% if (
+                Number(
+                    reservacion.antes_recogida
+                ) === 1
+            ) { %>
+
+                <form
+                    action="/panel/reservaciones/<%= reservacion.id %>/confirmar"
+                    method="POST"
+                    onsubmit="return confirm('¿Aprobar la reservación <%= reservacion.codigo %>? Se aplicará la política de pago configurada para la agencia.');"
+                >
+
+                    <button
+                        type="submit"
+                        class="reservation-compact-button reservation-compact-approve"
+                    >
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        Aprobar reservación
+
+                    </button>
+
+                </form>
+
+            <% } %>
+
+
+            <form
+                action="/panel/reservaciones/<%= reservacion.id %>/rechazar"
+                method="POST"
+                onsubmit="return confirm('¿Seguro que deseas rechazar la reservación <%= reservacion.codigo %>? Esta acción no podrá revertirse desde esta pantalla.');"
+            >
+
+                <button
+                    type="submit"
+                    class="reservation-compact-button reservation-compact-reject"
+                >
+
+                    <i class="fa-solid fa-circle-xmark"></i>
+
+                    Rechazar reservación
+
+                </button>
+
+            </form>
+
+
+        </div>
+
+    <% } %>
+
+</section>
 
 
                 <!-- =====================================
@@ -969,224 +1030,6 @@ const puedeEntregarVehiculo =
 
 %>
 
-
-
-<!-- =====================================
-     DECISIÓN DE LA RESERVACIÓN
-====================================== -->
-
-<section class="panel-units-card reservation-compact-decision">
-
-
-    <div class="reservation-compact-section-header">
-
-
-        <div>
-
-
-            <span>
-                Gestión
-            </span>
-
-
-            <h3>
-                Decisión de la reservación
-            </h3>
-
-
-            <p>
-
-                Reservación
-
-                <strong>
-                    <%= reservacion.codigo %>
-                </strong>
-
-            </p>
-
-
-        </div>
-
-
-        <span
-            class="unit-status <%= claseEstado %>"
-        >
-
-            <%= nombreEstadoReservacion %>
-
-        </span>
-
-
-    </div>
-
-
-
-    <% if (
-        reservacion.estado === "pendiente" &&
-        puedeValidarPagos
-    ) { %>
-
-
-        <div class="reservation-compact-decision-actions">
-
-
-            <% if (
-    Number(
-        reservacion.antes_recogida
-    ) === 1
-) { %>
-
-    <form
-        action="/panel/reservaciones/<%= reservacion.id %>/confirmar"
-        method="POST"
-        onsubmit="return confirm('¿Aprobar la reservación <%= reservacion.codigo %>? Se aplicará la política de pago configurada para la agencia.');"
-    >
-
-        <button
-            type="submit"
-            class="reservation-compact-button reservation-compact-approve"
-        >
-
-            <i class="fa-solid fa-circle-check"></i>
-
-            Aprobar reservación
-
-        </button>
-
-    </form>
-
-<% } %>
-
-
-
-            <form
-                action="/panel/reservaciones/<%= reservacion.id %>/rechazar"
-                method="POST"
-                onsubmit="return confirm('¿Seguro que deseas rechazar la reservación <%= reservacion.codigo %>? Esta acción no podrá revertirse desde esta pantalla.');"
-            >
-
-
-                <button
-                    type="submit"
-                    class="reservation-compact-button reservation-compact-reject"
-                >
-
-                    <i class="fa-solid fa-circle-xmark"></i>
-
-                    Rechazar reservación
-
-                </button>
-
-
-            </form>
-
-
-        </div>
-
-
-
-    <% } else if (
-        reservacion.estado === "pendiente" &&
-        !puedeValidarPagos
-    ) { %>
-
-
-        <div class="reservation-compact-message">
-
-
-            <i class="fa-solid fa-clock"></i>
-
-
-            <div>
-
-                <strong>
-                    Pendiente de decisión administrativa
-                </strong>
-
-                <span>
-
-                    Un administrador de la agencia
-                    debe aprobar o rechazar esta solicitud.
-
-                </span>
-
-            </div>
-
-
-        </div>
-
-
-
-    <% } else if (
-        reservacion.estado === "pendiente_pago"
-    ) { %>
-
-
-        <div class="reservation-compact-message">
-
-
-            <i class="fa-solid fa-credit-card"></i>
-
-
-            <div>
-
-                <strong>
-                    Reservación aprobada
-                </strong>
-
-                <span>
-
-                    Pendiente del anticipo de
-                    US$<%= moneda(
-                        resumenPago.montoAnticipoRequerido
-                    ) %>.
-
-                </span>
-
-            </div>
-
-
-        </div>
-
-
-
-    <% } else { %>
-
-
-        <div class="reservation-compact-message">
-
-
-            <i class="fa-solid fa-circle-info"></i>
-
-
-            <div>
-
-                <strong>
-                    Reservación procesada
-                </strong>
-
-                <span>
-
-                    Estado actual:
-                    <%= nombreEstadoReservacion %>.
-
-                </span>
-
-            </div>
-
-
-        </div>
-
-
-    <% } %>
-
-
-</section>
-
-
-
-
-
 <!-- =====================================
      RESUMEN OPERATIVO
 ====================================== -->
@@ -1277,9 +1120,6 @@ const puedeEntregarVehiculo =
 
 
     </article>
-
-
-
 
 
     <!-- =================================
@@ -1569,118 +1409,105 @@ const puedeEntregarVehiculo =
          CLIENTE COMPLETO
     ================================== -->
 
-    <details class="reservation-compact-details">
+    <details class="reservation-compact-details reservation-detail-client">
 
 
-        <summary>
+    <summary>
 
 
-            <span>
+        <span class="reservation-detail-summary-main">
+
+            <span class="reservation-detail-summary-icon">
 
                 <i class="fa-solid fa-user"></i>
-
-                Información completa del cliente
 
             </span>
 
 
+            <span class="reservation-detail-summary-copy">
+
+                <strong>
+                    Información completa del cliente
+                </strong>
+
+                <small>
+                    Datos personales, contacto y documentos.
+                </small>
+
+            </span>
+
+        </span>
+
+
+        <span class="reservation-detail-summary-side">
+
             <i class="fa-solid fa-chevron-down"></i>
 
-
-        </summary>
-
+        </span>
 
 
-        <div class="reservation-compact-details-body">
+    </summary>
 
 
-            <div class="reservation-compact-data-grid">
+
+       <div class="reservation-compact-details-body">
+
+
+    <div class="reservation-client-information-grid">
+
+
+        <!-- =================================
+             DATOS PERSONALES
+        ================================== -->
+
+        <article class="reservation-client-information-card">
+
+
+            <div class="reservation-client-information-header">
+
+                <span>
+                    <i class="fa-solid fa-user"></i>
+                </span>
+
+                <strong>
+                    Datos personales
+                </strong>
+
+            </div>
+
+
+            <div class="reservation-client-information-list">
 
 
                 <div>
 
-                    <strong>
-                        Nombre
-                    </strong>
-
                     <span>
-                        <%= reservacion.cliente_nombre || "No registrado" %>
+                        Nombre completo
                     </span>
+
+                    <strong>
+                        <%= reservacion.cliente_nombre
+                            || "No registrado"
+                        %>
+                    </strong>
 
                 </div>
 
 
-
                 <div>
-
-                    <strong>
-                        Documento
-                    </strong>
 
                     <span>
-                        <%= reservacion.cliente_documento || "No registrado" %>
-                    </span>
-
-                </div>
-
-
-
-                <div>
-
-                    <strong>
-                        Correo electrónico
-                    </strong>
-
-                    <span>
-                        <%= reservacion.cliente_correo || "No registrado" %>
-                    </span>
-
-                </div>
-
-
-
-                <div>
-
-                    <strong>
-                        Teléfono
-                    </strong>
-
-                    <span>
-                        <%= reservacion.cliente_telefono || "No registrado" %>
-                    </span>
-
-                </div>
-
-
-
-                <div>
-
-                    <strong>
                         Edad
-                    </strong>
+                    </span>
 
-                    <span>
+                    <strong>
 
                         <%= reservacion.cliente_edad
                             ? `${reservacion.cliente_edad} años`
                             : "No registrada"
                         %>
 
-                    </span>
-
-                </div>
-
-
-
-                <div>
-
-                    <strong>
-                        Licencia
                     </strong>
-
-                    <span>
-                        <%= reservacion.cliente_licencia || "No registrada" %>
-                    </span>
 
                 </div>
 
@@ -1688,169 +1515,268 @@ const puedeEntregarVehiculo =
             </div>
 
 
-        </div>
+        </article>
 
+
+        <!-- =================================
+             IDENTIFICACIÓN
+        ================================== -->
+
+        <article class="reservation-client-information-card">
+
+
+            <div class="reservation-client-information-header">
+
+                <span>
+                    <i class="fa-solid fa-id-card"></i>
+                </span>
+
+                <strong>
+                    Identificación
+                </strong>
+
+            </div>
+
+
+            <div class="reservation-client-information-list">
+
+
+                <div>
+
+                    <span>
+                        Documento
+                    </span>
+
+                    <strong>
+                        <%= reservacion.cliente_documento
+                            || "No registrado"
+                        %>
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Licencia
+                    </span>
+
+                    <strong>
+                        <%= reservacion.cliente_licencia
+                            || "No registrada"
+                        %>
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+        </article>
+
+
+        <!-- =================================
+             CONTACTO
+        ================================== -->
+
+        <article class="reservation-client-information-card">
+
+
+            <div class="reservation-client-information-header">
+
+                <span>
+                    <i class="fa-solid fa-address-book"></i>
+                </span>
+
+                <strong>
+                    Contacto
+                </strong>
+
+            </div>
+
+
+            <div class="reservation-client-information-list">
+
+
+                <div>
+
+                    <span>
+                        Teléfono
+                    </span>
+
+                    <strong>
+                        <%= reservacion.cliente_telefono
+                            || "No registrado"
+                        %>
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Correo electrónico
+                    </span>
+
+                    <strong>
+                        <%= reservacion.cliente_correo
+                            || "No registrado"
+                        %>
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+        </article>
+
+
+    </div>
+
+
+</div>
 
     </details>
-
-
-
-
 
     <!-- =================================
          ALQUILER
     ================================== -->
 
-    <details class="reservation-compact-details">
+    <details class="reservation-compact-details reservation-detail-rental">
 
 
-        <summary>
+    <summary>
 
 
-            <span>
+        <span class="reservation-detail-summary-main">
 
-                <i class="fa-solid fa-car-side"></i>
+            <span class="reservation-detail-summary-icon">
 
-                Detalles del alquiler
+                <i class="fa-solid fa-calendar-days"></i>
 
             </span>
 
 
+            <span class="reservation-detail-summary-copy">
+
+                <strong>
+                    Detalles del alquiler
+                </strong>
+
+                <small>
+                    Fechas, horarios, recogida y devolución.
+                </small>
+
+            </span>
+
+        </span>
+
+
+        <span class="reservation-detail-summary-side">
+
+            <small class="reservation-detail-badge reservation-detail-date-badge">
+
+                <i class="fa-regular fa-calendar"></i>
+
+                <%= fechaSegura(
+                    reservacion.fecha_recogida
+                ) %>
+
+                –
+
+                <%= fechaSegura(
+                    reservacion.fecha_entrega
+                ) %>
+
+            </small>
+
+
             <i class="fa-solid fa-chevron-down"></i>
 
-
-        </summary>
-
+        </span>
 
 
-        <div class="reservation-compact-details-body">
+    </summary>
 
 
-            <div class="reservation-compact-data-grid">
+
+       <div class="reservation-compact-details-body">
+
+
+    <div class="reservation-rental-overview">
+
+
+        <!-- =================================
+             VEHÍCULO RESERVADO
+        ================================== -->
+
+        <div class="reservation-rental-vehicle">
+
+
+            <span class="reservation-rental-vehicle-icon">
+
+                <i class="fa-solid fa-car-side"></i>
+
+            </span>
+
+
+            <div class="reservation-rental-vehicle-main">
+
+                <small>
+                    Vehículo reservado
+                </small>
+
+                <strong>
+                    <%= reservacion.modelo_marca %>
+                    <%= reservacion.modelo_nombre %>
+                </strong>
+
+            </div>
+
+
+            <div class="reservation-rental-vehicle-meta">
 
 
                 <div>
-
-                    <strong>
-                        Modelo
-                    </strong>
 
                     <span>
-
-                        <%= reservacion.modelo_marca %>
-                        <%= reservacion.modelo_nombre %>
-
-                    </span>
-
-                </div>
-
-
-
-                <div>
-
-                    <strong>
                         Cantidad
-                    </strong>
-
-                    <span>
-                        <%= reservacion.cantidad_vehiculos %>
                     </span>
+
+                    <strong>
+
+                        <%= reservacion.cantidad_vehiculos %>
+
+                        <%= Number(
+                            reservacion.cantidad_vehiculos || 0
+                        ) === 1
+                            ? "vehículo"
+                            : "vehículos"
+                        %>
+
+                    </strong>
 
                 </div>
 
 
-
                 <div>
 
-                    <strong>
-                        Precio diario
-                    </strong>
-
                     <span>
+                        Precio diario
+                    </span>
+
+                    <strong>
 
                         US$<%= moneda(
                             resumenPago.precioDiario
                         ) %>
 
-                    </span>
-
-                </div>
-
-
-
-                <div>
-
-                    <strong>
-                        Fecha de recogida
                     </strong>
-
-                    <span>
-
-                        <%= fechaSegura(
-                            reservacion.fecha_recogida
-                        ) %>
-
-                        ·
-
-                        <%= horaSegura(
-                            reservacion.hora_recogida
-                            
-                            ) %>
-
-                    </span>
-
-                </div>
-
-
-
-                <div>
-
-                    <strong>
-                        Lugar de recogida
-                    </strong>
-
-                    <span>
-                        <%= reservacion.lugar_recogida || "No registrado" %>
-                    </span>
-
-                </div>
-
-
-
-                <div>
-
-                    <strong>
-                        Fecha de devolución
-                    </strong>
-
-                    <span>
-
-                        <%= fechaSegura(
-                            reservacion.fecha_entrega
-                        ) %>
-
-                        ·
-
-                        <%= horaSegura(
-                            reservacion.hora_entrega
-                            
-                            ) %>
-
-                    </span>
-
-                </div>
-
-
-
-                <div>
-
-                    <strong>
-                        Lugar de devolución
-                    </strong>
-
-                    <span>
-                        <%= reservacion.lugar_entrega || "No registrado" %>
-                    </span>
 
                 </div>
 
@@ -1859,6 +1785,198 @@ const puedeEntregarVehiculo =
 
 
         </div>
+
+
+        <!-- =================================
+             RECORRIDO DEL ALQUILER
+        ================================== -->
+
+        <div class="reservation-rental-route">
+
+
+            <!-- RECOGIDA -->
+
+            <article class="reservation-rental-point">
+
+
+                <div class="reservation-rental-point-header">
+
+
+                    <span class="reservation-rental-point-icon">
+
+                        <i class="fa-solid fa-location-dot"></i>
+
+                    </span>
+
+
+                    <div>
+
+                        <small>
+                            Inicio del alquiler
+                        </small>
+
+                        <strong>
+                            Recogida
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="reservation-rental-point-data">
+
+
+                    <div>
+
+                        <span>
+                            Fecha y hora
+                        </span>
+
+                        <strong>
+
+                            <%= fechaSegura(
+                                reservacion.fecha_recogida
+                            ) %>
+
+                            ·
+
+                            <%= horaSegura(
+                                reservacion.hora_recogida
+                            ) %>
+
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Lugar de recogida
+                        </span>
+
+                        <strong>
+
+                            <%= reservacion.lugar_recogida
+                                || "No registrado"
+                            %>
+
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+            </article>
+
+
+            <!-- CONECTOR -->
+
+            <div
+                class="reservation-rental-route-connector"
+                aria-hidden="true"
+            >
+
+                <span></span>
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+                <span></span>
+
+            </div>
+
+
+            <!-- DEVOLUCIÓN -->
+
+            <article class="reservation-rental-point">
+
+
+                <div class="reservation-rental-point-header">
+
+
+                    <span class="reservation-rental-point-icon">
+
+                        <i class="fa-solid fa-flag-checkered"></i>
+
+                    </span>
+
+
+                    <div>
+
+                        <small>
+                            Final del alquiler
+                        </small>
+
+                        <strong>
+                            Devolución
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="reservation-rental-point-data">
+
+
+                    <div>
+
+                        <span>
+                            Fecha y hora
+                        </span>
+
+                        <strong>
+
+                            <%= fechaSegura(
+                                reservacion.fecha_entrega
+                            ) %>
+
+                            ·
+
+                            <%= horaSegura(
+                                reservacion.hora_entrega
+                            ) %>
+
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Lugar de devolución
+                        </span>
+
+                        <strong>
+
+                            <%= reservacion.lugar_entrega
+                                || "No registrado"
+                            %>
+
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+            </article>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
 
 
     </details>
@@ -1868,22 +1986,39 @@ const puedeEntregarVehiculo =
          UNIDADES FÍSICAS
     ================================== -->
 
-    <details class="reservation-compact-details">
+   <details class="reservation-compact-details reservation-detail-units">
 
 
-        <summary>
+    <summary>
 
 
-            <span>
+        <span class="reservation-detail-summary-main">
+
+            <span class="reservation-detail-summary-icon">
 
                 <i class="fa-solid fa-car-rear"></i>
-
-                Unidades físicas
 
             </span>
 
 
-            <small>
+            <span class="reservation-detail-summary-copy">
+
+                <strong>
+                    Unidades físicas
+                </strong>
+
+                <small>
+                    Vehículos asignados a la reservación.
+                </small>
+
+            </span>
+
+        </span>
+
+
+        <span class="reservation-detail-summary-side">
+
+            <small class="reservation-detail-badge">
 
                 <%= unidadesReservacion.cantidadAsignada %>/<%= unidadesReservacion.cantidadSolicitada %>
                 asignadas
@@ -1893,66 +2028,152 @@ const puedeEntregarVehiculo =
 
             <i class="fa-solid fa-chevron-down"></i>
 
+        </span>
 
-        </summary>
+
+    </summary>
 
 
 
         <div class="reservation-compact-details-body">
 
 
-            <div class="reservation-compact-data-grid">
+    <div class="reservation-units-dashboard">
+
+
+        <!-- =================================
+             RESUMEN DE UNIDADES
+        ================================== -->
+
+        <div class="reservation-units-metrics">
+
+
+            <article class="reservation-units-metric">
+
+                <span class="reservation-units-metric-icon">
+
+                    <i class="fa-solid fa-car-side"></i>
+
+                </span>
 
 
                 <div>
 
-                    <strong>
+                    <small>
                         Solicitadas
-                    </strong>
+                    </small>
 
-                    <span>
+                    <strong>
                         <%= unidadesReservacion.cantidadSolicitada %>
+                    </strong>
+
+                    <span>
+                        Vehículos requeridos
                     </span>
 
                 </div>
 
+            </article>
+
+
+            <article class="reservation-units-metric">
+
+                <span class="reservation-units-metric-icon">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                </span>
+
 
                 <div>
 
-                    <strong>
+                    <small>
                         Asignadas
+                    </small>
+
+                    <strong>
+                        <%= unidadesReservacion.cantidadAsignada %>
                     </strong>
 
                     <span>
-                        <%= unidadesReservacion.cantidadAsignada %>
+                        Unidades vinculadas
                     </span>
 
                 </div>
+
+            </article>
+
+
+            <article class="reservation-units-metric">
+
+                <span class="reservation-units-metric-icon">
+
+                    <i class="fa-solid fa-clock"></i>
+
+                </span>
 
 
                 <div>
 
-                    <strong>
+                    <small>
                         Pendientes
+                    </small>
+
+                    <strong>
+                        <%= unidadesReservacion.cantidadPendiente %>
                     </strong>
 
                     <span>
-                        <%= unidadesReservacion.cantidadPendiente %>
+                        Por asignar
                     </span>
 
                 </div>
 
-
-            </div>
-
+            </article>
 
 
-            <% if (
-                unidadesReservacion.unidadesAsignadas.length
-            ) { %>
+        </div>
 
 
-                <div class="reservation-compact-services">
+        <!-- =================================
+             UNIDADES YA ASIGNADAS
+        ================================== -->
+
+        <% if (
+            unidadesReservacion.unidadesAsignadas.length
+        ) { %>
+
+
+            <section class="reservation-units-section">
+
+
+                <div class="reservation-units-section-header">
+
+
+                    <span class="reservation-units-section-icon">
+
+                        <i class="fa-solid fa-car-rear"></i>
+
+                    </span>
+
+
+                    <div>
+
+                        <strong>
+                            Unidades asignadas
+                        </strong>
+
+                        <small>
+                            Vehículos físicos vinculados a esta reservación.
+                        </small>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="reservation-units-list">
 
 
                     <% unidadesReservacion.unidadesAsignadas.forEach(
@@ -1960,34 +2181,64 @@ const puedeEntregarVehiculo =
                     %>
 
 
-                        <div class="reservation-compact-service-row">
+                        <article class="reservation-unit-card">
 
 
-                            <div>
+                            <span class="reservation-unit-card-icon">
+
+                                <i class="fa-solid fa-car-side"></i>
+
+                            </span>
+
+
+                            <div class="reservation-unit-card-main">
+
+                                <small>
+                                    Unidad física
+                                </small>
 
                                 <strong>
                                     <%= unidad.codigo_interno %>
                                 </strong>
 
-                                <span>
 
-                                    <%= unidad.placa || "Sin placa" %>
+                                <div class="reservation-unit-card-meta">
 
-                                    ·
 
-                                    <%= unidad.sucursal_nombre || "Sin sucursal" %>
+                                    <span>
 
-                                </span>
+                                        <i class="fa-solid fa-id-card"></i>
+
+                                        <%= unidad.placa || "Sin placa" %>
+
+                                    </span>
+
+
+                                    <span>
+
+                                        <i class="fa-solid fa-building"></i>
+
+                                        <%= unidad.sucursal_nombre || "Sin sucursal" %>
+
+                                    </span>
+
+
+                                </div>
+
 
                             </div>
 
 
-                            <strong>
+                            <span class="reservation-unit-status assigned">
+
+                                <i class="fa-solid fa-circle-check"></i>
+
                                 Asignada
-                            </strong>
+
+                            </span>
 
 
-                        </div>
+                        </article>
 
 
                     <% }); %>
@@ -1996,164 +2247,298 @@ const puedeEntregarVehiculo =
                 </div>
 
 
-            <% } else { %>
+            </section>
 
 
-                <p class="reservation-compact-empty">
-
-                    Esta reservación todavía no tiene
-                    unidades físicas asignadas.
-
-                </p>
+        <% } else { %>
 
 
-            <% } %>
+            <div class="reservation-units-state">
 
 
+                <span>
 
-            <% if (
-    unidadesReservacion.puedeAsignar &&
-    Number(
-        reservacion.antes_recogida
-    ) === 1
-) { %>
+                    <i class="fa-solid fa-car"></i>
 
-
-                <p class="reservation-compact-comment">
-
-                    Unidades disponibles para asignar
-                    en este período:
-
-                </p>
-
-
-
-                <% if (
-    unidadesReservacion.unidadesCandidatas.length
-) { %>
-
-
-    <div class="reservation-compact-services">
-
-
-        <% unidadesReservacion.unidadesCandidatas.forEach(
-            (unidad) => {
-        %>
-
-
-            <div class="reservation-compact-service-row">
+                </span>
 
 
                 <div>
 
                     <strong>
-                        <%= unidad.codigo_interno %>
+                        Sin unidades asignadas
                     </strong>
 
-                    <span>
-
-                        <%= unidad.placa || "Sin placa" %>
-
-                        ·
-
-                        <%= unidad.sucursal_nombre || "Sin sucursal" %>
-
-                    </span>
+                    <small>
+                        Esta reservación todavía no tiene vehículos físicos vinculados.
+                    </small>
 
                 </div>
-
-
-                <% if (puedeGestionarUnidades) { %>
-
-
-                    <form
-                        method="POST"
-                        action="/panel/reservaciones/<%= reservacion.id %>/unidades/asignar"
-                    >
-
-                        <input
-                            type="hidden"
-                            name="vehiculoId"
-                            value="<%= unidad.id %>"
-                        >
-
-
-                        <button
-                            type="submit"
-                            class="reservation-compact-button reservation-compact-approve"
-                        >
-
-                            <i class="fa-solid fa-car-side"></i>
-
-                            Asignar
-
-                        </button>
-
-                    </form>
-
-
-                <% } else { %>
-
-
-                    <strong>
-                        Disponible
-                    </strong>
-
-
-                <% } %>
 
 
             </div>
 
 
-        <% }); %>
+        <% } %>
 
 
-    </div>
+        <!-- =================================
+             UNIDADES DISPONIBLES
+        ================================== -->
+
+        <% if (
+            unidadesReservacion.puedeAsignar &&
+            Number(
+                reservacion.antes_recogida
+            ) === 1
+        ) { %>
+
+
+            <section class="reservation-units-section reservation-units-available">
+
+
+                <div class="reservation-units-section-header">
+
+
+                    <span class="reservation-units-section-icon">
+
+                        <i class="fa-solid fa-square-plus"></i>
+
+                    </span>
+
+
+                    <div>
+
+                        <strong>
+                            Unidades disponibles
+                        </strong>
+
+                        <small>
+                            Selecciona una unidad compatible para esta reservación.
+                        </small>
+
+                    </div>
+
+
+                </div>
+
+
+                <% if (
+                    unidadesReservacion.unidadesCandidatas.length
+                ) { %>
+
+
+                    <div class="reservation-units-list">
+
+
+                        <% unidadesReservacion.unidadesCandidatas.forEach(
+                            (unidad) => {
+                        %>
+
+
+                            <article class="reservation-unit-card available">
+
+
+                                <span class="reservation-unit-card-icon">
+
+                                    <i class="fa-solid fa-car-side"></i>
+
+                                </span>
+
+
+                                <div class="reservation-unit-card-main">
+
+                                    <small>
+                                        Unidad disponible
+                                    </small>
+
+                                    <strong>
+                                        <%= unidad.codigo_interno %>
+                                    </strong>
+
+
+                                    <div class="reservation-unit-card-meta">
+
+
+                                        <span>
+
+                                            <i class="fa-solid fa-id-card"></i>
+
+                                            <%= unidad.placa || "Sin placa" %>
+
+                                        </span>
+
+
+                                        <span>
+
+                                            <i class="fa-solid fa-building"></i>
+
+                                            <%= unidad.sucursal_nombre || "Sin sucursal" %>
+
+                                        </span>
+
+
+                                    </div>
+
+
+                                </div>
+
+
+                                <% if (puedeGestionarUnidades) { %>
+
+
+                                    <form
+                                        method="POST"
+                                        action="/panel/reservaciones/<%= reservacion.id %>/unidades/asignar"
+                                    >
+
+                                        <input
+                                            type="hidden"
+                                            name="vehiculoId"
+                                            value="<%= unidad.id %>"
+                                        >
+
+
+                                        <button
+                                            type="submit"
+                                            class="reservation-unit-assign-button"
+                                        >
+
+                                            <i class="fa-solid fa-link"></i>
+
+                                            Asignar
+
+                                        </button>
+
+                                    </form>
+
+
+                                <% } else { %>
+
+
+                                    <span class="reservation-unit-status available">
+
+                                        <i class="fa-solid fa-circle-check"></i>
+
+                                        Disponible
+
+                                    </span>
+
+
+                                <% } %>
+
+
+                            </article>
+
+
+                        <% }); %>
+
+
+                    </div>
 
 
                 <% } else { %>
 
 
-                    <p class="reservation-compact-empty">
+                    <div class="reservation-units-state warning">
 
-                        No hay unidades compatibles
-                        disponibles para este período.
 
-                    </p>
+                        <span>
+
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                Sin unidades disponibles
+                            </strong>
+
+                            <small>
+                                No hay unidades compatibles disponibles para este período.
+                            </small>
+
+                        </div>
+
+
+                    </div>
 
 
                 <% } %>
 
 
-            <% } else if (
-                reservacion.estado === "confirmada"
-            ) { %>
+            </section>
 
 
-                <p class="reservation-compact-empty">
-
-                    La cantidad solicitada ya está
-                    completamente asignada.
-
-                </p>
+        <% } else if (
+            reservacion.estado === "confirmada"
+        ) { %>
 
 
-            <% } else { %>
+            <div class="reservation-units-state success">
 
 
-                <p class="reservation-compact-empty">
+                <span>
 
-                    Las unidades físicas podrán asignarse
-                    cuando la reservación esté confirmada.
+                    <i class="fa-solid fa-circle-check"></i>
 
-                </p>
+                </span>
 
 
-            <% } %>
+                <div>
 
+                    <strong>
+                        Asignación completada
+                    </strong>
+
+                    <small>
+                        La cantidad de vehículos solicitada ya está completamente asignada.
+                    </small>
 
                 </div>
+
+
+            </div>
+
+
+        <% } else { %>
+
+
+            <div class="reservation-units-state info">
+
+
+                <span>
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                </span>
+
+
+                <div>
+
+                    <strong>
+                        Asignación aún no disponible
+                    </strong>
+
+                    <small>
+                        Las unidades físicas podrán asignarse cuando la reservación esté confirmada.
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+        <% } %>
+
+
+    </div>
+
+
+</div>
 
 
     </details>
@@ -2230,152 +2615,286 @@ const puedeEntregarVehiculo =
          SERVICIOS ADICIONALES
     ================================== -->
 
-    <details class="reservation-compact-details">
+    <details class="reservation-compact-details reservation-detail-services">
 
 
-        <summary>
+    <summary>
+
+
+        <span class="reservation-detail-summary-main">
+
+            <span class="reservation-detail-summary-icon">
+
+                <i class="fa-solid fa-puzzle-piece"></i>
+
+            </span>
+
+
+            <span class="reservation-detail-summary-copy">
+
+                <strong>
+                    Servicios adicionales
+                </strong>
+
+                <small>
+                    Extras y accesorios incluidos en la reservación.
+                </small>
+
+            </span>
+
+        </span>
+
+
+        <span class="reservation-detail-summary-side">
+
+            <small class="reservation-detail-badge">
+
+                <%= adicionales.length %>
+
+                <%= adicionales.length === 1
+                    ? "servicio"
+                    : "servicios"
+                %>
+
+            </small>
+
+
+            <i class="fa-solid fa-chevron-down"></i>
+
+        </span>
+
+
+    </summary>
+
+
+<div class="reservation-compact-details-body">
+
+
+    <% if (adicionales.length) { %>
+
+
+        <div class="reservation-services-grid">
+
+
+            <% adicionales.forEach((adicional) => { %>
+
+
+                <article class="reservation-service-card">
+
+
+                    <div class="reservation-service-card-header">
+
+
+                        <span class="reservation-service-card-icon">
+
+                            <i class="fa-solid fa-puzzle-piece"></i>
+
+                        </span>
+
+
+                        <div class="reservation-service-card-title">
+
+                            <small>
+                                Servicio adicional
+                            </small>
+
+                            <strong>
+                                <%= adicional.nombre %>
+                            </strong>
+
+                        </div>
+
+
+                        <strong class="reservation-service-card-total">
+
+                            US$<%= moneda(
+                                adicional.costo_total
+                            ) %>
+
+                        </strong>
+
+
+                    </div>
+
+
+                    <div class="reservation-service-card-data">
+
+
+                        <div>
+
+                            <span>
+                                Precio diario
+                            </span>
+
+                            <strong>
+
+                                US$<%= moneda(
+                                    adicional.precio_diario
+                                ) %>
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Vehículos
+                            </span>
+
+                            <strong>
+                                <%= adicional.cantidad_vehiculos %>
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Días
+                            </span>
+
+                            <strong>
+                                <%= adicional.dias %>
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="reservation-service-card-footer">
+
+
+                        <span>
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                            Incluido en la reservación
+
+                        </span>
+
+
+                        <strong>
+
+                            Total:
+                            US$<%= moneda(
+                                adicional.costo_total
+                            ) %>
+
+                        </strong>
+
+
+                    </div>
+
+
+                </article>
+
+
+            <% }); %>
+
+
+        </div>
+
+
+    <% } else { %>
+
+
+        <div class="reservation-services-empty">
 
 
             <span>
 
                 <i class="fa-solid fa-puzzle-piece"></i>
 
-                Servicios adicionales
-
             </span>
 
 
-            <small>
-                <%= adicionales.length %>
-            </small>
+            <div>
 
+                <strong>
+                    Sin servicios adicionales
+                </strong>
 
-            <i class="fa-solid fa-chevron-down"></i>
+                <small>
+                    Esta reservación no incluye extras ni accesorios adicionales.
+                </small>
 
-
-        </summary>
-
-
-
-        <div class="reservation-compact-details-body">
-
-
-            <% if (adicionales.length) { %>
-
-
-                <div class="reservation-compact-services">
-
-
-                    <% adicionales.forEach((adicional) => { %>
-
-
-                        <div class="reservation-compact-service-row">
-
-
-                            <div>
-
-                                <strong>
-                                    <%= adicional.nombre %>
-                                </strong>
-
-
-                                <span>
-
-                                    US$<%= moneda(
-                                        adicional.precio_diario
-                                    ) %>
-                                    / día
-
-                                    ·
-
-                                    <%= adicional.cantidad_vehiculos %>
-                                    vehículo(s)
-
-                                    ·
-
-                                    <%= adicional.dias %>
-                                    día(s)
-
-                                </span>
-
-                            </div>
-
-
-                            <strong>
-
-                                US$<%= moneda(
-                                    adicional.costo_total
-                                ) %>
-
-                            </strong>
-
-
-                        </div>
-
-
-                    <% }); %>
-
-
-                </div>
-
-
-            <% } else { %>
-
-
-                <p class="reservation-compact-empty">
-
-                    Esta reservación no incluye
-                    servicios adicionales.
-
-                </p>
-
-
-            <% } %>
+            </div>
 
 
         </div>
 
 
+    <% } %>
+
+
+</div>
+
     </details>
-
-
-
-
 
     <!-- =================================
          PAGOS
     ================================== -->
 
     <details
-        class="reservation-compact-details"
-        <%= pagosPendientesValidacion.length > 0
-            ? "open"
-            : ""
-        %>
-    >
-
+    class="reservation-compact-details reservation-detail-payments"
+    <%= pagosPendientesValidacion.length > 0
+        ? "open"
+        : ""
+    %>
+>
 
         <summary>
 
 
-            <span>
+    <span class="reservation-detail-summary-main">
 
-                <i class="fa-solid fa-money-check-dollar"></i>
+        <span class="reservation-detail-summary-icon">
 
+            <i class="fa-solid fa-credit-card"></i>
+
+        </span>
+
+
+        <span class="reservation-detail-summary-copy">
+
+            <strong>
                 Pagos de la reservación
-
-            </span>
-
+            </strong>
 
             <small>
-                <%= pagosSeguros.length %>
+                Anticipos, pagos y comprobantes.
             </small>
 
+        </span>
 
-            <i class="fa-solid fa-chevron-down"></i>
+    </span>
 
 
-        </summary>
+    <span class="reservation-detail-summary-side">
+
+        <small class="reservation-detail-badge">
+
+            <%= pagosSeguros.length %>
+
+            <%= pagosSeguros.length === 1
+                ? "pago"
+                : "pagos"
+            %>
+
+        </small>
+
+
+        <i class="fa-solid fa-chevron-down"></i>
+
+    </span>
+
+
+</summary>
 
 
 
@@ -2811,34 +3330,53 @@ const puedeEntregarVehiculo =
          FACTURACIÓN
     ================================== -->
 
-    <details class="reservation-compact-details">
+    <details class="reservation-compact-details reservation-detail-billing">
 
 
-        <summary>
+    <summary>
 
 
-            <span>
+        <span class="reservation-detail-summary-main">
+
+            <span class="reservation-detail-summary-icon">
 
                 <i class="fa-solid fa-receipt"></i>
-
-                Desglose de facturación
 
             </span>
 
 
-            <strong>
+            <span class="reservation-detail-summary-copy">
+
+                <strong>
+                    Desglose de facturación
+                </strong>
+
+                <small>
+                    Detalle de costos, descuentos y total.
+                </small>
+
+            </span>
+
+        </span>
+
+
+        <span class="reservation-detail-summary-side">
+
+            <small class="reservation-detail-badge">
 
                 US$<%= moneda(
                     resumenPago.total
                 ) %>
 
-            </strong>
+            </small>
 
 
             <i class="fa-solid fa-chevron-down"></i>
 
+        </span>
 
-        </summary>
+
+    </summary>
 
 
 
@@ -2953,25 +3491,58 @@ const puedeEntregarVehiculo =
          COMENTARIOS
     ================================== -->
 
-    <details class="reservation-compact-details">
+    <details class="reservation-compact-details reservation-detail-comments">
 
 
-        <summary>
+    <summary>
 
 
-            <span>
+        <span class="reservation-detail-summary-main">
+
+            <span class="reservation-detail-summary-icon">
 
                 <i class="fa-regular fa-comment-dots"></i>
-
-                Comentarios del cliente
 
             </span>
 
 
+            <span class="reservation-detail-summary-copy">
+
+                <strong>
+                    Comentarios del cliente
+                </strong>
+
+                <small>
+                    Notas y observaciones realizadas por el cliente.
+                </small>
+
+            </span>
+
+        </span>
+
+
+        <span class="reservation-detail-summary-side">
+
+            <% if (
+                String(
+                    reservacion.comentarios ||
+                    ""
+                ).trim()
+            ) { %>
+
+                <small class="reservation-detail-badge">
+                    1 comentario
+                </small>
+
+            <% } %>
+
+
             <i class="fa-solid fa-chevron-down"></i>
 
+        </span>
 
-        </summary>
+
+    </summary>
 
 
 

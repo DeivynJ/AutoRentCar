@@ -338,6 +338,77 @@
 
                 </div>
 
+                                <!-- =========================================
+                     TRANSICIÓN DE INICIO DE SESIÓN
+                ========================================== -->
+
+                <div
+                    class="auth-cargando"
+                    id="auth-cargando"
+                    aria-hidden="true"
+                >
+
+                    <div
+                        class="auth-cargando-contenido"
+                        role="status"
+                        aria-live="polite"
+                    >
+
+                        <span class="auth-cargando-etiqueta">
+                            AVYNEXO
+                        </span>
+
+                       <strong class="auth-cargando-titulo">
+
+    <span>
+        Iniciando acceso
+    </span>
+
+    <span
+        class="auth-cargando-puntos"
+        aria-hidden="true"
+    >
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </span>
+
+</strong>
+
+<p>
+    Preparando tu panel administrativo...
+</p>
+
+<div
+    class="auth-cargando-progreso"
+    aria-hidden="true"
+>
+
+    <span></span>
+
+</div>
+
+                        <div
+                            class="auth-cargando-ruta"
+                            aria-hidden="true"
+                        >
+
+                            <span class="auth-cargando-linea"></span>
+
+                            <span class="auth-cargando-auto">
+
+                                <i class="fa-solid fa-car-side"></i>
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
 
         </section>
@@ -390,6 +461,84 @@
                 );
             }
         );
+                const formularioLogin =
+            document.querySelector(
+                ".auth-formulario"
+            );
+
+        const panelFormulario =
+            document.querySelector(
+                ".auth-panel-formulario"
+            );
+
+        const cargandoLogin =
+            document.getElementById(
+                "auth-cargando"
+            );
+
+        const botonLogin =
+            formularioLogin?.querySelector(
+                ".auth-boton"
+            );
+
+        let loginEnviando =
+            false;
+
+
+        formularioLogin?.addEventListener(
+            "submit",
+            (evento) => {
+
+                if (loginEnviando) {
+
+                    evento.preventDefault();
+
+                    return;
+
+                }
+
+
+                evento.preventDefault();
+
+
+                loginEnviando =
+                    true;
+
+
+                botonLogin?.setAttribute(
+                    "disabled",
+                    "disabled"
+                );
+
+
+                panelFormulario?.classList.add(
+                    "auth-esta-cargando"
+                );
+
+
+                cargandoLogin?.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+
+                window.setTimeout(
+                    () => {
+
+                        HTMLFormElement
+                            .prototype
+                            .submit
+                            .call(
+                                formularioLogin
+                            );
+
+                    },
+                    850
+                );
+
+            }
+        );
+        
     </script>
 
 </body>

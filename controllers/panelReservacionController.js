@@ -120,15 +120,14 @@ async function mostrarReservacionesPanel(
 
 
         const estadosPermitidos =
-            new Set([
-                "pendiente",
-                "pendiente_pago",
-                "confirmada",
-                "en_curso",
-                "finalizada",
-                "rechazada",
-                "cancelada"
-            ]);
+    new Set([
+        "pendiente",
+        "pendiente_pago",
+        "pendiente_asignacion",
+        "pendiente_entrega",
+        "en_curso",
+        "finalizada"
+    ]);
 
 
         const estadoSolicitado =
@@ -455,20 +454,135 @@ confirmadas:
         }
 
 
-        if (
-            filtros.estado
-        ) {
+        /* =================================================
+   FILTRO POR ETAPA OPERATIVA
+================================================= */
 
-            condicionesListado.push(
-                "r.estado = ?"
-            );
+if (
+    [
+        "pendiente",
+        "pendiente_pago",
+        "en_curso",
+        "finalizada"
+    ].includes(
+        filtros.estado
+    )
+) {
+
+    condicionesListado.push(
+        "r.estado = ?"
+    );
 
 
-            parametrosListado.push(
-                filtros.estado
-            );
+    parametrosListado.push(
+        filtros.estado
+    );
 
-        }
+}
+
+
+/* -------------------------------------------------
+   PENDIENTE DE ASIGNAR UNIDAD
+
+   Internamente la reservación ya está confirmada,
+   pero todavía no tiene todas las unidades físicas.
+------------------------------------------------- */
+
+if (
+    filtros.estado ===
+    "pendiente_asignacion"
+) {
+
+    condicionesListado.push(
+        `
+        (
+            r.estado = 'confirmada'
+
+            AND (
+
+                COALESCE(
+                    r.cantidad_vehiculos,
+                    0
+                ) <= 0
+
+                OR
+
+                (
+                    SELECT
+                        COUNT(*)
+
+                    FROM reservacion_vehiculos
+                        rv_filtro_asignacion
+
+                    WHERE
+                        rv_filtro_asignacion.reservacion_id =
+                            r.id
+
+                        AND
+                        rv_filtro_asignacion.estado =
+                            'asignado'
+                ) <
+                COALESCE(
+                    r.cantidad_vehiculos,
+                    0
+                )
+            )
+        )
+        `
+    );
+
+}
+
+
+/* -------------------------------------------------
+   PENDIENTE DE ENTREGA
+
+   Internamente continúa confirmada,
+   pero ya tiene todas las unidades asignadas.
+------------------------------------------------- */
+
+if (
+    filtros.estado ===
+    "pendiente_entrega"
+) {
+
+    condicionesListado.push(
+        `
+        (
+            r.estado = 'confirmada'
+
+            AND
+            COALESCE(
+                r.cantidad_vehiculos,
+                0
+            ) > 0
+
+            AND
+
+            (
+                SELECT
+                    COUNT(*)
+
+                FROM reservacion_vehiculos
+                    rv_filtro_entrega
+
+                WHERE
+                    rv_filtro_entrega.reservacion_id =
+                        r.id
+
+                    AND
+                    rv_filtro_entrega.estado =
+                        'asignado'
+            ) >=
+            COALESCE(
+                r.cantidad_vehiculos,
+                0
+            )
+        )
+        `
+    );
+
+}
 
 
         if (

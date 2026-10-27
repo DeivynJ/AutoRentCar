@@ -15,19 +15,87 @@
             <i class="fa-solid fa-bars"></i>
         </button>
 
-        <div class="topbar-title">
+        <a
+    href="/admin"
+    class="admin-topbar-brand"
+    aria-label="Ir al Dashboard"
+>
 
-            <span class="topbar-eyebrow">
-                <%= subtituloPagina || "Panel administrativo" %>
-            </span>
+    <span class="admin-topbar-brand-logo">
 
-            <h1>
-                <%= titulo %>
-            </h1>
+        <img
+            src="/img/logo/autorentcar-logo-oficial.png"
+            alt="AVYNEXO"
+        >
 
-        </div>
+    </span>
+
+
+    <span class="admin-topbar-brand-info">
+
+        <strong>
+            AVYNEXO
+        </strong>
+
+        <small>
+            Superadministrador
+        </small>
+
+    </span>
+
+</a>
 
     </div>
+
+    <nav
+    class="admin-topbar-primary-nav"
+    aria-label="Navegación principal"
+>
+
+    <div class="admin-topbar-primary-nav-inner">
+
+        <a
+            href="/admin"
+            class="admin-topbar-nav-link <%= paginaActual === 'dashboard' ? 'activo' : '' %>"
+        >
+            Dashboard
+        </a>
+
+
+        <a
+            href="/admin/agencias"
+            class="admin-topbar-nav-link <%= paginaActual === 'agencias' ? 'activo' : '' %>"
+        >
+            Agencias
+        </a>
+
+
+        <a
+            href="/admin/planes"
+            class="admin-topbar-nav-link <%= paginaActual === 'planes' ? 'activo' : '' %>"
+        >
+            Planes
+        </a>
+
+
+        <a
+            href="/admin/suscripciones"
+            class="admin-topbar-nav-link <%= paginaActual === 'suscripciones' ? 'activo' : '' %>"
+        >
+            Suscripciones
+        </a>
+
+
+        <a
+            href="/admin/usuarios"
+            class="admin-topbar-nav-link <%= paginaActual === 'usuarios' ? 'activo' : '' %>"
+        >
+            Usuarios
+        </a>
+
+    </div>
+
+</nav>
 
 
     <!-- =============================================

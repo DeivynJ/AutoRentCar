@@ -5393,41 +5393,233 @@ body.modo-oscuro .codigo-confirmacion button {
     font-size: 1.45rem;
 }
 
-/* Datos */
+/* =========================================================
+   COMPROBANTE - FICHA DE DATOS
+   RECORRIDO / CLIENTE
+========================================================= */
 
 .rejilla-datos-confirmacion {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        1px;
+
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        var(--color-borde);
+
+    border-radius:
+        16px;
+
+    background:
+        var(--color-borde);
 }
+
+
+/* =========================================================
+   FILA DE INFORMACIÓN
+========================================================= */
 
 .dato-confirmacion {
-    padding: 17px;
-    border: 1px solid var(--color-borde);
-    border-radius: 13px;
-    background-color: var(--color-fondo);
+
+    min-width:
+        0;
+
+    min-height:
+        78px;
+
+    padding:
+        15px 17px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        42px
+        minmax(
+            0,
+            1fr
+        );
+
+    grid-template-rows:
+        auto
+        auto;
+
+    align-items:
+        center;
+
+    column-gap:
+        13px;
+
+    row-gap:
+        2px;
+
+    border:
+        0;
+
+    border-radius:
+        0;
+
+    background:
+        var(--color-blanco);
+
+    box-shadow:
+        none;
+
+    transition:
+        background-color
+        var(--transicion);
 }
 
-.dato-confirmacion i {
-    display: block;
-    margin-bottom: 10px;
-    color: var(--color-secundario);
+
+/* =========================================================
+   EFECTO SUAVE
+========================================================= */
+
+.dato-confirmacion:hover {
+
+    background:
+        rgba(
+            var(--color-secundario-rgb),
+            0.035
+        );
 }
+
+
+/* =========================================================
+   ÚLTIMO ELEMENTO IMPAR
+   EJ.: CANTIDAD DE VEHÍCULOS
+========================================================= */
+
+.dato-confirmacion:last-child:nth-child(odd) {
+
+    grid-column:
+        1 / -1;
+}
+
+
+/* =========================================================
+   ICONO
+========================================================= */
+
+.dato-confirmacion i {
+
+    grid-column:
+        1;
+
+    grid-row:
+        1 / span 2;
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    margin:
+        0;
+
+    border-radius:
+        11px;
+
+    color:
+        var(--color-secundario);
+
+    background:
+        rgba(
+            var(--color-secundario-rgb),
+            0.10
+        );
+
+    font-size:
+        0.92rem;
+}
+
+
+/* =========================================================
+   TEXTO
+========================================================= */
 
 .dato-confirmacion span,
 .dato-confirmacion strong {
-    display: block;
+
+    min-width:
+        0;
+
+    display:
+        block;
 }
+
+
+/* =========================================================
+   ETIQUETA
+========================================================= */
 
 .dato-confirmacion span {
-    margin-bottom: 5px;
-    color: var(--color-texto-suave);
-    font-size: 0.67rem;
+
+    grid-column:
+        2;
+
+    margin:
+        0;
+
+    color:
+        var(--color-texto);
+
+    font-size:
+         0.76rem;
+
+    font-weight:
+        800;
+
+    line-height:
+        1.35;
 }
 
+
+/* =========================================================
+   VALOR
+========================================================= */
+
 .dato-confirmacion strong {
-    font-size: 0.82rem;
-    overflow-wrap: anywhere;
+
+    grid-column:
+        2;
+
+    color:
+        var(--color-texto-suave);
+
+    font-size:
+        0.86rem;
+
+    font-weight:
+        500;
+
+    line-height:
+        1.4;
+
+    overflow-wrap:
+        anywhere;
 }
 
 /* Adicionales */
@@ -5721,8 +5913,19 @@ body.modo-oscuro .rejilla-proximos-pasos article > span {
     }
 
     .rejilla-datos-confirmacion {
-        grid-template-columns: 1fr;
-    }
+
+    grid-template-columns:
+        1fr;
+
+}
+
+
+.dato-confirmacion:last-child:nth-child(odd) {
+
+    grid-column:
+        auto;
+
+}
 
     .desglose-confirmacion {
         max-width: none;
@@ -6219,33 +6422,314 @@ body.modo-oscuro .rejilla-proximos-pasos article > span {
     border-radius: 15px;
 }
 
+/* =========================================================
+   MIS RESERVACIONES - SECCIONES DEL DETALLE
+========================================================= */
+
+.detalle-reserva-seccion {
+
+    margin-top:
+        24px;
+}
+
+
+/* Primera sección después del vehículo */
+
+.detalle-vehiculo-reserva
++
+.detalle-reserva-seccion {
+
+    margin-top:
+        0;
+}
+
+
+/* =========================================================
+   ENCABEZADO DE CADA SECCIÓN
+========================================================= */
+
+.detalle-reserva-seccion-titulo {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+
+    margin-bottom:
+        13px;
+}
+
+
+.detalle-reserva-seccion-titulo
+> div {
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    flex-shrink:
+        0;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        11px;
+
+    color:
+        #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--color-principal),
+            var(--color-secundario)
+        );
+
+    box-shadow:
+        0 8px 18px
+        rgba(
+            var(--color-secundario-rgb),
+            0.18
+        );
+
+    font-size:
+        0.95rem;
+}
+
+
+.detalle-reserva-seccion-titulo
+section {
+
+    min-width:
+        0;
+}
+
+
+.detalle-reserva-seccion-titulo
+span {
+
+    display:
+        block;
+
+    margin-bottom:
+        2px;
+
+    color:
+        var(--color-secundario);
+
+    font-size:
+        0.64rem;
+
+    font-weight:
+        800;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.7px;
+}
+
+.detalle-reserva-seccion-titulo
+h3 {
+
+    color:
+        var(--color-principal);
+
+    font-size:
+        1rem;
+
+    font-weight:
+        800;
+
+    line-height:
+        1.3;
+}
+
+
+/* =========================================================
+   FICHA DE DATOS
+========================================================= */
+
 .rejilla-detalle-reservacion {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        1px;
+
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        var(--color-borde);
+
+    border-radius:
+        15px;
+
+    background:
+        var(--color-borde);
 }
 
-.rejilla-detalle-reservacion article {
-    padding: 15px;
-    border: 1px solid var(--color-borde);
-    border-radius: 11px;
-    background-color: var(--color-fondo);
+
+/* =========================================================
+   DATO INDIVIDUAL
+========================================================= */
+
+.rejilla-detalle-reservacion
+article {
+
+    min-width:
+        0;
+
+    min-height:
+        70px;
+
+    padding:
+        14px 16px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    justify-content:
+        center;
+
+    border:
+        0;
+
+    border-radius:
+        0;
+
+    background:
+        var(--color-blanco);
+
+    transition:
+        background-color
+        var(--transicion);
 }
 
-.rejilla-detalle-reservacion span,
-.rejilla-detalle-reservacion strong {
-    display: block;
+
+.rejilla-detalle-reservacion
+article:hover {
+
+    background:
+        rgba(
+            var(--color-secundario-rgb),
+            0.035
+        );
 }
 
-.rejilla-detalle-reservacion span {
-    margin-bottom: 5px;
-    color: var(--color-texto-suave);
-    font-size: 0.65rem;
+
+/* Si queda un dato solo al final */
+
+.rejilla-detalle-reservacion
+article:last-child:nth-child(odd) {
+
+    grid-column:
+        1 / -1;
 }
 
-.rejilla-detalle-reservacion strong {
-    font-size: 0.78rem;
-    overflow-wrap: anywhere;
+
+/* =========================================================
+   TÍTULO DEL DATO
+========================================================= */
+
+.rejilla-detalle-reservacion
+span {
+
+    display:
+        block;
+
+    margin-bottom:
+        4px;
+
+    color:
+        var(--color-texto);
+
+    font-size:
+        0.76rem;
+
+    font-weight:
+        800;
+
+    line-height:
+        1.35;
+}
+
+
+/* =========================================================
+   VALOR DEL DATO
+========================================================= */
+
+.rejilla-detalle-reservacion
+strong {
+
+    display:
+        block;
+
+    color:
+        var(--color-texto-suave);
+
+    font-size:
+        0.86rem;
+
+    font-weight:
+        500;
+
+    line-height:
+        1.45;
+
+    overflow-wrap:
+        anywhere;
+}
+
+
+/* =========================================================
+   COMENTARIOS
+========================================================= */
+
+.detalle-reserva-seccion-adicional
+.rejilla-detalle-reservacion
+article:first-child {
+
+    grid-column:
+        1 / -1;
+}
+
+/* =========================================================
+   MIS RESERVACIONES - TÍTULOS EN MODO OSCURO
+========================================================= */
+
+body.modo-oscuro
+.detalle-reserva-seccion-titulo
+h3 {
+
+    color:
+        var(--color-texto);
 }
 
 .total-detalle-reserva {
@@ -6389,6 +6873,17 @@ body.modo-oscuro .rejilla-proximos-pasos article > span {
     .rejilla-detalle-reservacion {
         grid-template-columns: 1fr;
     }
+
+    .rejilla-detalle-reservacion
+article:last-child:nth-child(odd),
+
+.detalle-reserva-seccion-adicional
+.rejilla-detalle-reservacion
+article:first-child {
+
+    grid-column:
+        auto;
+}
 
     .acciones-cancelacion {
         grid-template-columns: 1fr;

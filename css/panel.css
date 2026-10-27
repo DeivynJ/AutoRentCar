@@ -69,9 +69,6 @@
     --panel-sidebar-width:
         280px;
 
-    --panel-sidebar-collapsed:
-        84px;
-
     --panel-topbar-height:
         86px;
 
@@ -403,51 +400,6 @@ textarea {
     text-transform:
         uppercase;
 }
-
-
-.panel-sidebar-collapse {
-
-    flex:
-        0 0 34px;
-
-    width:
-        34px;
-
-    height:
-        34px;
-
-    display:
-        grid;
-
-    place-items:
-        center;
-
-    border:
-        none;
-
-    border-radius:
-        9px;
-
-    color:
-        rgba(
-            255,
-            255,
-            255,
-            0.62
-        );
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.06
-        );
-
-    cursor:
-        pointer;
-}
-
 
 /* =========================================================
    USUARIO SIDEBAR
@@ -987,111 +939,205 @@ transition:
 
 
 /* =========================================================
-   COLAPSADO
+   RAIL ADMINISTRATIVO - ESCRITORIO
 ========================================================= */
 
-body.panel-sidebar-collapsed
-.panel-sidebar {
+@media (
+    min-width:
+        981px
+) {
 
-    width:
-        var(--panel-sidebar-collapsed);
+    .panel-sidebar {
 
-    overflow:
-        visible;
+        width:
+            58px;
+
+        height:
+            auto;
+
+        max-height:
+            calc(
+                100vh - 140px
+            );
+
+        position:
+            fixed;
+
+        top:
+            50%;
+
+        left:
+            16px;
+
+        bottom:
+            auto;
+
+        padding:
+            8px 0;
+
+        overflow:
+            visible;
+
+        border:
+            1px solid
+            rgba(
+                255,
+                255,
+                255,
+                0.08
+            );
+
+        border-radius:
+            24px;
+
+        box-shadow:
+            0 16px 38px
+            rgba(
+                0,
+                0,
+                0,
+                0.18
+            );
+
+        transform:
+            translateY(
+                -50%
+            );
+    }
+
+    .panel-sidebar-header,
+    .panel-sidebar-user,
+    .panel-sidebar-footer,
+    .panel-nav-title,
+    .panel-nav-text,
+    .panel-nav-link small {
+
+        display:
+            none;
+    }
+
+
+    .panel-navigation {
+
+        flex:
+            none;
+
+        padding:
+            0 7px;
+
+        overflow:
+            visible;
+    }
+
+
+    .panel-nav-section {
+
+        margin:
+            0;
+    }
+
+
+    .panel-nav-link[href="/panel"],
+    .panel-nav-link[href="/panel/reservaciones"],
+    .panel-nav-link[href="/panel/catalogo"],
+    .panel-nav-link[href="/panel/clientes"],
+    .panel-nav-link[href="/panel/sucursales"],
+    .panel-nav-disabled {
+
+        display:
+            none;
+    }
+
+
+    .panel-nav-link {
+
+        width:
+            44px;
+
+        height:
+            44px;
+
+        min-height:
+            44px;
+
+        margin:
+            4px auto;
+
+        padding:
+            0;
+
+        display:
+            grid;
+
+        place-items:
+            center;
+
+        gap:
+            0;
+
+        border-radius:
+            13px;
+    }
+
+
+    .panel-nav-icon {
+
+        flex:
+            none;
+
+        width:
+            44px;
+
+        height:
+            44px;
+
+        display:
+            grid;
+
+        place-items:
+            center;
+    }
+
+
+    .panel-nav-icon > i {
+
+        width:
+            20px;
+
+        height:
+            20px;
+
+        display:
+            grid;
+
+        place-items:
+            center;
+
+        line-height:
+            1;
+
+        text-align:
+            center;
+    }
+
+
+    .panel-nav-link:hover {
+
+        transform:
+            none;
+    }
+
+
+    .panel-nav-link.activo::before {
+
+        top:
+            12px;
+
+        bottom:
+            12px;
+    }
+
 }
-
-
-body.panel-sidebar-collapsed
-.panel-content-wrapper {
-
-    margin-left:
-        var(--panel-sidebar-collapsed);
-}
-
-
-body.panel-sidebar-collapsed
-.panel-brand-info,
-
-body.panel-sidebar-collapsed
-.panel-sidebar-user-info,
-
-body.panel-sidebar-collapsed
-.panel-online-dot,
-
-body.panel-sidebar-collapsed
-.panel-nav-title,
-
-body.panel-sidebar-collapsed
-.panel-nav-text,
-
-body.panel-sidebar-collapsed
-.panel-nav-link small,
-
-body.panel-sidebar-collapsed
-.panel-plan-box div,
-
-body.panel-sidebar-collapsed
-.panel-logout span {
-
-    display:
-        none;
-}
-
-
-body.panel-sidebar-collapsed
-.panel-sidebar-user,
-body.panel-sidebar-collapsed
-.panel-nav-link,
-body.panel-sidebar-collapsed
-.panel-plan-box,
-body.panel-sidebar-collapsed
-.panel-logout {
-
-    justify-content:
-        center;
-}
-
-
-body.panel-sidebar-collapsed
-.panel-sidebar-collapse {
-
-    position:
-        absolute;
-
-    right:
-        -14px;
-
-    border:
-        1px solid
-        rgba(
-            var(--panel-primary-rgb),
-            0.12
-        );
-
-    color:
-        var(--panel-primary);
-
-    background:
-        var(--panel-surface);
-
-    box-shadow:
-        0 8px 20px
-        rgba(
-            0,
-            0,
-            0,
-            0.08
-        );
-}
-
-
-body.panel-sidebar-collapsed
-.panel-sidebar-collapse i {
-
-    transform:
-        rotate(180deg);
-}
-
 
 /* =========================================================
    CONTENIDO
@@ -1103,11 +1149,7 @@ body.panel-sidebar-collapsed
         100vh;
 
     margin-left:
-        var(--panel-sidebar-width);
-
-    transition:
-        margin-left
-        var(--panel-transition);
+        0;
 }
 
 
@@ -1174,6 +1216,308 @@ body.panel-sidebar-collapsed
         10px;
 }
 
+/* =========================================================
+   NAVEGACIÓN PRINCIPAL SUPERIOR
+========================================================= */
+
+.panel-topbar-left,
+.panel-topbar-right {
+
+    flex-shrink:
+        0;
+}
+
+/* =========================================================
+   IDENTIDAD DE AGENCIA EN TOPBAR
+========================================================= */
+
+.panel-topbar-agency {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+}
+
+
+.panel-topbar-agency-logo {
+
+    flex:
+        0 0 50px;
+
+    width:
+        50px;
+
+    height:
+        50px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        rgba(
+            var(--panel-accent-rgb),
+            0.20
+        );
+
+    border-radius:
+        13px;
+
+    color:
+        var(--panel-accent);
+
+    background:
+        var(--panel-surface);
+
+    transition:
+        var(--panel-transition);
+}
+
+.panel-topbar-agency:hover
+.panel-topbar-agency-logo {
+
+    border-color:
+        rgba(
+            var(--panel-accent-rgb),
+            0.42
+        );
+
+    transform:
+        translateY(-1px);
+}
+
+
+.panel-topbar-agency-logo img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    padding:
+        4px;
+
+    display:
+        block;
+
+    object-fit:
+        contain;
+
+    background:
+        #ffffff;
+}
+
+
+.panel-topbar-agency-info {
+
+    min-width:
+        0;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        3px;
+}
+
+
+.panel-topbar-agency-info strong {
+
+    max-width:
+        210px;
+
+    overflow:
+        hidden;
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.88rem;
+
+    font-weight:
+        800;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+}
+
+
+.panel-topbar-agency-info small {
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.59rem;
+
+    font-weight:
+        650;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.06em;
+}
+
+
+.panel-topbar-primary-nav {
+
+    min-width:
+        0;
+
+    flex:
+        1;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        0 12px;
+}
+
+
+.panel-topbar-primary-nav-inner {
+
+    min-width:
+        0;
+
+    padding:
+        4px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        3px;
+
+    border:
+    1px solid
+    rgba(
+        var(--panel-accent-rgb),
+        0.14
+    );
+
+    border-radius:
+        999px;
+
+    background:
+        var(--panel-surface);
+
+    box-shadow:
+        0 8px 24px
+        rgba(
+            var(--panel-primary-rgb),
+            0.045
+        );
+}
+
+.panel-topbar-nav-link {
+
+    min-height:
+        36px;
+
+    padding:
+         0 15px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        999px;
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+         0.70rem;
+
+    font-weight:
+        700;
+
+    white-space:
+        nowrap;
+
+    transition:
+        color
+        var(--panel-transition),
+        background
+        var(--panel-transition),
+        transform
+        var(--panel-transition),
+        box-shadow
+        var(--panel-transition);
+}
+
+
+.panel-topbar-nav-link:hover {
+
+    color:
+        var(--panel-accent);
+
+    background:
+        rgba(
+            var(--panel-accent-rgb),
+            0.09
+        );
+
+    transform:
+        translateY(-1px);
+}
+
+
+.panel-topbar-nav-link.activo {
+
+    color:
+        var(--panel-text-on-accent);
+
+    background:
+        var(--panel-accent);
+
+    box-shadow:
+        0 7px 18px
+        rgba(
+            var(--panel-accent-rgb),
+            0.24
+        );
+
+    transform:
+        none;
+}
 
 .panel-topbar-eyebrow {
 
@@ -1714,6 +2058,166 @@ body.panel-sidebar-collapsed
         );
 }
 
+/* =========================================================
+   NOTIFICACIONES - COLORES POR CATEGORÍA
+========================================================= */
+
+/* ---------------------------------------------------------
+   RESERVACIONES
+--------------------------------------------------------- */
+
+.panel-notification-item[
+    data-notification-category="reservaciones"
+]
+.panel-notification-item-icon {
+
+    color:
+        #2563eb;
+
+    background:
+        rgba(
+            37,
+            99,
+            235,
+            0.10
+        );
+}
+
+
+/* ---------------------------------------------------------
+   PAGOS
+--------------------------------------------------------- */
+
+.panel-notification-item[
+    data-notification-category="pagos"
+]
+.panel-notification-item-icon {
+
+    color:
+        #059669;
+
+    background:
+        rgba(
+            5,
+            150,
+            105,
+            0.10
+        );
+}
+
+
+/* ---------------------------------------------------------
+   SUSCRIPCIÓN
+--------------------------------------------------------- */
+
+.panel-notification-item[
+    data-notification-category="suscripcion"
+]
+.panel-notification-item-icon {
+
+    color:
+        #d97706;
+
+    background:
+        rgba(253, 35, 54, 0.11);
+}
+
+
+/* ---------------------------------------------------------
+   SISTEMA
+--------------------------------------------------------- */
+
+.panel-notification-item[
+    data-notification-category="sistema"
+]
+.panel-notification-item-icon {
+
+    color:
+        #7c3aed;
+
+    background:
+        rgba(
+            124,
+            58,
+            237,
+            0.10
+        );
+}
+
+
+/* =========================================================
+   MODO OSCURO
+========================================================= */
+
+html[data-panel-tema="oscuro"]
+.panel-notification-item[
+    data-notification-category="reservaciones"
+]
+.panel-notification-item-icon {
+
+    color:
+        #60a5fa;
+
+    background:
+        rgba(
+            96,
+            165,
+            250,
+            0.12
+        );
+}
+
+
+html[data-panel-tema="oscuro"]
+.panel-notification-item[
+    data-notification-category="pagos"
+]
+.panel-notification-item-icon {
+
+    color:
+        #34d399;
+
+    background:
+        rgba(
+            52,
+            211,
+            153,
+            0.12
+        );
+}
+
+
+html[data-panel-tema="oscuro"]
+.panel-notification-item[
+    data-notification-category="suscripcion"
+]
+.panel-notification-item-icon {
+
+    color:
+        #fb2424;
+
+    background:
+        rgba(251, 36, 65, 0.12);
+}
+
+
+html[data-panel-tema="oscuro"]
+.panel-notification-item[
+    data-notification-category="sistema"
+]
+.panel-notification-item-icon {
+
+    color:
+        #a78bfa;
+
+    background:
+        rgba(
+            167,
+            139,
+            250,
+            0.12
+        );
+}
 
 .panel-notification-item-content {
 
@@ -2285,6 +2789,22 @@ body.panel-sidebar-collapsed
         28px 30px;
 }
 
+/* =========================================================
+   ÁREA DE CONTENIDO CON RAIL FLOTANTE
+========================================================= */
+
+@media (
+    min-width:
+        981px
+) {
+
+    .panel-main {
+
+        margin-left:
+            92px;
+    }
+
+}
 
 /* =========================================================
    HERO
@@ -2854,10 +3374,69 @@ body.panel-sidebar-collapsed
         hidden;
 }
 
-
 /* =========================================================
    RESPONSIVE
 ========================================================= */
+
+@media (
+    min-width:
+        981px
+) and (
+    max-width:
+        1180px
+) {
+
+    .panel-topbar {
+
+        padding:
+            0 18px;
+
+        gap:
+            12px;
+    }
+
+
+    .panel-topbar-agency-info,
+    .panel-site-button span,
+    .panel-user-info,
+    .panel-user-arrow {
+
+        display:
+            none;
+    }
+
+
+    .panel-site-button {
+
+        width:
+            43px;
+
+        padding:
+            0;
+
+        justify-content:
+            center;
+    }
+
+
+    .panel-topbar-primary-nav {
+
+        padding:
+            0 6px;
+    }
+
+
+    .panel-topbar-nav-link {
+
+        padding:
+            0 10px;
+
+        font-size:
+            0.64rem;
+    }
+
+}
+
 
 @media (
     max-width:
@@ -2882,22 +3461,175 @@ body.panel-sidebar-collapsed
         980px
 ) {
 
+    /* ---------------------------------------------------------
+       NAVEGACIÓN SUPERIOR
+    --------------------------------------------------------- */
+
+    .panel-topbar-primary-nav {
+
+        display:
+            none;
+    }
+
+
+    /* ---------------------------------------------------------
+       SIDEBAR MÓVIL
+    --------------------------------------------------------- */
+
     .panel-sidebar {
+
+        width:
+            min(
+                290px,
+                88vw
+            );
+
+        height:
+            100vh;
+
+        height:
+            100dvh;
+
+        min-height:
+            100vh;
+
+        max-height:
+            none;
+
+        position:
+            fixed;
+
+        top:
+            0;
+
+        left:
+            0;
+
+        bottom:
+            0;
+
+        padding:
+            0;
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        overflow:
+            hidden;
+
+        border:
+            none;
+
+        border-radius:
+            0;
 
         transform:
             translateX(
                 -100%
             );
 
+        box-shadow:
+            14px 0 40px
+            rgba(
+                0,
+                0,
+                0,
+                0.25
+            );
+
+        z-index:
+            1000;
     }
 
+
+    /* ---------------------------------------------------------
+       RECUPERAR CABECERA Y USUARIO
+    --------------------------------------------------------- */
+
+    .panel-sidebar-header {
+
+        display:
+            flex;
+    }
+
+
+    .panel-sidebar-user {
+
+        display:
+            flex;
+    }
+
+
+    .panel-sidebar-footer {
+
+        display:
+            block;
+
+        flex-shrink:
+            0;
+    }
+
+
+    /* ---------------------------------------------------------
+       RECUPERAR TEXTOS DEL MENÚ COMPLETO
+    --------------------------------------------------------- */
+
+    .panel-nav-title {
+
+        display:
+            block;
+    }
+
+
+    .panel-nav-text {
+
+        display:
+            inline;
+    }
+
+
+    .panel-nav-link small {
+
+        display:
+            inline-flex;
+    }
+
+
+    /* ---------------------------------------------------------
+       NAVEGACIÓN CON SCROLL INTERNO
+    --------------------------------------------------------- */
+
+    .panel-navigation {
+
+        flex:
+            1;
+
+        min-height:
+            0;
+
+        padding:
+            8px 12px;
+
+        overflow-y:
+            auto;
+
+        overflow-x:
+            hidden;
+    }
+
+
+    /* ---------------------------------------------------------
+       MENÚ ABIERTO
+    --------------------------------------------------------- */
 
     body.panel-mobile-open
     .panel-sidebar {
 
         transform:
             translateX(0);
-
     }
 
 
@@ -2909,27 +3641,35 @@ body.panel-sidebar-collapsed
 
         visibility:
             visible;
-
     }
 
 
-    .panel-content-wrapper,
-    body.panel-sidebar-collapsed
+    /* ---------------------------------------------------------
+       CONTENIDO
+    --------------------------------------------------------- */
+
     .panel-content-wrapper {
 
         margin-left:
             0;
-
     }
 
 
-    .panel-sidebar-collapse {
-        display: none;
+    .panel-main {
+
+        margin-left:
+            0;
     }
 
+
+    /* ---------------------------------------------------------
+       BOTÓN HAMBURGUESA
+    --------------------------------------------------------- */
 
     .panel-menu-mobile {
-        display: grid;
+
+        display:
+            grid;
     }
 
 }
@@ -3011,7 +3751,7 @@ body.panel-sidebar-collapsed
 @media (
     max-width:
         540px
-) {
+){
 
     .panel-summary-grid {
 
@@ -3053,16 +3793,16 @@ body.panel-sidebar-collapsed
 
     .panel-footer {
 
-        flex-direction:
-            column;
+    flex-direction:
+        column;
+}
 
-    .panel-summary-card-remitente {
+
+.panel-summary-card-remitente {
 
     grid-column:
         auto;
-       }
-
-    }
+}
 
 }
 
@@ -9264,42 +10004,121 @@ th.panel-client-history-action-heading {
 
 
 /* =========================================================
-   PAGOS COMPACTOS
+   DETALLE RESERVACIÓN - PAGOS
 ========================================================= */
 
 .reservation-compact-payments {
 
     display:
-        flex;
-
-    flex-direction:
-        column;
+        grid;
 
     gap:
-        10px;
-
+        12px;
 }
 
+
+/* =========================================================
+   TARJETA DE PAGO
+========================================================= */
 
 .reservation-compact-payment-row {
 
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
     padding:
-        13px;
+        0;
 
     border:
         1px solid
-        var(--panel-border);
+        rgba(
+            var(--reservation-detail-rgb),
+            0.16
+        );
 
     border-radius:
-        10px;
+        13px;
 
     background:
-        var(--panel-surface-alt);
+        var(--panel-surface);
 
+    box-shadow:
+        0 6px 18px
+        rgba(
+            var(--panel-primary-rgb),
+            0.035
+        );
+
+    transition:
+        border-color
+        var(--panel-transition),
+        box-shadow
+        var(--panel-transition),
+        transform
+        var(--panel-transition);
 }
 
 
+.reservation-compact-payment-row::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    top:
+        0;
+
+    left:
+        0;
+
+    width:
+        4px;
+
+    height:
+        100%;
+
+    background:
+        var(--reservation-detail-color);
+}
+
+
+.reservation-compact-payment-row:hover {
+
+    border-color:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.28
+        );
+
+    box-shadow:
+        0 10px 24px
+        rgba(
+            var(--reservation-detail-rgb),
+            0.07
+        );
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =========================================================
+   CABECERA DEL PAGO
+========================================================= */
+
 .reservation-compact-payment-main {
+
+    min-height:
+        66px;
+
+    padding:
+        13px 15px
+        13px 17px;
 
     display:
         flex;
@@ -9313,14 +10132,87 @@ th.panel-client-history-action-heading {
     gap:
         14px;
 
+    border-bottom:
+        1px solid
+        var(--panel-border);
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(
+                var(--reservation-detail-rgb),
+                0.065
+            ),
+            transparent
+            55%
+        );
 }
 
 
 .reservation-compact-payment-main
 > div {
 
-    min-width: 0;
+    min-width:
+        0;
 
+    position:
+        relative;
+
+    padding-left:
+        43px;
+}
+
+
+.reservation-compact-payment-main
+> div::before {
+
+    content:
+        "\f09d";
+
+    width:
+        34px;
+
+    height:
+        34px;
+
+    position:
+        absolute;
+
+    top:
+        50%;
+
+    left:
+        0;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        9px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.11
+        );
+
+    font-family:
+        "Font Awesome 6 Free";
+
+    font-size:
+        0.68rem;
+
+    font-weight:
+        900;
+
+    transform:
+        translateY(-50%);
 }
 
 
@@ -9332,17 +10224,16 @@ th.panel-client-history-action-heading {
         block;
 
     margin-bottom:
-        3px;
+        4px;
 
     color:
         var(--panel-text);
 
     font-size:
-        0.72rem;
+        0.74rem;
 
     font-weight:
         800;
-
 }
 
 
@@ -9357,25 +10248,60 @@ th.panel-client-history-action-heading {
         var(--panel-text-soft);
 
     font-size:
-        0.67rem;
+        0.61rem;
 
     font-weight:
         500;
 
+    line-height:
+        1.4;
 }
 
 
 /* =========================================================
-   METADATOS DEL PAGO
+   ESTADO DEL PAGO
+========================================================= */
+
+.reservation-compact-payment-main
+> .unit-status {
+
+    flex:
+        0 0 auto;
+
+    min-height:
+        29px;
+
+    padding:
+        0 10px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        999px;
+
+    white-space:
+        nowrap;
+}
+
+
+/* =========================================================
+   METADATOS
 ========================================================= */
 
 .reservation-compact-payment-meta {
 
-    margin-top:
-        11px;
+    margin:
+        0;
 
-    padding-top:
-        10px;
+    padding:
+        12px 15px;
 
     display:
         grid;
@@ -9393,49 +10319,77 @@ th.panel-client-history-action-heading {
         10px;
 
     border-top:
-        1px solid
-        var(--panel-border);
-
+        0;
 }
 
 
-.reservation-compact-payment-meta strong {
+.reservation-compact-payment-meta
+> div {
+
+    min-width:
+        0;
+
+    padding:
+        9px 10px;
+
+    border:
+        1px solid
+        var(--panel-border);
+
+    border-radius:
+        9px;
+
+    background:
+        var(--panel-surface-alt);
+}
+
+
+.reservation-compact-payment-meta
+strong {
 
     display:
         block;
 
     margin-bottom:
-        3px;
-
-    color:
-        var(--panel-text);
-
-    font-size:
-         0.67rem;
-
-    font-weight:
-        800;
-
-}
-
-
-.reservation-compact-payment-meta span {
-
-    display:
-        block;
+        4px;
 
     color:
         var(--panel-text-soft);
 
     font-size:
-         0.72rem;
+        0.52rem;
 
     font-weight:
-        500;
+        700;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.035em;
+}
+
+
+.reservation-compact-payment-meta
+span {
+
+    display:
+        block;
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.62rem;
+
+    font-weight:
+        700;
+
+    line-height:
+        1.45;
 
     overflow-wrap:
         anywhere;
-
 }
 
 
@@ -9445,11 +10399,11 @@ th.panel-client-history-action-heading {
 
 .reservation-compact-proof {
 
-    margin-top:
-        10px;
+    margin:
+        0 15px 12px;
 
     padding:
-        9px 10px;
+        10px 11px;
 
     display:
         flex;
@@ -9465,20 +10419,27 @@ th.panel-client-history-action-heading {
 
     border:
         1px solid
-        var(--panel-border);
+        rgba(
+            var(--reservation-detail-rgb),
+            0.15
+        );
 
     border-radius:
-        9px;
+        10px;
 
     background:
-        var(--panel-surface);
-
+        rgba(
+            var(--reservation-detail-rgb),
+            0.035
+        );
 }
 
 
-.reservation-compact-proof > div {
+.reservation-compact-proof
+> div {
 
-    min-width: 0;
+    min-width:
+        0;
 
     display:
         flex;
@@ -9487,8 +10448,7 @@ th.panel-client-history-action-heading {
         center;
 
     gap:
-        8px;
-
+        9px;
 }
 
 
@@ -9496,9 +10456,35 @@ th.panel-client-history-action-heading {
 > div
 > i {
 
-    color:
-        var(--panel-accent);
+    width:
+        30px;
 
+    height:
+        30px;
+
+    flex:
+        0 0 30px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        8px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.10
+        );
+
+    font-size:
+        0.66rem;
 }
 
 
@@ -9506,18 +10492,72 @@ th.panel-client-history-action-heading {
 > div
 > span {
 
+    min-width:
+        0;
+
     color:
-        var(--panel-text-soft);
+        var(--panel-text);
 
     font-size:
-         0.67rem;
+        0.59rem;
 
     font-weight:
-        500;
+        600;
+
+    line-height:
+        1.4;
 
     overflow-wrap:
         anywhere;
+}
 
+
+.reservation-compact-proof
+.panel-secondary-button {
+
+    min-height:
+        34px;
+
+    padding:
+        0 11px;
+
+    flex:
+        0 0 auto;
+
+    border-color:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.20
+        );
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        var(--panel-surface);
+
+    font-size:
+        0.58rem;
+
+    font-weight:
+        800;
+
+    gap:
+        6px;
+
+    border-radius:
+        9px;
+}
+
+
+.reservation-compact-proof
+.panel-secondary-button:hover {
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.07
+        );
 }
 
 
@@ -9527,8 +10567,11 @@ th.panel-client-history-action-heading {
 
 .reservation-compact-payment-actions {
 
-    margin-top:
-        10px;
+    margin:
+        0;
+
+    padding:
+        12px 15px;
 
     display:
         flex;
@@ -9539,14 +10582,20 @@ th.panel-client-history-action-heading {
     gap:
         9px;
 
+    border-top:
+        1px solid
+        var(--panel-border);
+
+    background:
+        var(--panel-surface-alt);
 }
 
 
 .reservation-compact-payment-actions
 > form {
 
-    margin: 0;
-
+    margin:
+        0;
 }
 
 
@@ -9558,7 +10607,6 @@ th.panel-client-history-action-heading {
 
     min-width:
         190px;
-
 }
 
 
@@ -9607,7 +10655,7 @@ th.panel-client-history-action-heading {
         );
 
     font-size:
-        0.70rem;
+        0.64rem;
 
     font-weight:
         800;
@@ -9618,6 +10666,32 @@ th.panel-client-history-action-heading {
     list-style:
         none;
 
+    transition:
+        background
+        var(--panel-transition),
+        border-color
+        var(--panel-transition);
+}
+
+
+.reservation-payment-reject-details
+> summary:hover {
+
+    border-color:
+        rgba(
+            220,
+            38,
+            38,
+            0.34
+        );
+
+    background:
+        rgba(
+            220,
+            38,
+            38,
+            0.085
+        );
 }
 
 
@@ -9626,32 +10700,32 @@ th.panel-client-history-action-heading {
 
     display:
         none;
-
 }
 
 
-.reservation-payment-reject-details form {
+.reservation-payment-reject-details
+form {
 
     margin-top:
         8px;
 
     padding:
-        10px;
+        11px;
 
     border:
         1px solid
         var(--panel-border);
 
     border-radius:
-        9px;
+        10px;
 
     background:
         var(--panel-surface);
-
 }
 
 
-.reservation-payment-reject-details label {
+.reservation-payment-reject-details
+label {
 
     display:
         block;
@@ -9660,24 +10734,24 @@ th.panel-client-history-action-heading {
         var(--panel-text);
 
     font-size:
-        0.67rem;
+        0.62rem;
 
     font-weight:
         800;
-
 }
 
 
-.reservation-payment-reject-details textarea {
+.reservation-payment-reject-details
+textarea {
 
     width:
         100%;
 
     min-height:
-        64px;
+        70px;
 
     margin-top:
-        6px;
+        7px;
 
     padding:
         9px 10px;
@@ -9702,19 +10776,33 @@ th.panel-client-history-action-heading {
         var(--panel-surface-alt);
 
     font-size:
-         0.72rem;
+        0.62rem;
 
     font-weight:
         500;
 
+    transition:
+        border-color
+        var(--panel-transition),
+        box-shadow
+        var(--panel-transition);
 }
 
 
-.reservation-payment-reject-details textarea:focus {
+.reservation-payment-reject-details
+textarea:focus {
 
     border-color:
-        var(--panel-accent);
+        var(--panel-danger);
 
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            220,
+            38,
+            38,
+            0.07
+        );
 }
 
 
@@ -9726,21 +10814,20 @@ th.panel-client-history-action-heading {
 
     margin-top:
         8px;
-
 }
 
 
 /* =========================================================
-   NOTA DEL PAGO
+   NOTAS DE PAGO
 ========================================================= */
 
 .reservation-compact-payment-note {
 
-    margin-top:
-        10px;
+    margin:
+        0 15px 12px;
 
     padding:
-        9px 10px;
+        10px 11px;
 
     display:
         flex;
@@ -9751,8 +10838,17 @@ th.panel-client-history-action-heading {
     gap:
         8px;
 
+    border:
+        1px solid
+        rgba(
+            217,
+            134,
+            0,
+            0.15
+        );
+
     border-radius:
-        8px;
+        9px;
 
     color:
         var(--panel-warning);
@@ -9766,11 +10862,21 @@ th.panel-client-history-action-heading {
         );
 
     font-size:
-        0.67rem;
+        0.59rem;
 
     font-weight:
-        500;
+        600;
 
+    line-height:
+        1.45;
+}
+
+
+.reservation-compact-payment-note
+> i {
+
+    flex:
+        0 0 auto;
 }
 
 
@@ -9779,39 +10885,169 @@ th.panel-client-history-action-heading {
     color:
         var(--panel-danger);
 
+    border-color:
+        rgba(
+            220,
+            38,
+            38,
+            0.16
+        );
+
     background:
         rgba(
             220,
             38,
             38,
-            0.05
+            0.055
         );
-
 }
 
 
 /* =========================================================
-   FACTURACIÓN COMPACTA
+   MODO OSCURO - PAGOS
+========================================================= */
+
+html[data-panel-tema="oscuro"]
+.reservation-compact-payment-row {
+
+    background:
+        var(--panel-surface);
+
+    box-shadow:
+        none;
+}
+
+
+html[data-panel-tema="oscuro"]
+.reservation-compact-payment-meta
+> div,
+html[data-panel-tema="oscuro"]
+.reservation-compact-payment-actions {
+
+    background:
+        var(--panel-surface-alt);
+}
+
+
+/* =========================================================
+   RESPONSIVE - PAGOS
+========================================================= */
+
+@media (
+    max-width:
+        680px
+) {
+
+    .reservation-compact-payment-meta {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .reservation-compact-payment-main {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+
+    .reservation-compact-payment-actions {
+
+        flex-direction:
+            column;
+    }
+
+
+    .reservation-compact-payment-actions
+    > form,
+    .reservation-payment-reject-details {
+
+        width:
+            100%;
+    }
+
+
+    .reservation-compact-payment-actions
+    .reservation-compact-button,
+    .reservation-payment-reject-details
+    > summary {
+
+        width:
+            100%;
+    }
+
+
+    .reservation-compact-proof {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+
+    .reservation-compact-proof
+    .panel-secondary-button {
+
+        width:
+            100%;
+    }
+
+}
+/* =========================================================
+   DETALLE RESERVACIÓN - FACTURACIÓN
 ========================================================= */
 
 .reservation-compact-billing {
 
     max-width:
-        680px;
+        760px;
 
     margin:
         0 auto;
 
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        rgba(
+            var(--reservation-detail-rgb),
+            0.16
+        );
+
+    border-radius:
+        13px;
+
+    background:
+        var(--panel-surface);
+
+    box-shadow:
+        0 7px 20px
+        rgba(
+            var(--panel-primary-rgb),
+            0.035
+        );
 }
 
 
-.reservation-compact-billing > div {
+/* =========================================================
+   FILAS
+========================================================= */
+
+.reservation-compact-billing
+> div {
 
     min-height:
-        36px;
+        48px;
 
     padding:
-        7px 3px;
+        10px 14px;
 
     display:
         flex;
@@ -9823,57 +11059,148 @@ th.panel-client-history-action-heading {
         space-between;
 
     gap:
-        16px;
+        18px;
 
     border-bottom:
         1px solid
         var(--panel-border);
 
+    transition:
+        background
+        var(--panel-transition);
 }
 
 
-.reservation-compact-billing span {
+.reservation-compact-billing
+> div:not(.reservation-compact-billing-total):hover {
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.035
+        );
+}
+
+
+/* =========================================================
+   ETIQUETAS
+========================================================= */
+
+.reservation-compact-billing
+span {
+
+    min-width:
+        0;
 
     color:
         var(--panel-text-soft);
 
     font-size:
-         0.67rem;
+        0.61rem;
 
     font-weight:
-        500;
+        600;
 
+    line-height:
+        1.4;
 }
 
 
-.reservation-compact-billing strong {
+/* =========================================================
+   IMPORTES
+========================================================= */
+
+.reservation-compact-billing
+strong {
+
+    flex:
+        0 0 auto;
 
     color:
         var(--panel-text);
 
     font-size:
-        0.72rem;
+        0.66rem;
 
     font-weight:
-        700;
+        800;
 
     text-align:
         right;
-
 }
 
 
-.reservation-compact-billing-total {
+/* =========================================================
+   DESCUENTO
+========================================================= */
 
-    margin-top:
-        5px;
+.reservation-compact-billing
+> div:nth-child(3)
+strong {
+
+    color:
+        #16a34a;
+}
+
+
+/* =========================================================
+   CÓDIGO PROMOCIONAL
+========================================================= */
+
+.reservation-compact-billing
+> div:nth-child(4)
+strong {
 
     padding:
-        11px 3px !important;
+        5px 8px;
+
+    border-radius:
+        7px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.09
+        );
+
+    font-size:
+        0.56rem;
+}
+
+
+/* =========================================================
+   TOTAL
+========================================================= */
+
+.reservation-compact-billing-total {
+
+    min-height:
+        64px !important;
+
+    margin:
+        0;
+
+    padding:
+        13px 14px !important;
 
     border-bottom:
-        none !important;
+        0 !important;
 
+    background:
+        linear-gradient(
+            90deg,
+            rgba(
+                var(--reservation-detail-rgb),
+                0.08
+            ),
+            rgba(
+                var(--reservation-detail-rgb),
+                0.025
+            )
+        );
 }
 
 
@@ -9883,9 +11210,11 @@ span {
     color:
         var(--panel-text);
 
+    font-size:
+        0.68rem;
+
     font-weight:
         800;
-
 }
 
 
@@ -9893,36 +11222,282 @@ span {
 strong {
 
     color:
-        var(--panel-accent);
+        var(--reservation-detail-color);
 
     font-size:
-        0.84rem;
+        1rem;
 
     font-weight:
         800;
+}
+
+
+/* =========================================================
+   MODO OSCURO
+========================================================= */
+
+html[data-panel-tema="oscuro"]
+.reservation-compact-billing {
+
+    background:
+        var(--panel-surface);
+
+    box-shadow:
+        none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (
+    max-width:
+        560px
+) {
+
+    .reservation-compact-billing
+    > div {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+        gap:
+            5px;
+    }
+
+
+    .reservation-compact-billing
+    strong {
+
+        text-align:
+            left;
+    }
+
+
+    .reservation-compact-billing-total {
+
+        align-items:
+            center !important;
+
+        flex-direction:
+            row !important;
+    }
+
+
+    .reservation-compact-billing-total
+    strong {
+
+        text-align:
+            right;
+    }
 
 }
 
 
 /* =========================================================
-   COMENTARIO
+   DETALLE RESERVACIÓN - COMENTARIOS
 ========================================================= */
 
 .reservation-compact-comment {
 
-    margin: 0;
+    min-height:
+        92px;
+
+    margin:
+        0;
+
+    padding:
+        17px 18px
+        17px 58px;
+
+    position:
+        relative;
+
+    border:
+        1px solid
+        rgba(
+            var(--reservation-detail-rgb),
+            0.16
+        );
+
+    border-radius:
+        13px;
 
     color:
-        var(--panel-text-soft);
+        var(--panel-text);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(
+                var(--reservation-detail-rgb),
+                0.055
+            ),
+            var(--panel-surface)
+            60%
+        );
 
     font-size:
-        0.72rem;
+        0.65rem;
 
     font-weight:
         500;
 
     line-height:
-        1.65;
+        1.7;
+
+    overflow-wrap:
+        anywhere;
+}
+
+
+/* =========================================================
+   ICONO DECORATIVO
+========================================================= */
+
+.reservation-compact-comment::before {
+
+    content:
+        "\f4ad";
+
+    width:
+        34px;
+
+    height:
+        34px;
+
+    position:
+        absolute;
+
+    top:
+        17px;
+
+    left:
+        14px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        10px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.11
+        );
+
+    font-family:
+        "Font Awesome 6 Free";
+
+    font-size:
+        0.68rem;
+
+    font-weight:
+        400;
+}
+
+
+/* =========================================================
+   DETALLE DECORATIVO
+========================================================= */
+
+.reservation-compact-comment::after {
+
+    content:
+        "";
+
+    width:
+        3px;
+
+    position:
+        absolute;
+
+    top:
+        17px;
+
+    bottom:
+        17px;
+
+    left:
+        0;
+
+    border-radius:
+        0 4px 4px 0;
+
+    background:
+        var(--reservation-detail-color);
+}
+
+
+/* =========================================================
+   MODO OSCURO
+========================================================= */
+
+html[data-panel-tema="oscuro"]
+.reservation-compact-comment {
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(
+                var(--reservation-detail-rgb),
+                0.08
+            ),
+            var(--panel-surface)
+            60%
+        );
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (
+    max-width:
+        560px
+) {
+
+    .reservation-compact-comment {
+
+        padding:
+            54px 14px
+            15px;
+
+    }
+
+
+    .reservation-compact-comment::before {
+
+        top:
+            12px;
+
+        left:
+            14px;
+
+    }
+
+
+    .reservation-compact-comment::after {
+
+        top:
+            12px;
+
+        bottom:
+            12px;
+
+    }
 
 }
 
@@ -10244,4 +11819,4073 @@ html[data-panel-tema="oscuro"]
 
 .reservation-compact-proof .panel-secondary-button {
     font-size: 0.70rem;
+}
+
+/* =========================================================
+   AJUSTE FINAL - DRAWER MÓVIL
+========================================================= */
+
+@media (
+    max-width:
+        980px
+) {
+
+    /* ---------------------------------------------------------
+       BLOQUEAR LA PÁGINA CUANDO EL MENÚ ESTÁ ABIERTO
+    --------------------------------------------------------- */
+
+    body.panel-mobile-open {
+
+        overflow:
+            hidden;
+    }
+
+
+    /* ---------------------------------------------------------
+       DRAWER ANCLADO AL VIEWPORT COMPLETO
+    --------------------------------------------------------- */
+
+    .panel-sidebar {
+
+        position:
+            fixed;
+
+        top:
+            0;
+
+        left:
+            0;
+
+        right:
+            auto;
+
+        bottom:
+            0;
+
+        width:
+            min(
+                290px,
+                88vw
+            );
+
+        height:
+            auto;
+
+        min-height:
+            0;
+
+        max-height:
+            none;
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        overflow:
+            hidden;
+
+        border-radius:
+            0;
+
+        transform:
+            translateX(
+                -100%
+            );
+    }
+
+
+    body.panel-mobile-open
+    .panel-sidebar {
+
+        transform:
+            translateX(0);
+    }
+
+
+    /* ---------------------------------------------------------
+       SOLO LA NAVEGACIÓN HACE SCROLL
+    --------------------------------------------------------- */
+
+    .panel-navigation {
+
+        flex:
+            1 1 auto;
+
+        min-height:
+            0;
+
+        overflow-x:
+            hidden;
+
+        overflow-y:
+            auto;
+
+        overscroll-behavior:
+            contain;
+
+        -webkit-overflow-scrolling:
+            touch;
+    }
+
+
+    /* ---------------------------------------------------------
+       PIE SIEMPRE PEGADO ABAJO
+    --------------------------------------------------------- */
+
+    .panel-sidebar-footer {
+
+        flex:
+            0 0 auto;
+
+        margin-top:
+            auto;
+    }
+
+}
+
+/* =========================================================
+   RAIL - HOVER DINÁMICO SEGÚN AGENCIA
+========================================================= */
+
+@media (
+    min-width:
+        981px
+) {
+
+    /* ---------------------------------------------------------
+       PREPARAR ANIMACIÓN DEL ICONO
+    --------------------------------------------------------- */
+
+    .panel-nav-icon {
+
+        border-radius:
+            12px;
+
+        transition:
+            color
+            var(--panel-transition),
+            background
+            var(--panel-transition),
+            transform
+            var(--panel-transition),
+            box-shadow
+            var(--panel-transition);
+    }
+
+
+    .panel-nav-icon > i {
+
+        transition:
+            transform
+            var(--panel-transition);
+    }
+
+
+    /* ---------------------------------------------------------
+       HOVER DEL BOTÓN
+    --------------------------------------------------------- */
+
+    .panel-nav-link:not(.panel-nav-disabled):hover {
+
+        color:
+            var(--panel-accent);
+
+        background:
+            rgba(
+                var(--panel-accent-rgb),
+                0.09
+            );
+
+        box-shadow:
+            0 8px 20px
+            rgba(
+                var(--panel-accent-rgb),
+                0.14
+            );
+
+        transform:
+            none;
+    }
+
+
+    /* ---------------------------------------------------------
+       MOVIMIENTO DEL ICONO
+    --------------------------------------------------------- */
+
+    .panel-nav-link:not(.panel-nav-disabled):hover
+    .panel-nav-icon {
+
+        color:
+            var(--panel-accent);
+
+        background:
+            rgba(
+                var(--panel-accent-rgb),
+                0.10
+            );
+
+        box-shadow:
+            0 0 0 1px
+            rgba(
+                var(--panel-accent-rgb),
+                0.12
+            );
+
+        transform:
+            translateY(-2px)
+            scale(1.06);
+    }
+
+
+    .panel-nav-link:not(.panel-nav-disabled):hover
+    .panel-nav-icon > i {
+
+        transform:
+            scale(1.08);
+    }
+
+
+    /* ---------------------------------------------------------
+       ESTADO ACTIVO
+    --------------------------------------------------------- */
+
+    .panel-nav-link.activo
+    .panel-nav-icon {
+
+        color:
+            var(--panel-accent);
+    }
+
+
+    .panel-nav-link.activo:hover
+    .panel-nav-icon {
+
+        box-shadow:
+            0 0 0 1px
+            rgba(
+                var(--panel-accent-rgb),
+                0.16
+            ),
+            0 8px 20px
+            rgba(
+                var(--panel-accent-rgb),
+                0.15
+            );
+    }
+
+        /* ---------------------------------------------------------
+       TÍTULO ANIMADO DEL MÓDULO
+    --------------------------------------------------------- */
+
+    .panel-nav-link
+    .panel-nav-text {
+
+        display:
+            block;
+
+        min-width:
+            max-content;
+
+        padding:
+            8px 11px;
+
+        position:
+            absolute;
+
+        top:
+            50%;
+
+        left:
+            calc(
+                100% + 13px
+            );
+
+        z-index:
+            30;
+
+        border:
+            1px solid
+            rgba(
+                255,
+                255,
+                255,
+                0.08
+            );
+
+        border-radius:
+            9px;
+
+        color:
+            #ffffff;
+
+        background:
+            var(--panel-primary-deep);
+
+        box-shadow:
+            0 9px 24px
+            rgba(
+                0,
+                0,
+                0,
+                0.20
+            );
+
+        font-size:
+            0.67rem;
+
+        font-weight:
+            700;
+
+        line-height:
+            1;
+
+        white-space:
+            nowrap;
+
+        opacity:
+            0;
+
+        visibility:
+            hidden;
+
+        pointer-events:
+            none;
+
+        transform:
+            translateY(-50%)
+            translateX(-7px);
+
+        transition:
+            opacity
+            var(--panel-transition),
+            visibility
+            var(--panel-transition),
+            transform
+            var(--panel-transition);
+    }
+
+
+    /* ---------------------------------------------------------
+       FLECHA DEL TÍTULO
+    --------------------------------------------------------- */
+
+    .panel-nav-link
+    .panel-nav-text::before {
+
+        content:
+            "";
+
+        width:
+            8px;
+
+        height:
+            8px;
+
+        position:
+            absolute;
+
+        top:
+            50%;
+
+        left:
+            -4px;
+
+        background:
+            var(--panel-primary-deep);
+
+        transform:
+            translateY(-50%)
+            rotate(45deg);
+    }
+
+
+    /* ---------------------------------------------------------
+       MOSTRAR AL PASAR EL CURSOR
+    --------------------------------------------------------- */
+
+    .panel-nav-link:hover
+    .panel-nav-text {
+
+        opacity:
+            1;
+
+        visibility:
+            visible;
+
+        transform:
+            translateY(-50%)
+            translateX(0);
+    }
+
+
+    /* ---------------------------------------------------------
+       MOSTRAR TAMBIÉN CON TECLADO
+    --------------------------------------------------------- */
+
+    .panel-nav-link:focus-visible
+    .panel-nav-text {
+
+        opacity:
+            1;
+
+        visibility:
+            visible;
+
+        transform:
+            translateY(-50%)
+            translateX(0);
+    }
+
+}
+
+/* =========================================================
+   DETALLE RESERVACIÓN - INFORMACIÓN DEL CLIENTE
+========================================================= */
+
+.reservation-client-information-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        12px;
+}
+
+
+/* =========================================================
+   TARJETA INTERNA
+========================================================= */
+
+.reservation-client-information-card {
+
+    min-width:
+        0;
+
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        var(--panel-border);
+
+    border-radius:
+        12px;
+
+    background:
+        var(--panel-surface);
+
+    box-shadow:
+        0 5px 16px
+        rgba(
+            var(--panel-primary-rgb),
+            0.035
+        );
+}
+
+
+/* =========================================================
+   CABECERA DE TARJETA
+========================================================= */
+
+.reservation-client-information-header {
+
+    min-height:
+        43px;
+
+    padding:
+        9px 12px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        9px;
+
+    border-bottom:
+        1px solid
+        var(--panel-border);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.035
+        );
+}
+
+
+.reservation-client-information-header
+> span {
+
+    width:
+        28px;
+
+    height:
+        28px;
+
+    flex:
+        0 0 28px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        8px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.10
+        );
+
+    font-size:
+        0.62rem;
+}
+
+
+.reservation-client-information-header
+> strong {
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.69rem;
+
+    font-weight:
+        800;
+}
+
+
+/* =========================================================
+   DATOS
+========================================================= */
+
+.reservation-client-information-list {
+
+    padding:
+        3px 12px 7px;
+}
+
+
+.reservation-client-information-list
+> div {
+
+    min-height:
+        42px;
+
+    padding:
+        9px 0;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        14px;
+
+    border-bottom:
+        1px solid
+        var(--panel-border);
+}
+
+
+.reservation-client-information-list
+> div:last-child {
+
+    border-bottom:
+        0;
+}
+
+
+.reservation-client-information-list
+> div
+> span {
+
+    flex:
+        0 0 auto;
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.61rem;
+
+    font-weight:
+        700;
+}
+
+
+.reservation-client-information-list
+> div
+> strong {
+
+    min-width:
+        0;
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.62rem;
+
+    font-weight:
+        500;
+
+    line-height:
+        1.4;
+
+    text-align:
+        right;
+
+    overflow-wrap:
+        anywhere;
+}
+
+
+/* =========================================================
+   HOVER MUY SUAVE
+========================================================= */
+
+.reservation-client-information-card {
+
+    transition:
+        border-color
+        var(--panel-transition),
+        box-shadow
+        var(--panel-transition),
+        transform
+        var(--panel-transition);
+}
+
+
+.reservation-client-information-card:hover {
+
+    border-color:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.20
+        );
+
+    box-shadow:
+        0 8px 20px
+        rgba(
+            var(--panel-primary-rgb),
+            0.055
+        );
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =========================================================
+   MODO OSCURO
+========================================================= */
+
+html[data-panel-tema="oscuro"]
+.reservation-client-information-card {
+
+    background:
+        var(--panel-dark-surface);
+
+    box-shadow:
+        none;
+}
+
+
+html[data-panel-tema="oscuro"]
+.reservation-client-information-header {
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.07
+        );
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (
+    max-width:
+        980px
+) {
+
+    .reservation-client-information-grid {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+    }
+
+
+    .reservation-client-information-card:last-child {
+
+        grid-column:
+            1 / -1;
+    }
+
+}
+
+
+@media (
+    max-width:
+        620px
+) {
+
+    .reservation-client-information-grid {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .reservation-client-information-card:last-child {
+
+        grid-column:
+            auto;
+    }
+
+
+    .reservation-client-information-list
+    > div {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+        gap:
+            4px;
+    }
+
+
+    .reservation-client-information-list
+    > div
+    > strong {
+
+        text-align:
+            left;
+    }
+
+}
+
+/* =========================================================
+   DETALLE DE RESERVACIÓN - COLORES POR MÓDULO
+========================================================= */
+
+.reservation-detail-client {
+
+    --reservation-detail-rgb:
+        245, 158, 11;
+
+    --reservation-detail-color:
+        #d97706;
+}
+
+
+.reservation-detail-rental {
+
+    --reservation-detail-rgb:
+        37, 99, 235;
+
+    --reservation-detail-color:
+        #2563eb;
+}
+
+
+.reservation-detail-units {
+
+    --reservation-detail-rgb:
+        22, 163, 74;
+
+    --reservation-detail-color:
+        #16a34a;
+}
+
+
+.reservation-detail-services {
+
+    --reservation-detail-rgb:
+        124, 58, 237;
+
+    --reservation-detail-color:
+        #7c3aed;
+}
+
+
+.reservation-detail-payments {
+
+    --reservation-detail-rgb:
+        5, 150, 105;
+
+    --reservation-detail-color:
+        #059669;
+}
+
+
+.reservation-detail-billing {
+
+    --reservation-detail-rgb:
+        217, 119, 6;
+
+    --reservation-detail-color:
+        #d97706;
+}
+
+
+.reservation-detail-comments {
+
+    --reservation-detail-rgb:
+        225, 29, 72;
+
+    --reservation-detail-color:
+        #e11d48;
+}
+
+
+/* =========================================================
+   COLORES - MODO OSCURO
+========================================================= */
+
+html[data-panel-tema="oscuro"]
+.reservation-detail-client {
+
+    --reservation-detail-color:
+        #fbbf24;
+}
+
+
+html[data-panel-tema="oscuro"]
+.reservation-detail-rental {
+
+    --reservation-detail-color:
+        #60a5fa;
+}
+
+
+html[data-panel-tema="oscuro"]
+.reservation-detail-units {
+
+    --reservation-detail-color:
+        #4ade80;
+}
+
+
+html[data-panel-tema="oscuro"]
+.reservation-detail-services {
+
+    --reservation-detail-color:
+        #a78bfa;
+}
+
+
+html[data-panel-tema="oscuro"]
+.reservation-detail-payments {
+
+    --reservation-detail-color:
+        #34d399;
+}
+
+
+html[data-panel-tema="oscuro"]
+.reservation-detail-billing {
+
+    --reservation-detail-color:
+        #fbbf24;
+}
+
+
+html[data-panel-tema="oscuro"]
+.reservation-detail-comments {
+
+    --reservation-detail-color:
+        #fb7185;
+}
+
+/* =========================================================
+   AJUSTE FINAL - CABECERAS DETALLE DE RESERVACIÓN
+   Corrige interferencia con estilos antiguos
+========================================================= */
+
+.reservation-compact-details
+> summary {
+
+    min-height:
+        70px;
+
+    padding:
+        10px 16px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        14px;
+}
+
+
+/* =========================================================
+   LADO IZQUIERDO
+========================================================= */
+
+.reservation-compact-details
+> summary
+> .reservation-detail-summary-main {
+
+    min-width:
+        0;
+
+    flex:
+        1 1 auto;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+
+    font-size:
+        inherit;
+
+    font-weight:
+        inherit;
+}
+
+
+/* =========================================================
+   ICONO PRINCIPAL
+========================================================= */
+
+.reservation-compact-details
+> summary
+> .reservation-detail-summary-main
+> .reservation-detail-summary-icon {
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    flex:
+        0 0 42px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        12px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.10
+        );
+
+    font-size:
+        0.88rem;
+
+    font-weight:
+        400;
+}
+
+
+.reservation-compact-details
+> summary
+> .reservation-detail-summary-main
+> .reservation-detail-summary-icon
+> i {
+
+    width:
+        auto;
+
+    height:
+        auto;
+
+    display:
+        block;
+
+    color:
+        inherit;
+
+    background:
+        transparent;
+
+    font-size:
+        inherit;
+}
+
+
+/* =========================================================
+   TÍTULO + DESCRIPCIÓN
+========================================================= */
+
+.reservation-compact-details
+> summary
+.reservation-detail-summary-copy {
+
+    min-width:
+        0;
+
+    flex:
+        1;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        flex-start;
+
+    justify-content:
+        center;
+
+    gap:
+        4px;
+}
+
+
+.reservation-compact-details
+> summary
+.reservation-detail-summary-copy
+> strong {
+
+    display:
+        block;
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.74rem;
+
+    font-weight:
+        800;
+
+    line-height:
+        1.25;
+}
+
+
+.reservation-compact-details
+> summary
+.reservation-detail-summary-copy
+> small {
+
+    display:
+        block;
+
+    padding:
+        0;
+
+    border-radius:
+        0;
+
+    color:
+        var(--panel-text-soft);
+
+    background:
+        transparent;
+
+    font-size:
+        0.59rem;
+
+    font-weight:
+        500;
+
+    line-height:
+        1.4;
+
+    white-space:
+        normal;
+}
+
+
+/* =========================================================
+   LADO DERECHO
+========================================================= */
+
+.reservation-compact-details
+> summary
+> .reservation-detail-summary-side {
+
+    min-width:
+        0;
+
+    flex:
+        0 0 auto;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        flex-end;
+
+    gap:
+        10px;
+
+    font-size:
+        inherit;
+
+    font-weight:
+        inherit;
+}
+
+
+/* =========================================================
+   BADGE
+========================================================= */
+
+.reservation-compact-details
+> summary
+.reservation-detail-badge {
+
+    min-height:
+        28px;
+
+    padding:
+        0 10px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        6px;
+
+    border-radius:
+        999px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.10
+        );
+
+    font-size:
+        0.57rem;
+
+    font-weight:
+        800;
+
+    line-height:
+        1;
+
+    white-space:
+        nowrap;
+}
+
+
+/* =========================================================
+   FLECHA
+========================================================= */
+
+.reservation-compact-details
+> summary
+> .reservation-detail-summary-side
+> .fa-chevron-down {
+
+    width:
+        28px;
+
+    height:
+        28px;
+
+    flex:
+        0 0 28px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    padding:
+        0;
+
+    border-radius:
+        8px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.08
+        );
+
+    font-size:
+        0.56rem;
+
+    transition:
+        transform
+        var(--panel-transition),
+        background
+        var(--panel-transition);
+}
+
+
+.reservation-compact-details
+> summary:hover
+> .reservation-detail-summary-side
+> .fa-chevron-down {
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.14
+        );
+}
+
+
+.reservation-compact-details[open]
+> summary
+> .reservation-detail-summary-side
+> .fa-chevron-down {
+
+    transform:
+        rotate(180deg);
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.reservation-compact-details
+> summary:hover
+.reservation-detail-summary-icon {
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.14
+        );
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (
+    max-width:
+        620px
+) {
+
+    .reservation-compact-details
+    > summary {
+
+        min-height:
+            64px;
+
+        padding:
+            9px 12px;
+
+        gap:
+            9px;
+    }
+
+
+    .reservation-compact-details
+    > summary
+    > .reservation-detail-summary-main
+    > .reservation-detail-summary-icon {
+
+        width:
+            38px;
+
+        height:
+            38px;
+
+        flex-basis:
+            38px;
+    }
+
+
+    .reservation-compact-details
+    > summary
+    .reservation-detail-summary-copy
+    > small {
+
+        font-size:
+            0.54rem;
+    }
+
+
+    .reservation-compact-details
+    > summary
+    .reservation-detail-badge {
+
+        padding:
+            0 8px;
+
+        font-size:
+            0.52rem;
+    }
+
+}
+
+/* =========================================================
+   DETALLE RESERVACIÓN - ALQUILER
+========================================================= */
+
+.reservation-rental-overview {
+
+    display:
+        grid;
+
+    gap:
+        14px;
+}
+
+
+/* =========================================================
+   VEHÍCULO RESERVADO
+========================================================= */
+
+.reservation-rental-vehicle {
+
+    min-width:
+        0;
+
+    padding:
+        14px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        13px;
+
+    border:
+        1px solid
+        rgba(
+            var(--reservation-detail-rgb),
+            0.16
+        );
+
+    border-radius:
+        13px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(
+                var(--reservation-detail-rgb),
+                0.055
+            ),
+            var(--panel-surface)
+            42%
+        );
+}
+
+
+.reservation-rental-vehicle-icon {
+
+    width:
+        44px;
+
+    height:
+        44px;
+
+    flex:
+        0 0 44px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        12px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.11
+        );
+
+    font-size:
+        0.88rem;
+}
+
+
+.reservation-rental-vehicle-main {
+
+    min-width:
+        0;
+
+    flex:
+        1;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        4px;
+}
+
+
+.reservation-rental-vehicle-main small {
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.57rem;
+
+    font-weight:
+        700;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.055em;
+}
+
+
+.reservation-rental-vehicle-main strong {
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.82rem;
+
+    font-weight:
+        800;
+}
+
+
+/* =========================================================
+   DATOS RÁPIDOS DEL VEHÍCULO
+========================================================= */
+
+.reservation-rental-vehicle-meta {
+
+    flex:
+        0 0 auto;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                115px,
+                auto
+            )
+        );
+
+    gap:
+        10px;
+}
+
+
+.reservation-rental-vehicle-meta > div {
+
+    padding:
+        8px 11px;
+
+    border-left:
+        1px solid
+        var(--panel-border);
+}
+
+
+.reservation-rental-vehicle-meta span,
+.reservation-rental-vehicle-meta strong {
+
+    display:
+        block;
+}
+
+
+.reservation-rental-vehicle-meta span {
+
+    margin-bottom:
+        3px;
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.56rem;
+
+    font-weight:
+        600;
+}
+
+
+.reservation-rental-vehicle-meta strong {
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.66rem;
+
+    font-weight:
+        800;
+}
+
+
+/* =========================================================
+   RECORRIDO
+========================================================= */
+
+.reservation-rental-route {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(
+            0,
+            1fr
+        )
+        70px
+        minmax(
+            0,
+            1fr
+        );
+
+    align-items:
+        stretch;
+
+    gap:
+        10px;
+}
+
+
+/* =========================================================
+   PUNTO DEL RECORRIDO
+========================================================= */
+
+.reservation-rental-point {
+
+    min-width:
+        0;
+
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        var(--panel-border);
+
+    border-radius:
+        13px;
+
+    background:
+        var(--panel-surface);
+
+    transition:
+        border-color
+        var(--panel-transition),
+        transform
+        var(--panel-transition);
+}
+
+
+.reservation-rental-point:hover {
+
+    border-color:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.25
+        );
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =========================================================
+   CABECERA DEL PUNTO
+========================================================= */
+
+.reservation-rental-point-header {
+
+    padding:
+        12px 13px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    border-bottom:
+        1px solid
+        var(--panel-border);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.035
+        );
+}
+
+
+.reservation-rental-point-icon {
+
+    width:
+        34px;
+
+    height:
+        34px;
+
+    flex:
+        0 0 34px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        9px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.10
+        );
+
+    font-size:
+        0.69rem;
+}
+
+
+.reservation-rental-point-header
+> div {
+
+    min-width:
+        0;
+}
+
+
+.reservation-rental-point-header small,
+.reservation-rental-point-header strong {
+
+    display:
+        block;
+}
+
+
+.reservation-rental-point-header small {
+
+    margin-bottom:
+        2px;
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.54rem;
+
+    font-weight:
+        600;
+}
+
+
+.reservation-rental-point-header strong {
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.72rem;
+
+    font-weight:
+        800;
+}
+
+
+/* =========================================================
+   DATOS DEL PUNTO
+========================================================= */
+
+.reservation-rental-point-data {
+
+    padding:
+        4px 13px 8px;
+}
+
+
+.reservation-rental-point-data
+> div {
+
+    min-height:
+        46px;
+
+    padding:
+        9px 0;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        15px;
+
+    border-bottom:
+        1px solid
+        var(--panel-border);
+}
+
+
+.reservation-rental-point-data
+> div:last-child {
+
+    border-bottom:
+        0;
+}
+
+
+.reservation-rental-point-data span {
+
+    flex:
+        0 0 auto;
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.57rem;
+
+    font-weight:
+        600;
+}
+
+
+.reservation-rental-point-data strong {
+
+    min-width:
+        0;
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.62rem;
+
+    font-weight:
+        700;
+
+    line-height:
+        1.45;
+
+    text-align:
+        right;
+
+    overflow-wrap:
+        anywhere;
+}
+
+
+/* =========================================================
+   CONECTOR
+========================================================= */
+
+.reservation-rental-route-connector {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        6px;
+
+    color:
+        var(--reservation-detail-color);
+}
+
+
+.reservation-rental-route-connector span {
+
+    height:
+        1px;
+
+    flex:
+        1;
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.22
+        );
+}
+
+
+.reservation-rental-route-connector i {
+
+    width:
+        28px;
+
+    height:
+        28px;
+
+    flex:
+        0 0 28px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.10
+        );
+
+    font-size:
+        0.56rem;
+}
+
+
+/* =========================================================
+   MODO OSCURO
+========================================================= */
+
+html[data-panel-tema="oscuro"]
+.reservation-rental-point {
+
+    background:
+        var(--panel-surface);
+}
+
+
+html[data-panel-tema="oscuro"]
+.reservation-rental-vehicle {
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(
+                var(--reservation-detail-rgb),
+                0.09
+            ),
+            var(--panel-surface)
+            42%
+        );
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (
+    max-width:
+        760px
+) {
+
+    .reservation-rental-route {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .reservation-rental-route-connector {
+
+        min-height:
+            28px;
+    }
+
+
+    .reservation-rental-route-connector span {
+
+        display:
+            none;
+    }
+
+
+    .reservation-rental-route-connector i {
+
+        transform:
+            rotate(90deg);
+    }
+
+}
+
+
+@media (
+    max-width:
+        620px
+) {
+
+    .reservation-rental-vehicle {
+
+        align-items:
+            flex-start;
+
+        flex-wrap:
+            wrap;
+    }
+
+
+    .reservation-rental-vehicle-main {
+
+        min-width:
+            calc(
+                100% -
+                60px
+            );
+    }
+
+
+    .reservation-rental-vehicle-meta {
+
+        width:
+            100%;
+
+        grid-template-columns:
+            repeat(
+                2,
+                1fr
+            );
+    }
+
+
+    .reservation-rental-vehicle-meta
+    > div {
+
+        padding:
+            8px 4px;
+
+        border-left:
+            0;
+
+        border-top:
+            1px solid
+            var(--panel-border);
+    }
+
+
+    .reservation-rental-point-data
+    > div {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+        gap:
+            4px;
+    }
+
+
+    .reservation-rental-point-data strong {
+
+        text-align:
+            left;
+    }
+
+}
+
+/* =========================================================
+   DETALLE RESERVACIÓN - UNIDADES FÍSICAS
+========================================================= */
+
+.reservation-units-dashboard {
+
+    display:
+        grid;
+
+    gap:
+        14px;
+}
+
+
+/* =========================================================
+   MÉTRICAS
+========================================================= */
+
+.reservation-units-metrics {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        10px;
+}
+
+
+.reservation-units-metric {
+
+    min-width:
+        0;
+
+    padding:
+        13px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        11px;
+
+    border:
+        1px solid
+        rgba(
+            var(--reservation-detail-rgb),
+            0.14
+        );
+
+    border-radius:
+        12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(
+                var(--reservation-detail-rgb),
+                0.055
+            ),
+            var(--panel-surface)
+            70%
+        );
+}
+
+
+.reservation-units-metric-icon {
+
+    width:
+        38px;
+
+    height:
+        38px;
+
+    flex:
+        0 0 38px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        10px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.10
+        );
+
+    font-size:
+        0.72rem;
+}
+
+
+.reservation-units-metric
+small,
+.reservation-units-metric
+strong,
+.reservation-units-metric
+span {
+
+    display:
+        block;
+}
+
+
+.reservation-units-metric
+small {
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.54rem;
+
+    font-weight:
+        700;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.04em;
+}
+
+
+.reservation-units-metric
+strong {
+
+    margin-top:
+        3px;
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        1rem;
+
+    font-weight:
+        800;
+}
+
+
+.reservation-units-metric
+div
+> span {
+
+    margin-top:
+        2px;
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.56rem;
+}
+
+
+/* =========================================================
+   SECCIONES
+========================================================= */
+
+.reservation-units-section {
+
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        var(--panel-border);
+
+    border-radius:
+        13px;
+
+    background:
+        var(--panel-surface);
+}
+
+
+.reservation-units-section-header {
+
+    padding:
+        12px 13px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    border-bottom:
+        1px solid
+        var(--panel-border);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.035
+        );
+}
+
+
+.reservation-units-section-icon {
+
+    width:
+        34px;
+
+    height:
+        34px;
+
+    flex:
+        0 0 34px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        9px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.10
+        );
+
+    font-size:
+        0.68rem;
+}
+
+
+.reservation-units-section-header
+strong,
+.reservation-units-section-header
+small {
+
+    display:
+        block;
+}
+
+
+.reservation-units-section-header
+strong {
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.69rem;
+
+    font-weight:
+        800;
+}
+
+
+.reservation-units-section-header
+small {
+
+    margin-top:
+        3px;
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.56rem;
+}
+
+
+/* =========================================================
+   LISTA DE UNIDADES
+========================================================= */
+
+.reservation-units-list {
+
+    padding:
+        8px;
+}
+
+
+.reservation-unit-card {
+
+    min-width:
+        0;
+
+    padding:
+        11px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        11px;
+
+    border-radius:
+        10px;
+
+    transition:
+        background
+        var(--panel-transition),
+        transform
+        var(--panel-transition);
+}
+
+
+.reservation-unit-card
++ .reservation-unit-card {
+
+    border-top:
+        1px solid
+        var(--panel-border);
+}
+
+
+.reservation-unit-card:hover {
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.035
+        );
+}
+
+
+.reservation-unit-card-icon {
+
+    width:
+        37px;
+
+    height:
+        37px;
+
+    flex:
+        0 0 37px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        10px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.09
+        );
+
+    font-size:
+        0.70rem;
+}
+
+
+.reservation-unit-card-main {
+
+    min-width:
+        0;
+
+    flex:
+        1;
+}
+
+
+.reservation-unit-card-main
+> small {
+
+    display:
+        block;
+
+    margin-bottom:
+        2px;
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.53rem;
+
+    font-weight:
+        600;
+}
+
+
+.reservation-unit-card-main
+> strong {
+
+    display:
+        block;
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.72rem;
+
+    font-weight:
+        800;
+}
+
+
+.reservation-unit-card-meta {
+
+    margin-top:
+        5px;
+
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        6px 12px;
+}
+
+
+.reservation-unit-card-meta
+span {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    gap:
+        5px;
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.56rem;
+}
+
+
+.reservation-unit-card-meta
+i {
+
+    color:
+        var(--reservation-detail-color);
+}
+
+
+/* =========================================================
+   ESTADOS / BADGES
+========================================================= */
+
+.reservation-unit-status {
+
+    flex:
+        0 0 auto;
+
+    min-height:
+        28px;
+
+    padding:
+        0 9px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        5px;
+
+    border-radius:
+        999px;
+
+    font-size:
+        0.55rem;
+
+    font-weight:
+        800;
+
+    white-space:
+        nowrap;
+}
+
+
+.reservation-unit-status.assigned {
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.10
+        );
+}
+
+
+.reservation-unit-status.available {
+
+    color:
+        #2563eb;
+
+    background:
+        rgba(
+            37,
+            99,
+            235,
+            0.09
+        );
+}
+
+
+/* =========================================================
+   BOTÓN ASIGNAR
+========================================================= */
+
+.reservation-unit-assign-button {
+
+    min-height:
+        34px;
+
+    padding:
+        0 12px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        6px;
+
+    border:
+        0;
+
+    border-radius:
+        9px;
+
+    color:
+        #ffffff;
+
+    background:
+        var(--reservation-detail-color);
+
+    font-size:
+        0.58rem;
+
+    font-weight:
+        800;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform
+        var(--panel-transition),
+        box-shadow
+        var(--panel-transition);
+}
+
+
+.reservation-unit-assign-button:hover {
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 7px 16px
+        rgba(
+            var(--reservation-detail-rgb),
+            0.18
+        );
+}
+
+
+/* =========================================================
+   MENSAJES DE ESTADO
+========================================================= */
+
+.reservation-units-state {
+
+    padding:
+        13px 14px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        11px;
+
+    border:
+        1px solid
+        var(--panel-border);
+
+    border-radius:
+        12px;
+
+    background:
+        var(--panel-surface);
+}
+
+
+.reservation-units-state
+> span {
+
+    width:
+        36px;
+
+    height:
+        36px;
+
+    flex:
+        0 0 36px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        10px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.10
+        );
+
+    font-size:
+        0.70rem;
+}
+
+
+.reservation-units-state
+strong,
+.reservation-units-state
+small {
+
+    display:
+        block;
+}
+
+
+.reservation-units-state
+strong {
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.67rem;
+
+    font-weight:
+        800;
+}
+
+
+.reservation-units-state
+small {
+
+    margin-top:
+        3px;
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.57rem;
+
+    line-height:
+        1.45;
+}
+
+
+.reservation-units-state.warning
+> span {
+
+    color:
+        #d97706;
+
+    background:
+        rgba(
+            217,
+            119,
+            6,
+            0.10
+        );
+}
+
+
+.reservation-units-state.success
+> span {
+
+    color:
+        #16a34a;
+
+    background:
+        rgba(
+            22,
+            163,
+            74,
+            0.10
+        );
+}
+
+
+.reservation-units-state.info
+> span {
+
+    color:
+        #2563eb;
+
+    background:
+        rgba(
+            37,
+            99,
+            235,
+            0.10
+        );
+}
+
+
+/* =========================================================
+   MODO OSCURO
+========================================================= */
+
+html[data-panel-tema="oscuro"]
+.reservation-units-metric,
+html[data-panel-tema="oscuro"]
+.reservation-units-section,
+html[data-panel-tema="oscuro"]
+.reservation-units-state {
+
+    background:
+        var(--panel-surface);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (
+    max-width:
+        760px
+) {
+
+    .reservation-units-metrics {
+
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+
+@media (
+    max-width:
+        620px
+) {
+
+    .reservation-unit-card {
+
+        align-items:
+            flex-start;
+
+        flex-wrap:
+            wrap;
+    }
+
+
+    .reservation-unit-card-main {
+
+        min-width:
+            calc(
+                100% -
+                50px
+            );
+    }
+
+
+    .reservation-unit-card
+    > form {
+
+        width:
+            100%;
+    }
+
+
+    .reservation-unit-assign-button {
+
+        width:
+            100%;
+    }
+
+
+    .reservation-unit-status {
+
+        margin-left:
+            48px;
+    }
+
+}
+
+/* =========================================================
+   DETALLE RESERVACIÓN - SERVICIOS ADICIONALES
+========================================================= */
+
+.reservation-services-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        12px;
+}
+
+
+/* =========================================================
+   TARJETA DEL SERVICIO
+========================================================= */
+
+.reservation-service-card {
+
+    min-width:
+        0;
+
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        rgba(
+            var(--reservation-detail-rgb),
+            0.16
+        );
+
+    border-radius:
+        13px;
+
+    background:
+        var(--panel-surface);
+
+    transition:
+        border-color
+        var(--panel-transition),
+        transform
+        var(--panel-transition),
+        box-shadow
+        var(--panel-transition);
+}
+
+
+.reservation-service-card:hover {
+
+    border-color:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.28
+        );
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(
+            var(--reservation-detail-rgb),
+            0.07
+        );
+}
+
+
+/* =========================================================
+   CABECERA
+========================================================= */
+
+.reservation-service-card-header {
+
+    padding:
+        13px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    border-bottom:
+        1px solid
+        var(--panel-border);
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(
+                var(--reservation-detail-rgb),
+                0.07
+            ),
+            transparent
+            70%
+        );
+}
+
+
+.reservation-service-card-icon {
+
+    width:
+        38px;
+
+    height:
+        38px;
+
+    flex:
+        0 0 38px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        10px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.11
+        );
+
+    font-size:
+        0.72rem;
+}
+
+
+.reservation-service-card-title {
+
+    min-width:
+        0;
+
+    flex:
+        1;
+}
+
+
+.reservation-service-card-title
+small,
+.reservation-service-card-title
+strong {
+
+    display:
+        block;
+}
+
+
+.reservation-service-card-title
+small {
+
+    margin-bottom:
+        3px;
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.53rem;
+
+    font-weight:
+        700;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.04em;
+}
+
+
+.reservation-service-card-title
+strong {
+
+    overflow:
+        hidden;
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.72rem;
+
+    font-weight:
+        800;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+}
+
+
+.reservation-service-card-total {
+
+    flex:
+        0 0 auto;
+
+    color:
+        var(--reservation-detail-color);
+
+    font-size:
+        0.75rem;
+
+    font-weight:
+        800;
+}
+
+
+/* =========================================================
+   DATOS DEL SERVICIO
+========================================================= */
+
+.reservation-service-card-data {
+
+    padding:
+        12px 13px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        10px;
+}
+
+
+.reservation-service-card-data
+> div {
+
+    min-width:
+        0;
+
+    padding:
+        8px 9px;
+
+    border:
+        1px solid
+        var(--panel-border);
+
+    border-radius:
+        9px;
+
+    background:
+        var(--panel-surface-alt);
+}
+
+
+.reservation-service-card-data
+span,
+.reservation-service-card-data
+strong {
+
+    display:
+        block;
+}
+
+
+.reservation-service-card-data
+span {
+
+    margin-bottom:
+        3px;
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.52rem;
+
+    font-weight:
+        600;
+}
+
+
+.reservation-service-card-data
+strong {
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.64rem;
+
+    font-weight:
+        800;
+}
+
+
+/* =========================================================
+   PIE
+========================================================= */
+
+.reservation-service-card-footer {
+
+    padding:
+        9px 13px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    border-top:
+        1px solid
+        var(--panel-border);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.025
+        );
+}
+
+
+.reservation-service-card-footer
+span {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    gap:
+        5px;
+
+    color:
+        var(--reservation-detail-color);
+
+    font-size:
+        0.54rem;
+
+    font-weight:
+        700;
+}
+
+
+.reservation-service-card-footer
+strong {
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.57rem;
+
+    font-weight:
+        800;
+}
+
+
+/* =========================================================
+   SIN SERVICIOS
+========================================================= */
+
+.reservation-services-empty {
+
+    padding:
+        14px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        11px;
+
+    border:
+        1px solid
+        var(--panel-border);
+
+    border-radius:
+        12px;
+
+    background:
+        var(--panel-surface);
+}
+
+
+.reservation-services-empty
+> span {
+
+    width:
+        38px;
+
+    height:
+        38px;
+
+    flex:
+        0 0 38px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        10px;
+
+    color:
+        var(--reservation-detail-color);
+
+    background:
+        rgba(
+            var(--reservation-detail-rgb),
+            0.10
+        );
+
+    font-size:
+        0.72rem;
+}
+
+
+.reservation-services-empty
+strong,
+.reservation-services-empty
+small {
+
+    display:
+        block;
+}
+
+
+.reservation-services-empty
+strong {
+
+    color:
+        var(--panel-text);
+
+    font-size:
+        0.67rem;
+
+    font-weight:
+        800;
+}
+
+
+.reservation-services-empty
+small {
+
+    margin-top:
+        3px;
+
+    color:
+        var(--panel-text-soft);
+
+    font-size:
+        0.57rem;
+
+    line-height:
+        1.45;
+}
+
+
+/* =========================================================
+   MODO OSCURO
+========================================================= */
+
+html[data-panel-tema="oscuro"]
+.reservation-service-card,
+html[data-panel-tema="oscuro"]
+.reservation-services-empty {
+
+    background:
+        var(--panel-surface);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (
+    max-width:
+        760px
+) {
+
+    .reservation-services-grid {
+
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+
+@media (
+    max-width:
+        520px
+) {
+
+    .reservation-service-card-header {
+
+        align-items:
+            flex-start;
+
+        flex-wrap:
+            wrap;
+    }
+
+
+    .reservation-service-card-title {
+
+        min-width:
+            calc(
+                100% -
+                52px
+            );
+    }
+
+
+    .reservation-service-card-total {
+
+        width:
+            100%;
+
+        padding-left:
+            48px;
+    }
+
+
+    .reservation-service-card-data {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .reservation-service-card-footer {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+}
+
+/* =========================================================
+   VER DETALLE DE RESERVACIÓN
+   NORMALIZACIÓN TIPOGRÁFICA
+========================================================= */
+
+/* ---------------------------------------------------------
+   CABECERAS DE LOS ACORDEONES
+--------------------------------------------------------- */
+
+.reservation-details-stack
+.reservation-detail-summary-copy
+> strong {
+
+    font-size:
+        0.78rem;
+
+    line-height:
+        1.35;
+}
+
+
+.reservation-details-stack
+.reservation-detail-summary-copy
+> small {
+
+    font-size:
+        0.65rem;
+
+    line-height:
+        1.5;
+}
+
+
+.reservation-details-stack
+.reservation-detail-badge {
+
+    font-size:
+        0.62rem;
+}
+
+
+/* ---------------------------------------------------------
+   INFORMACIÓN DEL CLIENTE
+--------------------------------------------------------- */
+
+.reservation-details-stack
+.reservation-client-information-header
+> strong {
+
+    font-size:
+        0.72rem;
+}
+
+
+.reservation-details-stack
+.reservation-client-information-list
+> div
+> span {
+
+    font-size:
+        0.65rem;
+}
+
+
+.reservation-details-stack
+.reservation-client-information-list
+> div
+> strong {
+
+    font-size:
+        0.70rem;
+}
+
+
+/* ---------------------------------------------------------
+   DETALLES DEL ALQUILER
+--------------------------------------------------------- */
+
+.reservation-details-stack
+.reservation-rental-vehicle-main
+small {
+
+    font-size:
+        0.61rem;
+}
+
+
+.reservation-details-stack
+.reservation-rental-vehicle-main
+strong {
+
+    font-size:
+        0.82rem;
+}
+
+
+.reservation-details-stack
+.reservation-rental-vehicle-meta
+span {
+
+    font-size:
+        0.62rem;
+}
+
+
+.reservation-details-stack
+.reservation-rental-vehicle-meta
+strong {
+
+    font-size:
+        0.70rem;
+}
+
+
+.reservation-details-stack
+.reservation-rental-point-header
+small {
+
+    font-size:
+        0.61rem;
+}
+
+
+.reservation-details-stack
+.reservation-rental-point-header
+strong {
+
+    font-size:
+        0.74rem;
+}
+
+
+.reservation-details-stack
+.reservation-rental-point-data
+span {
+
+    font-size:
+        0.63rem;
+}
+
+
+.reservation-details-stack
+.reservation-rental-point-data
+strong {
+
+    font-size:
+        0.69rem;
+}
+
+
+/* ---------------------------------------------------------
+   UNIDADES FÍSICAS
+--------------------------------------------------------- */
+
+.reservation-details-stack
+.reservation-units-metric
+small {
+
+    font-size:
+        0.61rem;
+}
+
+
+.reservation-details-stack
+.reservation-units-metric
+strong {
+
+    font-size:
+        1rem;
+}
+
+
+.reservation-details-stack
+.reservation-units-metric
+div
+> span {
+
+    font-size:
+        0.63rem;
+}
+
+
+.reservation-details-stack
+.reservation-units-section-header
+strong {
+
+    font-size:
+        0.72rem;
+}
+
+
+.reservation-details-stack
+.reservation-units-section-header
+small {
+
+    font-size:
+        0.63rem;
+}
+
+
+.reservation-details-stack
+.reservation-unit-card-main
+> small {
+
+    font-size:
+        0.61rem;
+}
+
+
+.reservation-details-stack
+.reservation-unit-card-main
+> strong {
+
+    font-size:
+        0.72rem;
+}
+
+
+.reservation-details-stack
+.reservation-unit-card-meta
+span {
+
+    font-size:
+        0.63rem;
+}
+
+
+.reservation-details-stack
+.reservation-unit-status {
+
+    font-size:
+        0.62rem;
+}
+
+
+.reservation-details-stack
+.reservation-unit-assign-button {
+
+    font-size:
+        0.65rem;
+}
+
+
+.reservation-details-stack
+.reservation-units-state
+strong {
+
+    font-size:
+        0.71rem;
+}
+
+
+.reservation-details-stack
+.reservation-units-state
+small {
+
+    font-size:
+        0.64rem;
+}
+
+
+/* ---------------------------------------------------------
+   SERVICIOS ADICIONALES
+--------------------------------------------------------- */
+
+.reservation-details-stack
+.reservation-service-card-title
+small {
+
+    font-size:
+        0.60rem;
+}
+
+
+.reservation-details-stack
+.reservation-service-card-title
+strong {
+
+    font-size:
+        0.73rem;
+}
+
+
+.reservation-details-stack
+.reservation-service-card-total {
+
+    font-size:
+        0.74rem;
+}
+
+
+.reservation-details-stack
+.reservation-service-card-data
+span {
+
+    font-size:
+        0.61rem;
+}
+
+
+.reservation-details-stack
+.reservation-service-card-data
+strong {
+
+    font-size:
+        0.69rem;
+}
+
+
+.reservation-details-stack
+.reservation-service-card-footer
+span {
+
+    font-size:
+        0.62rem;
+}
+
+
+.reservation-details-stack
+.reservation-service-card-footer
+strong {
+
+    font-size:
+        0.65rem;
+}
+
+
+.reservation-details-stack
+.reservation-services-empty
+strong {
+
+    font-size:
+        0.71rem;
+}
+
+
+.reservation-details-stack
+.reservation-services-empty
+small {
+
+    font-size:
+        0.64rem;
+}
+
+
+/* ---------------------------------------------------------
+   PAGOS
+--------------------------------------------------------- */
+
+.reservation-details-stack
+.reservation-compact-payment-main
+> div
+> strong {
+
+    font-size:
+        0.74rem;
+}
+
+
+.reservation-details-stack
+.reservation-compact-payment-main
+> div
+> span {
+
+    font-size:
+        0.67rem;
+}
+
+
+.reservation-details-stack
+.reservation-compact-payment-meta
+strong {
+
+    font-size:
+        0.61rem;
+}
+
+
+.reservation-details-stack
+.reservation-compact-payment-meta
+span {
+
+    font-size:
+        0.69rem;
+}
+
+
+.reservation-details-stack
+.reservation-compact-proof
+> div
+> span {
+
+    font-size:
+        0.66rem;
+}
+
+
+.reservation-details-stack
+.reservation-compact-proof
+.panel-secondary-button {
+
+    font-size:
+        0.64rem;
+}
+
+
+.reservation-details-stack
+.reservation-payment-reject-details
+> summary {
+
+    font-size:
+        0.65rem;
+}
+
+
+.reservation-details-stack
+.reservation-payment-reject-details
+label {
+
+    font-size:
+        0.66rem;
+}
+
+
+.reservation-details-stack
+.reservation-payment-reject-details
+textarea {
+
+    font-size:
+        0.69rem;
+}
+
+
+.reservation-details-stack
+.reservation-compact-payment-note {
+
+    font-size:
+        0.65rem;
+}
+
+
+/* ---------------------------------------------------------
+   FACTURACIÓN
+--------------------------------------------------------- */
+
+.reservation-details-stack
+.reservation-compact-billing
+span {
+
+    font-size:
+        0.66rem;
+}
+
+
+.reservation-details-stack
+.reservation-compact-billing
+strong {
+
+    font-size:
+        0.71rem;
+}
+
+
+.reservation-details-stack
+.reservation-compact-billing-total
+span {
+
+    font-size:
+        0.72rem;
+}
+
+
+.reservation-details-stack
+.reservation-compact-billing-total
+strong {
+
+    font-size:
+        1rem;
+}
+
+
+/* ---------------------------------------------------------
+   COMENTARIOS
+--------------------------------------------------------- */
+
+.reservation-details-stack
+.reservation-compact-comment {
+
+    font-size:
+        0.70rem;
+
+    line-height:
+        1.7;
+}
+
+/* =========================================================
+   RESERVACIÓN - ACCIONES EN BANNER SUPERIOR
+========================================================= */
+
+.reservation-detail-hero-actions {
+
+    flex:
+        0 0 auto;
+
+    align-self:
+        center;
+
+    justify-content:
+        flex-end;
+
+    transform:
+        translateY(18px);
+
+}
+
+.reservation-detail-hero-actions
+form {
+
+    margin:
+        0;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (
+    max-width:
+        760px
+) {
+
+    .reservation-detail-hero-actions {
+
+    width:
+        100%;
+
+    transform:
+        none;
+
+}
+
+
+    .reservation-detail-hero-actions
+    form {
+
+        flex:
+            1;
+
+    }
+
+
+    .reservation-detail-hero-actions
+    .reservation-compact-button {
+
+        width:
+            100%;
+
+    }
+
+}
+
+
+@media (
+    max-width:
+        560px
+) {
+
+    .reservation-detail-hero-actions {
+
+        flex-direction:
+            column;
+
+    }
+
 }

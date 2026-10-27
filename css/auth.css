@@ -1533,3 +1533,1709 @@ a {
     }
 
 }
+
+/* =========================================================
+   LOGIN - NORMALIZACIÓN TIPOGRÁFICA
+   MISMA ESCALA DE FORMULARIOS DEL SISTEMA
+========================================================= */
+
+/* ---------------------------------------------------------
+   ETIQUETAS
+--------------------------------------------------------- */
+
+.auth-panel-formulario
+.auth-campo
+label {
+
+    font-size:
+        0.78rem;
+
+}
+
+
+/* ---------------------------------------------------------
+   TEXTO AUXILIAR JUNTO A ETIQUETAS
+--------------------------------------------------------- */
+
+.auth-panel-formulario
+.auth-label-fila
+span {
+
+    font-size:
+        0.65rem;
+
+}
+
+
+/* ---------------------------------------------------------
+   INPUTS
+--------------------------------------------------------- */
+
+.auth-panel-formulario
+.auth-input-contenedor
+input {
+
+    font-size:
+        0.80rem;
+
+}
+
+
+/* ---------------------------------------------------------
+   BOTÓN PRINCIPAL
+--------------------------------------------------------- */
+
+.auth-panel-formulario
+.auth-boton {
+
+    font-size:
+        0.78rem;
+
+}
+
+
+/* ---------------------------------------------------------
+   MENSAJE DE SEGURIDAD
+--------------------------------------------------------- */
+
+.auth-panel-formulario
+.auth-seguridad
+p {
+
+    font-size:
+        0.65rem;
+
+    line-height:
+        1.5;
+
+}
+
+
+/* ---------------------------------------------------------
+   PIE DEL FORMULARIO
+--------------------------------------------------------- */
+
+.auth-panel-formulario
+.auth-formulario-pie {
+
+    font-size:
+        0.62rem;
+
+}
+
+/* =========================================================
+   LOGIN - ENTRADA ANIMADA POR CAPAS
+========================================================= */
+
+
+/* ---------------------------------------------------------
+   PANEL VISUAL IZQUIERDO
+--------------------------------------------------------- */
+
+.auth-panel-marca {
+
+    animation:
+        authPanelMarcaEntrada
+        0.58s
+        cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        )
+        0.06s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   PARTE SUPERIOR DEL PANEL
+--------------------------------------------------------- */
+
+.auth-marca-superior {
+
+    animation:
+        authElementoEntrada
+        0.46s
+        ease
+        0.14s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   SUBTÍTULO
+--------------------------------------------------------- */
+
+.auth-subtitulo {
+
+    animation:
+        authElementoEntrada
+        0.46s
+        ease
+        0.20s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   TÍTULO PRINCIPAL
+--------------------------------------------------------- */
+
+.auth-marca-contenido
+h1 {
+
+    animation:
+        authElementoEntrada
+        0.50s
+        ease
+        0.26s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   DESCRIPCIÓN DEL PANEL
+--------------------------------------------------------- */
+
+.auth-marca-contenido
+> p {
+
+    animation:
+        authElementoEntrada
+        0.50s
+        ease
+        0.32s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   BENEFICIOS
+--------------------------------------------------------- */
+
+.auth-beneficios {
+
+    animation:
+        authElementoEntrada
+        0.52s
+        ease
+        0.38s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   PIE DEL PANEL IZQUIERDO
+--------------------------------------------------------- */
+
+.auth-marca-pie {
+
+    animation:
+        authElementoEntrada
+        0.48s
+        ease
+        0.44s
+        both;
+
+}
+
+
+/* =========================================================
+   FORMULARIO
+========================================================= */
+
+
+/* ---------------------------------------------------------
+   LOGO
+--------------------------------------------------------- */
+
+.auth-formulario-marca {
+
+    animation:
+        authElementoEntradaDerecha
+        0.48s
+        ease
+        0.18s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   ENCABEZADO
+--------------------------------------------------------- */
+
+.auth-formulario-encabezado {
+
+    animation:
+        authElementoEntradaDerecha
+        0.50s
+        ease
+        0.26s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   CAMPO CORREO
+--------------------------------------------------------- */
+
+.auth-formulario
+.auth-campo:nth-child(1) {
+
+    animation:
+        authElementoEntradaDerecha
+        0.50s
+        ease
+        0.34s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   CAMPO CONTRASEÑA
+--------------------------------------------------------- */
+
+.auth-formulario
+.auth-campo:nth-child(2) {
+
+    animation:
+        authElementoEntradaDerecha
+        0.50s
+        ease
+        0.42s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   BOTÓN INICIAR SESIÓN
+--------------------------------------------------------- */
+
+.auth-formulario
+.auth-boton {
+
+    animation:
+        authElementoEntradaDerecha
+        0.50s
+        ease
+        0.50s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   MENSAJE DE SEGURIDAD
+--------------------------------------------------------- */
+
+.auth-seguridad {
+
+    animation:
+        authElementoEntradaDerecha
+        0.48s
+        ease
+        0.58s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   PIE DEL FORMULARIO
+--------------------------------------------------------- */
+
+.auth-formulario-pie {
+
+    animation:
+        authElementoEntradaDerecha
+        0.46s
+        ease
+        0.64s
+        both;
+
+}
+
+
+/* =========================================================
+   ANIMACIONES
+========================================================= */
+
+@keyframes authPanelMarcaEntrada {
+
+    from {
+
+        opacity:
+            0;
+
+        transform:
+            translateX(-24px);
+
+    }
+
+
+    to {
+
+        opacity:
+            1;
+
+        transform:
+            translateX(0);
+
+    }
+
+}
+
+
+@keyframes authElementoEntrada {
+
+    from {
+
+        opacity:
+            0;
+
+        transform:
+            translateY(13px);
+
+    }
+
+
+    to {
+
+        opacity:
+            1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+@keyframes authElementoEntradaDerecha {
+
+    from {
+
+        opacity:
+            0;
+
+        transform:
+            translateX(15px)
+            translateY(5px);
+
+    }
+
+
+    to {
+
+        opacity:
+            1;
+
+        transform:
+            translateX(0)
+            translateY(0);
+
+    }
+
+}
+
+
+/* =========================================================
+   ACCESIBILIDAD - MOVIMIENTO REDUCIDO
+========================================================= */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    *,
+    *::before,
+    *::after {
+
+        animation-delay:
+            0ms !important;
+
+    }
+
+}
+
+/* =========================================================
+   LOGIN - MOVIMIENTO AMBIENTAL DEL PANEL DE MARCA
+========================================================= */
+
+
+/* ---------------------------------------------------------
+   LOGO DE FONDO
+   RESPIRACIÓN MUY SUAVE
+--------------------------------------------------------- */
+
+.auth-logo-fondo {
+
+    animation:
+        authLogoFondoRespirar
+        12s
+        ease-in-out
+        infinite;
+
+}
+
+
+/* ---------------------------------------------------------
+   BRILLO VERDE SUPERIOR
+--------------------------------------------------------- */
+
+.auth-panel-marca::before {
+
+    animation:
+        authBrilloPanel
+        14s
+        ease-in-out
+        infinite;
+
+}
+
+
+/* ---------------------------------------------------------
+   ANILLO DECORATIVO INFERIOR
+--------------------------------------------------------- */
+
+.auth-panel-marca::after {
+
+    animation:
+        authAnilloPanel
+        16s
+        ease-in-out
+        infinite;
+
+}
+
+
+/* =========================================================
+   ANIMACIONES AMBIENTALES
+========================================================= */
+
+@keyframes authLogoFondoRespirar {
+
+    0%,
+    100% {
+
+        transform:
+            translate(
+                -50%,
+                -50%
+            )
+            scale(1);
+
+    }
+
+
+    50% {
+
+        transform:
+            translate(
+                -50%,
+                -50%
+            )
+            scale(1.025);
+
+    }
+
+}
+
+
+@keyframes authBrilloPanel {
+
+    0%,
+    100% {
+
+        transform:
+            translate(
+                0,
+                0
+            );
+
+    }
+
+
+    50% {
+
+        transform:
+            translate(
+                -18px,
+                16px
+            );
+
+    }
+
+}
+
+
+@keyframes authAnilloPanel {
+
+    0%,
+    100% {
+
+        transform:
+            translate(
+                0,
+                0
+            )
+            rotate(0deg);
+
+    }
+
+
+    50% {
+
+        transform:
+            translate(
+                16px,
+                -12px
+            )
+            rotate(8deg);
+
+    }
+
+}
+
+/* =========================================================
+   LOGIN - TRANSICIÓN DE ACCESO CON VEHÍCULO
+========================================================= */
+
+
+/* ---------------------------------------------------------
+   PANEL DERECHO
+--------------------------------------------------------- */
+
+.auth-panel-formulario {
+
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+}
+
+
+/* ---------------------------------------------------------
+   CAPA DE TRANSICIÓN
+--------------------------------------------------------- */
+
+.auth-cargando {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    z-index:
+        50;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    padding:
+        38px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.98
+        );
+
+    opacity:
+        0;
+
+    visibility:
+        hidden;
+
+    pointer-events:
+        none;
+
+    transform:
+        translateY(8px);
+
+    transition:
+        opacity
+        0.22s
+        ease,
+        visibility
+        0.22s
+        ease,
+        transform
+        0.22s
+        ease;
+
+}
+
+
+/* ---------------------------------------------------------
+   MOSTRAR TRANSICIÓN
+--------------------------------------------------------- */
+
+.auth-panel-formulario.auth-esta-cargando
+.auth-cargando {
+
+    opacity:
+        1;
+
+    visibility:
+        visible;
+
+    transform:
+        translateY(0);
+
+}
+
+
+/* ---------------------------------------------------------
+   CONTENIDO
+--------------------------------------------------------- */
+
+.auth-cargando-contenido {
+
+    width:
+        min(
+            360px,
+            100%
+        );
+
+    text-align:
+        center;
+
+}
+
+
+.auth-cargando-etiqueta {
+
+    display:
+        inline-block;
+
+    margin-bottom:
+        10px;
+
+    color:
+        var(--auth-secundario);
+
+    font-size:
+        0.62rem;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        0.16em;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.auth-cargando-contenido
+> strong {
+
+    display:
+        block;
+
+    color:
+        var(--auth-texto);
+
+    font-size:
+        1.22rem;
+
+    font-weight:
+        800;
+
+}
+
+
+.auth-cargando-contenido
+> p {
+
+    margin-top:
+        7px;
+
+    color:
+        var(--auth-texto-suave);
+
+    font-size:
+        0.68rem;
+
+    line-height:
+        1.5;
+
+}
+
+
+/* =========================================================
+   CARRETERA
+========================================================= */
+
+.auth-cargando-ruta {
+
+    width:
+        100%;
+
+    height:
+        72px;
+
+    margin-top:
+        27px;
+
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+}
+
+
+.auth-cargando-linea {
+
+    width:
+        100%;
+
+    height:
+        2px;
+
+    position:
+        absolute;
+
+    left:
+        0;
+
+    bottom:
+        17px;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #cfd6df
+            0
+            13px,
+            transparent
+            13px
+            23px
+        );
+
+}
+
+
+/* =========================================================
+   VEHÍCULO
+========================================================= */
+
+.auth-cargando-auto {
+
+    width:
+        48px;
+
+    height:
+        38px;
+
+    position:
+        absolute;
+
+    left:
+        -54px;
+
+    bottom:
+        18px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    color:
+        var(--auth-secundario);
+
+    font-size:
+        2rem;
+
+}
+
+
+/* ---------------------------------------------------------
+   VEHÍCULO EN MOVIMIENTO
+--------------------------------------------------------- */
+
+.auth-panel-formulario.auth-esta-cargando
+.auth-cargando-auto {
+
+    animation:
+        authAutoCruzar
+        0.74s
+        cubic-bezier(
+            0.25,
+            0.75,
+            0.35,
+            1
+        )
+        0.05s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   BOTÓN DURANTE EL ENVÍO
+--------------------------------------------------------- */
+
+.auth-boton:disabled {
+
+    cursor:
+        default;
+
+    pointer-events:
+        none;
+
+}
+
+
+/* =========================================================
+   ANIMACIÓN DEL VEHÍCULO
+========================================================= */
+
+@keyframes authAutoCruzar {
+
+    0% {
+
+        left:
+            -54px;
+
+        transform:
+            translateY(0)
+            rotate(-1deg);
+
+    }
+
+
+    45% {
+
+        transform:
+            translateY(-2px)
+            rotate(0deg);
+
+    }
+
+
+    100% {
+
+        left:
+            calc(
+                100% + 8px
+            );
+
+        transform:
+            translateY(0)
+            rotate(1deg);
+
+    }
+
+}
+
+
+/* =========================================================
+   MOVIMIENTO REDUCIDO
+========================================================= */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .auth-panel-formulario.auth-esta-cargando
+    .auth-cargando-auto {
+
+        animation:
+            none;
+
+        left:
+            calc(
+                50% - 24px
+            );
+
+    }
+
+}
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .auth-panel-formulario.auth-esta-cargando
+    .auth-cargando-auto {
+
+        animation:
+            none;
+
+        left:
+            calc(
+                50% - 24px
+            );
+
+    }
+
+}
+
+/* =========================================================
+   LOGIN - EFECTO DE ACELERACIÓN DEL VEHÍCULO
+========================================================= */
+
+
+/* ---------------------------------------------------------
+   SOMBRA Y PROFUNDIDAD DEL AUTO
+--------------------------------------------------------- */
+
+.auth-cargando-auto {
+
+    filter:
+        drop-shadow(
+            0 5px 5px
+            rgba(
+                15,
+                23,
+                42,
+                0.22
+            )
+        );
+
+}
+
+
+/* ---------------------------------------------------------
+   LÍNEAS DE VELOCIDAD
+--------------------------------------------------------- */
+
+.auth-cargando-auto::before,
+.auth-cargando-auto::after {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    right:
+        calc(
+            100% + 4px
+        );
+
+    height:
+        2px;
+
+    border-radius:
+        999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(
+                22,
+                163,
+                74,
+                0.48
+            )
+        );
+
+    opacity:
+        0;
+
+}
+
+
+.auth-cargando-auto::before {
+
+    width:
+        32px;
+
+    top:
+        13px;
+
+}
+
+
+.auth-cargando-auto::after {
+
+    width:
+        22px;
+
+    top:
+        23px;
+
+}
+
+
+/* ---------------------------------------------------------
+   MOSTRAR LÍNEAS DURANTE LA ACELERACIÓN
+--------------------------------------------------------- */
+
+.auth-panel-formulario.auth-esta-cargando
+.auth-cargando-auto::before {
+
+    animation:
+        authEstelaUno
+        0.18s
+        ease-in-out
+        infinite
+        alternate;
+
+}
+
+
+.auth-panel-formulario.auth-esta-cargando
+.auth-cargando-auto::after {
+
+    animation:
+        authEstelaDos
+        0.15s
+        ease-in-out
+        infinite
+        alternate;
+
+}
+
+
+/* =========================================================
+   CARRETERA EN MOVIMIENTO
+========================================================= */
+
+.auth-panel-formulario.auth-esta-cargando
+.auth-cargando-linea {
+
+    animation:
+        authRutaMovimiento
+        0.30s
+        linear
+        infinite;
+
+}
+
+
+/* =========================================================
+   AUTO - MOVIMIENTO MEJORADO
+========================================================= */
+
+.auth-panel-formulario.auth-esta-cargando
+.auth-cargando-auto {
+
+    animation:
+        authAutoAcelerar
+        0.74s
+        cubic-bezier(
+            0.30,
+            0.05,
+            0.35,
+            1
+        )
+        0.05s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   PEQUEÑO MOVIMIENTO DE SUSPENSIÓN
+--------------------------------------------------------- */
+
+.auth-panel-formulario.auth-esta-cargando
+.auth-cargando-auto
+i {
+
+    animation:
+        authAutoSuspension
+        0.14s
+        ease-in-out
+        infinite
+        alternate;
+
+}
+
+
+/* =========================================================
+   ANIMACIONES
+========================================================= */
+
+@keyframes authAutoAcelerar {
+
+    0% {
+
+        left:
+            -54px;
+
+        transform:
+            scale(0.96);
+
+    }
+
+
+    18% {
+
+        left:
+            3%;
+
+        transform:
+            scale(1);
+
+    }
+
+
+    55% {
+
+        left:
+            48%;
+
+        transform:
+            scale(1.03);
+
+    }
+
+
+    82% {
+
+        left:
+            82%;
+
+        transform:
+            scale(1.02);
+
+    }
+
+
+    100% {
+
+        left:
+            calc(
+                100% + 12px
+            );
+
+        transform:
+            scale(0.98);
+
+    }
+
+}
+
+
+@keyframes authRutaMovimiento {
+
+    from {
+
+        background-position:
+            0 0;
+
+    }
+
+
+    to {
+
+        background-position:
+            -69px 0;
+
+    }
+
+}
+
+
+@keyframes authAutoSuspension {
+
+    from {
+
+        transform:
+            translateY(0);
+
+    }
+
+
+    to {
+
+        transform:
+            translateY(-1.5px);
+
+    }
+
+}
+
+
+@keyframes authEstelaUno {
+
+    from {
+
+        opacity:
+            0.20;
+
+        transform:
+            scaleX(0.65);
+
+    }
+
+
+    to {
+
+        opacity:
+            0.72;
+
+        transform:
+            scaleX(1);
+
+    }
+
+}
+
+
+@keyframes authEstelaDos {
+
+    from {
+
+        opacity:
+            0.14;
+
+        transform:
+            scaleX(0.55);
+
+    }
+
+
+    to {
+
+        opacity:
+            0.55;
+
+        transform:
+            scaleX(1);
+
+    }
+
+}
+
+
+/* =========================================================
+   MOVIMIENTO REDUCIDO
+========================================================= */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .auth-panel-formulario.auth-esta-cargando
+    .auth-cargando-linea,
+
+    .auth-panel-formulario.auth-esta-cargando
+    .auth-cargando-auto::before,
+
+    .auth-panel-formulario.auth-esta-cargando
+    .auth-cargando-auto::after,
+
+    .auth-panel-formulario.auth-esta-cargando
+    .auth-cargando-auto
+    i {
+
+        animation:
+            none;
+
+    }
+
+
+    .auth-cargando-auto::before,
+    .auth-cargando-auto::after {
+
+        display:
+            none;
+
+    }
+
+}
+
+/* =========================================================
+   LOGIN - REFINAMIENTO DE LA ESCENA DE ACCESO
+========================================================= */
+
+
+/* ---------------------------------------------------------
+   ENTRADA DEL CONTENIDO
+--------------------------------------------------------- */
+
+.auth-panel-formulario.auth-esta-cargando
+.auth-cargando-contenido {
+
+    animation:
+        authAccesoContenidoEntrada
+        0.26s
+        ease
+        0.03s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   TÍTULO + PUNTOS
+--------------------------------------------------------- */
+
+.auth-cargando-titulo {
+
+    display:
+        flex !important;
+
+    justify-content:
+        center;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+}
+
+
+/* ---------------------------------------------------------
+   CONTENEDOR DE PUNTOS
+--------------------------------------------------------- */
+
+.auth-cargando-puntos {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    gap:
+        4px;
+
+}
+
+
+/* ---------------------------------------------------------
+   CADA PUNTO
+--------------------------------------------------------- */
+
+.auth-cargando-puntos
+> span {
+
+    width:
+        5px;
+
+    height:
+        5px;
+
+    display:
+        block;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--auth-secundario);
+
+    opacity:
+        0.25;
+
+}
+
+
+/* ---------------------------------------------------------
+   ANIMACIÓN ESCALONADA DE PUNTOS
+--------------------------------------------------------- */
+
+.auth-panel-formulario.auth-esta-cargando
+.auth-cargando-puntos
+> span:nth-child(1) {
+
+    animation:
+        authPuntoAcceso
+        0.48s
+        ease-in-out
+        0s
+        infinite;
+
+}
+
+
+.auth-panel-formulario.auth-esta-cargando
+.auth-cargando-puntos
+> span:nth-child(2) {
+
+    animation:
+        authPuntoAcceso
+        0.48s
+        ease-in-out
+        0.10s
+        infinite;
+
+}
+
+
+.auth-panel-formulario.auth-esta-cargando
+.auth-cargando-puntos
+> span:nth-child(3) {
+
+    animation:
+        authPuntoAcceso
+        0.48s
+        ease-in-out
+        0.20s
+        infinite;
+
+}
+
+
+/* =========================================================
+   BARRA DE PROGRESO
+========================================================= */
+
+.auth-cargando-progreso {
+
+    width:
+        min(
+            190px,
+            64%
+        );
+
+    height:
+        3px;
+
+    margin:
+        14px auto 0;
+
+    overflow:
+        hidden;
+
+    border-radius:
+        999px;
+
+    background:
+        #edf1f4;
+
+}
+
+
+/* ---------------------------------------------------------
+   RELLENO
+--------------------------------------------------------- */
+
+.auth-cargando-progreso
+> span {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    display:
+        block;
+
+    border-radius:
+        inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--auth-secundario),
+            var(--auth-secundario-claro)
+        );
+
+    transform:
+        scaleX(0);
+
+    transform-origin:
+        left center;
+
+}
+
+
+/* ---------------------------------------------------------
+   PROGRESO SINCRONIZADO CON EL LOGIN
+--------------------------------------------------------- */
+
+.auth-panel-formulario.auth-esta-cargando
+.auth-cargando-progreso
+> span {
+
+    animation:
+        authProgresoAcceso
+        0.78s
+        cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        )
+        0.04s
+        both;
+
+}
+
+
+/* ---------------------------------------------------------
+   AJUSTE DE LA RUTA
+--------------------------------------------------------- */
+
+.auth-cargando-ruta {
+
+    margin-top:
+        20px;
+
+}
+
+
+/* =========================================================
+   ANIMACIONES
+========================================================= */
+
+@keyframes authAccesoContenidoEntrada {
+
+    from {
+
+        opacity:
+            0;
+
+        transform:
+            translateY(8px);
+
+    }
+
+
+    to {
+
+        opacity:
+            1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+@keyframes authPuntoAcceso {
+
+    0%,
+    100% {
+
+        opacity:
+            0.22;
+
+        transform:
+            translateY(0)
+            scale(0.85);
+
+    }
+
+
+    50% {
+
+        opacity:
+            1;
+
+        transform:
+            translateY(-2px)
+            scale(1);
+
+    }
+
+}
+
+
+@keyframes authProgresoAcceso {
+
+    0% {
+
+        transform:
+            scaleX(0);
+
+    }
+
+
+    35% {
+
+        transform:
+            scaleX(0.30);
+
+    }
+
+
+    72% {
+
+        transform:
+            scaleX(0.76);
+
+    }
+
+
+    100% {
+
+        transform:
+            scaleX(1);
+
+    }
+
+}
+
+
+/* =========================================================
+   MOVIMIENTO REDUCIDO
+========================================================= */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .auth-panel-formulario.auth-esta-cargando
+    .auth-cargando-contenido,
+
+    .auth-panel-formulario.auth-esta-cargando
+    .auth-cargando-puntos
+    > span {
+
+        animation:
+            none;
+
+    }
+
+
+    .auth-panel-formulario.auth-esta-cargando
+    .auth-cargando-progreso
+    > span {
+
+        animation:
+            none;
+
+        transform:
+            scaleX(1);
+
+    }
+
+}
+
+

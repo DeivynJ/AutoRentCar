@@ -23,22 +23,10 @@ document.addEventListener(
         const CLAVE_TEMA =
             `autorentcar-panel-tema:${slug}`;
 
-
-        const CLAVE_SIDEBAR =
-            `autorentcar-panel-sidebar:${slug}`;
-
-
         const botonTema =
             document.getElementById(
                 "panel-theme-toggle"
             );
-
-
-        const botonColapsar =
-            document.getElementById(
-                "panel-sidebar-collapse"
-            );
-
 
         const botonMenuMovil =
             document.getElementById(
@@ -215,72 +203,7 @@ const mensajeFiltroVacio =
         actualizarBotonTema();
 
 
-        /* =================================================
-           SIDEBAR
-        ================================================= */
-
-        try {
-
-            if (
-                localStorage.getItem(
-                    CLAVE_SIDEBAR
-                ) === "collapsed"
-            ) {
-
-                body.classList.add(
-                    "panel-sidebar-collapsed"
-                );
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "No fue posible recuperar el estado del menú.",
-                error
-            );
-
-        }
-
-
-        botonColapsar?.addEventListener(
-            "click",
-            () => {
-
-                body.classList.toggle(
-                    "panel-sidebar-collapsed"
-                );
-
-
-                const colapsado =
-                    body.classList.contains(
-                        "panel-sidebar-collapsed"
-                    );
-
-
-                try {
-
-                    localStorage.setItem(
-                        CLAVE_SIDEBAR,
-                        colapsado
-                            ? "collapsed"
-                            : "expanded"
-                    );
-
-                } catch (error) {
-
-                    console.error(
-                        "No fue posible guardar el estado del menú.",
-                        error
-                    );
-
-                }
-
-            }
-        );
-
-
-        /* =================================================
+        /* ================================================
            MENÚ MÓVIL
         ================================================= */
 
@@ -595,20 +518,19 @@ filtrosNotificaciones.forEach(
 
 
         window.addEventListener(
-            "resize",
-            () => {
+    "resize",
+    () => {
 
-                if (
-                    window.innerWidth >
-                    980
-                ) {
+        if (
+            window.innerWidth >
+            980
+        ) {
 
-                    cerrarMenuMovil();
+            cerrarMenuMovil();
 
-                }
+         }
 
-            }
-        );
-
-    }
+       }
+    );
+  }
 );

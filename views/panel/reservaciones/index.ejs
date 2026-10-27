@@ -301,72 +301,69 @@
             title="Estado"
         >
 
-            <option value="">
-                Todos los estados
-            </option>
+           <option value="">
+    Todos los estados
+</option>
 
-            <option
-                value="pendiente"
-                <%= filtros.estado === "pendiente"
-                    ? "selected"
-                    : "" %>
-            >
-                Pendientes
-            </option>
 
-            <option
-                value="pendiente_pago"
-                <%= filtros.estado === "pendiente_pago"
-                    ? "selected"
-                    : "" %>
-            >
-                Pendientes de pago
-            </option>
+<option
+    value="pendiente"
+    <%= filtros.estado === "pendiente"
+        ? "selected"
+        : "" %>
+>
+    Pendiente de confirmación
+</option>
 
-            <option
-                value="confirmada"
-                <%= filtros.estado === "confirmada"
-                    ? "selected"
-                    : "" %>
-            >
-                Confirmadas
-            </option>
 
-            <option
-                value="en_curso"
-                <%= filtros.estado === "en_curso"
-                    ? "selected"
-                    : "" %>
-            >
-                En curso
-            </option>
+<option
+    value="pendiente_pago"
+    <%= filtros.estado === "pendiente_pago"
+        ? "selected"
+        : "" %>
+>
+    Pendiente de pago
+</option>
 
-            <option
-                value="finalizada"
-                <%= filtros.estado === "finalizada"
-                    ? "selected"
-                    : "" %>
-            >
-                Finalizadas
-            </option>
 
-            <option
-                value="rechazada"
-                <%= filtros.estado === "rechazada"
-                    ? "selected"
-                    : "" %>
-            >
-                Rechazadas
-            </option>
+<option
+    value="pendiente_asignacion"
+    <%= filtros.estado === "pendiente_asignacion"
+        ? "selected"
+        : "" %>
+>
+    Pendiente de asignar unidad
+</option>
 
-            <option
-                value="cancelada"
-                <%= filtros.estado === "cancelada"
-                    ? "selected"
-                    : "" %>
-            >
-                Canceladas
-            </option>
+
+<option
+    value="pendiente_entrega"
+    <%= filtros.estado === "pendiente_entrega"
+        ? "selected"
+        : "" %>
+>
+    Pendiente de entrega
+</option>
+
+
+<option
+    value="en_curso"
+    <%= filtros.estado === "en_curso"
+        ? "selected"
+        : "" %>
+>
+    Alquiler en curso
+</option>
+
+
+<option
+    value="finalizada"
+    <%= filtros.estado === "finalizada"
+        ? "selected"
+        : "" %>
+>
+    Reservación finalizada
+</option>
 
         </select>
 
@@ -568,13 +565,6 @@ function horaSegura(valor) {
     "unit-status-reservado";
 
 
-const requierePagoReservacion =
-    Number(
-        reservacion.monto_anticipo_requerido ||
-        0
-    ) > 0;
-
-
 const cantidadSolicitada =
     Number(
         reservacion.cantidad_vehiculos ||
@@ -618,7 +608,7 @@ if (
         "unit-status-reservado";
 
     nombreEstado =
-        "Reservación confirmada · Pendiente de pago";
+        "Pendiente de pago";
 
 }
 
@@ -632,26 +622,12 @@ if (
         "unit-status-disponible";
 
 
-    if (
-        requierePagoReservacion
-    ) {
-
-        nombreEstado =
-            asignacionCompleta
-                ? "Pago confirmado · Pendiente de entrega"
-                : "Pago confirmado · Pendiente de asignar unidad";
-
-    } else {
-
-        nombreEstado =
-            asignacionCompleta
-                ? "Reservación confirmada · Pendiente de entrega"
-                : "Reservación confirmada · Pendiente de asignar unidad";
-
-    }
+    nombreEstado =
+        asignacionCompleta
+            ? "Pendiente de entrega"
+            : "Pendiente de asignar unidad";
 
 }
-
 
 if (
     reservacion.estado ===

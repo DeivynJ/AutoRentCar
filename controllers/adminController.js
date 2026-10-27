@@ -646,22 +646,6 @@ async function mostrarDashboard(
                 WHERE estado = 'activo'
             `);
 
-
-        const agenciasRecientes =
-            await conexion.query(`
-                SELECT
-                    a.id,
-                    a.nombre,
-                    a.ciudad,
-                    a.provincia,
-                    a.estado,
-                    a.fecha_creacion
-                FROM agencias a
-                ORDER BY
-                    a.fecha_creacion DESC
-                LIMIT 5
-            `);
-
         const estadisticas = {
 
             agencias:
@@ -704,8 +688,6 @@ async function mostrarDashboard(
                     req.session.usuario,
 
                 estadisticas,
-
-                agenciasRecientes,
 
                 totalAgencias:
                     estadisticas.agencias

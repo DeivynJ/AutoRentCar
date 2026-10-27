@@ -1275,160 +1275,292 @@ function verDetalleReservacion(codigo) {
 
             </div>
 
-            <div class="rejilla-detalle-reservacion">
+                        <!-- =================================================
+                 INFORMACIÓN DEL CLIENTE
+            ================================================== -->
 
-                ${crearDatoDetalle(
-                    "Cliente",
-                    reserva.cliente?.nombre
-                )}
+            <section class="detalle-reserva-seccion">
 
-                ${crearDatoDetalle(
-                    "Documento",
-                    reserva.cliente?.documento
-                )}
+                <div class="detalle-reserva-seccion-titulo">
 
-                ${crearDatoDetalle(
-                    "Correo",
-                    reserva.cliente?.correo
-                )}
+                    <div>
+                        <i class="fa-solid fa-user"></i>
+                    </div>
 
-                ${crearDatoDetalle(
-                    "Teléfono",
-                    reserva.cliente?.telefono
-                )}
+                    <section>
 
-                ${crearDatoDetalle(
-                    "Edad",
-                    reserva.cliente?.edad
-                        ? `${reserva.cliente.edad} años`
-                        : "Sin información"
-                )}
+                        <span>
+                            Conductor principal
+                        </span>
 
-                ${crearDatoDetalle(
-                    "Licencia",
-                    reserva.cliente?.licencia
-                )}
+                        <h3>
+                            Información del cliente
+                        </h3>
 
-                ${crearDatoDetalle(
-                    "Lugar de recogida",
-                    reserva.lugarRecogida
-                )}
+                    </section>
 
-                ${crearDatoDetalle(
-                    "Lugar de devolución",
-                    reserva.lugarEntrega
-                )}
+                </div>
 
-                ${crearDatoDetalle(
-                    "Fecha de recogida",
-                    formatearFechaSimpleReserva(
-                        reserva.fechaRecogida
-                    )
-                )}
+                <div class="rejilla-detalle-reservacion">
 
-                ${crearDatoDetalle(
-                    "Hora de recogida",
-                    formatearHoraReserva(
-                        reserva.horaRecogida
-                    )
-                )}
+                    ${crearDatoDetalle(
+                        "Cliente",
+                        reserva.cliente?.nombre
+                    )}
 
-                ${crearDatoDetalle(
-                    "Fecha de devolución",
-                    formatearFechaSimpleReserva(
-                        reserva.fechaEntrega
-                    )
-                )}
+                    ${crearDatoDetalle(
+                        "Documento",
+                        reserva.cliente?.documento
+                    )}
 
-                ${crearDatoDetalle(
-                    "Hora de devolución",
-                    formatearHoraReserva(
-                        reserva.horaEntrega
-                    )
-                )}
+                    ${crearDatoDetalle(
+                        "Correo",
+                        reserva.cliente?.correo
+                    )}
 
-                ${crearDatoDetalle(
-                    "Duración",
-                    formatearDiasReserva(
-                        dias
-                    )
-                )}
+                    ${crearDatoDetalle(
+                        "Teléfono",
+                        reserva.cliente?.telefono
+                    )}
 
-                ${crearDatoDetalle(
-                    "Cantidad reservada",
-                    textoCantidad
-                )}
+                    ${crearDatoDetalle(
+                        "Edad",
+                        reserva.cliente?.edad
+                            ? `${reserva.cliente.edad} años`
+                            : "Sin información"
+                    )}
 
-                ${crearDatoDetalle(
-                    "Precio por vehículo/día",
-                    formatearMonedaReserva(
-                        precioDiario
-                    )
-                )}
+                    ${crearDatoDetalle(
+                        "Licencia",
+                        reserva.cliente?.licencia
+                    )}
 
-                ${crearDatoDetalle(
-                    "Subtotal de vehículos",
-                    formatearMonedaReserva(
-                        subtotal
-                    )
-                )}
+                </div>
 
-                ${crearDatoDetalle(
-                    "Servicios adicionales",
-                    obtenerAdicionalesReserva(
-                        reserva.adicionales
-                    )
-                )}
+            </section>
 
-                ${crearDatoDetalle(
-                    "Costo de adicionales",
-                    formatearMonedaReserva(
-                        reserva.costoAdicionales
-                    )
-                )}
 
-                ${crearDatoDetalle(
-                    "Código promocional",
-                    reserva.codigoPromocional ||
-                    "No aplicado"
-                )}
+            <!-- =================================================
+                 INFORMACIÓN DEL ALQUILER
+            ================================================== -->
 
-                ${crearDatoDetalle(
-                    "Descuento",
-                    `-${formatearMonedaReserva(
-                        reserva.descuento
-                    )}`
-                )}
+            <section class="detalle-reserva-seccion">
 
-                ${crearDatoDetalle(
-                    "Comentarios",
-                    reserva.comentarios ||
-                    "Sin comentarios"
-                )}
+                <div class="detalle-reserva-seccion-titulo">
 
-                ${
-                    reserva.fechaCancelacion
-                        ? crearDatoDetalle(
-                            "Fecha de cancelación",
-                            formatearFechaReservaListado(
-                                reserva.fechaCancelacion
-                            )
+                    <div>
+                        <i class="fa-solid fa-route"></i>
+                    </div>
+
+                    <section>
+
+                        <span>
+                            Datos del recorrido
+                        </span>
+
+                        <h3>
+                            Información del alquiler
+                        </h3>
+
+                    </section>
+
+                </div>
+
+                <div class="rejilla-detalle-reservacion">
+
+                    ${crearDatoDetalle(
+                        "Lugar de recogida",
+                        reserva.lugarRecogida
+                    )}
+
+                    ${crearDatoDetalle(
+                        "Lugar de devolución",
+                        reserva.lugarEntrega
+                    )}
+
+                    ${crearDatoDetalle(
+                        "Fecha de recogida",
+                        formatearFechaSimpleReserva(
+                            reserva.fechaRecogida
                         )
-                        : ""
-                }
+                    )}
 
-                ${
-                    reserva.fechaRestauracion
-                        ? crearDatoDetalle(
-                            "Última restauración",
-                            formatearFechaReservaListado(
-                                reserva.fechaRestauracion
-                            )
+                    ${crearDatoDetalle(
+                        "Hora de recogida",
+                        formatearHoraReserva(
+                            reserva.horaRecogida
                         )
-                        : ""
-                }
+                    )}
 
-            </div>
+                    ${crearDatoDetalle(
+                        "Fecha de devolución",
+                        formatearFechaSimpleReserva(
+                            reserva.fechaEntrega
+                        )
+                    )}
+
+                    ${crearDatoDetalle(
+                        "Hora de devolución",
+                        formatearHoraReserva(
+                            reserva.horaEntrega
+                        )
+                    )}
+
+                    ${crearDatoDetalle(
+                        "Duración",
+                        formatearDiasReserva(
+                            dias
+                        )
+                    )}
+
+                    ${crearDatoDetalle(
+                        "Cantidad reservada",
+                        textoCantidad
+                    )}
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 RESUMEN ECONÓMICO
+            ================================================== -->
+
+            <section class="detalle-reserva-seccion">
+
+                <div class="detalle-reserva-seccion-titulo">
+
+                    <div>
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+
+                    <section>
+
+                        <span>
+                            Detalle de cargos
+                        </span>
+
+                        <h3>
+                            Resumen económico
+                        </h3>
+
+                    </section>
+
+                </div>
+
+                <div class="rejilla-detalle-reservacion">
+
+                    ${crearDatoDetalle(
+                        "Precio por vehículo/día",
+                        formatearMonedaReserva(
+                            precioDiario
+                        )
+                    )}
+
+                    ${crearDatoDetalle(
+                        "Subtotal de vehículos",
+                        formatearMonedaReserva(
+                            subtotal
+                        )
+                    )}
+
+                    ${crearDatoDetalle(
+                        "Servicios adicionales",
+                        obtenerAdicionalesReserva(
+                            reserva.adicionales
+                        )
+                    )}
+
+                    ${crearDatoDetalle(
+                        "Costo de adicionales",
+                        formatearMonedaReserva(
+                            reserva.costoAdicionales
+                        )
+                    )}
+
+                    ${crearDatoDetalle(
+                        "Código promocional",
+                        reserva.codigoPromocional ||
+                        "No aplicado"
+                    )}
+
+                    ${crearDatoDetalle(
+                        "Descuento",
+                        `-${formatearMonedaReserva(
+                            reserva.descuento
+                        )}`
+                    )}
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 INFORMACIÓN ADICIONAL
+            ================================================== -->
+
+            <section
+                class="
+                    detalle-reserva-seccion
+                    detalle-reserva-seccion-adicional
+                "
+            >
+
+                <div class="detalle-reserva-seccion-titulo">
+
+                    <div>
+                        <i class="fa-solid fa-circle-info"></i>
+                    </div>
+
+                    <section>
+
+                        <span>
+                            Otros datos
+                        </span>
+
+                        <h3>
+                            Información adicional
+                        </h3>
+
+                    </section>
+
+                </div>
+
+                <div class="rejilla-detalle-reservacion">
+
+                    ${crearDatoDetalle(
+                        "Comentarios",
+                        reserva.comentarios ||
+                        "Sin comentarios"
+                    )}
+
+                    ${
+                        reserva.fechaCancelacion
+                            ? crearDatoDetalle(
+                                "Fecha de cancelación",
+                                formatearFechaReservaListado(
+                                    reserva.fechaCancelacion
+                                )
+                            )
+                            : ""
+                    }
+
+                    ${
+                        reserva.fechaRestauracion
+                            ? crearDatoDetalle(
+                                "Última restauración",
+                                formatearFechaReservaListado(
+                                    reserva.fechaRestauracion
+                                )
+                            )
+                            : ""
+                    }
+
+                </div>
+
+            </section>
 
             <div class="total-detalle-reserva">
 
