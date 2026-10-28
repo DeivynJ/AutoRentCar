@@ -107,7 +107,11 @@ async function cambiarEstadoReservacionPanel({
 
     reservacionId,
 
-    nuevoEstado
+    nuevoEstado,
+
+    usuarioId = null,
+
+    motivoRechazo = null
 
 }) {
 
@@ -169,6 +173,61 @@ async function cambiarEstadoReservacionPanel({
 
     }
 
+
+    let usuarioIdSeguro =
+        null;
+
+
+    let motivoRechazoSeguro =
+        null;
+
+
+    if (
+        estadoSolicitado ===
+        "rechazada"
+    ) {
+
+        usuarioIdSeguro =
+            validarId(
+                usuarioId,
+                "El usuario"
+            );
+
+
+        motivoRechazoSeguro =
+            String(
+                motivoRechazo ||
+                ""
+            )
+                .trim();
+
+
+        if (
+            motivoRechazoSeguro.length <
+            3
+        ) {
+
+            throw crearErrorPanelReservacion(
+                "MOTIVO_RECHAZO_REQUERIDO",
+                "Debes indicar el motivo por el cual se rechaza la reservación."
+            );
+
+        }
+
+
+        if (
+            motivoRechazoSeguro.length >
+            500
+        ) {
+
+            throw crearErrorPanelReservacion(
+                "MOTIVO_RECHAZO_MUY_LARGO",
+                "El motivo del rechazo no puede superar los 500 caracteres."
+            );
+
+        }
+
+    }
 
     let conexion;
 
@@ -289,8 +348,15 @@ FROM reservaciones
                     `
                     UPDATE reservaciones
 
-                    SET
-                        estado = 'rechazada'
+                                        SET
+                        estado = 'rechazada',
+
+                        motivo_rechazo = ?,
+
+                        rechazada_por_usuario_id = ?,
+
+                        fecha_rechazo = NOW()
+
 
                     WHERE
                         id = ?
@@ -299,7 +365,9 @@ FROM reservaciones
 
                         AND estado = 'pendiente'
                     `,
-                    [
+                                        [
+                        motivoRechazoSeguro,
+                        usuarioIdSeguro,
                         reservacionIdSeguro,
                         agenciaIdSeguro
                     ]
@@ -345,6 +413,9 @@ FROM reservaciones
 
                 estado:
                     "rechazada",
+
+                motivoRechazo:
+                 motivoRechazoSeguro,
 
                 requierePago:
                     false,

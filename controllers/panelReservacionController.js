@@ -20,6 +20,8 @@ const {
 
     enviarCorreoReservacionConfirmada,
 
+    enviarCorreoReservacionRechazada,
+
     enviarCorreoVehiculoEntregado,
 
     enviarCorreoDevolucionConfirmada
@@ -1505,6 +1507,20 @@ async function rechazarReservacionPanel(
             );
 
 
+        const usuarioId =
+            Number(
+                req.usuarioAgencia?.id
+            );
+
+
+        const motivoRechazo =
+            String(
+                req.body?.motivo ||
+                ""
+            )
+                .trim();
+
+
         const resultado =
             await cambiarEstadoReservacionPanel({
 
@@ -1513,9 +1529,50 @@ async function rechazarReservacionPanel(
                 reservacionId,
 
                 nuevoEstado:
-                    "rechazada"
+                    "rechazada",
+
+                usuarioId,
+
+                motivoRechazo
 
             });
+
+
+        /* -------------------------------------------------
+           CORREO DE RESERVACIÓN RECHAZADA
+
+           La reservación ya fue rechazada.
+           Un error del correo NO debe revertir
+           la operación.
+        ------------------------------------------------- */
+
+        try {
+
+            await enviarCorreoReservacionRechazada({
+
+                agenciaId,
+
+                reservacionId
+
+            });
+
+
+        } catch (
+            errorCorreo
+        ) {
+
+            console.error(
+                "No fue posible enviar correo de reservación rechazada:",
+                {
+                    reservacionId,
+
+                    mensaje:
+                        errorCorreo.message
+                }
+            );
+
+        }
+
 
         return res.redirect(
             `/panel/reservaciones/${resultado.id}?resultado=rechazada`
@@ -1524,7 +1581,7 @@ async function rechazarReservacionPanel(
 
     } catch (error) {
 
-    
+
         if (
             error.codigo ===
             "RESERVACION_NO_ENCONTRADA"
@@ -1552,6 +1609,22 @@ async function rechazarReservacionPanel(
 
 
         if (
+            [
+                "MOTIVO_RECHAZO_REQUERIDO",
+                "MOTIVO_RECHAZO_MUY_LARGO"
+            ].includes(
+                error.codigo
+            )
+        ) {
+
+            return res.redirect(
+                `/panel/reservaciones/${req.params.reservacionId}?error=motivo_rechazo`
+            );
+
+        }
+
+
+        if (
             error.codigo ===
             "ID_INVALIDO"
         ) {
@@ -1565,10 +1638,11 @@ async function rechazarReservacionPanel(
         }
 
 
-console.error(
-    "Error inesperado rechazando reservación:",
-    error
-);
+        console.error(
+            "Error inesperado rechazando reservación:",
+            error
+        );
+
 
         return res.redirect(
             `/panel/reservaciones/${req.params.reservacionId}?error=rechazar`

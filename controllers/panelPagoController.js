@@ -6,7 +6,8 @@ const {
 );
 
 const {
-    enviarCorreoPagoConfirmado
+    enviarCorreoPagoConfirmado,
+    enviarCorreoPagoRechazado
 } = require(
     "../services/correoReservacionService"
 );
@@ -176,9 +177,74 @@ async function rechazarPagoPanel(
                 motivo
             );
 
+                       /* -------------------------------------------------
+           CORREO DE PAGO RECHAZADO
+
+           El pago ya fue rechazado en BD.
+           El resultado del correo solamente define
+           el mensaje que verá el administrador.
+        ------------------------------------------------- */
+
+        let resultadoVisual =
+            "pago_rechazado_correo_no_enviado";
+
+
+        try {
+
+            const resultadoCorreo =
+                await enviarCorreoPagoRechazado({
+
+                    agenciaId,
+
+                    reservacionId:
+                        resultado.pago.reservacionId,
+
+                    pagoId
+
+                });
+
+
+            if (
+                resultadoCorreo?.enviado ===
+                true
+            ) {
+
+                resultadoVisual =
+                    "pago_rechazado_correo_enviado";
+
+            } else if (
+                resultadoCorreo?.motivo ===
+                "CLIENTE_SIN_CORREO"
+            ) {
+
+                resultadoVisual =
+                    "pago_rechazado_sin_correo";
+
+            }
+
+
+        } catch (
+            errorCorreo
+        ) {
+
+            console.error(
+                "No fue posible enviar correo de pago rechazado:",
+                {
+                    pagoId,
+
+                    reservacionId:
+                        resultado.pago.reservacionId,
+
+                    mensaje:
+                        errorCorreo.message
+                }
+            );
+
+        }
+
 
         return res.redirect(
-            `/panel/reservaciones/${resultado.pago.reservacionId}?resultado=pago_rechazado`
+            `/panel/reservaciones/${resultado.pago.reservacionId}?resultado=${resultadoVisual}`
         );
 
     } catch (error) {

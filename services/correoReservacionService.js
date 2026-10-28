@@ -323,6 +323,7 @@ async function obtenerReservacionParaCorreo({
                     r.codigo,
 
                     r.estado,
+                    r.motivo_rechazo,
                     r.origen,
 
                     r.cantidad_vehiculos,
@@ -1620,6 +1621,495 @@ ${escaparHtml(nombreAgencia)}
 }
 
 /* =========================================================
+   RESERVACIÓN RECHAZADA
+========================================================= */
+
+async function enviarCorreoReservacionRechazada({
+
+    agenciaId,
+
+    reservacionId
+
+}) {
+
+    const reservacion =
+        await obtenerReservacionParaCorreo({
+
+            agenciaId,
+
+            reservacionId
+
+        });
+
+
+    if (
+        reservacion.estado !==
+        "rechazada"
+    ) {
+
+        return {
+
+            enviado:
+                false,
+
+            omitido:
+                true,
+
+            motivo:
+                "ESTADO_NO_RECHAZADO"
+
+        };
+
+    }
+
+
+    const correoCliente =
+        String(
+            reservacion.cliente_correo ||
+            ""
+        ).trim();
+
+
+    if (
+        !correoCliente
+    ) {
+
+        return {
+
+            enviado:
+                false,
+
+            omitido:
+                true,
+
+            motivo:
+                "CLIENTE_SIN_CORREO"
+
+        };
+
+    }
+
+
+    const motivoRechazo =
+        String(
+            reservacion.motivo_rechazo ||
+            "La agencia no pudo aprobar la solicitud."
+        ).trim();
+
+
+    const nombreCliente =
+        String(
+            reservacion.cliente_nombre ||
+            "Cliente"
+        ).trim();
+
+
+    const nombreAgencia =
+        String(
+            reservacion.agencia_nombre ||
+            "AVYNEXO"
+        ).trim();
+
+
+    const marca =
+        obtenerMarcaAgencia(
+            reservacion
+        );
+
+
+    const vehiculo =
+        [
+            reservacion.modelo_marca,
+            reservacion.modelo_nombre
+        ]
+            .filter(Boolean)
+            .join(" ");
+
+
+        const fechaRecogida =
+        formatearFechaHora(
+            reservacion.fecha_recogida,
+            reservacion.hora_recogida
+        );
+
+
+    const fechaEntrega =
+        formatearFechaHora(
+            reservacion.fecha_entrega,
+            reservacion.hora_entrega
+        );
+
+    const asunto =
+        `Reservación no aprobada - ${reservacion.codigo}`;
+
+
+    const texto =
+`Hola ${nombreCliente},
+
+La agencia ${nombreAgencia} revisó tu solicitud de reservación y no pudo aprobarla.
+
+Código de reservación: ${reservacion.codigo}
+Vehículo: ${vehiculo}
+Recogida: ${fechaRecogida}
+
+Motivo del rechazo:
+${motivoRechazo}
+
+La solicitud ha sido cerrada y ya no mantiene el vehículo reservado para esas fechas.
+
+Si todavía necesitas un vehículo, puedes realizar una nueva solicitud o comunicarte directamente con la agencia.
+
+${nombreAgencia}
+AVYNEXO`;
+
+
+        const html =
+`
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="
+margin:0;
+padding:0;
+background:#f4f6f8;
+font-family:Arial, Helvetica, sans-serif;
+color:#202124;
+">
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+style="
+background:#f4f6f8;
+padding:30px 15px;
+"
+>
+
+<tr>
+<td align="center">
+
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+style="
+max-width:620px;
+background:#ffffff;
+border-radius:12px;
+overflow:hidden;
+"
+>
+
+
+<tr>
+<td style="
+padding:28px 32px;
+background:${marca.colorPrimario};
+color:#ffffff;
+border-bottom:4px solid ${marca.colorSecundario};
+">
+
+
+${
+marca.logo
+?
+`
+<img
+src="${escaparHtml(marca.logo)}"
+alt="${escaparHtml(nombreAgencia)}"
+style="
+max-height:55px;
+max-width:180px;
+margin-bottom:15px;
+object-fit:contain;
+"
+>
+`
+:
+""
+}
+
+
+<div style="
+font-size:13px;
+opacity:.85;
+margin-bottom:6px;
+">
+${escaparHtml(nombreAgencia)}
+</div>
+
+
+<div style="
+font-size:24px;
+font-weight:700;
+">
+Reservación no aprobada
+</div>
+
+
+</td>
+</tr>
+
+
+<tr>
+<td style="
+padding:32px;
+">
+
+
+<p style="
+font-size:16px;
+line-height:1.6;
+">
+
+Hola
+<strong>
+${escaparHtml(nombreCliente)}
+</strong>,
+
+</p>
+
+
+<p style="
+font-size:15px;
+line-height:1.7;
+color:#4b5563;
+">
+
+La agencia ha revisado tu solicitud de reservación
+y en esta ocasión no pudo aprobarla.
+
+</p>
+
+
+<div style="
+background:#fef2f2;
+border:1px solid #fecaca;
+border-radius:10px;
+padding:18px;
+margin:24px 0;
+">
+
+
+<div style="
+font-size:13px;
+color:#b91c1c;
+">
+Estado
+</div>
+
+
+<div style="
+font-size:18px;
+font-weight:700;
+color:#991b1b;
+">
+
+Reservación no aprobada
+
+</div>
+
+
+<div style="
+margin-top:14px;
+padding-top:14px;
+border-top:1px solid #fecaca;
+font-size:13px;
+line-height:1.6;
+color:#7f1d1d;
+">
+
+<strong>
+Motivo del rechazo:
+</strong>
+
+<br>
+
+${escaparHtml(motivoRechazo)}
+
+</div>
+
+
+</div>
+
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+style="
+font-size:14px;
+line-height:1.7;
+"
+>
+
+<tr>
+<td style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+color:#6b7280;
+">
+Código
+</td>
+
+<td
+align="right"
+style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+font-weight:600;
+"
+>
+${escaparHtml(reservacion.codigo)}
+</td>
+</tr>
+
+
+<tr>
+<td style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+color:#6b7280;
+">
+Vehículo
+</td>
+
+<td
+align="right"
+style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+font-weight:600;
+"
+>
+${escaparHtml(vehiculo)}
+</td>
+</tr>
+
+
+<tr>
+<td style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+color:#6b7280;
+">
+Recogida
+</td>
+
+<td
+align="right"
+style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+font-weight:600;
+"
+>
+${escaparHtml(fechaRecogida)}
+</td>
+</tr>
+
+
+<tr>
+<td style="
+padding:10px 0;
+color:#6b7280;
+">
+Devolución
+</td>
+
+<td
+align="right"
+style="
+padding:10px 0;
+font-weight:600;
+"
+>
+${escaparHtml(fechaEntrega)}
+</td>
+</tr>
+
+</table>
+
+
+<div style="
+margin-top:26px;
+padding:16px;
+background:#f9fafb;
+border-left:4px solid ${marca.colorSecundario};
+border-radius:8px;
+font-size:14px;
+color:#4b5563;
+line-height:1.6;
+">
+
+La solicitud ha sido cerrada y el vehículo ya no
+permanece apartado por esta reservación.
+Si todavía necesitas un vehículo, puedes realizar
+una nueva solicitud o comunicarte con la agencia.
+
+</div>
+
+
+</td>
+</tr>
+
+
+<tr>
+<td style="
+padding:20px 32px;
+background:#f9fafb;
+text-align:center;
+font-size:12px;
+color:#6b7280;
+">
+
+${escaparHtml(nombreAgencia)}
+· AVYNEXO
+
+</td>
+</tr>
+
+
+</table>
+
+
+</td>
+</tr>
+
+</table>
+
+
+</body>
+</html>
+`;
+
+
+    return enviarCorreoAgencia({
+
+        agenciaId:
+            reservacion.agencia_id,
+
+        para:
+            correoCliente,
+
+        asunto,
+
+        texto,
+
+        html
+
+    });
+
+}
+
+/* =========================================================
    PAGO CONFIRMADO
 ========================================================= */
 
@@ -2107,6 +2597,732 @@ ${escaparHtml(pago.agencia_nombre)}
     }
 
 }
+
+/* =========================================================
+   PAGO RECHAZADO
+========================================================= */
+
+async function enviarCorreoPagoRechazado({
+
+    agenciaId,
+
+    reservacionId,
+
+    pagoId
+
+}) {
+
+    let conexion;
+
+    let pago;
+
+
+    try {
+
+        conexion =
+            await pool.getConnection();
+
+
+        const datos =
+            await conexion.query(
+                `
+                SELECT
+
+                    r.id AS reservacion_id,
+                    r.codigo,
+                    r.agencia_id,
+                    r.estado AS reservacion_estado,
+                    r.fecha_limite_pago,
+
+                    CASE
+                        WHEN
+                            r.estado = 'pendiente_pago'
+                            AND r.fecha_limite_pago IS NOT NULL
+                            AND r.fecha_limite_pago > NOW()
+                        THEN 1
+                        ELSE 0
+                    END AS puede_reintentar,
+
+                    DATE_FORMAT(
+                        r.fecha_limite_pago,
+                        '%d/%m/%Y'
+                    ) AS fecha_limite_pago_fecha,
+
+                    TIME_FORMAT(
+                        r.fecha_limite_pago,
+                        '%H:%i'
+                    ) AS fecha_limite_pago_hora,
+
+                    r.cliente_nombre,
+                    r.cliente_correo,
+
+                    a.nombre AS agencia_nombre,
+                    a.logo AS agencia_logo,
+                    a.color_primario AS agencia_color_primario,
+                    a.color_secundario AS agencia_color_secundario,
+
+                    p.estado AS pago_estado,
+                    p.monto,
+                    p.moneda,
+                    p.metodo_nombre,
+                    p.motivo_rechazo
+
+                FROM reservaciones r
+
+                INNER JOIN agencias a
+                    ON a.id = r.agencia_id
+
+                INNER JOIN pagos_reservacion p
+                    ON p.reservacion_id = r.id
+                    AND p.id = ?
+                    AND p.agencia_id = r.agencia_id
+
+                WHERE
+                    r.id = ?
+                    AND r.agencia_id = ?
+
+                LIMIT 1
+                `,
+                [
+                    pagoId,
+                    reservacionId,
+                    agenciaId
+                ]
+            );
+
+
+        if (
+            !datos.length
+        ) {
+
+            return {
+
+                enviado:
+                    false,
+
+                motivo:
+                    "DATOS_NO_ENCONTRADOS"
+
+            };
+
+        }
+
+
+        pago =
+            datos[0];
+
+    } finally {
+
+        if (
+            conexion
+        ) {
+
+            conexion.release();
+
+        }
+
+    }
+
+
+    if (
+        pago.pago_estado !==
+        "rechazado"
+    ) {
+
+        return {
+
+            enviado:
+                false,
+
+            omitido:
+                true,
+
+            motivo:
+                "PAGO_NO_RECHAZADO"
+
+        };
+
+    }
+
+
+    if (
+        !pago.cliente_correo
+    ) {
+
+        return {
+
+            enviado:
+                false,
+
+            omitido:
+                true,
+
+            motivo:
+                "CLIENTE_SIN_CORREO"
+
+        };
+
+    }
+
+
+    const marca =
+        obtenerMarcaAgencia(
+            pago
+        );
+
+
+    const nombreCliente =
+        String(
+            pago.cliente_nombre ||
+            "Cliente"
+        ).trim();
+
+
+    const nombreAgencia =
+        String(
+            pago.agencia_nombre ||
+            "AVYNEXO"
+        ).trim();
+
+
+    const motivoRechazo =
+        String(
+            pago.motivo_rechazo ||
+            "El comprobante no pudo ser validado."
+        ).trim();
+
+
+    let fechaLimitePago =
+        "";
+
+
+    if (
+        pago.fecha_limite_pago_fecha
+    ) {
+
+        fechaLimitePago =
+            pago.fecha_limite_pago_hora
+                ? `${pago.fecha_limite_pago_fecha} ${pago.fecha_limite_pago_hora}`
+                : pago.fecha_limite_pago_fecha;
+
+    }
+
+
+    let enlacePago =
+        "";
+
+
+    if (
+        Number(
+            pago.puede_reintentar
+        ) === 1
+    ) {
+
+        try {
+
+            const resultadoToken =
+                await generarTokenPagoReservacion(
+                    agenciaId,
+                    reservacionId
+                );
+
+
+            const baseUrl =
+                process.env.PUBLIC_URL ||
+                process.env.APP_URL ||
+                "http://localhost:3000";
+
+
+            enlacePago =
+                `${baseUrl}/pago/${resultadoToken.token}`;
+
+        } catch (
+            errorToken
+        ) {
+
+            console.error(
+                "No fue posible generar un nuevo enlace para el pago rechazado:",
+                {
+                    pagoId,
+                    reservacionId,
+                    mensaje:
+                        errorToken.message
+                }
+            );
+
+        }
+
+    }
+
+
+    const asunto =
+        `Comprobante de pago no aprobado - ${pago.codigo}`;
+
+
+    const texto =
+`Hola ${nombreCliente},
+
+${nombreAgencia} revisó el comprobante enviado para la reservación ${pago.codigo} y no pudo validarlo.
+
+Motivo del rechazo:
+${motivoRechazo}
+
+Monto informado:
+${pago.moneda} ${moneda(pago.monto)}
+
+Método de pago:
+${pago.metodo_nombre}
+
+${
+    enlacePago
+        ? `Tu reservación continúa pendiente de pago. Puedes enviar un nuevo comprobante antes de la fecha límite${fechaLimitePago ? ` (${fechaLimitePago})` : ""}:
+
+${enlacePago}`
+        : "No hay un nuevo enlace de pago disponible para esta reservación."
+}
+
+${nombreAgencia}
+AVYNEXO`;
+
+
+    const botonPagoHtml =
+        enlacePago
+            ? `
+<div style="
+    margin-top:24px;
+    text-align:center;
+">
+
+    <a
+        href="${escaparHtml(enlacePago)}"
+        style="
+            display:inline-block;
+            background:${marca.colorPrimario};
+            color:#ffffff;
+            padding:14px 24px;
+            border-radius:8px;
+            border-bottom:4px solid ${marca.colorSecundario};
+            text-decoration:none;
+            font-weight:700;
+        "
+    >
+        Enviar nuevo comprobante
+    </a>
+
+</div>
+`
+            : "";
+
+
+    const html =
+`
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+</head>
+
+<body style="
+margin:0;
+padding:0;
+background:#f4f6f8;
+font-family:Arial, Helvetica, sans-serif;
+color:#202124;
+">
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+style="
+background:#f4f6f8;
+padding:30px 15px;
+"
+>
+
+<tr>
+
+<td align="center">
+
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+style="
+max-width:620px;
+background:#ffffff;
+border-radius:12px;
+overflow:hidden;
+"
+>
+
+
+<tr>
+
+<td style="
+padding:28px 32px;
+background:${marca.colorPrimario};
+color:#ffffff;
+border-bottom:4px solid ${marca.colorSecundario};
+">
+
+
+${
+    marca.logo
+        ? `
+<img
+src="${escaparHtml(marca.logo)}"
+alt="${escaparHtml(nombreAgencia)}"
+style="
+max-height:55px;
+max-width:180px;
+margin-bottom:15px;
+object-fit:contain;
+"
+>
+`
+        : ""
+}
+
+
+<div style="
+font-size:13px;
+opacity:.85;
+margin-bottom:6px;
+">
+
+${escaparHtml(nombreAgencia)}
+
+</div>
+
+
+<div style="
+font-size:24px;
+font-weight:700;
+">
+
+Comprobante no aprobado
+
+</div>
+
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td style="
+padding:32px;
+">
+
+
+<p style="
+font-size:16px;
+line-height:1.6;
+">
+
+Hola
+<strong>
+${escaparHtml(nombreCliente)}
+</strong>,
+
+</p>
+
+
+<p style="
+font-size:15px;
+line-height:1.7;
+color:#4b5563;
+">
+
+La agencia revisó el comprobante enviado
+y no pudo validarlo.
+
+Tu reservación no ha sido rechazada.
+
+</p>
+
+
+<div style="
+background:#fef2f2;
+border:1px solid #fecaca;
+border-radius:10px;
+padding:18px;
+margin:24px 0;
+">
+
+
+<div style="
+font-size:13px;
+color:#b91c1c;
+">
+
+Estado del pago
+
+</div>
+
+
+<div style="
+font-size:18px;
+font-weight:700;
+color:#991b1b;
+">
+
+Comprobante rechazado
+
+</div>
+
+
+<div style="
+margin-top:14px;
+padding-top:14px;
+border-top:1px solid #fecaca;
+font-size:13px;
+line-height:1.6;
+color:#7f1d1d;
+">
+
+<strong>
+Motivo:
+</strong>
+
+<br>
+
+${escaparHtml(motivoRechazo)}
+
+</div>
+
+
+</div>
+
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+style="
+font-size:14px;
+line-height:1.7;
+"
+>
+
+
+<tr>
+
+<td style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+color:#6b7280;
+">
+Código
+</td>
+
+<td
+align="right"
+style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+font-weight:600;
+"
+>
+${escaparHtml(pago.codigo)}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+color:#6b7280;
+">
+Monto informado
+</td>
+
+<td
+align="right"
+style="
+padding:10px 0;
+border-bottom:1px solid #eeeeee;
+font-weight:600;
+"
+>
+
+${escaparHtml(pago.moneda)}
+${moneda(pago.monto)}
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td style="
+padding:10px 0;
+${
+    fechaLimitePago
+        ? "border-bottom:1px solid #eeeeee;"
+        : ""
+}
+color:#6b7280;
+">
+
+Método de pago
+
+</td>
+
+<td
+align="right"
+style="
+padding:10px 0;
+${
+    fechaLimitePago
+        ? "border-bottom:1px solid #eeeeee;"
+        : ""
+}
+font-weight:600;
+"
+>
+
+${escaparHtml(pago.metodo_nombre)}
+
+</td>
+
+</tr>
+
+
+${
+    fechaLimitePago
+        ? `
+<tr>
+
+<td style="
+padding:10px 0;
+color:#6b7280;
+">
+Fecha límite
+</td>
+
+<td
+align="right"
+style="
+padding:10px 0;
+font-weight:600;
+"
+>
+
+${escaparHtml(fechaLimitePago)}
+
+</td>
+
+</tr>
+`
+        : ""
+}
+
+
+</table>
+
+
+<div style="
+margin-top:26px;
+padding:16px;
+background:#f9fafb;
+border-left:4px solid ${marca.colorSecundario};
+border-radius:8px;
+font-size:14px;
+color:#4b5563;
+line-height:1.6;
+">
+
+${
+    enlacePago
+        ? `
+La reservación continúa pendiente de pago.
+Puedes corregir el comprobante y enviarlo
+nuevamente antes de que venza el plazo.
+`
+        : `
+El comprobante fue rechazado, pero no hay
+un nuevo enlace de pago disponible.
+
+Comunícate con la agencia si necesitas asistencia.
+`
+}
+
+</div>
+
+
+${botonPagoHtml}
+
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td style="
+padding:20px 32px;
+background:#f9fafb;
+text-align:center;
+font-size:12px;
+color:#6b7280;
+">
+
+${escaparHtml(nombreAgencia)}
+· AVYNEXO
+
+</td>
+
+</tr>
+
+
+</table>
+
+
+</td>
+
+</tr>
+
+</table>
+
+
+</body>
+
+</html>
+`;
+
+
+    return enviarCorreoAgencia({
+
+        agenciaId,
+
+        para:
+            pago.cliente_correo,
+
+        asunto,
+
+        texto,
+
+        html
+
+    });
+
+}
+
 
 /* =========================================================
    VEHÍCULO ENTREGADO · ALQUILER INICIADO
@@ -3568,8 +4784,12 @@ module.exports = {
     enviarCorreoSolicitudReservacionRecibida,
 
     enviarCorreoReservacionConfirmada,
+ 
+    enviarCorreoReservacionRechazada,
 
     enviarCorreoPagoConfirmado,
+
+    enviarCorreoPagoRechazado,
 
     enviarCorreoVehiculoEntregado,
 
