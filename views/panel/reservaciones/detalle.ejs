@@ -416,6 +416,64 @@ const puedeEntregarVehiculo =
 
 <% } %>
 
+
+<% if (
+    String(queryResultado || "") ===
+    "pendiente_pago_correo_enviado"
+) { %>
+
+    <div class="panel-reservation-message success">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <span>
+            La reservación fue aprobada correctamente.
+            El cliente fue notificado por correo y la reservación
+            continúa pendiente del pago del anticipo.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+<% if (
+    String(queryResultado || "") ===
+    "pendiente_pago_sin_correo"
+) { %>
+
+    <div class="panel-reservation-message warning">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <span>
+            La reservación fue aprobada y continúa pendiente de pago,
+            pero el cliente no tiene un correo registrado.
+        </span>
+
+    </div>
+
+<% } %>
+
+
+<% if (
+    String(queryResultado || "") ===
+    "pendiente_pago_correo_no_enviado"
+) { %>
+
+    <div class="panel-reservation-message warning">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <span>
+            La reservación fue aprobada y continúa pendiente de pago,
+            pero no fue posible enviar el correo con el enlace de pago.
+        </span>
+
+    </div>
+
+<% } %>
+
 <% if (String(queryResultado || "") === "rechazada") { %>
 
     <div class="panel-reservation-message danger">

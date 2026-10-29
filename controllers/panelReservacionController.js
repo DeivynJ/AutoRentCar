@@ -1379,44 +1379,90 @@ async function confirmarReservacionPanel(
 
             });
 
-            /* -------------------------------------------------
-   CORREO DE RESERVACIÓN CONFIRMADA
+        /* -------------------------------------------------
+           CORREO DE RESERVACIÓN CONFIRMADA
 
-   El estado ya fue actualizado.
-   Un error del correo no debe afectar
-   la confirmación.
-------------------------------------------------- */
+           El estado ya fue actualizado.
+           Un error del correo no debe afectar
+           la confirmación.
 
-try {
+           Cuando la reservación queda pendiente de pago,
+           el resultado del correo define el mensaje que
+           verá el administrador.
+        ------------------------------------------------- */
 
-    await enviarCorreoReservacionConfirmada({
-
-        agenciaId,
-
-        reservacionId
-
-    });
+        let resultadoVisual =
+            resultado.estado;
 
 
-} catch (
-    errorCorreo
-) {
+        if (
+            resultado.estado ===
+            "pendiente_pago"
+        ) {
 
-    console.error(
-        "No fue posible enviar correo de reservación confirmada:",
-        {
-            reservacionId,
-            mensaje:
-                errorCorreo.message
+            resultadoVisual =
+                "pendiente_pago_correo_no_enviado";
+
         }
-    );
 
-}
+
+        try {
+
+            const resultadoCorreo =
+                await enviarCorreoReservacionConfirmada({
+
+                    agenciaId,
+
+                    reservacionId
+
+                });
+
+
+            if (
+                resultado.estado ===
+                "pendiente_pago"
+            ) {
+
+                if (
+                    resultadoCorreo?.enviado ===
+                    true
+                ) {
+
+                    resultadoVisual =
+                        "pendiente_pago_correo_enviado";
+
+                } else if (
+                    resultadoCorreo?.motivo ===
+                    "CLIENTE_SIN_CORREO"
+                ) {
+
+                    resultadoVisual =
+                        "pendiente_pago_sin_correo";
+
+                }
+
+            }
+
+
+        } catch (
+            errorCorreo
+        ) {
+
+            console.error(
+                "No fue posible enviar correo de reservación confirmada:",
+                {
+                    reservacionId,
+                    mensaje:
+                        errorCorreo.message
+                }
+            );
+
+        }
 
 
         return res.redirect(
-    `/panel/reservaciones/${resultado.id}?resultado=${resultado.estado}`
-);
+            `/panel/reservaciones/${resultado.id}?resultado=${resultadoVisual}`
+        );
 
 
     } catch (error) {
